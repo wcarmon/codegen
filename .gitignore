@@ -4,7 +4,7 @@
 !.vscode/launch.json
 !.vscode/settings.json
 !.vscode/tasks.json
-!/gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.jar
 # Eventually remove these:
 $RECYCLE.BIN/
 *.7z
