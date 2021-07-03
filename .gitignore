@@ -196,3 +196,10 @@ testem.log
 Thumbs.db
 tmp/
 yarn-error.log
+
+
+
+
+# Eventually remove these:
+docs/todo.md
+todo.md
