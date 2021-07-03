@@ -1,5 +1,6 @@
 pluginManagement {
   plugins {
+    //TODO: bump versions
     id("com.github.ben-manes.versions") version "0.33.0"
     id("com.github.johnrengelman.shadow") version "6.0.0"
     id("com.gradle.build-scan") version "3.4.1"

@@ -1,1 +1,178 @@
-*.bat           text eol=crlf
+*                 text=auto
+*.*ignore         text
+*.*rc             text
+*.3gp             binary
+*.3gpp            binary
+*.7z              binary
+*.ai              binary
+*.as              binary
+*.asf             binary
+*.asx             binary
+*.avi             binary
+*.bash            text eol=lf
+*.bat             text eol=crlf
+*.bat             text eol=crlf
+*.bmp             binary
+*.class           binary
+*.cmd             text eol=crlf
+*.cnf             text
+*.coffee          text
+*.conf            text
+*.config          text
+*.css             text diff=css
+*.css             text diff=css
+*.df              text
+*.dll             binary
+*.dot             text
+*.ear             binary
+*.ejs             text
+*.eot             binary
+*.eps             binary
+*.exe             binary
+*.fla             binary
+*.flv             binary
+*.gif             binary
+*.gifv            binary
+*.go              text diff=golang
+*.gradle          text diff=java
+*.gradle.kts      text diff=java
+*.gz              binary
+*.haml            text
+*.handlebars      text
+*.hbs             text
+*.hbt             text
+*.htm             text diff=html
+*.html            text diff=html
+*.ico             binary
+*.inc             text
+*.ini             text
+*.ipynb           text
+*.jade            text
+*.jar             binary
+*.java            text diff=java
+*.jks             binary
+*.jng             binary
+*.jp2             binary
+*.jpeg            binary
+*.jpg             binary
+*.jpx             binary
+*.js              text
+*.json            text
+*.jsp             text
+*.jspf            text
+*.jspx            text
+*.jsx             text
+*.jxr             binary
+*.kar             binary
+*.latte           text
+*.less            text
+*.lock            text -diff
+*.ls              text
+*.m4a             binary
+*.m4v             binary
+*.map             text -diff
+*.markdown        text diff=markdown
+*.md              text diff=markdown
+*.mdown           text diff=markdown
+*.mdtext          text
+*.mdtxt           text
+*.mdwn            text diff=markdown
+*.mid             binary
+*.midi            binary
+*.mkd             text diff=markdown
+*.mkdn            text diff=markdown
+*.mng             binary
+*.mov             binary
+*.mp3             binary
+*.mp4             binary
+*.mpeg            binary
+*.mpg             binary
+*.mustache        text
+*.njk             text
+*.od              text
+*.ogg             binary
+*.ogv             binary
+*.onlydata        text
+*.otf             binary
+*.pdf             binary
+*.php             text diff=php
+*.phtml           text
+*.pl              text
+*.png             binary
+*.properties      text
+*.ps1             text eol=crlf
+*.psb             binary
+*.psd             binary
+*.py              text diff=python
+*.pyc             binary
+*.ra              binary
+*.rar             binary
+*.rb              text diff=ruby
+*.sass            text
+*.scm             text
+*.scss            text diff=css
+*.sh              text eol=lf
+*.so              binary
+*.sql             text
+*.styl            text
+*.svelte          text
+*.svg             text
+*.svgz            binary
+*.swc             binary
+*.swf             binary
+*.tag             text
+*.tag             text
+*.tagx            text
+*.tar             binary
+*.tif             binary
+*.tiff            binary
+*.tld             text
+*.tmpl            text
+*.toml            text
+*.tpl             text
+*.ts              text
+*.tsx             text
+*.ttf             binary
+*.twig            text
+*.txt             text
+*.vue             text
+*.war             binary
+*.wbmp            binary
+*.webm            binary
+*.webp            binary
+*.woff            binary
+*.woff2           binary
+*.xhtml           text diff=html
+*.xml             text
+*.yaml            text
+*.yml             text
+*.zip             binary
+*COPYRIGHT*       text
+*README*          text
+.editorconfig     text
+.env              text
+.gitattributes    text
+.gitconfig        text
+.htaccess         text
+.prettierrc       text
+AUTHORS           text
+browserslist      text
+CHANGELOG         text
+CHANGES           text
+CONTRIBUTING      text
+COPYING           text
+copyright         text
+Dockerfile        text
+INSTALL           text
+license           text
+LICENSE           text
+Makefile          text
+makefile          text
+NEWS              text
+package-lock.json text -diff
+package.json      text eol=lf
+pnpm-lock.yaml    text eol=lf -diff
+Procfile          text
+readme            text
+TODO              text
+yarn.lock         text -diff
