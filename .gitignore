@@ -4,6 +4,8 @@
 !.vscode/launch.json
 !.vscode/settings.json
 !.vscode/tasks.json
+!/gradle/wrapper/gradle-wrapper.jar
+# Eventually remove these:
 $RECYCLE.BIN/
 *.7z
 *.a
@@ -158,6 +160,7 @@ cpp/root/build/
 dependency-reduced-pom.xml
 Desktop.ini
 dist/
+docs/todo.md
 ehthumbs.db
 erase
 erase.*
@@ -195,11 +198,5 @@ test-output/
 testem.log
 Thumbs.db
 tmp/
-yarn-error.log
-
-
-
-
-# Eventually remove these:
-docs/todo.md
 todo.md
+yarn-error.log
