@@ -1,16 +1,18 @@
 plugins {
   id("java")
-  id("org.jetbrains.kotlin.jvm") version "1.5.0"
+  id("org.jetbrains.kotlin.jvm")
 
-  id("org.jetbrains.kotlin.plugin.allopen") version "1.5.0"
-  id("org.jetbrains.kotlin.plugin.spring") version "1.5.0"
+  id("maven-publish")
 
-  id("org.springframework.boot") version "2.4.5"
+  id("org.jetbrains.kotlin.plugin.allopen")
+  id("org.jetbrains.kotlin.plugin.spring")
 
-  id("com.github.johnrengelman.shadow") version "7.0.0"
-  id("io.gitlab.arturbosch.detekt") version "1.16.0"
-  id("com.github.ben-manes.versions") version "0.38.0"
-  id("com.diffplug.spotless") version "5.12.4"
+  id("org.springframework.boot")
+
+  id("com.github.johnrengelman.shadow")
+  id("io.gitlab.arturbosch.detekt")
+  id("com.github.ben-manes.versions")
+  id("com.diffplug.spotless")
 }
 
 apply(plugin = "java")
@@ -82,6 +84,27 @@ tasks {
     manifest {
 // TODO: set main class
 //      attributes("Main-Class" to mainClass)
+    }
+  }
+}
+
+publishing {
+
+  repositories {
+
+    maven {
+      name = "GitHubPackages"
+      url = uri("https://maven.pkg.github.com/wcarmon/codegen")
+      credentials {
+        username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
+        password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
+      }
+    }
+  }
+
+  publications {
+    register<MavenPublication>("gpr") {
+      from(components["java"])
     }
   }
 }
