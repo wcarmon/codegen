@@ -25,9 +25,7 @@ class CodegenBeans {
   ).normalize().absolute()
 
   @Bean
-  fun codeGenerator(velocityEngine: VelocityEngine) = CodeGenerator(
-    velocityEngine = velocityEngine,
-  )
+  fun codeGenerator() = CodeGenerator()
 
   @Bean
   fun velocityEngine() = VelocityEngine()

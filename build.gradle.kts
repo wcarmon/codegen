@@ -32,9 +32,9 @@ configurations.all {
   exclude(group = "jboss-logging", module = "org.jboss.logging")
   exclude(group = "jta", module = "jta")
   exclude(group = "log4j", module = "log4j")
+  exclude(group = "org.apache.logging.log4j", module = "log4j-to-slf4j")
   exclude(group = "org.nd4j", module = "jackson")
   exclude(group = "org.nd4j", module = "nd4j-common")
-  exclude(group = "org.springframework.boot", module = "spring-boot-starter-tomcat")
   exclude(group = "org.nd4j", module = "protobuf")
   exclude(group = "org.springframework.boot", module = "spring-boot-starter-tomcat")
 

@@ -3,7 +3,7 @@ package com.wcarmon.codegen
 import com.fasterxml.jackson.databind.ObjectReader
 import com.wcarmon.codegen.input.EntityConfigParser
 import com.wcarmon.codegen.input.OutputFileNameBuilder
-import com.wcarmon.codegen.input.getFilesForNamePattern
+import com.wcarmon.codegen.input.getPathsForNamePattern
 import com.wcarmon.codegen.model.CodeGenRequest
 import com.wcarmon.codegen.model.Entity
 import com.wcarmon.codegen.model.OutputMode.MULTIPLE
@@ -33,9 +33,8 @@ class CodeGeneratorApp(
     require(Files.exists(configRoot)) { "configRoot must exist" }
     require(Files.isDirectory(configRoot)) { "configRoot must be a directory" }
 
-    val requests = findGenRequest(configRoot)
-
-    val entities = findEntities(configRoot)
+    val requests = findCodeGenRequests(configRoot)
+    val entities = findEntityConfigs(configRoot)
 
     requests.forEach {
       handleCodeGenRequest(it, entities)
@@ -70,40 +69,40 @@ class CodeGeneratorApp(
     }
   }
 
-  private fun findGenRequest(configRoot: Path): Collection<CodeGenRequest> {
+  private fun findCodeGenRequests(configRoot: Path): Collection<CodeGenRequest> {
 
-    val generatorRequestFiles = getFilesForNamePattern(
-      filePattern = PATTERN_FOR_GEN_REQ_FILE,
+    val generatorRequestPaths = getPathsForNamePattern(
+      pathPattern = PATTERN_FOR_GEN_REQ_FILE,
       searchRoot = configRoot,
     )
 
-    require(generatorRequestFiles.isNotEmpty()) {
-      "At least one generator request file is required in $configRoot"
+    require(generatorRequestPaths.isNotEmpty()) {
+      "At least one CodeGen request file is required in $configRoot"
     }
 
     LOG.info("Found code gen requests: count={}, files={}",
-      generatorRequestFiles.size, generatorRequestFiles)
+      generatorRequestPaths.size, generatorRequestPaths)
 
-    return generatorRequestFiles.map {
+    return generatorRequestPaths.map {
       objectReader.readValue(
         it.toFile(),
         CodeGenRequest::class.java)
     }
   }
 
-  private fun findEntities(configRoot: Path): Collection<Entity> {
+  private fun findEntityConfigs(configRoot: Path): Collection<Entity> {
 
-    val entityConfigFiles = getFilesForNamePattern(
-      filePattern = PATTERN_FOR_ENTITY_FILE,
+    val entityConfigPaths = getPathsForNamePattern(
+      pathPattern = PATTERN_FOR_ENTITY_FILE,
       searchRoot = configRoot,
     )
 
-    require(entityConfigFiles.isNotEmpty()) {
+    require(entityConfigPaths.isNotEmpty()) {
       "At least one entity config file is required in $configRoot"
     }
 
-    LOG.info("Found entity config files: count={}", entityConfigFiles.size)
+    LOG.info("Found entity config files: count={}", entityConfigPaths.size)
 
-    return entityConfigParser.parse(entityConfigFiles)
+    return entityConfigParser.parse(entityConfigPaths)
   }
 }

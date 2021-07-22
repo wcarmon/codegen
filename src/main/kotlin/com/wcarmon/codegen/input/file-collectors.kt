@@ -14,9 +14,9 @@ import java.nio.file.Path
  *
  * (&#47; == slash)
  */
-fun getFilesForNamePattern(
+fun getPathsForNamePattern(
   searchRoot: Path,
-  filePattern: String,
+  pathPattern: String,
 ): Set<Path> {
 
   val cleanRoot = searchRoot.normalize().toAbsolutePath()
@@ -24,14 +24,14 @@ fun getFilesForNamePattern(
   require(Files.exists(cleanRoot)) { "Expected directory at $cleanRoot" }
 
   require(
-    filePattern.startsWith("glob:")
-        || filePattern.startsWith("regex:")) {
-    "java.nio.file.FileSystems only supports 'glob:' or 'regex:', filePattern=$filePattern"
+    pathPattern.startsWith("glob:")
+        || pathPattern.startsWith("regex:")) {
+    "java.nio.file.FileSystems only supports 'glob:' or 'regex:', filePattern=$pathPattern"
   }
 
   val matcher = FileSystems
     .getDefault()
-    .getPathMatcher(filePattern)
+    .getPathMatcher(pathPattern)
 
   val output = mutableListOf<Path>()
   val visitor = PathCollectingVisitor(matcher, output::add)
@@ -43,11 +43,11 @@ fun getFilesForNamePattern(
  * Convenience function
  * Aggregation over Multiple patterns
  */
-fun getFilesForNamePattern(
+fun getPathsForNamePattern(
   searchRoot: Path,
   patterns: Collection<String>,
 ) = patterns
   .map { pattern ->
-    getFilesForNamePattern(searchRoot, pattern)
+    getPathsForNamePattern(searchRoot, pattern)
   }
   .reduce { acc, current -> acc.union(current) }

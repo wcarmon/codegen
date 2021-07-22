@@ -17,7 +17,7 @@ data class CodeGenRequest(
   private val outputFileOrDirectory: Path,
   private val templatePath: Path,
   val allowOverride: Boolean = true,
-  ) {
+) {
 
   val cleanOutput = outputFileOrDirectory.normalize().toAbsolutePath()
   val cleanTemplatePath = templatePath.normalize().toAbsolutePath()

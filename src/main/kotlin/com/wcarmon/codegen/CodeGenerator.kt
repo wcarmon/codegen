@@ -6,7 +6,6 @@ import com.wcarmon.codegen.model.Entity
 import org.apache.logging.log4j.LogManager
 import org.apache.velocity.Template
 import org.apache.velocity.VelocityContext
-import org.apache.velocity.app.VelocityEngine
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -15,7 +14,6 @@ import java.util.function.Consumer
 
 /** Generates code, given a template, entities and a destination */
 class CodeGenerator(
-  private val velocityEngine: VelocityEngine,
   private val onAfterGenerate: Consumer<Path> = Consumer { LOG.info("Generated: $it") },
 ) {
 
