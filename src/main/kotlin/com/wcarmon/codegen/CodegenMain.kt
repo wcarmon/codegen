@@ -10,7 +10,6 @@ import com.wcarmon.codegen.model.OutputMode
 import org.springframework.boot.Banner
 import org.springframework.boot.WebApplicationType
 import org.springframework.boot.builder.SpringApplicationBuilder
-import java.io.File
 import java.nio.file.Paths
 
 /**
@@ -31,7 +30,7 @@ fun main(args: Array<String>) {
     .run(*args)
 
 
-  val searchRoot = File("/home/wcarmon/git-repos/modern-jvm/codegen/input")
+  val searchRoot = Paths.get("/home/wcarmon/git-repos/modern-jvm/codegen/input")
   val outputMode = OutputMode.MULTIPLE
 
   // Relative to classpath root or to ~/.codegen/templates

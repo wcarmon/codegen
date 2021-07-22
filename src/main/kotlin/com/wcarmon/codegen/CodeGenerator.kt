@@ -7,15 +7,17 @@ import org.apache.logging.log4j.LogManager
 import org.apache.velocity.Template
 import org.apache.velocity.VelocityContext
 import org.apache.velocity.app.VelocityEngine
-import java.io.File
 import java.io.FileWriter
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.function.Consumer
+import kotlin.io.path.isDirectory
 
 
 /** Generates code given a template, entities and a destination */
 class CodeGenerator(
-  private val onAfterGenerate: Consumer<File> = Consumer { LOG.info("Generated: $it") },
   private val velocityEngine: VelocityEngine,
+  private val onAfterGenerate: Consumer<Path> = Consumer { LOG.info("Generated: $it") },
 ) {
 
   companion object {
@@ -39,14 +41,14 @@ class CodeGenerator(
   fun generateToMultipleFiles(
     entities: Collection<Entity>,
     fileNameBuilder: OutputFileBuilder,
-    outputDir: File,
+    outputDir: Path,
     template: Template,
     allowOverwrite: Boolean = true,
   ) {
     check(entities.isNotEmpty()) { "no entities passed" }
 
-    outputDir.mkdirs()
-    require(outputDir.isDirectory) { "Either delete or put a directory at $outputDir" }
+    Files.createDirectories(outputDir)
+    require(Files.isDirectory(outputDir)) { "Either delete or put a directory at $outputDir" }
 
     entities.forEach { entity ->
       val context = VelocityContext()
