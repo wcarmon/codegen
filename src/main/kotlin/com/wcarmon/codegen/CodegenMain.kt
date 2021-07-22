@@ -2,28 +2,22 @@
 
 package com.wcarmon.codegen
 
-import com.wcarmon.codegen.config.JSONBeans
 import com.wcarmon.codegen.config.CodegenBeans
+import com.wcarmon.codegen.config.JSONBeans
 import com.wcarmon.codegen.input.EntityFileParser
 import com.wcarmon.codegen.input.getEntityFiles
 import com.wcarmon.codegen.model.OutputMode
-import org.apache.velocity.Template
-import org.apache.velocity.app.VelocityEngine
 import org.springframework.boot.Banner
 import org.springframework.boot.WebApplicationType
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.builder.SpringApplicationBuilder
-import org.springframework.context.annotation.Configuration
 import java.io.File
 import java.nio.file.Paths
 
-
-@Configuration
-@EnableAutoConfiguration
-class CodeGeneratorApp
-
+/**
+ * Entry point
+ */
 fun main(args: Array<String>) {
-  val ctx = SpringApplicationBuilder(CodegenApp::class.java)
+  val ctx = SpringApplicationBuilder(CodeGeneratorApp::class.java)
     .bannerMode(Banner.Mode.OFF)
     .headless(true)
     .logStartupInfo(true)
