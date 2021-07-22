@@ -21,4 +21,14 @@ pluginManagement {
   }
 }
 
+dependencyResolutionManagement {
+  repositories {
+    mavenLocal()
+    mavenCentral()
+
+    google()
+    gradlePluginPortal()
+  }
+}
+
 rootProject.name = "codegen"
