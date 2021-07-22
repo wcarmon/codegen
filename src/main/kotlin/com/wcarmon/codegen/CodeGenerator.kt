@@ -12,7 +12,7 @@ import java.nio.file.Path
 import java.util.function.Consumer
 
 
-/** Generates code given a template, entities and a destination */
+/** Generates code, given a template, entities and a destination */
 class CodeGenerator(
   private val velocityEngine: VelocityEngine,
   private val onAfterGenerate: Consumer<Path> = Consumer { LOG.info("Generated: $it") },
@@ -33,8 +33,9 @@ class CodeGenerator(
   }
 
   /**
-   * Use when each entity goes into separate output file
-   * Template should expect "entity" object in the context
+   * Use when each entity goes into separate output file.
+   *
+   * Template should expect "entity" object in the velocity context
    */
   fun generateToMultipleFiles(
     entities: Collection<Entity>,
@@ -43,14 +44,12 @@ class CodeGenerator(
     template: Template,
     allowOverwrite: Boolean = true,
   ) {
-    check(entities.isNotEmpty()) { "no entities passed" }
+    require(entities.isNotEmpty()) { "no entities passed" }
 
     Files.createDirectories(outputDir)
     require(Files.isDirectory(outputDir)) { "Either delete or put a directory at $outputDir" }
 
     entities.forEach { entity ->
-      val context = VelocityContext()
-      context.put("entity", entity)
 
       val dest = fileNameBuilder.build(entity, outputDir)
         .normalize().toAbsolutePath()
@@ -60,8 +59,11 @@ class CodeGenerator(
         return@forEach
       }
 
-      Files.newBufferedWriter(dest).use {
-        template.merge(context, it)
+      val context = VelocityContext()
+      context.put("entity", entity)
+
+      Files.newBufferedWriter(dest).use { writer ->
+        template.merge(context, writer)
       }
 
       onAfterGenerate.accept(dest)
@@ -72,7 +74,7 @@ class CodeGenerator(
    * Use when all entities go into the same output file
    * Template should expect "entities" collection in the context
    *
-   * This case is less common
+   * This case is less common than [generateToMultipleFiles]
    */
   fun generateToOneFile(
     entities: Collection<Entity>,
@@ -80,7 +82,7 @@ class CodeGenerator(
     template: Template,
     allowOverwrite: Boolean = true,
   ) {
-    check(entities.isNotEmpty()) { "no entities passed" }
+    require(entities.isNotEmpty()) { "no entities passed" }
 
     Files.createDirectories(outputFile.parent)
 
@@ -90,15 +92,17 @@ class CodeGenerator(
         return
       }
 
-      require(Files.isRegularFile(outputFile)) { "Either delete or put a regular file at $outputFile" }
+      require(Files.isRegularFile(outputFile)) {
+        "Either delete or put a regular file at $outputFile"
+      }
     }
 
     val context = VelocityContext()
     context.put("entities", entities)
 
     val dest = outputFile.normalize().toAbsolutePath()
-    Files.newBufferedWriter(dest).use {
-      template.merge(context, it)
+    Files.newBufferedWriter(dest).use { writer ->
+      template.merge(context, writer)
     }
 
     onAfterGenerate.accept(dest)
