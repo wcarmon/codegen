@@ -17,4 +17,10 @@ class JSONBeans {
     .registerModule(JavaTimeModule())
     .registerModule(KotlinModule())
     .setSerializationInclusion(JsonInclude.Include.NON_NULL)!!
+
+  @Bean
+  fun objectReader(objectMapper: ObjectMapper) = objectMapper.reader()
+
+  @Bean
+  fun objectWriter(objectMapper: ObjectMapper) = objectMapper.writer()
 }

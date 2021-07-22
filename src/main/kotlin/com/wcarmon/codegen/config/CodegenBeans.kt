@@ -1,9 +1,10 @@
 package com.wcarmon.codegen.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.ObjectReader
 import com.wcarmon.codegen.CodeGenerator
-import com.wcarmon.codegen.input.EntityFileParser
-import com.wcarmon.codegen.input.EntityFileParserImpl
+import com.wcarmon.codegen.input.EntityConfigParser
+import com.wcarmon.codegen.input.EntityConfigParserImpl
 import org.apache.logging.log4j.LogManager
 import org.apache.velocity.app.VelocityEngine
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
@@ -30,25 +31,23 @@ class CodegenBeans {
 
   @Bean
   fun velocityEngine() = VelocityEngine()
-      .also {
-        it.addProperty("runtime.log.invalid.references", "true")  // expensive
+    .also {
+      it.addProperty("runtime.log.invalid.references", "true")  // expensive
 
-        it.addProperty("resource.manager.logwhenfound", "true")
-        it.addProperty("resource.loader", "file,classpath") // GOTCHA: names are arbitrary
+      it.addProperty("resource.manager.logwhenfound", "true")
+      it.addProperty("resource.loader", "file,classpath") // GOTCHA: names are arbitrary
 
-        it.addProperty("classpath.resource.loader.class", ClasspathResourceLoader::class.java.name)
-        it.addProperty("file.resource.loader.class", FileResourceLoader::class.java.name)
-        it.addProperty("file.resource.loader.path", extraTemplatesPath.toString())
-        it.init()
+      it.addProperty("classpath.resource.loader.class", ClasspathResourceLoader::class.java.name)
+      it.addProperty("file.resource.loader.class", FileResourceLoader::class.java.name)
+      it.addProperty("file.resource.loader.path", extraTemplatesPath.toString())
+      it.init()
 
-        LOG.info("extra templates can go at $extraTemplatesPath/*.vm")
-      }
+      LOG.info("extra templates can go at $extraTemplatesPath/*.vm")
+    }
 
   @Bean
   fun entityParser(
-    objectMapper: ObjectMapper,
-  ): EntityFileParser =
-    EntityFileParserImpl(
-      objectMapper
-    )
+    objectReader: ObjectReader,
+  ): EntityConfigParser =
+    EntityConfigParserImpl(objectReader)
 }
