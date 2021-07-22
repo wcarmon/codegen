@@ -16,10 +16,11 @@ data class CodeGenRequest(
   val outputMode: OutputMode,
   private val outputFileOrDirectory: Path,
   private val templatePath: Path,
-) {
+  val allowOverride: Boolean = true,
+  ) {
 
   val cleanOutput = outputFileOrDirectory.normalize().toAbsolutePath()
-  val cleanTemplate = templatePath.normalize().toAbsolutePath()
+  val cleanTemplatePath = templatePath.normalize().toAbsolutePath()
 
   init {
     require(entityConfigPaths.isNotEmpty()) { "At least one entity config file required" }

@@ -1,7 +1,7 @@
 package com.wcarmon.codegen
 
 
-import com.wcarmon.codegen.input.OutputFileBuilder
+import com.wcarmon.codegen.input.OutputFileNameBuilder
 import com.wcarmon.codegen.model.Entity
 import org.apache.logging.log4j.LogManager
 import org.apache.velocity.Template
@@ -9,6 +9,7 @@ import org.apache.velocity.VelocityContext
 import org.apache.velocity.app.VelocityEngine
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.Paths
 import java.util.function.Consumer
 
 
@@ -24,22 +25,13 @@ class CodeGenerator(
   }
 
   /**
-   * @param templateName  ...TODO ...
-   */
-  fun templateForPath(templateName: String): Template {
-    require(templateName.isNotBlank()) { "Template name required" }
-
-    return velocityEngine.getTemplate(templateName)
-  }
-
-  /**
    * Use when each entity goes into separate output file.
    *
    * Template should expect "entity" object in the velocity context
    */
   fun generateToMultipleFiles(
     entities: Collection<Entity>,
-    fileNameBuilder: OutputFileBuilder,
+    fileNameBuilder: OutputFileNameBuilder,
     outputDir: Path,
     template: Template,
     allowOverwrite: Boolean = true,
@@ -51,8 +43,10 @@ class CodeGenerator(
 
     entities.forEach { entity ->
 
-      val dest = fileNameBuilder.build(entity, outputDir)
-        .normalize().toAbsolutePath()
+      val dest = Paths.get(
+        outputDir.normalize().toAbsolutePath().toString(),
+        fileNameBuilder.build(entity),
+      )
 
       if (Files.exists(dest) && !allowOverwrite) {
         LOG.warn("Refusing to overwrite $dest")

@@ -1,6 +1,5 @@
 package com.wcarmon.codegen.config
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.ObjectReader
 import com.wcarmon.codegen.CodeGenerator
 import com.wcarmon.codegen.input.EntityConfigParser
@@ -11,6 +10,7 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
 import org.apache.velocity.runtime.resource.loader.FileResourceLoader
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.absolute
 
@@ -25,7 +25,7 @@ class CodegenBeans {
   ).normalize().absolute()
 
   @Bean
-  fun gen(velocityEngine: VelocityEngine) = CodeGenerator(
+  fun codeGenerator(velocityEngine: VelocityEngine) = CodeGenerator(
     velocityEngine = velocityEngine,
   )
 
@@ -50,4 +50,11 @@ class CodegenBeans {
     objectReader: ObjectReader,
   ): EntityConfigParser =
     EntityConfigParserImpl(objectReader)
+
+  @Bean
+  fun templateBuilder(velocityEngine: VelocityEngine) =
+    { templatePath: Path ->
+      velocityEngine.getTemplate(
+        templatePath.toAbsolutePath().toString())
+    }
 }
