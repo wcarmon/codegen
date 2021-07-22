@@ -3,7 +3,11 @@ package com.wcarmon.codegen.input
 import com.wcarmon.codegen.model.Entity
 import java.nio.file.Path
 
-/** Produces Entities from codegen entity config "files" */
+/**
+ * Produces Entities from codegen entity config "files"
+ *
+ * See [com.wcarmon.codegen.PATTERN_FOR_ENTITY_FILE] for file name pattern
+ */
 fun interface EntityConfigParser {
 
   /**
