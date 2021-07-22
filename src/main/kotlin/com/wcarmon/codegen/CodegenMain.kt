@@ -9,6 +9,7 @@ import org.springframework.boot.Banner
 import org.springframework.boot.WebApplicationType
 import org.springframework.boot.builder.SpringApplicationBuilder
 import java.nio.file.Paths
+import kotlin.system.exitProcess
 
 private val LOG = LogManager.getLogger("com.wcarmon.codegen.CodegenMain")
 
@@ -28,7 +29,7 @@ fun main(args: Array<String>) {
 
   if (args.size != 1) {
     LOG.error("Pass exactly 1 directory as an argument")
-    System.exit(1)
+    exitProcess(1)
   }
 
   val configRoot = Paths.get(args[0]).normalize().toAbsolutePath()
