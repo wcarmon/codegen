@@ -12,7 +12,7 @@ const val MAX_NAME_LENGTH = 64
  * Files names look like: *.entity.json
  * (eg. "foo.entity.json")
  */
-const val PATTERN_FOR_ENTITY_FILE = "glob:**.entity.json"
+const val PATTERN_FOR_ENTITY_FILE = "glob:**/*.entity.json"
 
 
 /**
@@ -24,4 +24,4 @@ const val PATTERN_FOR_ENTITY_FILE = "glob:**.entity.json"
  * Files names look like: *.gen-req.json
  * (eg. "row-mappers.gen-req.json")
  */
-const val PATTERN_FOR_GEN_REQ_FILE = "glob:**.gen-req.json"
+const val PATTERN_FOR_GEN_REQ_FILE = "glob:**/*.gen-req.json"
