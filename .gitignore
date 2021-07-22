@@ -177,7 +177,6 @@ HELP.md
 heroku-deploy/
 hs_err_pid*
 Icon?
-input/
 java/out/
 java/output/
 logs/
