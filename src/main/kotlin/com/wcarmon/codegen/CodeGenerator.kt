@@ -7,11 +7,9 @@ import org.apache.logging.log4j.LogManager
 import org.apache.velocity.Template
 import org.apache.velocity.VelocityContext
 import org.apache.velocity.app.VelocityEngine
-import java.io.FileWriter
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.function.Consumer
-import kotlin.io.path.isDirectory
 
 
 /** Generates code given a template, entities and a destination */
@@ -54,13 +52,15 @@ class CodeGenerator(
       val context = VelocityContext()
       context.put("entity", entity)
 
-      val dest = fileNameBuilder.build(entity, outputDir).canonicalFile.absoluteFile
-      if (dest.exists() && !allowOverwrite) {
+      val dest = fileNameBuilder.build(entity, outputDir)
+        .normalize().toAbsolutePath()
+
+      if (Files.exists(dest) && !allowOverwrite) {
         LOG.warn("Refusing to overwrite $dest")
         return@forEach
       }
 
-      FileWriter(dest).use {
+      Files.newBufferedWriter(dest).use {
         template.merge(context, it)
       }
 
@@ -76,28 +76,28 @@ class CodeGenerator(
    */
   fun generateToOneFile(
     entities: Collection<Entity>,
-    outputFile: File,
+    outputFile: Path,
     template: Template,
     allowOverwrite: Boolean = true,
   ) {
     check(entities.isNotEmpty()) { "no entities passed" }
 
-    outputFile.parentFile.mkdirs()
+    Files.createDirectories(outputFile.parent)
 
-    if (outputFile.exists()) {
+    if (Files.exists(outputFile)) {
       if (!allowOverwrite) {
         LOG.warn("Refusing to overwrite $outputFile")
         return
       }
 
-      require(outputFile.isFile) { "Either delete or put a regular file at $outputFile" }
+      require(Files.isRegularFile(outputFile)) { "Either delete or put a regular file at $outputFile" }
     }
 
     val context = VelocityContext()
     context.put("entities", entities)
 
-    val dest = outputFile.canonicalFile.absoluteFile
-    FileWriter(dest).use {
+    val dest = outputFile.normalize().toAbsolutePath()
+    Files.newBufferedWriter(dest).use {
       template.merge(context, it)
     }
 
