@@ -30,14 +30,14 @@ class CodegenBeans {
   @Bean
   fun velocityEngine() = VelocityEngine()
     .also {
-      it.addProperty("runtime.log.invalid.references", "true")  // expensive
+      it.addProperty("runtime.log.log_invalid_references", "true")  // expensive
 
-      it.addProperty("resource.manager.logwhenfound", "true")
-      it.addProperty("resource.loader", "file,classpath") // GOTCHA: names are arbitrary
+      it.addProperty("resource.manager.log_when_found", "true")
+      it.addProperty("resource.loaders", "file,classpath") // GOTCHA: names are arbitrary
 
-      it.addProperty("classpath.resource.loader.class", ClasspathResourceLoader::class.java.name)
-      it.addProperty("file.resource.loader.class", FileResourceLoader::class.java.name)
-      it.addProperty("file.resource.loader.path", extraTemplatesPath.toString())
+      it.addProperty("resource.loader.classpath.class", ClasspathResourceLoader::class.java.name)
+      it.addProperty("resource.loader.file.class", FileResourceLoader::class.java.name)
+      it.addProperty("resource.loader.file.path", extraTemplatesPath.toString())
       it.init()
 
       LOG.info("extra templates can go at $extraTemplatesPath/*.vm")

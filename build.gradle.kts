@@ -26,6 +26,8 @@ version = "0.1.0-SNAPSHOT"
 configurations.all {
   resolutionStrategy.failOnVersionConflict()
 
+  exclude(group = "ch.qos.logback", module = "logback-classic")
+  exclude(group = "ch.qos.logback", module = "logback-core")
   exclude(group = "com.google.code.findbugs", module = "jsr305")
   exclude(group = "commons-logging", module = "commons-logging")
   exclude(group = "javax.annotation", module = "jsr305")
@@ -36,6 +38,7 @@ configurations.all {
   exclude(group = "org.nd4j", module = "jackson")
   exclude(group = "org.nd4j", module = "nd4j-common")
   exclude(group = "org.nd4j", module = "protobuf")
+  exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
   exclude(group = "org.springframework.boot", module = "spring-boot-starter-tomcat")
 
   // MAINTENANCE: diff with latest from ~/git-repos/modern-jvm/gradle-parent/build.gradle.kts
