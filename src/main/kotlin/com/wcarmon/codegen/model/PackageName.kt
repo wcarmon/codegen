@@ -1,5 +1,7 @@
 package com.wcarmon.codegen.model
 
+import com.fasterxml.jackson.annotation.JsonValue
+
 /**
  * Represents ...
  * - REST: url-segment
@@ -15,6 +17,7 @@ package com.wcarmon.codegen.model
  * - Typescript: namespace: https://www.typescriptlang.org/docs/handbook/namespaces-and-modules.html#using-namespaces
  */
 data class PackageName(
+  @JsonValue
   val value: String,
 ) {
   init {

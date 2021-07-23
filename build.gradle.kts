@@ -60,6 +60,7 @@ configurations.all {
     "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.2",
     "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.12.4",
     "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.4",
+    "com.fasterxml.jackson.module:jackson-module-jsonSchema:2.12.4",
     "com.fasterxml.jackson.module:jackson-module-kotlin:2.12.4",
     "com.fasterxml.jackson.module:jackson-module-parameter-names:2.12.4",
     "com.fasterxml.jackson:jackson-bom:2.12.4",
@@ -134,6 +135,7 @@ dependencies {
   implementation("com.fasterxml.jackson.core:jackson-databind")
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+  implementation("com.fasterxml.jackson.module:jackson-module-jsonSchema")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("com.google.guava:guava")
   implementation("com.lmax:disruptor")

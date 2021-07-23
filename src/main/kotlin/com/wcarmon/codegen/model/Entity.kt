@@ -20,24 +20,55 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped
  */
 @JsonPropertyOrder(alphabetic = true)
 data class Entity(
-  @JsonUnwrapped
   val name: Name,
   val pkg: PackageName,
   val documentation: Documentation = Documentation.EMPTY,
 
-  val canCheckExists: Boolean = true,
+  val canCheckForExistence: Boolean = true,
   val canCreate: Boolean = true,
   val canDelete: Boolean = true,
   val canExtend: Boolean = false,
   val canFindByPK: Boolean = true,
   val canList: Boolean = true,
   val canUpdate: Boolean = true,
-  val extraImports: String = "", // comma separated
-  val implements: String = "", // comma separated
 
-  // TODO: list: pagination??TODO
-  // TODO: list: order by X, asc|desc
+  // Likely easier to specify directly in template
+  val extraImports: Set<String> = setOf(),
 
-  // TODO: rdbms: primary key & order
-  // TODO: rdbms: unique index & order
-)
+  // Likely easier to specify directly in template
+  val extraImplements: List<String> = listOf(),
+
+  val fields: List<Field>,
+
+  @JsonUnwrapped
+  val rdbms: RDBMSTable? = null,
+
+  // TODO: list: pagination
+  // TODO: list: order by fieldX, asc|desc
+) {
+
+  init {
+    require(fields.isNotEmpty()) { "At least one field required" }
+
+    // -- Validate field names are unique
+    val fieldNames = fields.map { it.name }
+    require(fieldNames.size == fieldNames.toSet().size) {
+      "field names must be unique: entity=${name.lowerCamel}, fieldNames=$fieldNames"
+    }
+
+    // -- Validate PK fields
+    val pkPositions = fields
+      .filter { it.rdbms != null }
+      .filter { it.rdbms!!.positionInPrimaryKey != null }
+      .map { it.rdbms!!.positionInPrimaryKey!! }
+
+    require(pkPositions.size == pkPositions.toSet().size) {
+      "All PK field positions must be distinct"
+    }
+
+    // -- Validate extraImplements
+    require(extraImplements.size == extraImplements.toSet().size) {
+      "remove duplicate extraImplements values: $extraImplements"
+    }
+  }
+}

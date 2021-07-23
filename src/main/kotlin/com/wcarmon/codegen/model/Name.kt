@@ -1,5 +1,7 @@
 package com.wcarmon.codegen.model
 
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonValue
 import com.google.common.base.CaseFormat
 import com.google.common.base.CaseFormat.*
 import com.wcarmon.codegen.MAX_NAME_LENGTH
@@ -12,15 +14,24 @@ data class Name(
   private val camelCase: String,
 ) {
 
+  @JsonValue
   val lowerCamel: String
   val lowerKebab: String
   val lowerSnake: String
   val upperCamel: String
   val upperSnake: String
 
+  companion object {
+    @JvmStatic
+    @JsonCreator
+    fun build(camelCase: String) = Name(camelCase)
+  }
+
   init {
     require(camelCase.isNotBlank()) { "name is required" }
     require(camelCase.length <= MAX_NAME_LENGTH) { "name too long: $camelCase" }
+    require(!camelCase.contains("_")) { "camel case strings cannot contain _: $camelCase" }
+    require(!camelCase.contains("-")) { "camel case strings cannot contain -: $camelCase" }
 
     val inputCase: CaseFormat
     if (camelCase.first().isLowerCase()) {
@@ -40,7 +51,4 @@ data class Name(
     lowerSnake = inputCase.to(LOWER_UNDERSCORE, camelCase)
     upperSnake = inputCase.to(UPPER_UNDERSCORE, camelCase)
   }
-
-//  @JsonValue
-//  val lowerCamel = lowerCamelCase
 }
