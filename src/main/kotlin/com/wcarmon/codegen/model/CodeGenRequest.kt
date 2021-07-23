@@ -18,10 +18,16 @@ import kotlin.io.path.name
 @JsonPropertyOrder(alphabetic = true)
 data class CodeGenRequest(
   val entityConfigPaths: Collection<Path>,
-  val outputMode: OutputMode,
   private val outputFileOrDirectory: Path,
   private val templatePath: Path,
   val allowOverride: Boolean = true,
+
+  /**
+   * Uses format of String.format
+   * See https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html#format(java.lang.String,java.lang.Object...)
+   */
+  val outputFilenameTemplate: String = "",
+  val outputMode: OutputMode,
 ) {
 
   @JsonIgnore
@@ -39,19 +45,33 @@ data class CodeGenRequest(
 
     when (outputMode) {
 
-      SINGLE ->
+      SINGLE -> {
+        require(outputFilenameTemplate.isBlank()) {
+          "outputFilenameTemplate is forbidden when generating single file"
+        }
+
         if (Files.exists(cleanOutput)) {
           require(Files.isRegularFile(cleanOutput)) {
             "Either delete or put a regular file at $cleanOutput"
           }
         }
+      }
 
-      MULTIPLE ->
+      MULTIPLE -> {
+        require(outputFilenameTemplate.isNotBlank()) {
+          "outputFilenameTemplate required when generating multiple files"
+        }
+
+        require(outputFilenameTemplate.contains("%s")){
+          "outputFilenameTemplate must contain a placeholder for entity name: $outputFilenameTemplate"
+        }
+
         if (Files.exists(cleanOutput)) {
           require(Files.isDirectory(cleanOutput)) {
             "Either delete or put a directory at $cleanOutput"
           }
         }
+      }
     }
   }
 }

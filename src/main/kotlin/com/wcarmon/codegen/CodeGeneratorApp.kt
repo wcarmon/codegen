@@ -2,7 +2,6 @@ package com.wcarmon.codegen
 
 import com.fasterxml.jackson.databind.ObjectReader
 import com.wcarmon.codegen.input.EntityConfigParser
-import com.wcarmon.codegen.input.OutputFileNameBuilder
 import com.wcarmon.codegen.input.getPathsForNamePattern
 import com.wcarmon.codegen.model.CodeGenRequest
 import com.wcarmon.codegen.model.Entity
@@ -36,6 +35,12 @@ class CodeGeneratorApp(
     val requests = findCodeGenRequests(configRoot)
     val entities = findEntityConfigs(configRoot)
 
+    // -- Enforce unique entity names
+    val entityNames = entities.map { it.name }
+    require(entityNames.size == entityNames.toSet().size) {
+      "entity names must be unique: entityNames=$entityNames"
+    }
+
     requests.forEach {
       handleCodeGenRequest(it, entities)
     }
@@ -44,7 +49,6 @@ class CodeGeneratorApp(
   private fun handleCodeGenRequest(
     request: CodeGenRequest,
     entities: Collection<Entity>,
-    fileNameBuilder: OutputFileNameBuilder? = null, //TODO pass as part of CodeGenRequest
   ) {
 
     when (request.outputMode) {
@@ -56,7 +60,16 @@ class CodeGeneratorApp(
       )
 
       MULTIPLE -> {
-        requireNotNull(fileNameBuilder) { "fileNameBuilder required" }
+        require(request.outputFilenameTemplate.isNotBlank()) {
+          "outputFilenameTemplate required when generating multiple files"
+        }
+
+        //TODO: accept CaseFormat to support golang, c, rust, ...
+        val fileNameBuilder = { entity: Entity ->
+          String.format(
+            request.outputFilenameTemplate,
+            entity.name.upperCamel)
+        }
 
         generator.generateToMultipleFiles(
           allowOverwrite = request.allowOverride,

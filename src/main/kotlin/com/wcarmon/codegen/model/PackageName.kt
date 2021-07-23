@@ -1,5 +1,6 @@
 package com.wcarmon.codegen.model
 
+import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonValue
 
 /**
@@ -20,7 +21,18 @@ data class PackageName(
   @JsonValue
   val value: String,
 ) {
+
+  companion object {
+    @JvmStatic
+    @JsonCreator
+    fun build(value: String) = PackageName(value)
+  }
+
   init {
+    require(value == value.trim()) {
+      "package names must be trimmed: '$value'"
+    }
+
     // TODO: restrictions (allow blank)
   }
 }

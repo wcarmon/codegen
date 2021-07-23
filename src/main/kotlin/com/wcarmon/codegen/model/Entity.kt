@@ -1,7 +1,6 @@
 package com.wcarmon.codegen.model
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import com.fasterxml.jackson.annotation.JsonUnwrapped
 
 
 /**
@@ -40,7 +39,6 @@ data class Entity(
 
   val fields: List<Field>,
 
-  @JsonUnwrapped
   val rdbms: RDBMSTable? = null,
 
   // TODO: list: pagination

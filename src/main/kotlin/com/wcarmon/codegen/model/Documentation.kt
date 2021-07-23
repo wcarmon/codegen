@@ -1,5 +1,6 @@
 package com.wcarmon.codegen.model
 
+import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonValue
 
 /** Represents javadoc, jsdoc, tsdoc, cppdoc, ... */
@@ -9,6 +10,10 @@ data class Documentation(
 ) {
 
   companion object {
+    @JvmStatic
+    @JsonCreator
+    fun build(value: String) = Documentation(value)
+
     fun fromLinesAsJavadoc(lines: Collection<String>): Documentation {
       TODO()
     }

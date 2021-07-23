@@ -1,7 +1,6 @@
 package com.wcarmon.codegen.model
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import com.fasterxml.jackson.annotation.JsonUnwrapped
 
 /**
  * Represents ...
@@ -32,7 +31,6 @@ data class Field(
 
   val nullable: Boolean = false,
 
-  @JsonUnwrapped
   val rdbms: RDBMSColumn? = null,
 
   val validation: FieldValidation = FieldValidation(),
