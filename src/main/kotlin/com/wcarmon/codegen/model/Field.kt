@@ -1,5 +1,7 @@
 package com.wcarmon.codegen.model
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
+
 /**
  * Represents ...
  * - REST: resource property/attribute
@@ -14,6 +16,7 @@ package com.wcarmon.codegen.model
  * - c++: struct member, class data member
  * - Typescript: property
  */
+@JsonPropertyOrder(alphabetic = true)
 data class Field(
   val name: Name,
 

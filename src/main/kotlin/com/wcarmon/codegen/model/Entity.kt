@@ -1,5 +1,8 @@
 package com.wcarmon.codegen.model
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.fasterxml.jackson.annotation.JsonUnwrapped
+
 
 /**
  * Represents ...
@@ -15,7 +18,9 @@ package com.wcarmon.codegen.model
  * - c++: class (heap) or struct (stack)
  * - Typescript: interface or class
  */
+@JsonPropertyOrder(alphabetic = true)
 data class Entity(
+  @JsonUnwrapped
   val name: Name,
   val pkg: PackageName,
   val documentation: Documentation = Documentation.EMPTY,

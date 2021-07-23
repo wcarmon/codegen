@@ -1,9 +1,13 @@
 package com.wcarmon.codegen.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.wcarmon.codegen.TEMPLATE_SUFFIX
 import com.wcarmon.codegen.model.OutputMode.MULTIPLE
 import com.wcarmon.codegen.model.OutputMode.SINGLE
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.name
 
 
 /**
@@ -11,6 +15,7 @@ import java.nio.file.Path
  *
  * See [com.wcarmon.codegen.PATTERN_FOR_GEN_REQ_FILE] for file name pattern
  */
+@JsonPropertyOrder(alphabetic = true)
 data class CodeGenRequest(
   val entityConfigPaths: Collection<Path>,
   val outputMode: OutputMode,
@@ -19,7 +24,10 @@ data class CodeGenRequest(
   val allowOverride: Boolean = true,
 ) {
 
+  @JsonIgnore
   val cleanOutput = outputFileOrDirectory.normalize().toAbsolutePath()
+
+  @JsonIgnore
   val cleanTemplatePath = templatePath.normalize().toAbsolutePath()
 
   init {
@@ -27,7 +35,7 @@ data class CodeGenRequest(
 
     require(Files.exists(templatePath)) { "cannot find template at $templatePath" }
     require(Files.isRegularFile(templatePath)) { "template file required at $templatePath" }
-    require(templatePath.endsWith(".vm")) { "template must end with .vm: $templatePath" }
+    require(templatePath.name.endsWith(TEMPLATE_SUFFIX)) { "template must end with .vm: $templatePath" }
 
     when (outputMode) {
 

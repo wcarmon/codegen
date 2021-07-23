@@ -1,15 +1,24 @@
 package com.wcarmon.codegen.model
 
+import com.fasterxml.jackson.annotation.JsonValue
+
 /**
  * Determines whether to output 1 or multiple files
  */
-enum class OutputMode {
+enum class OutputMode(
+  @JsonValue
+  val serialized: String,
+) {
 
   /** Generate multiple files (in a directory) */
-  MULTIPLE,
+  MULTIPLE("multiple"),
 
   /** Generate one file (possibly containing multiple entities) */
-  SINGLE;
+  SINGLE("single");
+
+  init {
+    require(serialized.isNotBlank()) { "serialized value is required" }
+  }
 
   companion object {
 

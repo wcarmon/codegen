@@ -21,7 +21,9 @@ const val PATTERN_FOR_ENTITY_FILE = "glob:**/*.entity.json"
  * Code gen requests are in json files.
  * Multiple are supported.
  *
- * Files names look like: *.gen-req.json
- * (eg. "row-mappers.gen-req.json")
+ * Files names look like: *.request.json
+ * (eg. "row-mappers.request.json")
  */
-const val PATTERN_FOR_GEN_REQ_FILE = "glob:**/*.gen-req.json"
+const val PATTERN_FOR_GEN_REQ_FILE = "glob:**/*.request.json"
+
+const val TEMPLATE_SUFFIX = ".vm"

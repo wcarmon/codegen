@@ -1,6 +1,9 @@
 package com.wcarmon.codegen.model
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
+
 /** [Field] attributes specific to relational database */
+@JsonPropertyOrder(alphabetic = true)
 data class RDBMSColumn(
   val autoIncrement: Boolean = false,
   val varcharLength: Int? = null,

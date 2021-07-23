@@ -88,7 +88,7 @@
       <AppenderRef ref="asyncAppender"/>
     </logger>
 
-    <logger name="org.apache.velocity.loader" level="debug" additivity="false">
+    <logger name="org.apache.velocity.loader" level="info" additivity="false">
       <AppenderRef ref="asyncAppender"/>
     </logger>
 

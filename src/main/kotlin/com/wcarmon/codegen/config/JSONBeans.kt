@@ -22,5 +22,5 @@ class JSONBeans {
   fun objectReader(objectMapper: ObjectMapper) = objectMapper.reader()
 
   @Bean
-  fun objectWriter(objectMapper: ObjectMapper) = objectMapper.writer()
+  fun objectWriter(objectMapper: ObjectMapper) = objectMapper.writerWithDefaultPrettyPrinter()
 }
