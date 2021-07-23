@@ -97,6 +97,7 @@ configurations.all {
     "org.junit.jupiter:junit-jupiter-params:5.7.0",
     "org.junit.platform:junit-platform-launcher:1.7.0",
     "org.junit.vintage:junit-vintage-engine:5.7.0",
+    "org.mockito:mockito-inline:3.6.0",
     "org.slf4j:jul-to-slf4j:1.7.30",
     "org.slf4j:slf4j-api:1.7.30",
     "org.slf4j:slf4j-jdk14:1.7.30",
@@ -134,6 +135,7 @@ dependencies {
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+  implementation("com.google.guava:guava")
   implementation("com.lmax:disruptor")
   implementation("org.apache.commons:commons-compress")
   implementation("org.apache.commons:commons-lang3")
@@ -148,6 +150,16 @@ dependencies {
   implementation("org.yaml:snakeyaml")
   implementation(kotlin("stdlib"))
   implementation(kotlin("stdlib-jdk8"))
+
+  testImplementation("org.apache.commons:commons-compress")
+  testImplementation("org.apache.commons:commons-lang3")
+  testImplementation("org.apache.commons:commons-text")
+  testImplementation("org.junit.jupiter:junit-jupiter-api")
+  testImplementation("org.junit.jupiter:junit-jupiter-engine")
+  testImplementation("org.junit.jupiter:junit-jupiter-params")
+  testImplementation("org.mockito:mockito-inline")
+  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+  testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 sourceSets {
