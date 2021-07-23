@@ -68,26 +68,6 @@
       <AppenderRef ref="asyncAppender"/>
     </Logger>
 
-    <logger name="io.netty" level="info" additivity="false">
-      <AppenderRef ref="asyncAppender"/>
-    </logger>
-
-    <logger name="io.micrometer" level="debug" additivity="false">
-      <AppenderRef ref="asyncAppender"/>
-    </logger>
-
-    <logger name="io.opentracing" level="debug" additivity="false">
-      <AppenderRef ref="asyncAppender"/>
-    </logger>
-
-    <logger name="io.jaegertracing" level="info" additivity="false">
-      <AppenderRef ref="asyncAppender"/>
-    </logger>
-
-    <logger name="org.apache.thrift" level="debug" additivity="false">
-      <AppenderRef ref="asyncAppender"/>
-    </logger>
-
     <logger name="org.apache.velocity.loader" level="info" additivity="false">
       <AppenderRef ref="asyncAppender"/>
     </logger>

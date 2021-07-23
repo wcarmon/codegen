@@ -62,7 +62,7 @@ data class CodeGenRequest(
           "outputFilenameTemplate required when generating multiple files"
         }
 
-        require(outputFilenameTemplate.contains("%s")){
+        require(outputFilenameTemplate.contains("%s")) {
           "outputFilenameTemplate must contain a placeholder for entity name: $outputFilenameTemplate"
         }
 
