@@ -191,7 +191,39 @@ tasks {
 //      attributes("Main-Class" to mainClass)
     }
   }
+
+  withType<JavaCompile>().configureEach {
+//    options.forkOptions.javaHome = file(java11Home)
+    options.isDebug = false
+    options.isFailOnError = true
+    options.isFork = true
+    options.isIncremental = true
+    options.isVerbose = false
+//    options.release.set(11)
+  }
+
+  // https://github.com/JetBrains/kotlin/blob/master/libraries/tools/kotlin-gradle-plugin/src/main/kotlin/org/jetbrains/kotlin/gradle/dsl/KotlinCompile.kt
+  withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions {
+      freeCompilerArgs = listOf("-Xjsr305=strict")
+//      jdkHome = java11Home
+      jvmTarget = "11"
+    }
+  }
+
+  withType<Test> {
+
+    failFast = true
+    useJUnitPlatform { }
+
+    testLogging {
+      events("passed", "skipped", "failed", "standardOut", "standardError")
+      showExceptions = true
+      showStandardStreams = true
+    }
+  }
 }
+
 
 publishing {
 
