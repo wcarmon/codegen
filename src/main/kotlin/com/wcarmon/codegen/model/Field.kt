@@ -20,18 +20,18 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 data class Field(
   val name: Name,
 
-  // TODO: type (primitive, built-in, custom, an Entity, enum, ...)
+  val type: LogicalFieldType,
 
   val defaultValue: String? = null,
 
   val documentation: Documentation = Documentation.EMPTY,
 
-  /** Bounded set of acceptable values? */
-  val enumType: Boolean = false,
-
-  val nullable: Boolean = false,
-
   val rdbms: RDBMSColumn? = null,
+
+
+  // --- These are part of the type -----------
+  /** Bounded set of acceptable values? */
+  val enumType: Boolean = false,  // part of validation?
 
   val validation: FieldValidation = FieldValidation(),
 )
