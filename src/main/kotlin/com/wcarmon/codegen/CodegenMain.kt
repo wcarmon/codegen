@@ -6,6 +6,7 @@ import com.wcarmon.codegen.config.CodegenBeans
 import com.wcarmon.codegen.config.JSONBeans
 import org.apache.logging.log4j.LogManager
 import org.springframework.boot.Banner
+import org.springframework.boot.SpringApplication
 import org.springframework.boot.WebApplicationType
 import org.springframework.boot.builder.SpringApplicationBuilder
 import java.nio.file.Paths
@@ -48,6 +49,16 @@ fun main(args: Array<String>) {
     .build()
     .run(*args)
 
-  ctx.getBean(CodeGeneratorApp::class.java)
-    .run(configRoot)
+  try {
+    ctx.getBean(CodeGeneratorApp::class.java)
+      .run(configRoot)
+
+    ctx.close()
+    exitProcess(0)
+
+  } catch (ex: Exception) {
+    LOG.error("Failed to run generator:", ex)
+    SpringApplication.exit(ctx, { 0 })
+    exitProcess(2)
+  }
 }
