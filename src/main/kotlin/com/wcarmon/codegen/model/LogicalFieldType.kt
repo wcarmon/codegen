@@ -27,6 +27,10 @@ class LogicalFieldType(
     @JvmStatic
     @JsonCreator
     fun parse(literal: String): LogicalFieldType = TODO()
+
+    fun isSigned(literal: String): Boolean {
+      TODO()
+    }
   }
 
 

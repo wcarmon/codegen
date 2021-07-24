@@ -52,6 +52,8 @@ enum class BaseFieldType {
       "golang.int32" to INT_32,
       "golang.int64" to INT_64,
       "golang.int8" to INT_8,
+      "golang.math.big.Float" to FLOAT_BIG,
+      "golang.math.big.Int" to INT_BIG,
       "golang.rune" to INT_32,
       "golang.string" to STRING,
       "golang.uint16" to INT_16,
@@ -60,6 +62,8 @@ enum class BaseFieldType {
       "golang.uint8" to INT_16,
       "java.io.File" to PATH,
       "java.lang.Boolean" to BOOLEAN,
+      "java.math.BigDecimal" to FLOAT_BIG,
+      "java.math.BigInteger" to INT_BIG,
       "java.net.URI" to URI,
       "java.net.URL" to URL,
       "java.nio.file.Path" to PATH,
@@ -67,20 +71,25 @@ enum class BaseFieldType {
       "java.util.Map" to MAP,
       "java.util.Set" to SET,
       "java.util.UUID" to UUID,
+      "kotlin.Byte" to INT_8,
+      "kotlin.collections.List" to LIST,
+      "kotlin.collections.Map" to MAP,
+      "kotlin.collections.Set" to SET,
+      "kotlin.Double" to FLOAT_64,
+      "kotlin.Float" to FLOAT_32,
+      "kotlin.Int" to INT_32,
+      "kotlin.Long" to INT_64,
+      "kotlin.Short" to INT_16,
 
       //TODO: golang.complex128
       //TODO: golang.complex64
       //TODO: golang.int
-      //TODO: golang.math.big.Float
-      //TODO: golang.math.big.Int
       //TODO: golang.time.Duration
       //TODO: golang.time.Location
       //TODO: golang.time.Time
       //TODO: golang.uint
       //TODO: golang.uintptr
 
-      //TODO: java.math.BigDecimal
-      //TODO: java.math.BigInteger
       //TODO: java.sql.*
       //TODO: java.sql.Date
       //TODO: java.sql.Timestamp
@@ -104,9 +113,6 @@ enum class BaseFieldType {
       //TODO: kotlin.CharProgression
       //TODO: kotlin.CharProgression
       //TODO: kotlin.CharRange
-      //TODO: kotlin.collections.List
-      //TODO: kotlin.collections.Map
-      //TODO: kotlin.collections.Set
       //TODO: kotlin.IntProgression
       //TODO: kotlin.IntRange
       //TODO: kotlin.LongProgression
@@ -115,12 +121,6 @@ enum class BaseFieldType {
       //TODO: kotlin.UIntRange
       //TODO: kotlin.ULongProgression
       //TODO: kotlin.ULongRange
-      //TODO: kotlin.Int
-      //TODO: kotlin.Byte
-      //TODO: kotlin.Short
-      //TODO: kotlin.Long
-      //TODO: kotlin.Float
-      //TODO: kotlin.Double
 
       //TODO: rust
       //TODO: sql
