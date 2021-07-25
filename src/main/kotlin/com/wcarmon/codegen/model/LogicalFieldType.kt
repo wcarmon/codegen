@@ -7,8 +7,8 @@ class LogicalFieldType(
   val nullable: Boolean = false,
 
   // -- Only numeric types
-  val precision: Int, // total # significant digits (both sides of decimal point)
-  val scale: Int = 0, // # decimal digits
+  val precision: Int = 0, // total # significant digits (both sides of decimal point)
+  val scale: Int = 0,     // # decimal digits
   val signed: Boolean = true,
 ) {
 
@@ -38,20 +38,22 @@ class LogicalFieldType(
   }
 
   init {
-    require(precision <= 1000) { "precision too large: $precision" }
+    require(precision <= 1_000) { "precision too high: $precision" }
+    require(precision >= 0) { "precision too low: $precision" }
+
+    require(scale <= precision) { "Scale too high: scale=$scale, precision=$precision" }
     require(scale >= 0) { "Scale too low: $scale" }
 
-    if (base.isNumeric()) {
-      require(precision >= 0) { "Precision too low: $precision" }
+    if (base.requiresPrecision()) {
+      require(precision > 0) { "Precision too low: $precision" }
     } else {
-      require(precision == 0) { "only numeric types can have precision" }
+      require(precision == 0) { "Only numeric types can have precision" }
     }
 
-    //TODO: integer types always have scale=0
-    //TODO: max precision
-    //TODO: min precision
-    //TODO: min scale
-    //TODO: max scale
+    if (!base.canHaveScale()) {
+      //TODO: missing context
+      require(scale == 0) { "field cannot have scale" }
+    }
   }
 
 

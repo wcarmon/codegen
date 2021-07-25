@@ -14,6 +14,8 @@ class BaseFieldTypeTest {
     "golang.float64" to FLOAT_64,
     "java.lang.Boolean" to BOOLEAN,
     "java.lang.Byte" to INT_8,
+    "java.lang.byte" to INT_8,
+    "JAVA.LANG.BYTE" to INT_8,
   )
 
   @Test

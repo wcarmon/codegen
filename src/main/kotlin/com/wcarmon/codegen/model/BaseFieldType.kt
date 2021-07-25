@@ -52,7 +52,6 @@ enum class BaseFieldType {
 
     @JvmStatic
     fun parse(value: String): BaseFieldType =
-      //TODO: do case insensitive lookups (matters most for sql)
       MAPPINGS.getOrDefault(value, null)
         ?: throw IllegalArgumentException("Failed to parse base type for value=$value")
 
@@ -77,6 +76,15 @@ enum class BaseFieldType {
       "golang.uint8" to INT_16,
       "java.io.File" to PATH,
       "java.lang.Boolean" to BOOLEAN,
+      "java.lang.Byte" to INT_8,
+      "java.lang.char" to CHAR,
+      "java.lang.Character" to CHAR,
+      "java.lang.Double" to FLOAT_64,
+      "java.lang.Float" to FLOAT_32,
+      "java.lang.int" to INT_32,
+      "java.lang.Integer" to INT_32,
+      "java.lang.Long" to INT_64,
+      "java.lang.Short" to INT_16,
       "java.lang.String" to STRING,
       "java.math.BigDecimal" to FLOAT_BIG,
       "java.math.BigInteger" to INT_BIG,
@@ -144,6 +152,21 @@ enum class BaseFieldType {
       "postgres.uuid" to UUID,
       "postgres.varchar" to STRING,
       "postgres.xml" to STRING,
+      "rust.bool" to BOOLEAN,
+      "rust.f32" to FLOAT_32,
+      "rust.f64" to FLOAT_64,
+      "rust.i128" to INT_128,
+      "rust.i16" to INT_16,
+      "rust.i32" to INT_32,
+      "rust.i64" to INT_64,
+      "rust.i8" to INT_8,
+      "rust.str" to STRING,
+      "rust.String" to STRING,
+      "rust.u128" to INT_128,
+      "rust.u16" to INT_16,
+      "rust.u32" to INT_32,
+      "rust.u64" to INT_64,
+      "rust.u8" to INT_8,
 
       // -- Not supported
       // golang.int             --  32-bit on 32 bit systems, 64-bit on 64 bit systems
@@ -157,10 +180,16 @@ enum class BaseFieldType {
 
       // -------------------------------------------
       // -- Decide on these:
+      //TODO: "enum" to ,
+
       //TODO: "postgres.bit" to ,
       //TODO: "postgres.decimal" to FLOAT_64 or BIG_FLOAT,
       //TODO: "postgres.numeric" to FLOAT_64 or BIG_FLOAT or INT_64 or BIG_INT,
       //TODO: "postgres.varbit" to ,
+
+      //TODO: "rust array" to ,
+      //TODO: "rust slice" to ,
+      //TODO: "rust.char" to ,
 
       // -- Network address
       //TODO: "postgres.cidr" to ,
@@ -179,26 +208,13 @@ enum class BaseFieldType {
 
       //TODO: "java.time.ZoneId" to ,
 
-      //TODO: kotlin.CharProgression
-      //TODO: kotlin.CharProgression
-      //TODO: kotlin.CharRange
-      //TODO: kotlin.IntProgression
-      //TODO: kotlin.IntRange
-      //TODO: kotlin.LongProgression
-      //TODO: kotlin.LongRange
-      //TODO: kotlin.UIntProgression
-      //TODO: kotlin.UIntRange
-      //TODO: kotlin.ULongProgression
-      //TODO: kotlin.ULongRange
-
       //TODO: mysql.*
-      //TODO: rust
 
       //TODO: golang.complex128
       //TODO: golang.complex64
       //TODO: golang.time.Location
-      //TODO: golang.uintptr
-    )
+
+    ).toSortedMap(String.CASE_INSENSITIVE_ORDER)
   }
 
   /** true for String, Collections, Enums, Arrays */
@@ -206,7 +222,15 @@ enum class BaseFieldType {
     TODO()
   }
 
-  fun isNumeric(): Boolean = when (this) {
+  fun canHaveScale(): Boolean = when (this) {
+    FLOAT_32,
+    FLOAT_64,
+    FLOAT_BIG,
+    -> true
+    else -> false
+  }
+
+  fun requiresPrecision(): Boolean = when (this) {
     FLOAT_32,
     FLOAT_64,
     FLOAT_BIG,
@@ -217,29 +241,6 @@ enum class BaseFieldType {
     INT_8,
     INT_BIG,
     -> true
-
-    ARRAY,
-    BOOLEAN,
-    CHAR,
-    DURATION,
-    LIST,
-    MAP,
-    MONTH_DAY,
-    PATH,
-    PERIOD,
-    SET,
-    STRING,
-    URI,
-    URL,
-    UTC_INSTANT,
-    UTC_TIME,
-    UUID,
-    YEAR,
-    YEAR_MONTH,
-    ZONE_AGNOSTIC_DATE,
-    ZONE_AGNOSTIC_TIME,
-    ZONE_OFFSET,
-    ZONED_DATE_TIME,
-    -> false
+    else -> false
   }
 }
