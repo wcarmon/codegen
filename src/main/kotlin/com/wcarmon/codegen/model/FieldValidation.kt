@@ -3,7 +3,7 @@ package com.wcarmon.codegen.model
 /** Represents logical validations performed on field */
 data class FieldValidation(
 
-  // For Files
+  // For Files/Paths
   val requireDirectory: Boolean = false,
   val requireDirectoryIfExists: Boolean = false,
   val requireRegularFile: Boolean = false,
@@ -16,7 +16,6 @@ data class FieldValidation(
 
 
   // For Collections
-  val requireItemsDistinct: Boolean = true,
   //  val requireItemsSorted: Boolean = false, complicated: by what property? reversed?
 
 
@@ -28,7 +27,7 @@ data class FieldValidation(
   val requireUpperCase: Boolean = false,
 
 
-  // For Numbers
+  // For Numeric
   val coerceAtLeast: Number? = null, // coerce when outside range
   val coerceAtMost: Number? = null, // coerce when outside range
   val maxValue: Number? = null, // error when outside range

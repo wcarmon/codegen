@@ -168,6 +168,34 @@ enum class BaseFieldType {
       "rust.u64" to INT_64,
       "rust.u8" to INT_8,
 
+      // -- Convenient unambiguous aliases
+      "array" to ARRAY,
+      "bigfloat" to FLOAT_BIG,
+      "bigint" to INT_BIG,
+      "bool" to BOOLEAN,
+      "boolean" to BOOLEAN,
+      "character" to CHAR,
+      "dictionary" to MAP,
+      "duration" to DURATION,
+      "file" to PATH,
+      "float32" to FLOAT_32,
+      "float64" to FLOAT_64,
+      "instant" to UTC_INSTANT,
+      "int16" to INT_16,
+      "int32" to INT_32,
+      "int64" to INT_64,
+      "list" to LIST,
+      "map" to MAP,
+      "path" to PATH,
+      "set" to SET,
+      "string" to STRING,
+      "uint16" to INT_16,
+      "uint32" to INT_32,
+      "uint64" to INT_64,
+      "url" to URL,
+      "uuid" to UUID,
+
+
       // -- Not supported
       // golang.int             --  32-bit on 32 bit systems, 64-bit on 64 bit systems
       // golang.uint            -- 32-bit on 32 bit systems, 64-bit on 64 bit systems
@@ -209,6 +237,7 @@ enum class BaseFieldType {
       //TODO: "java.time.ZoneId" to ,
 
       //TODO: mysql.*
+      //TODO: maria.*
 
       //TODO: golang.complex128
       //TODO: golang.complex64
@@ -242,5 +271,14 @@ enum class BaseFieldType {
     INT_BIG,
     -> true
     else -> false
+  }
+
+  fun requiredTypeParameterCount(): Int = when (this) {
+    MAP -> 2
+    ARRAY,
+    LIST,
+    SET,
+    -> 1
+    else -> 0
   }
 }
