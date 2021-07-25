@@ -3,7 +3,7 @@ package com.wcarmon.codegen.model
 import com.wcarmon.codegen.model.BaseFieldType.*
 import kotlin.math.sign
 
-class LogicalFieldType(
+data class LogicalFieldType(
   val base: BaseFieldType,
   val nullable: Boolean = false,
 
