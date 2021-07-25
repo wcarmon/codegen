@@ -1,0 +1,2 @@
+#* @implicitly included *#
+#* @vtlvariable name="entity" type="com.wcarmon.codegen.model.Entity" *#
