@@ -1,7 +1,6 @@
 package com.wcarmon.codegen.model
 
 import com.wcarmon.codegen.model.BaseFieldType.*
-import kotlin.math.sign
 
 data class LogicalFieldType(
   val base: BaseFieldType,
@@ -101,7 +100,7 @@ data class LogicalFieldType(
 
   //TODO: handle enums
   //TODO: handle unsigned types
-  fun asKotlin(): String = when (base) {
+  fun asKotlin() = when (base) {
     ARRAY -> getKotlinArrayType()
     BOOLEAN -> "Boolean"
     CHAR -> "Char"
@@ -141,8 +140,65 @@ data class LogicalFieldType(
     TODO()
   }
 
-  //TODO: can you align Postgres/MySQL/Oracle
-  fun asSQL(): String {
+  //TODO: handle enums
+  fun asPostgreSQL(varcharLength: Int = 0): String {
+    require(varcharLength >= 0) { "varcharLength too low: $varcharLength" }
+
+    return when (base) {
+      ARRAY -> TODO()
+      BOOLEAN -> "BOOLEAN"
+      CHAR -> TODO()
+      DURATION -> "INTERVAL"
+      FLOAT_32 -> "FLOAT4"
+      FLOAT_64 -> "FLOAT8"
+      FLOAT_BIG -> TODO()
+      INT_128 -> TODO()
+      INT_16 -> "INT2"
+      INT_32 -> "INT4"
+      INT_64 -> "INT8"
+      INT_8 -> "SMALLINT"
+      INT_BIG -> TODO()
+      LIST -> TODO()  // comma separated?
+      MAP -> TODO()
+      MONTH_DAY -> "VARCHAR(16)"
+      PERIOD -> "INTERVAL"
+      SET -> TODO() // comma separated?
+      UTC_INSTANT -> "TIMESTAMP WITHOUT TIME ZONE"
+      UTC_TIME -> TODO()
+      UUID -> "UUID"
+      YEAR -> "INT4"
+      YEAR_MONTH -> "VARCHAR(32)"
+      ZONE_AGNOSTIC_DATE -> "DATE"
+      ZONE_AGNOSTIC_TIME -> TODO()
+      ZONE_OFFSET -> "INT4"
+      ZONED_DATE_TIME -> TODO()
+
+      //TODO: allow param to override
+      PATH -> "VARCHAR(256)"
+      URL -> "VARCHAR(2048)"
+      URI,
+      STRING,
+      -> "VARCHAR($varcharLength)"
+    }
+  }
+
+  fun asSQLite(): String {
+    TODO()
+  }
+
+  fun asMySQL(): String {
+    TODO()
+  }
+
+  fun asOracle(): String {
+    TODO()
+  }
+
+  fun asSQLiteDelight(): String {
+    TODO()
+  }
+
+  fun asProtoBuf(): String {
     TODO()
   }
 
@@ -190,6 +246,10 @@ data class LogicalFieldType(
     SET -> TODO("Set or array?")
     MAP -> TODO("object or Map?")
     YEAR -> TODO("handle year")
+  }
+
+  fun asSwagger(): String {
+    TODO()
   }
 
   fun asVala(): String {
