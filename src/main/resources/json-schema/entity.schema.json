@@ -1,0 +1,88 @@
+{
+  "$id": "https://wcarmon.com/schemas/codegen/entity.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Entity, Struct, Table, ...",
+  "properties": {
+    "$schema": {
+      "format": "uri",
+      "type": "string"
+    },
+    "canCheckForExistence": {
+      "type": "boolean"
+    },
+    "canCreate": {
+      "type": "boolean"
+    },
+    "canDelete": {
+      "type": "boolean"
+    },
+    "canExtend": {
+      "type": "boolean"
+    },
+    "canFindByPK": {
+      "type": "boolean"
+    },
+    "canList": {
+      "type": "boolean"
+    },
+    "canUpdate": {
+      "type": "boolean"
+    },
+    "documentation": {
+      "maxLength": 4096,
+      "minLength": 0,
+      "type": "string"
+    },
+    "extraImplements": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 10,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "extraImports": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 96,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "fields": {
+      "items": {
+        "$ref": "field.schema.json"
+      },
+      "maxItems": 256,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "name": {
+      "maxLength": 48,
+      "minLength": 1,
+      "pattern": "^[A-Za-z][A-Za-z0-9]*$",
+      "type": "string"
+    },
+    "pkg": {
+      "maxLength": 128,
+      "type": "string"
+    },
+    "rdbms": {
+      "$ref": "rdbms-table.schema.json"
+    }
+  },
+  "propertyNames": {
+    "pattern": "^[A-Za-z_][A-Za-z0-9]*$"
+  },
+  "required": [
+    "name",
+    "$schema",
+    "fields"
+  ],
+  "title": "Entity",
+  "type": "object"
+}

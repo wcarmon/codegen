@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 
 
 /**
+ * See src/main/resources/json-schema/entity.schema.json
+ *
  * Represents ...
  * - REST: Resource
  * - Protocol buffer: Message
@@ -35,6 +37,7 @@ data class Entity(
   val extraImports: Set<String> = setOf(),
 
   // Likely easier to specify directly in template
+  // unique, order matters
   val extraImplements: List<String> = listOf(),
 
   val fields: List<Field>,
