@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 
 /**
+ * See src/main/resources/json-schema/field.schema.json
+ *
  * Represents ...
  * - REST: resource property/attribute
  * - Protocol buffer: field

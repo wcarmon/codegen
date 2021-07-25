@@ -64,7 +64,7 @@
     "name": {
       "maxLength": 48,
       "minLength": 1,
-      "pattern": "^[A-Za-z][A-Za-z0-9]*$",
+      "pattern": "^[A-Z][A-Za-z0-9]*$",
       "type": "string"
     },
     "pkg": {
@@ -76,7 +76,7 @@
     }
   },
   "propertyNames": {
-    "pattern": "^[A-Za-z_][A-Za-z0-9]*$"
+    "pattern": "^[$]?[A-Za-z_][A-Za-z0-9]*$"
   },
   "required": [
     "name",

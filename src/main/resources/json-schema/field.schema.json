@@ -1,0 +1,68 @@
+{
+  "$id": "https://wcarmon.com/schemas/codegen/field.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Field, Property, Column, ...",
+  "properties": {
+    "defaultValue": {
+      "maxLength": 2048,
+      "type": "string"
+    },
+    "documentation": {
+      "type": "string"
+    },
+    "enumType": {
+      "type": "boolean"
+    },
+    "name": {
+      "maxLength": 48,
+      "minLength": 1,
+      "pattern": "^[a-z][A-Za-z0-9]*$",
+      "type": "string"
+    },
+    "nullable": {
+      "type": "boolean"
+    },
+    "precision": {
+      "exclusiveMaximum": 1000,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "rdbms": {
+      "$ref": "rdbms-column.schema.json"
+    },
+    "scale": {
+      "exclusiveMaximum": 1000,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "signed": {
+      "type": "boolean"
+    },
+    "type": {
+      "maxLength": 64,
+      "type": "string"
+    },
+    "typeParameters": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 6,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": false
+    },
+    "validation": {
+      "$ref": "field-validation.schema.json"
+    }
+  },
+  "propertyNames": {
+    "pattern": "^[$]?[A-Za-z_][A-Za-z0-9]*$"
+  },
+  "required": [
+    "name",
+    "type"
+  ],
+  "title": "Field",
+  "type": "object"
+}
