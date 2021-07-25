@@ -1,0 +1,17 @@
+{
+  "$id": "https://wcarmon.com/schemas/codegen/rdbms-table.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "extra config for RDBMS Tables",
+  "properties": {
+
+  },
+  "propertyNames": {
+    "pattern": "^[$]?[A-Za-z_][A-Za-z0-9]*$"
+  },
+  "required": [
+  ],
+  "title": "Table config",
+  "type": "object"
+}
+

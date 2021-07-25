@@ -2,7 +2,11 @@ package com.wcarmon.codegen.model
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 
-/** [Field] attributes specific to relational database column */
+/**
+ * [Field] attributes specific to relational database column
+ *
+ * See src/main/resources/json-schema/rdbms-column.schema.json
+ */
 @JsonPropertyOrder(alphabetic = true)
 data class RDBMSColumn(
   val autoIncrement: Boolean = false,

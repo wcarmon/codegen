@@ -1,0 +1,27 @@
+{
+  "$id": "https://wcarmon.com/schemas/codegen/rdbms-column.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "extra config for RDBMS Columns",
+  "properties": {
+    "autoIncrement": {
+      "type": "boolean"
+    },
+    "positionInPrimaryKey": {
+      "exclusiveMinimum": 8,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "varcharLength": {
+      "exclusiveMinimum": 4000,
+      "minimum": 0,
+      "type": "integer"
+    }
+  },
+  "propertyNames": {
+    "pattern": "^[$]?[A-Za-z_][A-Za-z0-9]*$"
+  },
+  "required": [],
+  "title": "Column config",
+  "type": "object"
+}
