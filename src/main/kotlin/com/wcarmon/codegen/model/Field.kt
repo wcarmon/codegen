@@ -1,5 +1,7 @@
 package com.wcarmon.codegen.model
 
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 
 /**
@@ -34,4 +36,49 @@ data class Field(
   val enumType: Boolean = false,  // part of validation?
 
   val validation: FieldValidation = FieldValidation(),
-)
+) {
+
+  companion object {
+
+    @JvmStatic
+    @JsonCreator
+    fun parse(
+      @JsonProperty("name") name: Name,
+      @JsonProperty("defaultValue") defaultValue: String? = null,
+      @JsonProperty("documentation") documentation: Documentation = Documentation.EMPTY,
+      @JsonProperty("nullable") nullable: Boolean = false,
+      @JsonProperty("precision") precision: Int = 0,
+      @JsonProperty("rdbms") rdbms: RDBMSColumn? = null,
+      @JsonProperty("scale") scale: Int = 0,
+      @JsonProperty("signed") signed: Boolean = true,
+      @JsonProperty("type") typeLiteral: String = "",
+      @JsonProperty("typeParameters") typeParameters: List<String> = listOf(),
+      @JsonProperty("validation") validation: FieldValidation = FieldValidation(),
+      //TODO: enumType
+    ): Field {
+
+      //TODO: missing context
+      require(typeLiteral.isNotBlank()) { "Field.type is required" }
+
+      //TODO: signed should override whatever is specified on type literal
+
+      return Field(
+        defaultValue = defaultValue,
+        documentation = documentation,
+        //TODO: support enums
+        enumType = false,
+        name = name,
+        rdbms = rdbms,
+        type = LogicalFieldType(
+          base = BaseFieldType.parse(typeLiteral),
+          nullable = nullable,
+          precision = precision,
+          scale = scale,
+          signed = signed,
+          typeParameters = typeParameters,
+        ),
+        validation = validation,
+      )
+    }
+  }
+}

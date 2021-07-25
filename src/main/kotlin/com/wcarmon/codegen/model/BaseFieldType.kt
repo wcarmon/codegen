@@ -50,10 +50,13 @@ enum class BaseFieldType {
 
   companion object {
 
+    /**
+     * See [LogicalFieldTypeTest] for examples
+     */
     @JvmStatic
     fun parse(value: String): BaseFieldType =
       MAPPINGS.getOrDefault(value, null)
-        ?: throw IllegalArgumentException("Failed to parse base type for value=$value")
+        ?: throw IllegalArgumentException("Failed to parse baseType for value='$value'")
 
     private val MAPPINGS = mapOf(
       "golang.bool" to BOOLEAN,

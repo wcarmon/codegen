@@ -1,7 +1,7 @@
 package com.wcarmon.codegen.model
 
-import com.fasterxml.jackson.annotation.JsonCreator
 import com.wcarmon.codegen.model.BaseFieldType.*
+import kotlin.math.sign
 
 class LogicalFieldType(
   val base: BaseFieldType,
@@ -15,17 +15,6 @@ class LogicalFieldType(
   // -- Only on collections
   val typeParameters: List<String> = listOf(),
 ) {
-
-  companion object {
-
-    /**
-     * See [BaseFieldType] for supported literals
-     * See [LogicalFieldTypeTest] for examples
-     */
-    @JvmStatic
-    @JsonCreator
-    fun parse(literal: String): LogicalFieldType = TODO()
-  }
 
   init {
     require(precision <= 1_000) { "precision too high: $precision" }
@@ -53,11 +42,11 @@ class LogicalFieldType(
       }
 
       1 -> require(typeParameters.size == n) {
-        "exactly 1 type parameter required"
+        "exactly 1-type parameter required (add 'typeParameters' to Field)"
       }
 
       else -> require(typeParameters.size == n) {
-        "type parameters required: requiredCount=$n, actualCount=${typeParameters.size}"
+        "type parameters required (add 'typeParameters' to Field): requiredCount=$n, actualCount=${typeParameters.size}"
       }
     }
   }
@@ -111,6 +100,7 @@ class LogicalFieldType(
   }
 
   //TODO: handle enums
+  //TODO: handle unsigned types
   fun asKotlin(): String = when (base) {
     ARRAY -> getKotlinArrayType()
     BOOLEAN -> "Boolean"
