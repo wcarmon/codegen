@@ -6,9 +6,13 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.wcarmon.codegen.TEMPLATE_SUFFIX
 import com.wcarmon.codegen.model.OutputMode.MULTIPLE
 import com.wcarmon.codegen.model.OutputMode.SINGLE
+import org.springframework.core.io.ClassPathResource
+import org.springframework.core.io.PathResource
+import org.springframework.core.io.Resource
+import org.springframework.core.io.ResourceLoader.CLASSPATH_URL_PREFIX
+import java.net.URI
 import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.io.path.name
 
 
 /**
@@ -23,7 +27,15 @@ import kotlin.io.path.name
 data class CodeGenRequest(
   val entityConfigDirs: Collection<Path>,
   private val outputFileOrDirectory: Path,
-  private val templatePath: Path,
+
+  /**
+   * Prefixed with "file:" or "classpath:"
+   *
+   * eg. classpath:/templates/jdbc-template/row-mapper.vm
+   * eg. file:///tmp/templates/row-mapper.vm
+   */
+  private val templateURI: URI,
+
   val allowOverride: Boolean = true,
 
   /**
@@ -37,8 +49,11 @@ data class CodeGenRequest(
   @JsonIgnore
   val cleanOutput = outputFileOrDirectory.normalize().toAbsolutePath()
 
-  @JsonIgnore
-  val cleanTemplatePath = templatePath.normalize().toAbsolutePath()
+  /**
+   * eg. file: or classpath:
+   * See https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#resources
+   */
+  val template: Resource
 
   init {
     require(entityConfigDirs.isNotEmpty()) { "At least one entity config file required" }
@@ -52,9 +67,27 @@ data class CodeGenRequest(
       "None of the entity directories exist: $entityConfigDirs"
     }
 
-    require(Files.exists(templatePath)) { "cannot find template at $templatePath" }
-    require(Files.isRegularFile(templatePath)) { "template file required at $templatePath" }
-    require(templatePath.name.endsWith(TEMPLATE_SUFFIX)) { "template must end with .vm: $templatePath" }
+    val t = templateURI.toString()
+    template =
+      if (t.startsWith(CLASSPATH_URL_PREFIX)) {
+        ClassPathResource(
+          t.substringAfter(CLASSPATH_URL_PREFIX),
+          CodeGenRequest::class.java.classLoader)
+
+      } else if (templateURI.toURL().protocol == "file") {
+        PathResource(templateURI)
+
+      } else {
+        TODO("Define resource for templateURI=$templateURI")
+      }
+
+    if (template.isFile) {
+      require(template.exists()) { "cannot find template at ${template.uri}" }
+
+      val filename =
+        template.filename ?: throw IllegalArgumentException("template filename required")
+      require(filename.endsWith(TEMPLATE_SUFFIX)) { "template must end with .vm: $template" }
+    }
 
     when (outputMode) {
 

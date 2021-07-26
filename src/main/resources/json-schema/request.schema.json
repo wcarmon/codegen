@@ -36,10 +36,11 @@
         "single"
       ]
     },
-    "templatePath": {
+    "templateURI": {
       "maxLength": 250,
       "minLength": 1,
-      "type": "string"
+      "type": "string",
+      "format": "uri"
     }
   },
   "propertyNames": {
@@ -50,7 +51,7 @@
     "outputFilenameTemplate",
     "outputFileOrDirectory",
     "outputMode",
-    "templatePath"
+    "templateURI"
   ],
   "title": "Code generation request",
   "type": "object"

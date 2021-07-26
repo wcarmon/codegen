@@ -7,6 +7,7 @@ import com.wcarmon.codegen.model.CodeGenRequest
 import com.wcarmon.codegen.model.Entity
 import com.wcarmon.codegen.model.OutputMode.MULTIPLE
 import com.wcarmon.codegen.model.OutputMode.SINGLE
+import org.apache.commons.lang3.StringUtils
 import org.apache.logging.log4j.LogManager
 import org.apache.velocity.Template
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -20,7 +21,7 @@ class CodeGeneratorApp(
   private val entityConfigParser: EntityConfigParser,
   private val generator: CodeGenerator,
   private val objectReader: ObjectReader,
-  private val templateBuilder: (Path) -> Template,
+  private val templateLoader: (Path) -> Template,
 ) {
 
   companion object {
@@ -28,22 +29,32 @@ class CodeGeneratorApp(
     private val LOG = LogManager.getLogger(CodeGeneratorApp::class.java)
   }
 
-  fun run(configRoot: Path) {
-    require(Files.exists(configRoot)) { "configRoot must exist" }
-    require(Files.isDirectory(configRoot)) { "configRoot must be a directory" }
+  fun run(requestConfigRoot: Path) {
+    require(Files.exists(requestConfigRoot)) { "configRoot must exist" }
+    require(Files.isDirectory(requestConfigRoot)) { "configRoot must be a directory" }
 
-    val requests = findCodeGenRequests(configRoot)
-    val entities = findEntityConfigs(configRoot)
+    findCodeGenRequests(requestConfigRoot)
+      .forEach { req ->
 
-    // -- Enforce unique entity names
-    val entityNames = entities.map { it.name }
-    require(entityNames.size == entityNames.toSet().size) {
-      "entity names must be unique: entityNames=$entityNames"
-    }
+        val entities = findEntityConfigs(req.entityConfigDirs)
 
-    requests.forEach {
-      handleCodeGenRequest(it, entities)
-    }
+        LOG.info("Found entity configs for request: count={}, names=[{}]",
+          entities.size,
+          StringUtils.truncate(
+            entities
+              .map { it.name.upperCamel }
+              .sortedBy { it }
+              .joinToString(),
+            256))
+
+        // -- Enforce unique entity names
+        val entityNames = entities.map { it.name }
+        require(entityNames.size == entityNames.toSet().size) {
+          "Entity names must be unique: entityNames=${entityNames.sortedBy { it.lowerCamel }}"
+        }
+
+        handleCodeGenRequest(req, entities)
+      }
   }
 
   private fun handleCodeGenRequest(
@@ -51,12 +62,14 @@ class CodeGeneratorApp(
     entities: Collection<Entity>,
   ) {
 
+    val template = templateLoader(request.template.file.toPath())
+
     when (request.outputMode) {
       SINGLE -> generator.generateToOneFile(
         allowOverwrite = request.allowOverride,
         entities = entities,
         outputFile = request.cleanOutput,
-        template = templateBuilder(request.cleanTemplatePath),
+        template = template,
       )
 
       MULTIPLE -> {
@@ -76,7 +89,7 @@ class CodeGeneratorApp(
           entities = entities,
           fileNameBuilder = fileNameBuilder,
           outputDir = request.cleanOutput,
-          template = templateBuilder(request.cleanTemplatePath),
+          template = template,
         )
       }
     }
@@ -94,27 +107,30 @@ class CodeGeneratorApp(
     }
 
     LOG.info("Found code gen requests: count={}, files={}",
-      generatorRequestPaths.size, generatorRequestPaths)
+      generatorRequestPaths.size,
+      StringUtils.truncate(generatorRequestPaths.toString(), 256))
 
     return generatorRequestPaths.map {
+      //TODO: validate via json-schema here
       objectReader.readValue(
         it.toFile(),
         CodeGenRequest::class.java)
     }
   }
 
-  private fun findEntityConfigs(configRoot: Path): Collection<Entity> {
+  private fun findEntityConfigs(configRoots: Collection<Path>): Collection<Entity> {
+    require(configRoots.isNotEmpty()) { "at least one configRoot is required" }
 
-    val entityConfigPaths = getPathsForNamePattern(
-      pathPattern = PATTERN_FOR_ENTITY_FILE,
-      searchRoot = configRoot,
-    )
+    val entityConfigPaths = configRoots.flatMap { configRoot ->
+      getPathsForNamePattern(
+        pathPattern = PATTERN_FOR_ENTITY_FILE,
+        searchRoot = configRoot,
+      )
+    }.toSet()
 
     require(entityConfigPaths.isNotEmpty()) {
-      "At least one entity config file is required in $configRoot"
+      "At least one entity config file is required in configRoots=$configRoots"
     }
-
-    LOG.info("Found entity config files: count={}", entityConfigPaths.size)
 
     return entityConfigParser.parse(entityConfigPaths)
   }

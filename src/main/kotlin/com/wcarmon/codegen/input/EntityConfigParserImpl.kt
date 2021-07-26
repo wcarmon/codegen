@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectReader
 import com.wcarmon.codegen.model.Entity
 import java.nio.file.Path
 
+
 class EntityConfigParserImpl(
   private val objectReader: ObjectReader,
 ) : EntityConfigParser {
@@ -18,8 +19,19 @@ class EntityConfigParserImpl(
     return entityConfigs.map { parse(it) }
   }
 
-  private fun parse(entityConfigFile: Path) =
-    objectReader.readValue(
+  private fun parse(entityConfigFile: Path): Entity {
+
+    //TODO: do schema validation here
+//    val schemaFactory: JsonSchemaFactory =
+//      JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V201909)
+//
+//    val schema: JsonSchema = schemaFactory.getSchema(schemaStream)
+//    val validationResult: Set<ValidationMessage> = schema.validate(json)
+
+    val parsed = objectReader.readValue(
       entityConfigFile.toFile(),
       Entity::class.java)
+
+    return parsed
+  }
 }

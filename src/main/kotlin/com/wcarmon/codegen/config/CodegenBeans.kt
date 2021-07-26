@@ -61,7 +61,6 @@ class CodegenBeans {
   @Bean
   fun templateBuilder(velocityEngine: VelocityEngine) =
     { templatePath: Path ->
-      velocityEngine.getTemplate(
-        templatePath.toAbsolutePath().toString())
+      velocityEngine.getTemplate(templatePath.toAbsolutePath().toString())
     }
 }
