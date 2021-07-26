@@ -1,6 +1,7 @@
 package com.wcarmon.codegen.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.wcarmon.codegen.TEMPLATE_SUFFIX
 import com.wcarmon.codegen.model.OutputMode.MULTIPLE
@@ -14,10 +15,13 @@ import kotlin.io.path.name
  * Represents a parsed code-gen request file
  *
  * See [com.wcarmon.codegen.PATTERN_FOR_GEN_REQ_FILE] for file name pattern
+ *
+ * See src/main/resources/json-schema/request.schema.json
  */
+@JsonIgnoreProperties("\u0024schema", "\u0024id")
 @JsonPropertyOrder(alphabetic = true)
 data class CodeGenRequest(
-  val entityConfigPaths: Collection<Path>,
+  val entityConfigDirs: Collection<Path>,
   private val outputFileOrDirectory: Path,
   private val templatePath: Path,
   val allowOverride: Boolean = true,
@@ -37,7 +41,16 @@ data class CodeGenRequest(
   val cleanTemplatePath = templatePath.normalize().toAbsolutePath()
 
   init {
-    require(entityConfigPaths.isNotEmpty()) { "At least one entity config file required" }
+    require(entityConfigDirs.isNotEmpty()) { "At least one entity config file required" }
+    entityConfigDirs.forEach {
+      require(!Files.exists(it) || Files.isDirectory(it)) {
+        "Expected directory at ${it.toAbsolutePath()}"
+      }
+    }
+
+    require(entityConfigDirs.any { Files.exists(it) }) {
+      "None of the entity directories exist: $entityConfigDirs"
+    }
 
     require(Files.exists(templatePath)) { "cannot find template at $templatePath" }
     require(Files.isRegularFile(templatePath)) { "template file required at $templatePath" }

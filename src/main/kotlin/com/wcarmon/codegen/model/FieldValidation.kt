@@ -1,13 +1,16 @@
 package com.wcarmon.codegen.model
 
-/** Represents logical validations performed on field */
+import java.time.Instant
+
+/**
+ * Represents logical validations performed on field
+ *
+ * See src/main/resources/json-schema/field-validation.schema.json
+ */
 data class FieldValidation(
 
   // For Files/Paths
-  val requireDirectory: Boolean = false,
-  val requireDirectoryIfExists: Boolean = false,
-  val requireRegularFile: Boolean = false,
-  val requireRegularFileIfExists: Boolean = false,
+  val fileConstraint: FileValidationConstraint? = null,
 
 
   // For Strings, Collections, ...
@@ -20,10 +23,12 @@ data class FieldValidation(
 
 
   // For Strings
-  val requireLowerCase: Boolean = false,
   val requireMatchesRegex: Regex? = null,
   val requireNotBlank: Boolean = false,
   val requireTrimmed: Boolean = false,
+
+  // TODO: consider combining these (eg. requireCase enum)
+  val requireLowerCase: Boolean = false,
   val requireUpperCase: Boolean = false,
 
 
@@ -32,8 +37,32 @@ data class FieldValidation(
   val coerceAtMost: Number? = null, // coerce when outside range
   val maxValue: Number? = null, // error when outside range
   val minValue: Number? = null, // error when outside range
-) {
 
-  //TODO: Date-like: after
-  //TODO: Date-like: before
+
+  // For Temporal
+  val after: Instant? = null,
+  val before: Instant? = null,
+) {
+  init {
+
+    if (maxSize != null && minSize != null) {
+      require(maxSize >= minSize) {
+        "Conflicting constraint: minSize=$minSize, maxSize=$maxSize"
+      }
+    }
+
+    if (after != null && before != null) {
+      require(after.isBefore(before)) {
+        "Conflicting constraint: after=$after, before=$before"
+      }
+    }
+
+    if (maxValue != null && minValue != null) {
+      require(maxValue.toDouble() >= minValue.toDouble()) {
+        "Conflicting constraint: maxValue=$maxValue, minValue=$minValue"
+      }
+    }
+
+    //TODO: enforce no impossible combinations for coerceAtLeast & coerceAtMost
+  }
 }

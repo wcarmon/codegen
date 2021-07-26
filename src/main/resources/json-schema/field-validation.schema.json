@@ -1,0 +1,70 @@
+{
+  "$id": "https://wcarmon.com/schemas/codegen/field-validation.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "configuration for enforced field validation",
+  "properties": {
+    "after": {
+      "format": "date-time",
+      "maxLength": 32,
+      "minLength": 7,
+      "type": "string"
+    },
+    "before": {
+      "format": "date-time",
+      "maxLength": 32,
+      "minLength": 7,
+      "type": "string"
+    },
+    "coerceAtLeast": {
+      "type": "number"
+    },
+    "coerceAtMost": {
+      "type": "number"
+    },
+    "fileConstraint": {
+      "enum": [
+        "dir-if-exists",
+        "existing-dir",
+        "existing-file",
+        "file-if-exists"
+      ]
+    },
+    "maxSize": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "maxValue": {
+      "type": "number"
+    },
+    "minSize": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "minValue": {
+      "type": "number"
+    },
+    "requireLowerCase": {
+      "type": "boolean"
+    },
+    "requireMatchesRegex": {
+      "format": "regex",
+      "type": "string"
+    },
+    "requireNotBlank": {
+      "type": "boolean"
+    },
+    "requireTrimmed": {
+      "type": "boolean"
+    },
+    "requireUpperCase": {
+      "type": "boolean"
+    }
+  },
+  "propertyNames": {
+    "pattern": "^[$]?[A-Za-z_][A-Za-z0-9]*$"
+  },
+  "required": [],
+  "title": "Field validation config",
+  "type": "object"
+}

@@ -1,6 +1,7 @@
 package com.wcarmon.codegen.model
 
 import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 
@@ -20,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
  * - c++: struct member, class data member
  * - Typescript: property
  */
+@JsonIgnoreProperties("\u0024schema", "\u0024id")
 @JsonPropertyOrder(alphabetic = true)
 data class Field(
   val name: Name,

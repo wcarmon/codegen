@@ -1,5 +1,6 @@
 package com.wcarmon.codegen.model
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 
 
@@ -19,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
  * - c++: class (heap) or struct (stack)
  * - Typescript: interface or class
  */
+@JsonIgnoreProperties("\u0024schema", "\u0024id")
 @JsonPropertyOrder(alphabetic = true)
 data class Entity(
   val name: Name,

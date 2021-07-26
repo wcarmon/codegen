@@ -1,0 +1,57 @@
+{
+  "$id": "https://wcarmon.com/schemas/codegen/request.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "configuration for a single run of the code generator",
+  "properties": {
+    "$schema": {
+      "format": "uri",
+      "type": "string"
+    },
+    "allowOverride": {
+      "type": "boolean"
+    },
+    "entityConfigDirs": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 256,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "outputFileOrDirectory": {
+      "maxLength": 250,
+      "minLength": 1,
+      "type": "string"
+    },
+    "outputFilenameTemplate": {
+      "maxLength": 64,
+      "minLength": 2,
+      "type": "string"
+    },
+    "outputMode": {
+      "enum": [
+        "multiple",
+        "single"
+      ]
+    },
+    "templatePath": {
+      "maxLength": 250,
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "propertyNames": {
+    "pattern": "^[$]?[A-Za-z_][A-Za-z0-9]*$"
+  },
+  "required": [
+    "entityConfigDirs",
+    "outputFilenameTemplate",
+    "outputFileOrDirectory",
+    "outputMode",
+    "templatePath"
+  ],
+  "title": "Code generation request",
+  "type": "object"
+}

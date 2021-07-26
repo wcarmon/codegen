@@ -3,15 +3,11 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "description": "extra config for RDBMS Tables",
-  "properties": {
-
-  },
+  "properties": {},
   "propertyNames": {
     "pattern": "^[$]?[A-Za-z_][A-Za-z0-9]*$"
   },
-  "required": [
-  ],
+  "required": [],
   "title": "Table config",
   "type": "object"
 }
-
