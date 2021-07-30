@@ -5,6 +5,7 @@
 !.vscode/settings.json
 !.vscode/tasks.json
 !gradle/wrapper/gradle-wrapper.jar
+# --- remove eventually
 $RECYCLE.BIN/
 *.7z
 *.a
@@ -159,6 +160,7 @@ cpp/root/build/
 dependency-reduced-pom.xml
 Desktop.ini
 dist/
+docs/todo.md
 ehthumbs.db
 erase
 erase.*
@@ -185,6 +187,7 @@ Network Trash Folder
 node_modules/
 npm-debug.log
 root/src/gen/java/
+samples/output/
 sonarlint/
 speed-measure-plugin*.json
 src/**/*.map
@@ -195,9 +198,5 @@ test-output/
 testem.log
 Thumbs.db
 tmp/
-yarn-error.log
-
-
-# --- remove eventually
-docs/todo.md
 todo.md
+yarn-error.log

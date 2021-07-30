@@ -83,6 +83,7 @@ configurations.all {
     "org.apache.commons:commons-text:1.9",
     "org.apache.velocity.tools:velocity-tools-generic:3.1",
     "org.apache.velocity:velocity-engine-core:2.3",
+    "org.atteo:evo-inflector:1.3",
     "org.jetbrains.kotlin:kotlin-compiler-embeddable:1.5.30-M1",
     "org.jetbrains.kotlin:kotlin-reflect:1.5.30-M1",
     "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:1.5.30-M1",
@@ -117,6 +118,7 @@ configurations.all {
     "org.springframework:spring-context:5.3.5",
     "org.springframework:spring-core:5.3.5",
     "org.springframework:spring-expression:5.3.5",
+    "org.springframework:spring-jdbc:5.3.9",
     "org.springframework:spring-test:5.3.5",
     "org.springframework:spring-web:5.3.5",
     "org.yaml:snakeyaml:1.28",
@@ -145,6 +147,7 @@ dependencies {
   implementation("org.apache.logging.log4j:log4j-api")
   implementation("org.apache.velocity.tools:velocity-tools-generic")
   implementation("org.apache.velocity:velocity-engine-core")
+  implementation("org.atteo:evo-inflector")
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.springframework.boot:spring-boot-starter")
