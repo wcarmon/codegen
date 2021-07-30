@@ -1,7 +1,77 @@
-I am a template for row-mappers:
+package rowmappers; // TODO: replace
 
-fieldCount = $entity.fields.size()
+import ${entity.pkg}.${entity.name.upperCamel};
+import org.springframework.jdbc.core.RowMapper;
 
+import java.io.*;
+import java.math.*;
+import java.net.*;
+import java.nio.file.*;
+import java.sql.Blob;
+import java.sql.Clob;
+import java.sql.Connection;
+import java.sql.NClob;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.*;
+import java.util.*;
+
+
+/**
+ * Generated file
+ *
+ * Maps one row of ResultSet data to ${entity.name.upperCamel} instance
+ *
+ * See https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/jdbc/core/RowMapper.html
+ */
+public final class ${entity.name.upperCamel}RowMapper implements RowMapper<${entity.name.upperCamel}> {
+
+  private final CollectionMapper collectionMapper;
+  private final TemporalMapper temporalMapper;
+
+  public ${entity.name.upperCamel}RowMapper(
+    CollectionMapper collectionMapper,
+    TemporalMapper temporalMapper
+  ){
+    Objects.requireNotNull(collectionMapper, "collectionMapper is required")
+    Objects.requireNotNull(temporalMapper, "temporalMapper is required")
+
+    this.collectionMapper = collectionMapper;
+    this.temporalMapper = temporalMapper;
+  }
+
+  /**
+   * Maps $entity.fields.size()-fields from ResultSet
+   *
+   * @return ${entity.name.upperCamel} instance
+   */
+  @Override
+  public ${entity.name.upperCamel} mapRow(ResultSet rs, int rowNum) throws SQLException {
+    Objects.requireNotNull(rs, "null result set passed to ${entity.name.upperCamel}RowMapper");
+
+    final ${entity.name.upperCamel} output = new ${entity.name.upperCamel}();
+
+    #if (!$entity.primaryKeyFields.isEmpty())
+    // -- $entity.commentForPKFields
+    #end
+    #foreach( $field in $entity.primaryKeyFields )
+    output.set${field.name.UpperCamel}( rs.getX("") );
+    #end
+
+
+    // -- Other Fields
+    #foreach( $field in $entity.nonPrimaryKeyFields )
+    output.set${field.name.UpperCamel}( rs.getX("") );
+        ##Enum: fromString(...)
+        ##Temporal:
+    #end
+
+    return output;
+  }
+}
+
+/*
 #foreach( $field in $entity.fields )
 field.name=$field.name.upperCamel
 
@@ -17,3 +87,4 @@ field.defaultValue=$!field.defaultValue
     no documentation
     #end
 #end
+*/
