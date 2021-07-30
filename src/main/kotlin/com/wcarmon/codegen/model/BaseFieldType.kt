@@ -46,6 +46,8 @@ enum class BaseFieldType {
   LIST,
   MAP,
   SET,
+
+  USER_DEFINED
   ;
 
   companion object {
@@ -56,7 +58,8 @@ enum class BaseFieldType {
     @JvmStatic
     fun parse(value: String): BaseFieldType =
       MAPPINGS.getOrDefault(value, null)
-        ?: throw IllegalArgumentException("Failed to parse baseType for value='$value'")
+        ?: USER_DEFINED
+//        ?: throw IllegalArgumentException("Failed to parse baseType for value='$value'")
 
     private val MAPPINGS = mapOf(
       "golang.bool" to BOOLEAN,

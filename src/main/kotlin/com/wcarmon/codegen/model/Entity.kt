@@ -2,6 +2,7 @@ package com.wcarmon.codegen.model
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import org.atteo.evo.inflector.English
 
 
 /**
@@ -74,4 +75,16 @@ data class Entity(
       "remove duplicate extraImplements values: $extraImplements"
     }
   }
+
+  val primaryKeyFields = fields
+    .filter { it.rdbms != null }
+    .filter { it.rdbms!!.positionInPrimaryKey != null }
+    .sortedBy { it.rdbms!!.positionInPrimaryKey!! }
+
+  val nonPrimaryKeyFields = fields
+    .filter { it.rdbms == null || it.rdbms.positionInPrimaryKey == null }
+
+  val commentForPKFields =
+    if (primaryKeyFields.isEmpty()) ""
+    else "PK " + English.plural("field", primaryKeyFields.size)
 }

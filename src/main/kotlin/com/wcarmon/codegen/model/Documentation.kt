@@ -20,4 +20,8 @@ data class Documentation(
 
     val EMPTY = Documentation("")
   }
+
+  fun isBlank(): Boolean = value.isBlank()
+
+  fun isNotBlank(): Boolean = value.isNotBlank()
 }

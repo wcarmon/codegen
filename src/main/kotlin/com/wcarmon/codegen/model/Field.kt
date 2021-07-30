@@ -34,11 +34,6 @@ data class Field(
 
   val rdbms: RDBMSColumn? = null,
 
-
-  // --- These are part of the type -----------
-  /** Bounded set of acceptable values? */
-  val enumType: Boolean = false,  // part of validation?
-
   val validation: FieldValidation = FieldValidation(),
 ) {
 
@@ -69,14 +64,13 @@ data class Field(
       return Field(
         defaultValue = defaultValue,
         documentation = documentation,
-        //TODO: support enums
-        enumType = false,
         name = name,
         rdbms = rdbms,
         type = LogicalFieldType(
           base = BaseFieldType.parse(typeLiteral),
           nullable = nullable,
           precision = precision,
+          rawTypeLiteral = typeLiteral,
           scale = scale,
           signed = signed,
           typeParameters = typeParameters,

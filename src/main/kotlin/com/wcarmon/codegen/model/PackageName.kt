@@ -35,4 +35,6 @@ data class PackageName(
 
     // TODO: restrictions (allow blank)
   }
+
+  override fun toString() = value
 }

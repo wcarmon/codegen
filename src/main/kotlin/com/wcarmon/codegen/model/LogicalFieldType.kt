@@ -11,6 +11,12 @@ data class LogicalFieldType(
   val scale: Int = 0,     // # decimal digits
   val signed: Boolean = true,
 
+  /** For user defined types */
+  val rawTypeLiteral: String,
+
+  /** Bounded set of acceptable values? */
+  val enumType: Boolean = false,
+
   // -- Only on collections
   val typeParameters: List<String> = listOf(),
 ) {
@@ -96,6 +102,7 @@ data class LogicalFieldType(
     ZONE_AGNOSTIC_TIME -> "java.time.LocalTime"
     ZONE_OFFSET -> "java.time.ZoneOffset"
     ZONED_DATE_TIME -> "java.time.ZonedDateTime"
+    USER_DEFINED -> rawTypeLiteral //TODO: might need to convert if specified in non-jvm
   }
 
   //TODO: handle enums
@@ -132,6 +139,8 @@ data class LogicalFieldType(
     ZONE_AGNOSTIC_TIME -> "java.time.LocalTime"
     ZONE_OFFSET -> "java.time.ZoneOffset"
     ZONED_DATE_TIME -> "java.time.ZonedDateTime"
+    USER_DEFINED -> rawTypeLiteral //TODO: might need to convert if specified in non-jvm
+
   }.let {
     if (nullable) "$it?" else it
   }
@@ -179,6 +188,8 @@ data class LogicalFieldType(
       URI,
       STRING,
       -> "VARCHAR($varcharLength)"
+
+      USER_DEFINED -> TODO("convert $rawTypeLiteral")
     }
   }
 
@@ -246,6 +257,8 @@ data class LogicalFieldType(
     SET -> TODO("Set or array?")
     MAP -> TODO("object or Map?")
     YEAR -> TODO("handle year")
+
+    USER_DEFINED -> TODO("convert $rawTypeLiteral")
   }
 
   fun asSwagger(): String {
