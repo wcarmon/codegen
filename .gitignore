@@ -191,6 +191,8 @@ samples/output/
 sonarlint/
 speed-measure-plugin*.json
 src/**/*.map
+src/gen/java/
+src/gen/kotlin/
 tags
 target/
 Temporary Items
