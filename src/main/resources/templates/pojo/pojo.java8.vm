@@ -100,7 +100,7 @@ public final class ${entity.name.upperCamel} {
     return new ${entity.name.upperCamel}Builder();
   }
 
-  @JsonPOJOBuilder
+  @JsonPOJOBuilder(withPrefix = "", buildMethodName = "build")
   public static class ${entity.name.upperCamel}Builder {
 
     #foreach( $field in $entity.sortedFields )
