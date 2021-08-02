@@ -94,10 +94,23 @@ data class Field(
       return "$identifier0.${name.lowerCamel} == $identifier1.${name.lowerCamel}"
     }
 
+    if (type.base == FLOAT_64) {
+      return "Double.compare($identifier0.${name.lowerCamel}, $identifier1.${name.lowerCamel}) == 0"
+    }
+
+    if (type.base == FLOAT_32) {
+      return "Float.compare($identifier0.${name.lowerCamel}, $identifier1.${name.lowerCamel}) == 0"
+    }
+
     if (type.base == ARRAY) {
-      return "Arrays.equals($identifier0.${name.lowerCamel}, $identifier1.${name.lowerCamel})"
+      return "Arrays.deepEquals($identifier0.${name.lowerCamel}, $identifier1.${name.lowerCamel})"
     }
 
     return "Objects.equals($identifier0.${name.lowerCamel}, $identifier1.${name.lowerCamel})"
+  }
+
+  fun shouldQuoteInString() = when (type.base) {
+    STRING -> true
+    else -> false
   }
 }
