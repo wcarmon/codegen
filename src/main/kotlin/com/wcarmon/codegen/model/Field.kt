@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.wcarmon.codegen.model.BaseFieldType.*
 
 /**
  * See src/main/resources/json-schema/field.schema.json
@@ -83,5 +84,20 @@ data class Field(
 
   fun isPrimaryKeyField(): Boolean {
     return rdbms?.positionInPrimaryKey ?: -1 >= 0
+  }
+
+  fun javaEqualityExpression(identifier0: String, identifier1: String): String {
+    require(identifier0.isNotBlank())
+    require(identifier1.isNotBlank())
+
+    if (type.enumType || type.base == BOOLEAN || type.base == CHAR) {
+      return "$identifier0.${name.lowerCamel} == $identifier1.${name.lowerCamel}"
+    }
+
+    if (type.base == ARRAY) {
+      return "Arrays.equals($identifier0.${name.lowerCamel}, $identifier1.${name.lowerCamel})"
+    }
+
+    return "Objects.equals($identifier0.${name.lowerCamel}, $identifier1.${name.lowerCamel})"
   }
 }
