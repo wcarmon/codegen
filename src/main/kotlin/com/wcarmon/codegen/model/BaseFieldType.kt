@@ -257,6 +257,16 @@ enum class BaseFieldType {
     TODO()
   }
 
+  fun isCollection(): Boolean = when (this) {
+    ARRAY,
+    LIST,
+    MAP,
+    SET,
+    -> true
+
+    else -> false
+  }
+
   fun canHaveScale(): Boolean = when (this) {
     FLOAT_32,
     FLOAT_64,

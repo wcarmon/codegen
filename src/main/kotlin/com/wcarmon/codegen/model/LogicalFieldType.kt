@@ -56,7 +56,6 @@ data class LogicalFieldType(
     }
   }
 
-
   fun asC(): String {
     TODO()
   }
@@ -267,6 +266,37 @@ data class LogicalFieldType(
 
   fun asVala(): String {
     TODO()
+  }
+
+  /**
+   * Template should prefix "new" when required
+   */
+  fun newJavaCollectionExpression(): String {
+
+    require(base.isCollection()) {
+      "method only for collections: $this"
+    }
+
+    return when (base) {
+      ARRAY -> TODO("Handle creating arrays (need to know size)")
+      LIST -> "ArrayList<>()"
+      MAP -> "HashMap<>()"
+      SET -> "HashSet<>()"
+      else -> TODO("Handle instantiating: $this")
+    }
+  }
+
+  fun unmodifiableJavaCollectionMethod(): String {
+    require(base.isCollection()) {
+      "method only for collections: $this"
+    }
+
+    return when (base) {
+      LIST -> "Collections.unmodifiableList"
+      MAP -> "Collections.unmodifiableMap"
+      SET -> "Collections.unmodifiableSet"
+      else -> TODO("Handle immutable version of: $this")
+    }
   }
 
   private fun getKotlinArrayType(): String {

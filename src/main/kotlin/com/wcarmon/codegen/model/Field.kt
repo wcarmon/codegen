@@ -80,4 +80,8 @@ data class Field(
       )
     }
   }
+
+  fun isPrimaryKeyField(): Boolean {
+    return rdbms?.positionInPrimaryKey ?: -1 >= 0
+  }
 }

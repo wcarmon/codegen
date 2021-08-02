@@ -24,6 +24,7 @@
       "type": "boolean"
     },
     "precision": {
+      "description": "total # significant digits (both sides of decimal point)",
       "exclusiveMaximum": 1000,
       "minimum": 0,
       "type": "integer"
@@ -32,6 +33,7 @@
       "$ref": "rdbms-column.schema.json"
     },
     "scale": {
+      "description": "# decimal digits",
       "exclusiveMaximum": 1000,
       "minimum": 0,
       "type": "integer"

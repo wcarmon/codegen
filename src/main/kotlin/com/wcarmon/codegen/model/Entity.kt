@@ -76,6 +76,8 @@ data class Entity(
     }
   }
 
+  val sortedFields = fields.sortedBy { it.name.lowerCamel }
+
   val primaryKeyFields = fields
     .filter { it.rdbms != null }
     .filter { it.rdbms!!.positionInPrimaryKey != null }

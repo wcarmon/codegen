@@ -1,0 +1,96 @@
+package $request.packageName.value;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.net.URI;
+import java.net.URL;
+import java.time.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+/**
+ * Generated file
+ *
+ *
+ *
+ */
+##TODO: include class documentation when present
+##TODO: Jackson annotations
+public final class ${entity.name.upperCamel} {
+
+  #foreach( $field in $entity.sortedFields )
+
+  /**
+    ##TODO: include field documentation when present
+    #if($field.isPrimaryKeyField())
+     * Primary key
+    #end
+  */
+  private final $field.type.asJava() ${field.name.lowerCamel};
+  #end
+
+  private ${entity.name.upperCamel}( ${entity.name.upperCamel}Builder builder ) {
+    //TODO: Validation here
+
+    #foreach( $field in $entity.sortedFields )
+      #if($field.type.base.isCollection())
+      this.${field.name.lowerCamel} = ${field.type.unmodifiableJavaCollectionMethod()}(builder.${field.name.lowerCamel});
+      #else
+      this.${field.name.lowerCamel} = builder.${field.name.lowerCamel};
+      #end
+    #end
+  }
+
+  //TODO: jackson stuff
+  //TODO: toString
+  //TODO: hashCode
+  //TODO: equals
+
+  #foreach( $field in $entity.sortedFields )
+    public $field.type.asJava() get${field.name.upperCamel}() {
+      return this.$field.name.lowerCamel;
+    }
+
+  #end
+
+  public static ${entity.name.upperCamel}Builder builder() {
+    return new ${entity.name.upperCamel}Builder();
+  }
+
+  public static class ${entity.name.upperCamel}Builder {
+
+    #foreach( $field in $entity.sortedFields )
+    private $field.type.asJava() ${field.name.lowerCamel};
+    #end
+
+    ${entity.name.upperCamel}Builder() {
+    }
+
+    #foreach( $field in $entity.sortedFields )
+    public ${entity.name.upperCamel}Builder ${field.name.lowerCamel}(${field.type.asJava()} value) {
+      this.$field.name.lowerCamel = value;
+      return this;
+    }
+
+      #if($field.type.base.isCollection())
+
+        public ${entity.name.upperCamel}Builder ${field.name.lowerCamel}(${field.type.getTypeParameters()[0]} value) {
+          if (this.$field.name.lowerCamel == null) {
+            this.$field.name.lowerCamel = new $field.type.newJavaCollectionExpression();
+          }
+
+          this.${field.name.lowerCamel}.add(value);
+          return this;
+        }
+      #end
+    #end
+
+    public ${entity.name.upperCamel} build() {
+      return new ${entity.name.upperCamel}(this);
+    }
+  }
+}
