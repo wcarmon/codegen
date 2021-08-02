@@ -2,12 +2,18 @@ package com.wcarmon.codegen.input
 
 import com.fasterxml.jackson.databind.ObjectReader
 import com.wcarmon.codegen.model.Entity
+import org.apache.logging.log4j.LogManager
 import java.nio.file.Path
 
 
 class EntityConfigParserImpl(
   private val objectReader: ObjectReader,
 ) : EntityConfigParser {
+
+  companion object {
+    @JvmStatic
+    private val LOG = LogManager.getLogger(EntityConfigParserImpl::class.java)
+  }
 
   override fun parse(entityConfigs: Collection<Path>): Collection<Entity> {
     require(entityConfigs.isNotEmpty()) {
@@ -28,6 +34,7 @@ class EntityConfigParserImpl(
 //    val schema: JsonSchema = schemaFactory.getSchema(schemaStream)
 //    val validationResult: Set<ValidationMessage> = schema.validate(json)
 
+    LOG.debug("Parsing file: $entityConfigFile")
     val parsed = objectReader.readValue(
       entityConfigFile.toFile(),
       Entity::class.java)

@@ -2,6 +2,7 @@ package com.wcarmon.codegen.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.wcarmon.codegen.TEMPLATE_SUFFIX
 import com.wcarmon.codegen.model.OutputMode.MULTIPLE
@@ -44,6 +45,9 @@ data class CodeGenRequest(
    */
   val outputFilenameTemplate: String = "",
   val outputMode: OutputMode,
+
+  @JsonProperty("package")
+  val packageName: PackageName? = null,
 ) {
 
   @JsonIgnore

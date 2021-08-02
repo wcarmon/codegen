@@ -66,9 +66,8 @@ class CodeGeneratorApp(
 
     when (request.outputMode) {
       SINGLE -> generator.generateToOneFile(
-        allowOverwrite = request.allowOverride,
         entities = entities,
-        outputFile = request.cleanOutput,
+        request = request,
         template = template,
       )
 
@@ -85,10 +84,9 @@ class CodeGeneratorApp(
         }
 
         generator.generateToMultipleFiles(
-          allowOverwrite = request.allowOverride,
           entities = entities,
           fileNameBuilder = fileNameBuilder,
-          outputDir = request.cleanOutput,
+          request = request,
           template = template,
         )
       }

@@ -2,6 +2,7 @@ package com.wcarmon.codegen
 
 
 import com.wcarmon.codegen.input.OutputFileNameBuilder
+import com.wcarmon.codegen.model.CodeGenRequest
 import com.wcarmon.codegen.model.Entity
 import org.apache.logging.log4j.LogManager
 import org.apache.velocity.Template
@@ -30,11 +31,13 @@ class CodeGenerator(
   fun generateToMultipleFiles(
     entities: Collection<Entity>,
     fileNameBuilder: OutputFileNameBuilder,
-    outputDir: Path,
+    request: CodeGenRequest,
     template: Template,
     allowOverwrite: Boolean = true,
   ) {
     require(entities.isNotEmpty()) { "no entities passed" }
+
+    val outputDir = request.cleanOutput
 
     Files.createDirectories(outputDir)
     require(Files.isDirectory(outputDir)) { "Either delete or put a directory at $outputDir" }
@@ -53,6 +56,7 @@ class CodeGenerator(
 
       val context = VelocityContext()
       context.put("entity", entity)
+      context.put("request", request)
 
       Files.newBufferedWriter(dest).use { writer ->
         template.merge(context, writer)
@@ -70,11 +74,13 @@ class CodeGenerator(
    */
   fun generateToOneFile(
     entities: Collection<Entity>,
-    outputFile: Path,
+    request: CodeGenRequest,
     template: Template,
     allowOverwrite: Boolean = true,
   ) {
     require(entities.isNotEmpty()) { "no entities passed" }
+
+    val outputFile = request.cleanOutput
 
     Files.createDirectories(outputFile.parent)
 
@@ -91,6 +97,7 @@ class CodeGenerator(
 
     val context = VelocityContext()
     context.put("entities", entities)
+    context.put("request", request)
 
     val dest = outputFile.normalize().toAbsolutePath()
     Files.newBufferedWriter(dest).use { writer ->

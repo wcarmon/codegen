@@ -1,4 +1,4 @@
-package rowmappers; // TODO: replace
+package $request.packageName.value;
 
 import ${entity.pkg}.${entity.name.upperCamel};
 import org.springframework.jdbc.core.RowMapper;
@@ -34,8 +34,8 @@ public final class ${entity.name.upperCamel}RowMapper implements RowMapper<${ent
     CollectionMapper collectionMapper,
     TemporalMapper temporalMapper
   ){
-    Objects.requireNotNull(collectionMapper, "collectionMapper is required")
-    Objects.requireNotNull(temporalMapper, "temporalMapper is required")
+    Objects.requireNonNull(collectionMapper, "collectionMapper is required")
+    Objects.requireNonNull(temporalMapper, "temporalMapper is required")
 
     this.collectionMapper = collectionMapper;
     this.temporalMapper = temporalMapper;
@@ -48,7 +48,7 @@ public final class ${entity.name.upperCamel}RowMapper implements RowMapper<${ent
    */
   @Override
   public ${entity.name.upperCamel} mapRow(ResultSet rs, int rowNum) throws SQLException {
-    Objects.requireNotNull(rs, "null result set passed to ${entity.name.upperCamel}RowMapper");
+    Objects.requireNonNull(rs, "null result set passed to ${entity.name.upperCamel}RowMapper");
 
     final ${entity.name.upperCamel} output = new ${entity.name.upperCamel}();
 
@@ -56,13 +56,14 @@ public final class ${entity.name.upperCamel}RowMapper implements RowMapper<${ent
     // -- $entity.commentForPKFields
     #end
     #foreach( $field in $entity.primaryKeyFields )
-    output.set${field.name.UpperCamel}( rs.getX("") );
+    output.set${field.name.UpperCamel}( rs.getX("${field.name.lowerSnake}") );
     #end
 
 
     // -- Other Fields
     #foreach( $field in $entity.nonPrimaryKeyFields )
-    output.set${field.name.UpperCamel}( rs.getX("") );
+    output.set${field.name.UpperCamel}( rs.getString("${field.name.lowerSnake}") );
+
         ##Enum: fromString(...)
         ##Temporal:
     #end

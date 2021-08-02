@@ -45,6 +45,7 @@ data class Field(
       @JsonProperty("name") name: Name,
       @JsonProperty("defaultValue") defaultValue: String? = null,
       @JsonProperty("documentation") documentation: Documentation = Documentation.EMPTY,
+      @JsonProperty("enumType") enumType: Boolean = false,
       @JsonProperty("nullable") nullable: Boolean = false,
       @JsonProperty("precision") precision: Int = 0,
       @JsonProperty("rdbms") rdbms: RDBMSColumn? = null,
@@ -53,7 +54,6 @@ data class Field(
       @JsonProperty("type") typeLiteral: String = "",
       @JsonProperty("typeParameters") typeParameters: List<String> = listOf(),
       @JsonProperty("validation") validation: FieldValidation = FieldValidation(),
-      //TODO: enumType
     ): Field {
 
       //TODO: missing context
@@ -68,6 +68,7 @@ data class Field(
         rdbms = rdbms,
         type = LogicalFieldType(
           base = BaseFieldType.parse(typeLiteral),
+          enumType = enumType,
           nullable = nullable,
           precision = precision,
           rawTypeLiteral = typeLiteral,

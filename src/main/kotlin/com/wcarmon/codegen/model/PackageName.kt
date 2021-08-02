@@ -33,6 +33,7 @@ data class PackageName(
       "package names must be trimmed: '$value'"
     }
 
+    //TODO: max length
     // TODO: restrictions (allow blank)
   }
 

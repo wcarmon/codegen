@@ -36,11 +36,16 @@
         "single"
       ]
     },
+    "package": {
+      "maxLength": 250,
+      "minLength": 0,
+      "type": "string"
+    },
     "templateURI": {
+      "format": "uri",
       "maxLength": 250,
       "minLength": 1,
-      "type": "string",
-      "format": "uri"
+      "type": "string"
     }
   },
   "propertyNames": {
