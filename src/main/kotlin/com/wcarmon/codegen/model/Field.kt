@@ -113,4 +113,16 @@ data class Field(
     STRING -> true
     else -> false
   }
+
+  fun jacksonTypeRef(): String {
+    require(type.base.isParameterized()) {
+      "type references are only required for parameterized types"
+    }
+
+    return when (type.base) {
+      LIST -> "List<${type.typeParameters[0]}>"
+      SET -> "Set<${type.typeParameters[0]}>"
+      else -> TODO("Build TypeReference for $this")
+    }
+  }
 }

@@ -253,8 +253,16 @@ enum class BaseFieldType {
   }
 
   /** true for String, Collections, Enums, Arrays */
-  fun isParameterized(): Boolean {
-    TODO()
+  fun isParameterized(): Boolean = when (this) {
+    ARRAY,
+    LIST,
+    MAP,
+    SET,
+    -> true
+
+    USER_DEFINED -> TODO("Determine if type is parameterized: $this")
+
+    else -> false
   }
 
   fun isCollection(): Boolean = when (this) {
@@ -262,6 +270,23 @@ enum class BaseFieldType {
     LIST,
     MAP,
     SET,
+    -> true
+
+    else -> false
+  }
+
+  fun isTemporal(): Boolean = when (this) {
+    DURATION,
+    MONTH_DAY,
+    PERIOD,
+    UTC_INSTANT,
+    UTC_TIME,
+    YEAR,
+    YEAR_MONTH,
+    ZONE_AGNOSTIC_DATE,
+    ZONE_AGNOSTIC_TIME,
+    ZONE_OFFSET,
+    ZONED_DATE_TIME,
     -> true
 
     else -> false

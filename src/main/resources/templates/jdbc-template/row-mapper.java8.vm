@@ -2,6 +2,8 @@ package $request.packageName.value;
 
 import ${entity.pkg}.${entity.name.upperCamel};
 import org.springframework.jdbc.core.RowMapper;
+#if ($entity.hasCollectionFields)import com.fasterxml.jackson.databind.ObjectMapper;#end
+#if ($entity.hasCollectionFields)import com.fasterxml.jackson.core.type.TypeReference;#end
 
 import java.io.*;
 import java.math.*;
@@ -15,8 +17,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
-
+import java.util.function.Function;
 
 /**
  * Generated file
@@ -25,21 +28,27 @@ import java.util.*;
  *
  * See https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/jdbc/core/RowMapper.html
  */
+#if ($entity.hasCollectionFields)
+@SuppressWarnings("unchecked")
+#end
 public final class ${entity.name.upperCamel}RowMapper implements RowMapper<${entity.name.upperCamel}> {
 
-  private final CollectionMapper collectionMapper;
-  private final TemporalMapper temporalMapper;
+  #if ($entity.hasCollectionFields)
+    #foreach ($field in $entity.collectionFields)
+    private static final TypeReference<${field.jacksonTypeRef()}> ${field.name.upperSnake}_REF =
+      new TypeReference<>(){};
+    #end
 
-  public ${entity.name.upperCamel}RowMapper(
-    CollectionMapper collectionMapper,
-    TemporalMapper temporalMapper
-  ){
-    Objects.requireNonNull(collectionMapper, "collectionMapper is required")
-    Objects.requireNonNull(temporalMapper, "temporalMapper is required")
+  private final ObjectMapper objectMapper;
 
-    this.collectionMapper = collectionMapper;
-    this.temporalMapper = temporalMapper;
+  public ${entity.name.upperCamel}RowMapper(ObjectMapper objectMapper) {
+    Objects.requireNonNull(objectMapper, "objectMapper is required")
+
+    this.objectMapper = objectMapper;
   }
+  #else
+  public ${entity.name.upperCamel}RowMapper() {}
+  #end
 
   /**
    * Maps $entity.fields.size()-fields from ResultSet
@@ -50,42 +59,84 @@ public final class ${entity.name.upperCamel}RowMapper implements RowMapper<${ent
   public ${entity.name.upperCamel} mapRow(ResultSet rs, int rowNum) throws SQLException {
     Objects.requireNonNull(rs, "null result set passed to ${entity.name.upperCamel}RowMapper");
 
-    final ${entity.name.upperCamel} output = new ${entity.name.upperCamel}();
+    return ${entity.name.upperCamel}.builder()
+        #if (!$entity.primaryKeyFields.isEmpty())
+        // -- $entity.commentForPKFields
+        #end
+        #foreach( $field in $entity.primaryKeyFields )
+          ## TODO: use the field.javaStringFactory
+        .${field.name.lowerCamel}( ${field.type.rawTypeLiteral}.fromString(
+          rs.${field.type.jdbcGetter()}("${field.name.lowerSnake}")))
+        #end
 
-    #if (!$entity.primaryKeyFields.isEmpty())
-    // -- $entity.commentForPKFields
-    #end
-    #foreach( $field in $entity.primaryKeyFields )
-    output.set${field.name.UpperCamel}( rs.getX("${field.name.lowerSnake}") );
-    #end
-
-
-    // -- Other Fields
-    #foreach( $field in $entity.nonPrimaryKeyFields )
-    output.set${field.name.UpperCamel}( rs.getString("${field.name.lowerSnake}") );
-
-        ##Enum: fromString(...)
-        ##Temporal:
-    #end
-
-    return output;
+        // -- Other Fields
+        #foreach ($field in $entity.nonPrimaryKeyFields)
+##
+            ## -- Enums
+            #if ($field.type.enumType)
+            .${field.name.lowerCamel}( ${field.type.rawTypeLiteral}.fromString(
+              rs.${field.type.jdbcGetter()}("${field.name.lowerSnake}")) )
+##
+            ## -- Collections
+            #elseif ($field.type.base.isCollection())
+            .${field.name.lowerCamel}(
+                to${field.type.rawTypeLiteral}(
+                rs.getString("${field.name.lowerSnake}"), ${field.name.upperSnake}_REF))
+##
+            ## -- Temporal
+            #elseif ($field.type.base.isTemporal())
+            .${field.name.lowerCamel}( ${field.type.javaStringFactory()}(rs.getString("${field.name.lowerSnake}")))
+##
+##TODO: handle Path, URI & URL should use the temporal branch
+            ## -- normal fields
+            #else
+            .${field.name.lowerCamel}( rs.${field.type.jdbcGetter()}("${field.name.lowerSnake}") )
+            #end
+        #end
+    .build();
   }
+
+  #if ($entity.hasCollectionFields)
+  /**
+   * Deserialize to a List
+   *
+   * @param serialized json version of list data
+   * @param typeRef for compile time type safety
+   * @param <L> complete type, (including the List)
+   * @return a new List (possibly empty, never null)
+   */
+  private <L> L toList(String serialized, TypeReference<L> typeRef) {
+    if( serialized == null || serialized.trim().isEmpty() ) {
+      return (L) Collections.emptyList();
+    }
+
+    try {
+      return objectMapper.readValue(serialized, typeRef);
+
+    } catch (Exception ex) {
+      throw new RuntimeException("Failed to deserialize List: serialized=" + serialized, ex);
+    }
+  }
+
+  /**
+   * Deserialize to a Set
+   *
+   * @param serialized json version of set data
+   * @param typeRef for compile time type safety
+   * @param <S> complete type, (including the Set)
+   * @return a new Set (possibly empty, never null)
+   */
+  private <S> S toSet(String serialized, TypeReference<S> typeRef) {
+    if( serialized == null || serialized.trim().isEmpty() ) {
+      return (S) Collections.emptySet();
+    }
+
+    try {
+      return objectMapper.readValue(serialized, typeRef);
+
+    } catch (Exception ex) {
+      throw new RuntimeException("Failed to deserialize Set: serialized=" + serialized, ex);
+    }
+  }
+  #end
 }
-
-/*
-#foreach( $field in $entity.fields )
-field.name=$field.name.upperCamel
-
-field.type=$field.type
-field.rdbms=$field.rdbms
-
-// ! prints "" when no value
-field.defaultValue=$!field.defaultValue
-
-    #if($field.documentation)
-    documentation = $field.documentation
-    #else
-    no documentation
-    #end
-#end
-*/

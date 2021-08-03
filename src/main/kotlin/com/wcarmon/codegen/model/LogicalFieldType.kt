@@ -299,6 +299,52 @@ data class LogicalFieldType(
     }
   }
 
+  fun jdbcGetter(): String = when (base) {
+    BOOLEAN -> "getBoolean"
+    FLOAT_32 -> "getFloat"
+    FLOAT_64 -> "getDouble"
+    FLOAT_BIG -> "getBigDecimal"
+    INT_16 -> "getShort"
+    INT_32 -> "getInt"
+    INT_64 -> "getLong"
+    UTC_INSTANT -> "getString"
+    YEAR -> "getInt"
+
+//    CHAR, // 16-bit Unicode character
+//    INT_128
+//    INT_8
+//    INT_BIG
+
+//    DURATION,           // measured in seconds & nanos
+//    MONTH_DAY,          // eg. birthdays
+//    PERIOD,             // measured in years, months (day agnostic) or days (time agnostic)
+//    UTC_TIME,           // eg. daily meeting time, market opening time (y/m/d agnostic)
+//    YEAR_MONTH,         // eg. credit card expiration
+//    ZONE_AGNOSTIC_DATE, // eg. birthdate (tz agnostic)
+//    ZONE_AGNOSTIC_TIME, // eg. store closing time (tz agnostic)
+//    ZONE_OFFSET,        // seconds (with upper bound)
+//    ZONED_DATE_TIME,    // Instant + offset + tz rules
+
+    ARRAY,
+    LIST,
+    MAP,
+    PATH,
+    SET,
+    STRING,
+    URI,
+    URL,
+    UUID,
+    -> "getString"
+
+
+    //TODO: handle when enum puts number in database
+    USER_DEFINED ->
+      if (enumType) "getString"
+      else "getString"  // User has to serialize somehow
+
+    else -> TODO("add jdbc getter for $this")
+  }
+
   private fun getKotlinArrayType(): String {
     check(base == ARRAY) { "Only invoke for arrays" }
     check(typeParameters.size == 1) { "exactly 1 type param required" }
@@ -339,5 +385,45 @@ data class LogicalFieldType(
     }
 
     TODO("determine kotlin array type: $this")
+  }
+
+  fun javaStringFactory(): String = when (base) {
+    BOOLEAN -> TODO("fix string factory for $this")
+    CHAR -> TODO("fix string factory for $this")
+    FLOAT_32 -> TODO("fix string factory for $this")
+    FLOAT_64 -> TODO("fix string factory for $this")
+    FLOAT_BIG -> TODO("fix string factory for $this")
+    INT_128 -> TODO("fix string factory for $this")
+    INT_8 -> TODO("fix string factory for $this")
+    INT_BIG -> TODO("fix string factory for $this")
+
+    ZONE_AGNOSTIC_DATE -> TODO("fix string factory for $this")
+    ZONE_AGNOSTIC_TIME -> TODO("fix string factory for $this")
+    ZONE_OFFSET -> TODO("fix string factory for $this")
+    ZONED_DATE_TIME -> TODO("fix string factory for $this")
+    ARRAY -> TODO("fix string factory for $this")
+    LIST -> TODO("fix string factory for $this")
+    MAP -> TODO("fix string factory for $this")
+    SET -> TODO("fix string factory for $this")
+    USER_DEFINED -> TODO("fix string factory for $this")
+
+    INT_16 -> "Short.parseShort"
+    INT_32 -> "Integer.parseInt"
+    INT_64 -> "Long.parseLong"
+    PATH -> "${asJava()}.of"
+    STRING -> "String.valueOf"  //TODO: seems unnecessary
+    URI -> "${asJava()}.create"
+    UUID -> "${asJava()}.fromString"
+
+    URL -> "new ${asJava()}"
+
+    DURATION,
+    MONTH_DAY,
+    PERIOD,
+    UTC_INSTANT,
+    UTC_TIME,
+    YEAR_MONTH,
+    YEAR,
+    -> "${asJava()}.parse"
   }
 }

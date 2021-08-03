@@ -78,6 +78,10 @@ data class Entity(
 
   val sortedFields = fields.sortedBy { it.name.lowerCamel }
 
+  val collectionFields = fields
+    .filter { it.type.base.isCollection() }
+    .sortedBy { it.name.lowerCamel }
+
   val primaryKeyFields = fields
     .filter { it.rdbms != null }
     .filter { it.rdbms!!.positionInPrimaryKey != null }
@@ -89,4 +93,7 @@ data class Entity(
   val commentForPKFields =
     if (primaryKeyFields.isEmpty()) ""
     else "PK " + English.plural("field", primaryKeyFields.size)
+
+  val hasCollectionFields =
+    fields.any { it.type.base.isCollection() }
 }
