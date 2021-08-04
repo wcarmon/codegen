@@ -6,11 +6,9 @@ import com.google.common.base.CaseFormat
 import com.google.common.base.CaseFormat.*
 import com.wcarmon.codegen.MAX_NAME_LENGTH
 
-/**
- * Identifier for Entity or Field
- */
+/** Identifier for [Entity] or [Field] */
 data class Name(
-  // Either upper camel or lower camel
+  // Either UpperCamel or lowerCamel
   private val camelCase: String,
 ) {
 

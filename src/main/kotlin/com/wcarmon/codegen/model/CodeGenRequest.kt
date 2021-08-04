@@ -6,8 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.google.common.base.CaseFormat
 import com.wcarmon.codegen.TEMPLATE_SUFFIX
-import com.wcarmon.codegen.model.OutputMode.MULTIPLE
-import com.wcarmon.codegen.model.OutputMode.SINGLE
+import com.wcarmon.codegen.model.OutputMode.FILE_PER_ENTITY
+import com.wcarmon.codegen.model.OutputMode.SINGLE_FILE
 import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.PathResource
 import org.springframework.core.io.Resource
@@ -102,7 +102,7 @@ data class CodeGenRequest(
 
     when (outputMode) {
 
-      SINGLE -> {
+      SINGLE_FILE -> {
         require(outputFilenameTemplate.isBlank()) {
           "outputFilenameTemplate is forbidden when generating single file"
         }
@@ -114,7 +114,7 @@ data class CodeGenRequest(
         }
       }
 
-      MULTIPLE -> {
+      FILE_PER_ENTITY -> {
         require(outputFilenameTemplate.isNotBlank()) {
           "outputFilenameTemplate required when generating multiple files"
         }

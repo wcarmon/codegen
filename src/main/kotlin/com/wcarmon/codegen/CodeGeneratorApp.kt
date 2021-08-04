@@ -5,7 +5,7 @@ import com.wcarmon.codegen.input.EntityConfigParser
 import com.wcarmon.codegen.input.getPathsMatchingNamePattern
 import com.wcarmon.codegen.model.CodeGenRequest
 import com.wcarmon.codegen.model.Entity
-import com.wcarmon.codegen.model.OutputMode.SINGLE
+import com.wcarmon.codegen.model.OutputMode.SINGLE_FILE
 import org.apache.commons.lang3.StringUtils
 import org.apache.logging.log4j.LogManager
 import org.apache.velocity.Template
@@ -70,7 +70,7 @@ class CodeGeneratorApp(
 
     val template = templateLoader(request.template.file.toPath())
 
-    if (request.outputMode == SINGLE) {
+    if (request.outputMode == SINGLE_FILE) {
       generator.generateOneFileForEntities(
         entities = entities,
         request = request,
