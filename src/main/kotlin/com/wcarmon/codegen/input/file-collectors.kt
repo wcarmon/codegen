@@ -14,7 +14,7 @@ import java.nio.file.Path
  *
  * (&#47; == slash)
  */
-fun getPathsForNamePattern(
+fun getPathsMatchingNamePattern(
   searchRoot: Path,
   pathPattern: String,
 ): Set<Path> {
@@ -43,11 +43,11 @@ fun getPathsForNamePattern(
  * Convenience function
  * Aggregation over Multiple patterns
  */
-fun getPathsForNamePattern(
+fun getPathsMatchingNamePattern(
   searchRoot: Path,
   patterns: Collection<String>,
 ) = patterns
   .map { pattern ->
-    getPathsForNamePattern(searchRoot, pattern)
+    getPathsMatchingNamePattern(searchRoot, pattern)
   }
   .reduce { acc, current -> acc.union(current) }

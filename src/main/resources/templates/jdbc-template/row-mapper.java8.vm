@@ -35,7 +35,7 @@ public final class ${entity.name.upperCamel}RowMapper implements RowMapper<${ent
 
   #if ($entity.hasCollectionFields)
     #foreach ($field in $entity.collectionFields)
-    private static final TypeReference<${field.jacksonTypeRef()}> ${field.name.upperSnake}_REF =
+    private static final TypeReference<${field.jacksonTypeRef()}> ${field.name.upperSnake}_TYPE_REF =
       new TypeReference<>(){};
     #end
 
@@ -81,7 +81,7 @@ public final class ${entity.name.upperCamel}RowMapper implements RowMapper<${ent
             #elseif ($field.type.base.isCollection())
             .${field.name.lowerCamel}(
                 to${field.type.rawTypeLiteral}(
-                rs.getString("${field.name.lowerSnake}"), ${field.name.upperSnake}_REF))
+                rs.getString("${field.name.lowerSnake}"), ${field.name.upperSnake}_TYPE_REF))
 ##
             ## -- Temporal
             #elseif ($field.type.base.isTemporal())

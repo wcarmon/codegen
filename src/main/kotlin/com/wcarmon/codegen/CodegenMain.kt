@@ -18,18 +18,18 @@ private val LOG = LogManager.getLogger("com.wcarmon.codegen.CodegenMain")
 /**
  * Entry point
  *
- * Pass exactly 1-directory as command line arg.
+ * Pass exactly 1-directory, as command line arg.
  *
- * Directory must contain at-least-one entity json file
- * Directory must contain at-least-one generator request json file
- *
+ * Directory must contain at-least-1 entity json file
  * See [PATTERN_FOR_ENTITY_FILE]
+ *
+ * Directory must contain at-least-1 code generator request json file
  * See [PATTERN_FOR_GEN_REQ_FILE]
  */
 fun main(args: Array<String>) {
 
   if (args.size != 1) {
-    LOG.error("Pass exactly 1 directory as an argument")
+    LOG.error("Pass exactly 1 argument (directory containing request json files)")
     exitProcess(1)
   }
 

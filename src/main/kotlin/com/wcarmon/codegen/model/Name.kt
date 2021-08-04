@@ -51,4 +51,12 @@ data class Name(
     lowerSnake = inputCase.to(LOWER_UNDERSCORE, camelCase)
     upperSnake = inputCase.to(UPPER_UNDERSCORE, camelCase)
   }
+
+  fun forCaseFormat(caseFormat: CaseFormat): String = when (caseFormat) {
+    LOWER_CAMEL -> lowerCamel
+    LOWER_HYPHEN -> lowerKebab
+    LOWER_UNDERSCORE -> lowerSnake
+    UPPER_CAMEL -> upperCamel
+    UPPER_UNDERSCORE -> upperSnake
+  }
 }

@@ -13,9 +13,12 @@ import java.nio.file.Paths
 import java.util.function.Consumer
 
 
-/** Generates code, given a template, entities and a destination */
+/** Generates code, given a template, entities and output destination */
 class CodeGenerator(
-  private val onAfterGenerate: Consumer<Path> = Consumer { LOG.info("Generated: $it") },
+
+  /** Executed after each file generated */
+  private val onAfterGenerateFile: Consumer<Path> =
+    Consumer { LOG.info("Generated: $it") },
 ) {
 
   companion object {
@@ -24,11 +27,14 @@ class CodeGenerator(
   }
 
   /**
+   * Use case #1:
    * Use when each entity goes into separate output file.
    *
    * Template should expect "entity" object in the velocity context
+   *
+   * See also [generateOneFileForEntities]
    */
-  fun generateToMultipleFiles(
+  fun generateFilePerEntity(
     entities: Collection<Entity>,
     fileNameBuilder: OutputFileNameBuilder,
     request: CodeGenRequest,
@@ -40,12 +46,14 @@ class CodeGenerator(
     val outputDir = request.cleanOutput
 
     Files.createDirectories(outputDir)
-    require(Files.isDirectory(outputDir)) { "Either delete or put a directory at $outputDir" }
+    require(Files.isDirectory(outputDir)) {
+      "Either delete or put a directory at $outputDir"
+    }
 
     entities.forEach { entity ->
 
       val dest = Paths.get(
-        outputDir.normalize().toAbsolutePath().toString(),
+        outputDir.toString(),
         fileNameBuilder.build(entity),
       )
 
@@ -54,25 +62,28 @@ class CodeGenerator(
         return@forEach
       }
 
-      val context = VelocityContext()
-      context.put("entity", entity)
-      context.put("request", request)
+      val context = VelocityContext(mapOf(
+        "entity" to entity,
+        "request" to request
+      ))
 
       Files.newBufferedWriter(dest).use { writer ->
         template.merge(context, writer)
       }
 
-      onAfterGenerate.accept(dest)
+      onAfterGenerateFile.accept(dest)
     }
   }
 
   /**
+   * Use case #2:
    * Use when all entities go into the same output file
+   *
    * Template should expect "entities" collection in the context
    *
-   * This case is less common than [generateToMultipleFiles]
+   * This use case is less common than [generateFilePerEntity]
    */
-  fun generateToOneFile(
+  fun generateOneFileForEntities(
     entities: Collection<Entity>,
     request: CodeGenRequest,
     template: Template,
@@ -95,15 +106,15 @@ class CodeGenerator(
       }
     }
 
-    val context = VelocityContext()
-    context.put("entities", entities)
-    context.put("request", request)
+    val context = VelocityContext(mapOf(
+      "entities" to entities,
+      "request" to request
+    ))
 
-    val dest = outputFile.normalize().toAbsolutePath()
-    Files.newBufferedWriter(dest).use { writer ->
+    Files.newBufferedWriter(outputFile).use { writer ->
       template.merge(context, writer)
     }
 
-    onAfterGenerate.accept(dest)
+    onAfterGenerateFile.accept(outputFile)
   }
 }

@@ -48,6 +48,9 @@ data class CodeGenRequest(
 
   @JsonProperty("package")
   val packageName: PackageName? = null,
+
+  //TODO: accept caseFormat for entity name in output file
+  // only applicable for OutputMode.MULTIPLE, default to CaseFormat.UPPER_CAMEL
 ) {
 
   @JsonIgnore
@@ -90,7 +93,7 @@ data class CodeGenRequest(
 
       val filename =
         template.filename ?: throw IllegalArgumentException("template filename required")
-      require(filename.endsWith(TEMPLATE_SUFFIX)) { "template must end with .vm: $template" }
+      require(filename.endsWith(TEMPLATE_SUFFIX)) { "template must end with $TEMPLATE_SUFFIX: $template" }
     }
 
     when (outputMode) {

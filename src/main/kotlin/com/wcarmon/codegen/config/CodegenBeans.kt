@@ -2,6 +2,7 @@ package com.wcarmon.codegen.config
 
 import com.fasterxml.jackson.databind.ObjectReader
 import com.wcarmon.codegen.CodeGenerator
+import com.wcarmon.codegen.TEMPLATE_SUFFIX
 import com.wcarmon.codegen.input.EntityConfigParser
 import com.wcarmon.codegen.input.EntityConfigParserImpl
 import org.apache.logging.log4j.LogManager
@@ -55,7 +56,7 @@ class CodegenBeans {
 
       it.init()
 
-      LOG.info("extra templates can go at $extraTemplatesPath/*.vm")
+      LOG.info("extra templates can go at $extraTemplatesPath/*${TEMPLATE_SUFFIX}")
     }
 
   @Bean

@@ -1,11 +1,11 @@
 package com.wcarmon.codegen
 
 import com.fasterxml.jackson.databind.ObjectReader
+import com.google.common.base.CaseFormat
 import com.wcarmon.codegen.input.EntityConfigParser
-import com.wcarmon.codegen.input.getPathsForNamePattern
+import com.wcarmon.codegen.input.getPathsMatchingNamePattern
 import com.wcarmon.codegen.model.CodeGenRequest
 import com.wcarmon.codegen.model.Entity
-import com.wcarmon.codegen.model.OutputMode.MULTIPLE
 import com.wcarmon.codegen.model.OutputMode.SINGLE
 import org.apache.commons.lang3.StringUtils
 import org.apache.logging.log4j.LogManager
@@ -29,14 +29,21 @@ class CodeGeneratorApp(
     private val LOG = LogManager.getLogger(CodeGeneratorApp::class.java)
   }
 
+  /**
+   * @param requestConfigRoot where to start looking for request.json files
+   *
+   * See [PATTERN_FOR_GEN_REQ_FILE]
+   */
   fun run(requestConfigRoot: Path) {
-    require(Files.exists(requestConfigRoot)) { "configRoot must exist" }
-    require(Files.isDirectory(requestConfigRoot)) { "configRoot must be a directory" }
+    val cleanRoot = requestConfigRoot.normalize().toAbsolutePath()
 
-    findCodeGenRequests(requestConfigRoot)
-      .forEach { req ->
+    require(Files.exists(cleanRoot)) { "configRoot must exist at $cleanRoot" }
+    require(Files.isDirectory(cleanRoot)) { "expected directory at $cleanRoot" }
 
-        val entities = findEntityConfigs(req.entityConfigDirs)
+    findCodeGenRequests(cleanRoot)
+      .forEach { codeGenRequest ->
+
+        val entities = findEntityConfigs(codeGenRequest.entityConfigDirs)
 
         LOG.info("Found entity configs for request: count={}, names=[{}]",
           entities.size,
@@ -48,12 +55,12 @@ class CodeGeneratorApp(
             256))
 
         // -- Enforce unique entity names
-        val entityNames = entities.map { it.name }
+        val entityNames = entities.map { it.name.lowerCamel }
         require(entityNames.size == entityNames.toSet().size) {
-          "Entity names must be unique: entityNames=${entityNames.sortedBy { it.lowerCamel }}"
+          "Entity names must be unique: entityNames=${entityNames.sortedBy { it }}"
         }
 
-        handleCodeGenRequest(req, entities)
+        handleCodeGenRequest(codeGenRequest, entities)
       }
   }
 
@@ -64,47 +71,62 @@ class CodeGeneratorApp(
 
     val template = templateLoader(request.template.file.toPath())
 
-    when (request.outputMode) {
-      SINGLE -> generator.generateToOneFile(
+    if (request.outputMode == SINGLE) {
+      generator.generateOneFileForEntities(
         entities = entities,
         request = request,
         template = template,
       )
 
-      MULTIPLE -> {
-        require(request.outputFilenameTemplate.isNotBlank()) {
-          "outputFilenameTemplate required when generating multiple files"
-        }
-
-        //TODO: accept CaseFormat to support golang, c, rust, ...
-        val fileNameBuilder = { entity: Entity ->
-          String.format(
-            request.outputFilenameTemplate,
-            entity.name.upperCamel)
-        }
-
-        generator.generateToMultipleFiles(
-          entities = entities,
-          fileNameBuilder = fileNameBuilder,
-          request = request,
-          template = template,
-        )
-      }
+      return
     }
+
+    // Invariant: Generating multiple files
+
+    require(request.outputFilenameTemplate.isNotBlank()) {
+      "outputFilenameTemplate required when generating multiple files"
+    }
+
+    //TODO: get from request (don't hardcode)
+    val caseFormat = CaseFormat.UPPER_CAMEL
+
+    val fileNameBuilder = { entity: Entity ->
+      val entityNameInFile = entity.name.forCaseFormat(caseFormat)
+
+      String.format(
+        request.outputFilenameTemplate,
+        entityNameInFile)
+    }
+
+    generator.generateFilePerEntity(
+      entities = entities,
+      fileNameBuilder = fileNameBuilder,
+      request = request,
+      template = template,
+    )
   }
 
+  /**
+   * Traverse `configRoot`,
+   * parse found json files to [CodeGenRequest] instances
+   *
+   * @param configRoot file system root for searching
+   * @return parsed [CodeGenRequest] instances
+   *
+   * See [PATTERN_FOR_GEN_REQ_FILE]
+   */
   private fun findCodeGenRequests(configRoot: Path): Collection<CodeGenRequest> {
 
-    val generatorRequestPaths = getPathsForNamePattern(
+    val generatorRequestPaths = getPathsMatchingNamePattern(
       pathPattern = PATTERN_FOR_GEN_REQ_FILE,
       searchRoot = configRoot,
     )
 
     require(generatorRequestPaths.isNotEmpty()) {
-      "At least one CodeGen request file is required in $configRoot"
+      "At least one Code Generate request file is required under $configRoot"
     }
 
-    LOG.info("Found code gen requests: count={}, files={}",
+    LOG.info("Found Code Generate requests: count={}, files={}",
       generatorRequestPaths.size,
       StringUtils.truncate(generatorRequestPaths.toString(), 256))
 
@@ -116,18 +138,27 @@ class CodeGeneratorApp(
     }
   }
 
+  /**
+   * Traverse each root in `configRoots`,
+   * parse found json files to [Entity] instances
+   *
+   * @param configRoots file system roots for searching
+   * @return parsed [Entity] instances
+   *
+   * See [PATTERN_FOR_ENTITY_FILE]
+   */
   private fun findEntityConfigs(configRoots: Collection<Path>): Collection<Entity> {
-    require(configRoots.isNotEmpty()) { "at least one configRoot is required" }
+    require(configRoots.isNotEmpty()) { "At least one configRoot is required" }
 
     val entityConfigPaths = configRoots.flatMap { configRoot ->
-      getPathsForNamePattern(
+      getPathsMatchingNamePattern(
         pathPattern = PATTERN_FOR_ENTITY_FILE,
         searchRoot = configRoot,
       )
     }.toSet()
 
     require(entityConfigPaths.isNotEmpty()) {
-      "At least one entity config file is required in configRoots=$configRoots"
+      "At least one entity config file is required under configRoots=$configRoots"
     }
 
     return entityConfigParser.parse(entityConfigPaths)
