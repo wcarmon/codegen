@@ -4,6 +4,7 @@ package com.wcarmon.codegen
 
 import com.wcarmon.codegen.config.CodegenBeans
 import com.wcarmon.codegen.config.JSONBeans
+import com.wcarmon.codegen.config.VelocityBeans
 import org.apache.logging.log4j.LogManager
 import org.springframework.boot.Banner
 import org.springframework.boot.SpringApplication
@@ -23,7 +24,7 @@ private val LOG = LogManager.getLogger("com.wcarmon.codegen.CodegenMain")
  * Directory must contain at-least-1 entity json file
  * See [PATTERN_FOR_ENTITY_FILE]
  *
- * Directory must contain at-least-1 code generator request json file
+ * Directory must contain at-least-1 code generate request json file
  * See [PATTERN_FOR_GEN_REQ_FILE]
  */
 fun main(args: Array<String>) {
@@ -43,8 +44,9 @@ fun main(args: Array<String>) {
     .profiles("default")
     .web(WebApplicationType.NONE)
     .sources(
-      JSONBeans::class.java,
       CodegenBeans::class.java,
+      JSONBeans::class.java,
+      VelocityBeans::class.java,
     )
     .build()
     .run(*args)

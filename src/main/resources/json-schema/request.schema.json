@@ -11,6 +11,15 @@
     "allowOverride": {
       "type": "boolean"
     },
+    "caseFormatForOutputFile": {
+      "enum": [
+        "LOWER_CAMEL",
+        "LOWER_HYPHEN",
+        "LOWER_UNDERSCORE",
+        "UPPER_CAMEL",
+        "UPPER_UNDERSCORE"
+      ]
+    },
     "entityConfigDirs": {
       "items": {
         "type": "string"

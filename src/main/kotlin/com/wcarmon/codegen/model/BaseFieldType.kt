@@ -1,7 +1,8 @@
 package com.wcarmon.codegen.model
 
 /**
- * Represents a type in many popular languages.
+ * Represents types for many popular languages
+ * (java, kotlin, golang, rust, typescript, sql, c++ ...).
  *
  * Modifiers like nullable, generics, mutable are in [LogicalFieldType]
  */

@@ -1,7 +1,6 @@
 package com.wcarmon.codegen
 
 import com.fasterxml.jackson.databind.ObjectReader
-import com.google.common.base.CaseFormat
 import com.wcarmon.codegen.input.EntityConfigParser
 import com.wcarmon.codegen.input.getPathsMatchingNamePattern
 import com.wcarmon.codegen.model.CodeGenRequest
@@ -87,11 +86,9 @@ class CodeGeneratorApp(
       "outputFilenameTemplate required when generating multiple files"
     }
 
-    //TODO: get from request (don't hardcode)
-    val caseFormat = CaseFormat.UPPER_CAMEL
-
     val fileNameBuilder = { entity: Entity ->
-      val entityNameInFile = entity.name.forCaseFormat(caseFormat)
+      val entityNameInFile = entity.name.forCaseFormat(
+        request.caseFormatForOutputFile)
 
       String.format(
         request.outputFilenameTemplate,

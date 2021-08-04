@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.google.common.base.CaseFormat
 import com.wcarmon.codegen.TEMPLATE_SUFFIX
 import com.wcarmon.codegen.model.OutputMode.MULTIPLE
 import com.wcarmon.codegen.model.OutputMode.SINGLE
@@ -17,20 +18,22 @@ import java.nio.file.Path
 
 
 /**
- * Represents a parsed code-gen request file
+ * Represents a parsed Code Generate request file
  *
  * See [com.wcarmon.codegen.PATTERN_FOR_GEN_REQ_FILE] for file name pattern
  *
  * See src/main/resources/json-schema/request.schema.json
  */
+// `$id` and `$schema` are part of json standard, but not useful for code generation
 @JsonIgnoreProperties("\u0024schema", "\u0024id")
 @JsonPropertyOrder(alphabetic = true)
 data class CodeGenRequest(
   val entityConfigDirs: Collection<Path>,
+
   private val outputFileOrDirectory: Path,
 
   /**
-   * Prefixed with "file:" or "classpath:"
+   * Prefixed with "classpath:" or "file:"
    *
    * eg. classpath:/templates/jdbc-template/row-mapper.vm
    * eg. file:///tmp/templates/row-mapper.vm
@@ -44,13 +47,14 @@ data class CodeGenRequest(
    * See https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html#format(java.lang.String,java.lang.Object...)
    */
   val outputFilenameTemplate: String = "",
+
   val outputMode: OutputMode,
 
   @JsonProperty("package")
   val packageName: PackageName? = null,
 
-  //TODO: accept caseFormat for entity name in output file
-  // only applicable for OutputMode.MULTIPLE, default to CaseFormat.UPPER_CAMEL
+  /** Only used for OutputMode.MULTIPLE */
+  val caseFormatForOutputFile: CaseFormat = CaseFormat.UPPER_CAMEL,
 ) {
 
   @JsonIgnore

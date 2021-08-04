@@ -2,6 +2,12 @@ package com.wcarmon.codegen.model
 
 import com.wcarmon.codegen.model.BaseFieldType.*
 
+/**
+ * Represents all the aspects of a field's type (in popular languages)
+ *
+ * [BaseFieldType] handles most of the logic for predefined types
+ * Generics are handled by [typeParameters] (parametric polymorphism)
+ */
 data class LogicalFieldType(
   val base: BaseFieldType,
   val nullable: Boolean = false,
@@ -11,13 +17,13 @@ data class LogicalFieldType(
   val scale: Int = 0,     // # decimal digits
   val signed: Boolean = true,
 
-  /** For user defined types */
+  /** Useful for user defined types, fully qualified */
   val rawTypeLiteral: String,
 
-  /** Bounded set of acceptable values? */
+  /** Can this type only have a bounded set of values? */
   val enumType: Boolean = false,
 
-  // -- Only on collections
+  // -- Only on collections & generic types (Parametric polymorphism)
   val typeParameters: List<String> = listOf(),
 ) {
 
@@ -104,7 +110,6 @@ data class LogicalFieldType(
     USER_DEFINED -> rawTypeLiteral //TODO: might need to convert if specified in non-jvm
   }
 
-  //TODO: handle enums
   //TODO: handle unsigned types
   fun asKotlin() = when (base) {
     ARRAY -> getKotlinArrayType()
