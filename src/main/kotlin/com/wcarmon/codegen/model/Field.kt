@@ -14,14 +14,15 @@ import com.wcarmon.codegen.model.BaseFieldType.*
  * - Protocol buffer: field
  * - RDBMS: column
  *
- * - Kotlin: class field
- * - Java: class field, record field
+ * - C++: struct member, class data member
+ * - C: struct member
  * - Golang: struct field
+ * - Java: class field, record field
+ * - Kotlin: class field
  * - Rust: struct field
- * - c: struct member
- * - c++: struct member, class data member
  * - Typescript: property
  */
+// `$id` and `$schema` are part of json standard, but not useful for code generation
 @JsonIgnoreProperties("\u0024schema", "\u0024id")
 @JsonPropertyOrder(alphabetic = true)
 data class Field(

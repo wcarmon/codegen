@@ -3,7 +3,7 @@ package com.wcarmon.codegen.model
 import java.time.Instant
 
 /**
- * Represents logical validations performed on field
+ * Represents logical validations performed on [Field]
  *
  * See src/main/resources/json-schema/field-validation.schema.json
  */

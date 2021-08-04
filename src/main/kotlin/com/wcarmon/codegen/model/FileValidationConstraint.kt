@@ -3,6 +3,8 @@ package com.wcarmon.codegen.model
 import com.fasterxml.jackson.annotation.JsonValue
 
 /**
+ * Validation constraints for files & directories
+ *
  * See src/main/resources/json-schema/field-validation.schema.json
  */
 enum class FileValidationConstraint(

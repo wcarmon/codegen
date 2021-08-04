@@ -17,13 +17,13 @@ data class LogicalFieldType(
   val scale: Int = 0,     // # decimal digits
   val signed: Boolean = true,
 
-  /** Useful for user defined types, fully qualified */
+  /** Useful for user-defined types, fully qualified */
   val rawTypeLiteral: String,
 
-  /** Can this type only have a bounded set of values? */
+  /** Is this type limited to a bounded set of values? */
   val enumType: Boolean = false,
 
-  // -- Only on collections & generic types (Parametric polymorphism)
+  // -- Only for Collections & Generic types (Parametric polymorphism)
   val typeParameters: List<String> = listOf(),
 ) {
 
