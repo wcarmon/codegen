@@ -70,7 +70,7 @@ fun jvmDeserializeTemplate(
       fieldValueExpression)
   }
 
-  if (type.base.isTemporal()
+  if (type.base.isTemporal
     || type.base in setOf(PATH, URI, URL)
     || type.enumType
   ) {
@@ -87,5 +87,5 @@ fun shouldUseJVMDeserializer(type: LogicalFieldType): Boolean =
       || type.base == PATH
       || type.base == URI
       || type.base == URL
-      || type.base.isTemporal()
+      || type.base.isTemporal
       || type.enumType

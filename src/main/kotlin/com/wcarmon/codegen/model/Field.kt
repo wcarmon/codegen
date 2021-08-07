@@ -90,18 +90,14 @@ data class Field(
     }
   }
 
-  // -- Language & Framework specific
-  val asJava by lazy {
-    asJava(type)
-  }
+  // -- Language & Framework specific convenience methods (for velocity)
+  val asJava = asJava(type)
 
-  val collection by lazy {
-    type.base.isCollection
-  }
+  @get:JvmName("getIsCollection") // ... to appease velocity being stupid
+  val isCollection: Boolean = type.base.isCollection
 
-  val isPrimaryKeyField by lazy {
-    rdbms?.positionInPrimaryKey ?: -1 >= 0
-  }
+  @get:JvmName("getIsPrimaryKeyField") // ... to appease velocity being stupid
+  val isPrimaryKeyField = rdbms?.positionInPrimaryKey ?: -1 >= 0
 
   //TODO: move to jackson extensions file
   val jacksonTypeRef by lazy {
@@ -124,11 +120,9 @@ data class Field(
     newJavaCollectionExpression(type.base)
   }
 
-  val shouldQuoteInString by lazy {
-    when (type.base) {
-      STRING -> true
-      else -> false
-    }
+  val shouldQuoteInString = when (type.base) {
+    STRING -> true
+    else -> false
   }
 
   val shouldUseJVMDeserializer by lazy {

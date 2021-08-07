@@ -25,7 +25,9 @@ class VelocityBeans {
   @Bean
   fun velocityEngine() = VelocityEngine()
     .also {
-      it.addProperty("runtime.log.log_invalid_references", "true")  // expensive
+      it.addProperty("runtime.log.log_invalid_method_calls", "true")
+      it.addProperty("runtime.log.log_invalid_references", "true")
+      it.addProperty("runtime.strict_mode.enable", "true")
 
       // GOTCHA: names are arbitrary
 //      it.addProperty(VelocityEngine.RESOURCE_LOADERS, "classpath,file,url")

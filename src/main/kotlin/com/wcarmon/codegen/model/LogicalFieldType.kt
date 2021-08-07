@@ -54,13 +54,13 @@ data class LogicalFieldType(
     require(scale <= precision) { "Scale too high: scale=$scale, precision=$precision, field=$this" }
     require(scale >= 0) { "Scale too low: $scale" }
 
-    if (base.requiresPrecision()) {
+    if (base.requiresPrecision) {
       require(precision > 0) { "Precision too low: $this" }
     } else {
       require(precision == 0) { "Only numeric types can have precision: $this" }
     }
 
-    if (!base.canHaveScale()) {
+    if (!base.canHaveScale) {
       //TODO: missing context
       require(scale == 0) { "field cannot have scale: $this" }
     }
@@ -95,7 +95,7 @@ data class LogicalFieldType(
     }
 
     // -- Parametric polymorphism
-    val n = base.requiredTypeParameterCount()
+    val n = base.requiredTypeParameterCount
     when (n) {
       //TODO: missing context
       0 -> require(typeParameters.isEmpty()) {
