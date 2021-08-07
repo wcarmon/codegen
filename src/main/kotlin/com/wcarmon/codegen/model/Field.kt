@@ -39,7 +39,7 @@ data class Field(
 
   val rdbms: RDBMSColumn? = null,
 
-  val validation: FieldValidation = FieldValidation(),
+  val validation: FieldValidation? = null,
 ) {
 
   companion object {
@@ -60,7 +60,7 @@ data class Field(
       @JsonProperty("signed") signed: Boolean = true,
       @JsonProperty("type") typeLiteral: String = "",
       @JsonProperty("typeParameters") typeParameters: List<String> = listOf(),
-      @JsonProperty("validation") validation: FieldValidation = FieldValidation(),
+      @JsonProperty("validation") validation: FieldValidation? = null,
     ): Field {
 
       //TODO: missing context
@@ -90,8 +90,12 @@ data class Field(
     }
   }
 
+  val hasDefault = this.defaultValue != null
+
   // -- Language & Framework specific convenience methods (for velocity)
-  val asJava = asJava(type)
+  val javaType = asJava(type)
+
+  val kotlinType = asKotlin(type)
 
   val isCollection: Boolean = type.base.isCollection
 

@@ -34,7 +34,7 @@ public final class ${entity.name.upperCamel} {
      * Primary key
     #end
   */
-  private final $field.asJava ${field.name.lowerCamel};
+  private final $field.javaType ${field.name.lowerCamel};
   #end
 
   private ${entity.name.upperCamel}( ${entity.name.upperCamel}Builder builder ) {
@@ -76,7 +76,7 @@ public final class ${entity.name.upperCamel} {
   }
 
   #foreach( $field in $entity.sortedFields )
-    public $field.asJava get${field.name.upperCamel}() {
+    public $field.javaType get${field.name.upperCamel}() {
       return this.$field.name.lowerCamel;
     }
 
@@ -101,16 +101,16 @@ public final class ${entity.name.upperCamel} {
 
   @JsonPOJOBuilder(withPrefix = "", buildMethodName = "build")
   public static class ${entity.name.upperCamel}Builder {
-
+##TODO: set default values on fields here
     #foreach( $field in $entity.sortedFields )
-    private $field.asJava ${field.name.lowerCamel};
+    private $field.javaType ${field.name.lowerCamel};
     #end
 
     ${entity.name.upperCamel}Builder() {
     }
 
     #foreach( $field in $entity.sortedFields )
-    public ${entity.name.upperCamel}Builder ${field.name.lowerCamel}(${field.asJava} value) {
+    public ${entity.name.upperCamel}Builder ${field.name.lowerCamel}(${field.javaType} value) {
       this.$field.name.lowerCamel = value;
       return this;
     }

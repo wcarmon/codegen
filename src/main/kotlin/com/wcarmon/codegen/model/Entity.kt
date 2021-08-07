@@ -78,6 +78,10 @@ data class Entity(
 
   val sortedFields = fields.sortedBy { it.name.lowerCamel }
 
+  val fieldsWithValidation = fields
+    .filter { it.validation != null }
+    .sortedBy { it.name.lowerCamel }
+
   val collectionFields = fields
     .filter { it.type.base.isCollection }
     .sortedBy { it.name.lowerCamel }

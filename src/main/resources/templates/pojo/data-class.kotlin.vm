@@ -1,0 +1,48 @@
+package $request.packageName.value
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.net.URI;
+import java.net.URL;
+import java.time.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.StringJoiner;
+import java.util.TreeSet;
+
+/**
+ * Generated file
+ *
+ * Immutable POJO pattern
+ */
+##TODO: include class documentation when present
+//@JsonDeserialize  <-- TODO: fix this
+data class ${entity.name.upperCamel}(
+  #foreach( $field in $entity.primaryKeyFields )
+      /** PK field */
+      val $field.name.lowerCamel: $field.kotlinType,
+
+  #end
+  // -- Other Fields
+  #foreach( $field in $entity.nonPrimaryKeyFields )
+    #if ($field.hasDefault)
+        val $field.name.lowerCamel: $field.kotlinType = $field.defaultValue,
+    #else
+        val $field.name.lowerCamel: $field.kotlinType,
+    #end
+  #end
+) {
+
+  init {
+    #foreach($field in $entity.fieldsWithValidation)
+        //TODO: validation for $field
+    #end
+  }
+}
