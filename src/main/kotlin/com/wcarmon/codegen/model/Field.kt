@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.wcarmon.codegen.model.BaseFieldType.*
+import com.wcarmon.codegen.model.util.*
 
 /**
  * See src/main/resources/json-schema/field.schema.json
@@ -21,6 +22,8 @@ import com.wcarmon.codegen.model.BaseFieldType.*
  * - Kotlin: class field
  * - Rust: struct field
  * - Typescript: property
+ *
+ * See extensions package for laguage & framework specific methods
  */
 // `$id` and `$schema` are part of json standard, but not useful for code generation
 @JsonIgnoreProperties("\u0024schema", "\u0024id")
@@ -44,10 +47,12 @@ data class Field(
     @JvmStatic
     @JsonCreator
     fun parse(
-      @JsonProperty("name") name: Name,
       @JsonProperty("defaultValue") defaultValue: String? = null,
       @JsonProperty("documentation") documentation: Documentation = Documentation.EMPTY,
       @JsonProperty("enumType") enumType: Boolean = false,
+      @JsonProperty("jvmDeserializerTemplate") jvmDeserializerTemplate: String = "",
+      @JsonProperty("jvmSerializerTemplate") jvmSerializerTemplate: String = "",
+      @JsonProperty("name") name: Name,
       @JsonProperty("nullable") nullable: Boolean = false,
       @JsonProperty("precision") precision: Int = 0,
       @JsonProperty("rdbms") rdbms: RDBMSColumn? = null,
@@ -71,6 +76,8 @@ data class Field(
         type = LogicalFieldType(
           base = BaseFieldType.parse(typeLiteral),
           enumType = enumType,
+          jvmDeserializerTemplate = jvmDeserializerTemplate,
+          jvmSerializerTemplate = jvmSerializerTemplate,
           nullable = nullable,
           precision = precision,
           rawTypeLiteral = typeLiteral,
@@ -83,47 +90,69 @@ data class Field(
     }
   }
 
-  fun isPrimaryKeyField(): Boolean {
-    return rdbms?.positionInPrimaryKey ?: -1 >= 0
+  // -- Language & Framework specific
+  val asJava by lazy {
+    asJava(type)
   }
 
-  fun javaEqualityExpression(identifier0: String, identifier1: String): String {
-    require(identifier0.isNotBlank())
-    require(identifier1.isNotBlank())
-
-    if (type.enumType || type.base == BOOLEAN || type.base == CHAR) {
-      return "$identifier0.${name.lowerCamel} == $identifier1.${name.lowerCamel}"
-    }
-
-    if (type.base == FLOAT_64) {
-      return "Double.compare($identifier0.${name.lowerCamel}, $identifier1.${name.lowerCamel}) == 0"
-    }
-
-    if (type.base == FLOAT_32) {
-      return "Float.compare($identifier0.${name.lowerCamel}, $identifier1.${name.lowerCamel}) == 0"
-    }
-
-    if (type.base == ARRAY) {
-      return "Arrays.deepEquals($identifier0.${name.lowerCamel}, $identifier1.${name.lowerCamel})"
-    }
-
-    return "Objects.equals($identifier0.${name.lowerCamel}, $identifier1.${name.lowerCamel})"
+  val collection by lazy {
+    type.base.isCollection
   }
 
-  fun shouldQuoteInString() = when (type.base) {
-    STRING -> true
-    else -> false
+  val isPrimaryKeyField by lazy {
+    rdbms?.positionInPrimaryKey ?: -1 >= 0
   }
 
-  fun jacksonTypeRef(): String {
-    require(type.base.isParameterized()) {
+  //TODO: move to jackson extensions file
+  val jacksonTypeRef by lazy {
+    require(type.base.isParameterized) {
       "type references are only required for parameterized types"
     }
 
-    return when (type.base) {
+    when (type.base) {
       LIST -> "List<${type.typeParameters[0]}>"
       SET -> "Set<${type.typeParameters[0]}>"
       else -> TODO("Build TypeReference for $this")
     }
   }
+
+  val jdbcGetter by lazy {
+    jdbcGetter(type)
+  }
+
+  val newJavaCollectionExpression by lazy {
+    newJavaCollectionExpression(type.base)
+  }
+
+  val shouldQuoteInString by lazy {
+    when (type.base) {
+      STRING -> true
+      else -> false
+    }
+  }
+
+  val shouldUseJVMDeserializer by lazy {
+    shouldUseJVMDeserializer(type)
+  }
+
+  val unmodifiableJavaCollectionMethod by lazy {
+    unmodifiableJavaCollectionMethod(type.base)
+  }
+
+  fun asPostgreSQL(varcharLength: Int = 0) {
+    asPostgreSQL(type, varcharLength)
+  }
+
+  fun javaEqualityExpression(
+    identifier0: String,
+    identifier1: String,
+  ) = com.wcarmon.codegen.model.util.javaEqualityExpression(
+    type,
+    name,
+    identifier0,
+    identifier1
+  )
+
+  fun jvmDeserializeTemplate(fieldValueExpression: String) =
+    jvmDeserializeTemplate(type, fieldValueExpression)
 }

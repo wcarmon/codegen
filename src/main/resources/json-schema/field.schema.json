@@ -14,6 +14,18 @@
     "enumType": {
       "type": "boolean"
     },
+    "jvmDeserializerTemplate": {
+      "description": "Expression, String -> theType, qualified by the package & possibly the type, use %s for placeholder",
+      "maxLength": 64,
+      "minLength": 1,
+      "type": "string"
+    },
+    "jvmSerializerTemplate": {
+      "description": "Expression, theType -> String, qualified by the package & possibly the type, use %s for placeholder",
+      "maxLength": 64,
+      "minLength": 1,
+      "type": "string"
+    },
     "name": {
       "maxLength": 48,
       "minLength": 1,

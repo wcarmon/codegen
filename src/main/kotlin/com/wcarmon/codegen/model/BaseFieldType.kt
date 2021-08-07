@@ -253,74 +253,86 @@ enum class BaseFieldType {
     ).toSortedMap(String.CASE_INSENSITIVE_ORDER)
   }
 
+  val canHaveScale by lazy {
+    when (this) {
+      FLOAT_32,
+      FLOAT_64,
+      FLOAT_BIG,
+      -> true
+      else -> false
+    }
+  }
+
+  val isCollection by lazy {
+    when (this) {
+      ARRAY,
+      LIST,
+      MAP,
+      SET,
+      -> true
+
+      else -> false
+    }
+  }
+
   /** true for String, Collections, Enums, Arrays */
-  fun isParameterized(): Boolean = when (this) {
-    ARRAY,
-    LIST,
-    MAP,
-    SET,
-    -> true
+  val isParameterized by lazy {
+    when (this) {
+      ARRAY,
+      LIST,
+      MAP,
+      SET,
+      -> true
 
-    USER_DEFINED -> TODO("Determine if type is parameterized: $this")
+      USER_DEFINED -> TODO("Determine if type is parameterized: $this")
 
-    else -> false
+      else -> false
+    }
   }
 
-  fun isCollection(): Boolean = when (this) {
-    ARRAY,
-    LIST,
-    MAP,
-    SET,
-    -> true
+  val isTemporal by lazy {
+    when (this) {
+      DURATION,
+      MONTH_DAY,
+      PERIOD,
+      UTC_INSTANT,
+      UTC_TIME,
+      YEAR,
+      YEAR_MONTH,
+      ZONE_AGNOSTIC_DATE,
+      ZONE_AGNOSTIC_TIME,
+      ZONE_OFFSET,
+      ZONED_DATE_TIME,
+      -> true
 
-    else -> false
+      else -> false
+    }
   }
 
-  fun isTemporal(): Boolean = when (this) {
-    DURATION,
-    MONTH_DAY,
-    PERIOD,
-    UTC_INSTANT,
-    UTC_TIME,
-    YEAR,
-    YEAR_MONTH,
-    ZONE_AGNOSTIC_DATE,
-    ZONE_AGNOSTIC_TIME,
-    ZONE_OFFSET,
-    ZONED_DATE_TIME,
-    -> true
-
-    else -> false
+  val requiresPrecision by lazy {
+    when (this) {
+      FLOAT_32,
+      FLOAT_64,
+      FLOAT_BIG,
+      INT_128,
+      INT_16,
+      INT_32,
+      INT_64,
+      INT_8,
+      INT_BIG,
+      -> true
+      else -> false
+    }
   }
 
-  fun canHaveScale(): Boolean = when (this) {
-    FLOAT_32,
-    FLOAT_64,
-    FLOAT_BIG,
-    -> true
-    else -> false
-  }
-
-  fun requiresPrecision(): Boolean = when (this) {
-    FLOAT_32,
-    FLOAT_64,
-    FLOAT_BIG,
-    INT_128,
-    INT_16,
-    INT_32,
-    INT_64,
-    INT_8,
-    INT_BIG,
-    -> true
-    else -> false
-  }
-
-  fun requiredTypeParameterCount(): Int = when (this) {
-    MAP -> 2
-    ARRAY,
-    LIST,
-    SET,
-    -> 1
-    else -> 0
+  val requiredTypeParameterCount by lazy {
+    when (this) {
+      MAP -> 2
+      ARRAY,
+      LIST,
+      SET,
+      -> 1
+      else -> 0
+    }
   }
 }

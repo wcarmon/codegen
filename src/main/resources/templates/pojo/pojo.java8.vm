@@ -20,8 +20,7 @@ import java.util.TreeSet;
 /**
  * Generated file
  *
- *
- *
+ * Immutable POJO pattern
  */
 ##TODO: include class documentation when present
 @JsonDeserialize(builder = ${entity.name.upperCamel}.${entity.name.upperCamel}Builder.class)
@@ -31,19 +30,19 @@ public final class ${entity.name.upperCamel} {
 
   /**
     ##TODO: include field documentation when present
-    #if($field.isPrimaryKeyField())
+    #if($field.isPrimaryKeyField)
      * Primary key
     #end
   */
-  private final $field.type.asJava() ${field.name.lowerCamel};
+  private final $field.asJava ${field.name.lowerCamel};
   #end
 
   private ${entity.name.upperCamel}( ${entity.name.upperCamel}Builder builder ) {
     //TODO: Validation here
 
     #foreach( $field in $entity.sortedFields )
-      #if($field.type.base.isCollection())
-      this.${field.name.lowerCamel} = ${field.type.unmodifiableJavaCollectionMethod()}(builder.${field.name.lowerCamel});
+      #if($field.isCollection)
+      this.${field.name.lowerCamel} = ${field.unmodifiableJavaCollectionMethod}(builder.${field.name.lowerCamel});
       #else
       this.${field.name.lowerCamel} = builder.${field.name.lowerCamel};
       #end
@@ -77,7 +76,7 @@ public final class ${entity.name.upperCamel} {
   }
 
   #foreach( $field in $entity.sortedFields )
-    public $field.type.asJava() get${field.name.upperCamel}() {
+    public $field.asJava get${field.name.upperCamel}() {
       return this.$field.name.lowerCamel;
     }
 
@@ -87,7 +86,7 @@ public final class ${entity.name.upperCamel} {
   public String toString() {
     return new StringJoiner(", ", ${entity.name.upperCamel}.class.getSimpleName() + "[", "]")
     #foreach( $field in $entity.sortedFields )
-      #if ($field.shouldQuoteInString())
+      #if ($field.shouldQuoteInString)
       .add("$field.name.lowerCamel='" + $field.name.lowerCamel + "'")
       #else
       .add("$field.name.lowerCamel=" + $field.name.lowerCamel)
@@ -104,23 +103,23 @@ public final class ${entity.name.upperCamel} {
   public static class ${entity.name.upperCamel}Builder {
 
     #foreach( $field in $entity.sortedFields )
-    private $field.type.asJava() ${field.name.lowerCamel};
+    private $field.asJava ${field.name.lowerCamel};
     #end
 
     ${entity.name.upperCamel}Builder() {
     }
 
     #foreach( $field in $entity.sortedFields )
-    public ${entity.name.upperCamel}Builder ${field.name.lowerCamel}(${field.type.asJava()} value) {
+    public ${entity.name.upperCamel}Builder ${field.name.lowerCamel}(${field.asJava} value) {
       this.$field.name.lowerCamel = value;
       return this;
     }
 
-      #if($field.type.base.isCollection())
+      #if($field.isCollection)
 
-        public ${entity.name.upperCamel}Builder ${field.name.lowerCamel}(${field.type.getTypeParameters()[0]} value) {
+        public ${entity.name.upperCamel}Builder ${field.name.lowerCamel}(${field.type.typeParameters[0]} value) {
           if (this.$field.name.lowerCamel == null) {
-            this.$field.name.lowerCamel = new $field.type.newJavaCollectionExpression();
+            this.$field.name.lowerCamel = new $field.newJavaCollectionExpression;
           }
 
           this.${field.name.lowerCamel}.add(value);

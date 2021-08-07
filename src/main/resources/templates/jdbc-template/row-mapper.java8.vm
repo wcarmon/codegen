@@ -35,14 +35,14 @@ public final class ${entity.name.upperCamel}RowMapper implements RowMapper<${ent
 
   #if ($entity.hasCollectionFields)
     #foreach ($field in $entity.collectionFields)
-    private static final TypeReference<${field.jacksonTypeRef()}> ${field.name.upperSnake}_TYPE_REF =
+    private static final TypeReference<${field.jacksonTypeRef}> ${field.name.upperSnake}_TYPE_REF =
       new TypeReference<>(){};
     #end
 
   private final ObjectMapper objectMapper;
 
   public ${entity.name.upperCamel}RowMapper(ObjectMapper objectMapper) {
-    Objects.requireNonNull(objectMapper, "objectMapper is required")
+    Objects.requireNonNull(objectMapper, "objectMapper is required");
 
     this.objectMapper = objectMapper;
   }
@@ -66,31 +66,26 @@ public final class ${entity.name.upperCamel}RowMapper implements RowMapper<${ent
         #foreach( $field in $entity.primaryKeyFields )
           ## TODO: use the field.javaStringFactory
         .${field.name.lowerCamel}( ${field.type.rawTypeLiteral}.fromString(
-          rs.${field.type.jdbcGetter()}("${field.name.lowerSnake}")))
+          rs.${field.jdbcGetter}("${field.name.lowerSnake}")))
         #end
 
         // -- Other Fields
         #foreach ($field in $entity.nonPrimaryKeyFields)
-##
-            ## -- Enums
-            #if ($field.type.enumType)
-            .${field.name.lowerCamel}( ${field.type.rawTypeLiteral}.fromString(
-              rs.${field.type.jdbcGetter()}("${field.name.lowerSnake}")) )
-##
-            ## -- Collections
-            #elseif ($field.type.base.isCollection())
+            ## -- Custom Serde
+            #if ($field.shouldUseJVMDeserializer)
             .${field.name.lowerCamel}(
-                to${field.type.rawTypeLiteral}(
-                rs.getString("${field.name.lowerSnake}"), ${field.name.upperSnake}_TYPE_REF))
+              ${field.jvmDeserializeTemplate("rs.getString(""${field.name.lowerSnake}"")")})
 ##
-            ## -- Temporal
-            #elseif ($field.type.base.isTemporal())
-            .${field.name.lowerCamel}( ${field.type.javaStringFactory()}(rs.getString("${field.name.lowerSnake}")))
+            ## -- Collections (JSON via Jackson)
+            #elseif ($field.isCollection)
+            .${field.name.lowerCamel}(
+              to${field.type.rawTypeLiteral}(
+              rs.getString("${field.name.lowerSnake}"), ${field.name.upperSnake}_TYPE_REF))
 ##
-##TODO: handle Path, URI & URL should use the temporal branch
-            ## -- normal fields
+            ## -- Direct assignment
             #else
-            .${field.name.lowerCamel}( rs.${field.type.jdbcGetter()}("${field.name.lowerSnake}") )
+            .${field.name.lowerCamel}(
+              rs.${field.jdbcGetter}("${field.name.lowerSnake}"))
             #end
         #end
     .build();
@@ -98,7 +93,7 @@ public final class ${entity.name.upperCamel}RowMapper implements RowMapper<${ent
 
   #if ($entity.hasCollectionFields)
   /**
-   * Deserialize to a List
+   * Deserialize to a java.util.List
    *
    * @param serialized json version of list data
    * @param typeRef for compile time type safety
@@ -119,7 +114,7 @@ public final class ${entity.name.upperCamel}RowMapper implements RowMapper<${ent
   }
 
   /**
-   * Deserialize to a Set
+   * Deserialize to a java.util.Set
    *
    * @param serialized json version of set data
    * @param typeRef for compile time type safety
