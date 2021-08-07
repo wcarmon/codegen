@@ -1,0 +1,11 @@
+{
+  "$schema": "https://wcarmon.com/schemas/codegen/request.schema.json",
+  "allowOverride": true,
+  "entityConfigDirs": [
+    "file:///home/wcarmon/git-repos/codegen/samples/entities"
+  ],
+  "outputFileOrDirectory": "file:///home/wcarmon/git-repos/codegen/samples/output",
+  "outputFilenameTemplate": "%sRowMapper.kt",
+  "outputMode": "multiple",
+  "templateURI": "classpath:/templates/jdbc-template/row-mapper.kotlin.vm"
+}
