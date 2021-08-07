@@ -30,7 +30,7 @@ public final class ${entity.name.upperCamel} {
 
   /**
     ##TODO: include field documentation when present
-    #if($field.isPrimaryKeyField)
+    #if($field.primaryKeyField)
      * Primary key
     #end
   */
@@ -41,7 +41,7 @@ public final class ${entity.name.upperCamel} {
     //TODO: Validation here
 
     #foreach( $field in $entity.sortedFields )
-      #if($field.isCollection)
+      #if($field.collection)
       this.${field.name.lowerCamel} = ${field.unmodifiableJavaCollectionMethod}(builder.${field.name.lowerCamel});
       #else
       this.${field.name.lowerCamel} = builder.${field.name.lowerCamel};
@@ -115,7 +115,7 @@ public final class ${entity.name.upperCamel} {
       return this;
     }
 
-      #if($field.isCollection)
+      #if($field.collection)
 
         public ${entity.name.upperCamel}Builder ${field.name.lowerCamel}(${field.type.typeParameters[0]} value) {
           if (this.$field.name.lowerCamel == null) {

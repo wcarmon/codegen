@@ -93,10 +93,8 @@ data class Field(
   // -- Language & Framework specific convenience methods (for velocity)
   val asJava = asJava(type)
 
-  @get:JvmName("getIsCollection") // ... to appease velocity being stupid
   val isCollection: Boolean = type.base.isCollection
 
-  @get:JvmName("getIsPrimaryKeyField") // ... to appease velocity being stupid
   val isPrimaryKeyField = rdbms?.positionInPrimaryKey ?: -1 >= 0
 
   //TODO: move to jackson extensions file

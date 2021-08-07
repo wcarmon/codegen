@@ -77,7 +77,7 @@ public final class ${entity.name.upperCamel}RowMapper implements RowMapper<${ent
               ${field.jvmDeserializeTemplate("rs.getString(""${field.name.lowerSnake}"")")})
 ##
             ## -- Collections (JSON via Jackson)
-            #elseif ($field.isCollection)
+            #elseif ($field.collection)
             .${field.name.lowerCamel}(
               to${field.type.rawTypeLiteral}(
               rs.getString("${field.name.lowerSnake}"), ${field.name.upperSnake}_TYPE_REF))
