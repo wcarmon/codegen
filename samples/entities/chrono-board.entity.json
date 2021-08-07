@@ -1,0 +1,102 @@
+{
+  "$schema": "https://wcarmon.com/schemas/codegen/entity.schema.json",
+  "fields": [
+    {
+      "name": "uuid",
+      "rdbms": {
+        "positionInPrimaryKey": 0
+      },
+      "type": "com.wcarmon.ub.model.UBUuid",
+      "validation": {
+        "maxSize": 36,
+        "minSize": 16,
+        "requireNotBlank": true,
+        "requireTrimmed": true
+      }
+    },
+    {
+      "name": "name",
+      "type": "String",
+      "validation": {
+        "requireNotBlank": true
+      }
+    },
+    {
+      "defaultValue": "false",
+      "name": "closed",
+      "type": "Boolean"
+    },
+    {
+      "name": "created",
+      "type": "Instant"
+    },
+    {
+      "name": "updated",
+      "type": "Instant"
+    },
+    {
+      "name": "backgroundImage",
+      "nullable": true,
+      "type": "java.net.URI"
+    },
+    {
+      "defaultValue": "",
+      "name": "details",
+      "type": "String"
+    },
+    {
+      "defaultValue": "true",
+      "name": "enableSearch",
+      "type": "Boolean"
+    },
+    {
+      "enumType": true,
+      "name": "horizon",
+      "type": "com.wcarmon.chrono.model.ChronoHorizon"
+    },
+    {
+      "defaultValue": "",
+      "name": "iconCode",
+      "type": "String"
+    },
+    {
+      "enumType": true,
+      "name": "importance",
+      "type": "com.wcarmon.chrono.model.ChronoLevel"
+    },
+    {
+      "defaultValue": "",
+      "name": "keywords",
+      "type": "String",
+      "validation": {
+        "maxSize": 128
+      }
+    },
+    {
+      "defaultValue": "null",
+      "name": "pinnedPosition",
+      "nullable": true,
+      "precision": 6,
+      "scale": 0,
+      "type": "java.lang.Integer"
+    },
+    {
+      "defaultValue": "",
+      "name": "tags",
+      "type": "Set",
+      "typeParameters": [
+        "com.wcarmon.chrono.model.ChronoTag"
+      ]
+    },
+    {
+      "defaultValue": "null",
+      "jvmDeserializerTemplate": "com.wcarmon.chrono.model.ChronoColor.parse(%s)",
+      "jvmSerializerTemplate": "%s.toString()",
+      "name": "themeColor",
+      "nullable": true,
+      "type": "com.wcarmon.chrono.model.ChronoColor"
+    }
+  ],
+  "name": "ChronoBoard",
+  "pkg": "com.wcarmon.chrono.model"
+}
