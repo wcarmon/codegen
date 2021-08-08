@@ -309,6 +309,25 @@ enum class BaseFieldType {
     }
   }
 
+  val isNumeric by lazy {
+    when (this) {
+      FLOAT_32,
+      FLOAT_64,
+      FLOAT_BIG,
+      INT_128,
+      INT_16,
+      INT_32,
+      INT_64,
+      INT_8,
+      INT_BIG,
+      YEAR,
+      ZONE_OFFSET,
+      -> true
+
+      else -> false
+    }
+  }
+
   val requiresPrecision by lazy {
     when (this) {
       FLOAT_32,

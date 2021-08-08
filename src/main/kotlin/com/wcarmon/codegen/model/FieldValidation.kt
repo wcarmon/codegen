@@ -33,8 +33,6 @@ data class FieldValidation(
 
 
   // For Numeric
-  val coerceAtLeast: Number? = null, // coerce when outside range
-  val coerceAtMost: Number? = null, // coerce when outside range
   val maxValue: Number? = null, // error when outside range
   val minValue: Number? = null, // error when outside range
 
@@ -62,7 +60,5 @@ data class FieldValidation(
         "Conflicting constraint: maxValue=$maxValue, minValue=$minValue"
       }
     }
-
-    //TODO: enforce no impossible combinations for coerceAtLeast & coerceAtMost
   }
 }

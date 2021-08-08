@@ -6,13 +6,7 @@
       "rdbms": {
         "positionInPrimaryKey": 0
       },
-      "type": "com.wcarmon.ub.model.UBUuid",
-      "validation": {
-        "maxSize": 36,
-        "minSize": 16,
-        "requireNotBlank": true,
-        "requireTrimmed": true
-      }
+      "type": "com.wcarmon.ub.model.UBUuid"
     },
     {
       "name": "name",

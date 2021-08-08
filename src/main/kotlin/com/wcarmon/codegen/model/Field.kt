@@ -135,6 +135,14 @@ data class Field(
     unmodifiableJavaCollectionMethod(type.base)
   }
 
+  val usesStringValidation by lazy {
+    type.base == STRING
+  }
+
+  val usesNumericValidation by lazy {
+    type.base.isNumeric
+  }
+
   fun asPostgreSQL(varcharLength: Int = 0) {
     asPostgreSQL(type, varcharLength)
   }
