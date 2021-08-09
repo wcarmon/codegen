@@ -17,6 +17,7 @@ plugins {
 
 apply(plugin = "java")
 apply(plugin = "org.jetbrains.kotlin.jvm")
+
 apply(plugin = "com.diffplug.spotless")
 apply(plugin = "io.gitlab.arturbosch.detekt")
 
@@ -30,6 +31,7 @@ configurations.all {
   exclude(group = "ch.qos.logback", module = "logback-core")
   exclude(group = "com.google.code.findbugs", module = "jsr305")
   exclude(group = "commons-logging", module = "commons-logging")
+  exclude(group = "hibernate-validator", module = "org.hibernate.validator")
   exclude(group = "javax.annotation", module = "jsr305")
   exclude(group = "jboss-logging", module = "org.jboss.logging")
   exclude(group = "jta", module = "jta")
@@ -64,7 +66,10 @@ configurations.all {
     "com.fasterxml.jackson.module:jackson-module-kotlin:2.12.4",
     "com.fasterxml.jackson.module:jackson-module-parameter-names:2.12.4",
     "com.fasterxml.jackson:jackson-bom:2.12.4",
+    "com.github.ben-manes.caffeine:caffeine:2.8.5",
+    "com.github.javafaker:javafaker:1.0.2",
     "com.google.guava:guava:30.0-jre",
+    "com.h2database:h2:1.4.200",
     "com.lmax:disruptor:3.4.4",
     "commons-beanutils:commons-beanutils:1.6.1",
     "commons-codec:commons-codec:1.11",
@@ -84,6 +89,8 @@ configurations.all {
     "org.apache.velocity.tools:velocity-tools-generic:3.1",
     "org.apache.velocity:velocity-engine-core:2.3",
     "org.atteo:evo-inflector:1.3",
+    "org.awaitility:awaitility-kotlin:4.0.3",
+    "org.awaitility:awaitility:4.0.3",
     "org.jetbrains.kotlin:kotlin-compiler-embeddable:1.5.30-M1",
     "org.jetbrains.kotlin:kotlin-reflect:1.5.30-M1",
     "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:1.5.30-M1",
@@ -92,6 +99,7 @@ configurations.all {
     "org.jetbrains.kotlin:kotlin-stdlib:1.5.30-M1",
     "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1",
     "org.jetbrains.kotlinx:kotlinx-coroutines-javafx:1.5.1",
+    "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.5.1",
     "org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.5.1",
     "org.jetbrains:annotations:20.1.0",
     "org.junit.jupiter:junit-jupiter-api:5.7.0",
@@ -100,6 +108,7 @@ configurations.all {
     "org.junit.platform:junit-platform-launcher:1.7.0",
     "org.junit.vintage:junit-vintage-engine:5.7.0",
     "org.mockito:mockito-inline:3.6.0",
+    "org.projectlombok:lombok:1.18.20",
     "org.slf4j:jul-to-slf4j:1.7.30",
     "org.slf4j:slf4j-api:1.7.30",
     "org.slf4j:slf4j-jdk14:1.7.30",
@@ -171,6 +180,8 @@ sourceSets {
 
   main {
     java.srcDirs(
+      "src/gen/java",
+      "src/gen/kotlin",
       "src/main/java",
       "src/main/kotlin"
     )
@@ -178,6 +189,8 @@ sourceSets {
 
   test {
     java.srcDirs(
+      "src/gen/java",
+      "src/gen/kotlin",
       "src/main/java",
       "src/main/kotlin",
       "src/test/java",
@@ -186,47 +199,45 @@ sourceSets {
   }
 }
 
-tasks {
 
-  jar {
-    manifest {
+tasks.jar {
+  manifest {
 // TODO: set main class
 //      attributes("Main-Class" to mainClass)
-    }
-  }
-
-  withType<JavaCompile>().configureEach {
-//    options.forkOptions.javaHome = file(java11Home)
-    options.isDebug = false
-    options.isFailOnError = true
-    options.isFork = true
-    options.isIncremental = true
-    options.isVerbose = false
-//    options.release.set(11)
-  }
-
-  // https://github.com/JetBrains/kotlin/blob/master/libraries/tools/kotlin-gradle-plugin/src/main/kotlin/org/jetbrains/kotlin/gradle/dsl/KotlinCompile.kt
-  withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions {
-      freeCompilerArgs = listOf("-Xjsr305=strict")
-//      jdkHome = java11Home
-      jvmTarget = "11"
-    }
-  }
-
-  withType<Test> {
-
-    failFast = true
-    useJUnitPlatform { }
-
-    testLogging {
-      events("passed", "skipped", "failed", "standardOut", "standardError")
-      showExceptions = true
-      showStandardStreams = true
-    }
   }
 }
 
+tasks.withType<JavaCompile>().configureEach {
+//    options.forkOptions.javaHome = file(java11Home)
+  options.isDebug = false
+  options.isFailOnError = true
+  options.isFork = true
+  options.isIncremental = true
+  options.isVerbose = false
+//    options.release.set(11)
+}
+
+// https://github.com/JetBrains/kotlin/blob/master/libraries/tools/kotlin-gradle-plugin/src/main/kotlin/org/jetbrains/kotlin/gradle/dsl/KotlinCompile.kt
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+  kotlinOptions {
+    freeCompilerArgs = listOf("-Xjsr305=strict")
+//      jdkHome = java11Home
+    jvmTarget = "11"
+  }
+}
+
+tasks.withType<Test> {
+
+  failFast = true
+  useJUnitPlatform { }
+
+  testLogging {
+    events("passed", "skipped", "failed", "standardOut", "standardError")
+    showExceptions = true
+    showStandardStreams = true
+  }
+
+}
 
 publishing {
 
