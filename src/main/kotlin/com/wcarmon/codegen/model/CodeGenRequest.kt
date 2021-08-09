@@ -9,6 +9,7 @@ import com.wcarmon.codegen.TEMPLATE_SUFFIX
 import com.wcarmon.codegen.model.OutputMode.FILE_PER_ENTITY
 import com.wcarmon.codegen.model.OutputMode.SINGLE_FILE
 import org.springframework.core.io.ClassPathResource
+import org.springframework.core.io.FileSystemResource
 import org.springframework.core.io.PathResource
 import org.springframework.core.io.Resource
 import org.springframework.core.io.ResourceLoader.CLASSPATH_URL_PREFIX
@@ -130,5 +131,12 @@ data class CodeGenRequest(
         }
       }
     }
+  }
+
+  val prettyTemplateName = when {
+    template is ClassPathResource -> "classpath:${template.path}"
+    template is FileSystemResource -> template.uri.toString()
+
+    else -> TODO("decide how to pretty-print this template")
   }
 }

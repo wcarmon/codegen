@@ -19,6 +19,7 @@ import java.util.TreeSet;
 
 /**
  * Generated file
+ * Template: $request.prettyTemplateName
  *
  * Immutable POJO pattern
  */

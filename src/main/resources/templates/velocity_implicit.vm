@@ -1,5 +1,4 @@
 #* @implicitly included *#
 #* @vtlvariable name="entities" type="java.util.Collection<com.wcarmon.codegen.model.Entity>" *#
 #* @vtlvariable name="entity" type="com.wcarmon.codegen.model.Entity" *#
-#* @vtlvariable name="req" type="com.wcarmon.codegen.model.CodeGenRequest" *#
 #* @vtlvariable name="request" type="com.wcarmon.codegen.model.CodeGenRequest" *#
