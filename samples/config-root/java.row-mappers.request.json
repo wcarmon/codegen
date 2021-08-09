@@ -4,7 +4,7 @@
   "entityConfigDirs": [
     "file:///home/wcarmon/git-repos/codegen/samples/entities"
   ],
-  "outputFileOrDirectory": "file:///home/wcarmon/git-repos/modern-jvm/chrono-client-common/src/gen/java/com/wcarmon/chrono/rowmappers",
+  "outputFileOrDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/java/com/wcarmon/chrono/rowmappers",
   "outputFilenameTemplate": "%sRowMapper.java",
   "outputMode": "multiple",
   "package": "com.wcarmon.chrono.rowmappers",
