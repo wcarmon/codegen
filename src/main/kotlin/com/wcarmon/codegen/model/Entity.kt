@@ -2,6 +2,8 @@ package com.wcarmon.codegen.model
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.wcarmon.codegen.model.utils.commaSeparatedColumnAssignment
+import com.wcarmon.codegen.model.utils.commaSeparatedColumns
 import org.atteo.evo.inflector.English
 
 
@@ -91,6 +93,8 @@ data class Entity(
     .filter { it.rdbms!!.positionInPrimaryKey != null }
     .sortedBy { it.rdbms!!.positionInPrimaryKey!! }
 
+  val hasPrimaryKeyFields = primaryKeyFields.isNotEmpty()
+
   val nonPrimaryKeyFields = fields
     .filter { it.rdbms == null || it.rdbms.positionInPrimaryKey == null }
     .sortedBy { it.name.lowerCamel }
@@ -101,4 +105,12 @@ data class Entity(
 
   val hasCollectionFields =
     fields.any { it.type.base.isCollection }
+
+  val commaSeparatedColumns = commaSeparatedColumns(this)
+
+  val questionMarkStringForInsert = (1..fields.size).map { "?" }.joinToString()
+
+  val pkWhereClause = commaSeparatedColumnAssignment(primaryKeyFields)
+
+  val updateSetClause = commaSeparatedColumnAssignment(nonPrimaryKeyFields)
 }

@@ -62,7 +62,6 @@
   },
   "required": [
     "entityConfigDirs",
-    "outputFilenameTemplate",
     "outputFileOrDirectory",
     "outputMode",
     "templateURI"

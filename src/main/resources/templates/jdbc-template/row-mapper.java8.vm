@@ -63,7 +63,7 @@ public final class ${entity.name.upperCamel}RowMapper implements RowMapper<${ent
         #if (!$entity.primaryKeyFields.isEmpty())
         // -- $entity.commentForPKFields
         #end
-        #foreach( $field in $entity.primaryKeyFields )
+        #foreach ($field in $entity.primaryKeyFields)
           ## TODO: use the field.javaStringFactory
         .${field.name.lowerCamel}( ${field.type.rawTypeLiteral}.fromString(
           rs.${field.jdbcGetter}("${field.name.lowerSnake}")))
