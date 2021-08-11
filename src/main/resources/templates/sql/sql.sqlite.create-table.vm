@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS ${entity.dbSchemaPrefix}${entity.name.lowerSnake}
 ##
   #if ($entity.hasPrimaryKeyFields)
     ,
-    $entity.sqlitePrimaryKeyTableConstraint
+    $entity.primaryKeyTableConstraint
   #end
   ##TODO: unique constraints
   ##TODO: check constraints

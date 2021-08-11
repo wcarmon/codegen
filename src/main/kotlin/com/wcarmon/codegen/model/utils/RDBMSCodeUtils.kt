@@ -2,8 +2,11 @@
 
 package com.wcarmon.codegen.model.utils
 
+import com.wcarmon.codegen.model.BaseFieldType
+import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.Entity
 import com.wcarmon.codegen.model.Field
+import com.wcarmon.codegen.model.QuoteType
 
 fun commaSeparatedColumns(entity: Entity): String {
 
@@ -43,4 +46,51 @@ fun primaryKeyTableConstraint(entity: Entity): String {
     .joinToString(",")
 
   return "PRIMARY KEY ($csv)"
+}
+
+
+/**
+ * SQLite: https://www.sqlite.org/lang_keywords.html
+ * PostgreSQL: https://www.postgresql.org/docs/current/sql-syntax-lexical.html
+ * Oracle: TODO
+ * DB2: TODO
+ */
+fun quoteTypeForRDBMSLiteral(base: BaseFieldType): QuoteType = when (base) {
+
+  CHAR -> QuoteType.SINGLE
+
+  BOOLEAN,
+  FLOAT_32,
+  FLOAT_64,
+  INT_128,
+  INT_16,
+  INT_32,
+  INT_64,
+  INT_8,
+  YEAR,
+  ZONE_OFFSET,
+  -> QuoteType.NONE
+
+  FLOAT_BIG,
+  INT_BIG,
+  -> TODO("Determine quote type for JVM literal: $base")
+
+  else -> QuoteType.SINGLE
+}
+
+/**
+ * TODO: ...
+ */
+//TODO: more tests here
+fun rdbmsDefaultValueLiteral(field: Field): String {
+  if (field.defaultValue == null) {
+    return ""
+  }
+
+  if (field.shouldDefaultToNull) {
+    return "NULL"
+  }
+
+  return quoteTypeForRDBMSLiteral(field.type.base)
+    .wrap(field.defaultValue)
 }

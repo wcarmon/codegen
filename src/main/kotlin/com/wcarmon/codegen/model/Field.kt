@@ -177,10 +177,6 @@ data class Field(
     type.base.isNumeric
   }
 
-  fun postgresType(varcharLength: Int = 0) {
-    asPostgreSQL(type, varcharLength)
-  }
-
   val sqliteColumnDefinition by lazy {
     sqliteColumnDefinition(this)
   }

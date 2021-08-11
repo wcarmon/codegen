@@ -2,19 +2,14 @@
 
 package com.wcarmon.codegen.model.util
 
-import com.wcarmon.codegen.model.BaseFieldType
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.LogicalFieldType
-import com.wcarmon.codegen.model.QuoteType
-import com.wcarmon.codegen.model.QuoteType.NONE
-import com.wcarmon.codegen.model.QuoteType.SINGLE
+import com.wcarmon.codegen.model.utils.rdbmsDefaultValueLiteral
 
-// Quoting info
-// https://www.sqlite.org/lang_keywords.html
 
 // For aligning columns
-private val CHARS_FOR_COLUMN_NAME = 19
+private val CHARS_FOR_COLUMN_NAME = 20
 private val CHARS_FOR_COLUMN_TYPE = 7
 private val CHARS_FOR_DEFAULT_CLAUSE = 13
 private val CHARS_FOR_NULLABLE_CLAUSE = 9
@@ -24,7 +19,7 @@ private val CHARS_FOR_NULLABLE_CLAUSE = 9
  *
  * SQLite adjust storage based on the values you pass it
  */
-fun asSQLite(type: LogicalFieldType) =
+fun getSQLiteTypeLiteral(type: LogicalFieldType) =
   when (type.base) {
 
     BOOLEAN,
@@ -52,29 +47,6 @@ fun asSQLite(type: LogicalFieldType) =
     else -> "TEXT"
   }
 
-fun quoteTypeForSQLiteLiterals(base: BaseFieldType): QuoteType = when (base) {
-
-  CHAR -> SINGLE
-
-  BOOLEAN,
-  FLOAT_32,
-  FLOAT_64,
-  INT_128,
-  INT_16,
-  INT_32,
-  INT_64,
-  INT_8,
-  YEAR,
-  ZONE_OFFSET,
-  -> NONE
-
-  FLOAT_BIG,
-  INT_BIG,
-  -> TODO("Determine quote type for JVM literal: $base")
-
-  else -> SINGLE
-}
-
 
 /**
  * See https://www.sqlite.org/lang_createtable.html
@@ -83,9 +55,11 @@ fun quoteTypeForSQLiteLiterals(base: BaseFieldType): QuoteType = when (base) {
 fun sqliteColumnDefinition(field: Field): String {
   val parts = mutableListOf<String>()
 
-  parts += "\"${field.name.lowerSnake}\"".padEnd(CHARS_FOR_COLUMN_NAME, ' ')
+  parts += "\"${field.name.lowerSnake}\""
+    .padEnd(CHARS_FOR_COLUMN_NAME, ' ')
 
-  parts += asSQLite(field.type).padEnd(CHARS_FOR_COLUMN_TYPE, ' ')
+  parts += getSQLiteTypeLiteral(field.type)
+    .padEnd(CHARS_FOR_COLUMN_TYPE, ' ')
 
   // -- nullable clause
   val nullableClause =
@@ -96,24 +70,10 @@ fun sqliteColumnDefinition(field: Field): String {
 
   // -- default clause
   val defaultClause =
-    if (field.hasDefault) "DEFAULT ${sqliteDefaultValueLiteral(field)}"
+    if (field.hasDefault) "DEFAULT ${rdbmsDefaultValueLiteral(field)}"
     else ""
 
   parts += defaultClause.padEnd(CHARS_FOR_DEFAULT_CLAUSE, ' ')
 
   return parts.joinToString(" ")
-}
-
-//TODO: more tests here
-fun sqliteDefaultValueLiteral(field: Field): String {
-  if (field.defaultValue == null) {
-    return ""
-  }
-
-  if (field.shouldDefaultToNull) {
-    return "NULL"
-  }
-
-  return quoteTypeForSQLiteLiterals(field.type.base)
-    .wrap(field.defaultValue)
 }
