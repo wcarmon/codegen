@@ -82,6 +82,8 @@ configurations.all {
     "io.netty:netty-transport-native-epoll:4.1.65.Final",
     "io.netty:netty-transport-native-unix-common:4.1.65.Final",
     "io.netty:netty-transport:4.1.65.Final",
+    "junit:junit:4.13.1",
+    "net.java.dev.jna:jna:5.8.0",
     "org.apache.commons:commons-compress:1.21",
     "org.apache.commons:commons-lang3:3.12.0",
     "org.apache.commons:commons-math3:3.6.1",
@@ -130,6 +132,8 @@ configurations.all {
     "org.springframework:spring-jdbc:5.3.9",
     "org.springframework:spring-test:5.3.5",
     "org.springframework:spring-web:5.3.5",
+    "org.testcontainers:junit-jupiter:1.15.3",
+    "org.testcontainers:testcontainers:1.15.3",
     "org.yaml:snakeyaml:1.28",
     "oro:oro:2.0.8",
     "xerces:xercesImpl:2.12.0",
@@ -172,6 +176,9 @@ dependencies {
   testImplementation("org.junit.jupiter:junit-jupiter-engine")
   testImplementation("org.junit.jupiter:junit-jupiter-params")
   testImplementation("org.mockito:mockito-inline")
+  testImplementation("org.testcontainers:junit-jupiter")
+  testImplementation("org.testcontainers:testcontainers")
+
   testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
