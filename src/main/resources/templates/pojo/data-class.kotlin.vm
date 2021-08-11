@@ -33,7 +33,7 @@ data class ${entity.name.upperCamel}(
   // -- Other Fields
   #foreach( $field in $entity.nonPrimaryKeyFields )
     #if ($field.hasDefault)
-        val $field.name.lowerCamel: $field.kotlinType = $field.defaultValue,
+        val $field.name.lowerCamel: $field.kotlinType = $field.defaultValueLiteralForJVM,
     #else
         val $field.name.lowerCamel: $field.kotlinType,
     #end

@@ -93,11 +93,13 @@ data class Entity(
     .filter { it.rdbms!!.positionInPrimaryKey != null }
     .sortedBy { it.rdbms!!.positionInPrimaryKey!! }
 
-  val hasPrimaryKeyFields = primaryKeyFields.isNotEmpty()
-
   val nonPrimaryKeyFields = fields
     .filter { it.rdbms == null || it.rdbms.positionInPrimaryKey == null }
     .sortedBy { it.name.lowerCamel }
+
+  val hasPrimaryKeyFields = primaryKeyFields.isNotEmpty()
+
+  val hasNonPrimaryKeyFields = nonPrimaryKeyFields.isNotEmpty()
 
   val commentForPKFields =
     if (primaryKeyFields.isEmpty()) ""

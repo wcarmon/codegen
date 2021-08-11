@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.util.*
+import kotlin.text.RegexOption.IGNORE_CASE
 
 /**
  * See src/main/resources/json-schema/field.schema.json
@@ -33,6 +34,17 @@ data class Field(
 
   val type: LogicalFieldType,
 
+  /**
+   * JSON                         | in here   | Interpretation
+   * ---------------------------- | --------- | --------------
+   * (no defaultValue attribute)  |
+   * defaultValue: null           |
+   * defaultValue: "null"         |
+   * defaultValue: "'null'"       |
+   * defaultValue: ""             |
+   * defaultValue: "\"null\""     |
+   */
+  //TODO: add tests to enforce above
   val defaultValue: String? = null,
 
   val documentation: Documentation = Documentation.EMPTY,
@@ -90,9 +102,31 @@ data class Field(
     }
   }
 
-  val hasDefault = this.defaultValue != null
+  init {
+
+    val isPrimaryKeyField = rdbms?.positionInPrimaryKey ?: -1 >= 0
+    if (isPrimaryKeyField) {
+      require(!type.nullable) {
+        "Primary key fields cannot be nullable: $this"
+      }
+    }
+  }
+
+  val hasDefault = defaultValue != null
+
+  val shouldDefaultToNull: Boolean by lazy {
+    //TODO: is this reusable & threadsafe?
+    val regex =
+      """^['"]?null['"]?$""".toRegex(IGNORE_CASE)
+
+    defaultValue != null && regex.matches(defaultValue)
+  }
 
   // -- Language & Framework specific convenience methods (for velocity)
+  val defaultValueLiteralForJVM by lazy {
+    defaultValueLiteralForJVM(this)
+  }
+
   val javaType = asJava(type)
 
   val kotlinType = asKotlin(type)
@@ -143,8 +177,12 @@ data class Field(
     type.base.isNumeric
   }
 
-  fun asPostgreSQL(varcharLength: Int = 0) {
+  fun postgresType(varcharLength: Int = 0) {
     asPostgreSQL(type, varcharLength)
+  }
+
+  val sqliteColumnDefinition by lazy {
+    sqliteColumnDefinition(this)
   }
 
   fun javaEqualityExpression(

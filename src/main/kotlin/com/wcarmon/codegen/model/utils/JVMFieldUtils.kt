@@ -2,9 +2,49 @@
 
 package com.wcarmon.codegen.model.util
 
+import com.wcarmon.codegen.model.BaseFieldType
 import com.wcarmon.codegen.model.BaseFieldType.*
+import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.LogicalFieldType
+import com.wcarmon.codegen.model.QuoteType
+import com.wcarmon.codegen.model.QuoteType.*
 
+fun quoteTypeForJVMLiterals(base: BaseFieldType): QuoteType = when (base) {
+
+  CHAR -> SINGLE
+
+  BOOLEAN,
+  FLOAT_32,
+  FLOAT_64,
+  INT_128,
+  INT_16,
+  INT_32,
+  INT_64,
+  INT_8,
+  YEAR,
+  ZONE_OFFSET,
+  -> NONE
+
+  FLOAT_BIG,
+  INT_BIG,
+  -> TODO("Determine quote type for JVM literal: $base")
+
+  else -> DOUBLE
+}
+
+
+fun defaultValueLiteralForJVM(field: Field): String? {
+  if (field.defaultValue == null) {
+    return null
+  }
+
+  if (field.shouldDefaultToNull) {
+    return "null"
+  }
+
+  return quoteTypeForJVMLiterals(field.type.base)
+    .wrap(field.defaultValue)
+}
 
 fun jdbcGetter(type: LogicalFieldType): String = when (type.base) {
   BOOLEAN -> "getBoolean"
