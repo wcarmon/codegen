@@ -5,8 +5,14 @@ package com.wcarmon.codegen.model
  *
  * See src/main/resources/json-schema/rdbms-table.schema.json
  */
-class RDBMSTable {
+data class RDBMSTable(
+  val schema: String = "",
+  // TODO: unique index & order
+) {
 
-  // TODO: rdbms: unique index & order
-
+  init {
+    require(schema == schema.trim()) {
+      "schema must be trimmed: $schema"
+    }
+  }
 }

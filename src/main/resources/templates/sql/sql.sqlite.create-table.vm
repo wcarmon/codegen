@@ -1,25 +1,25 @@
 -- See https://www.sqlite.org/lang_createtable.html
 -- See https://www.sqlite.org/datatype3.html
-
+##
 #foreach ($entity in $entities)
 
-  -- Entity: ${entity.pkg.value}.${entity.name.upperCamel}
-  -- PK column count: ${entity.primaryKeyFields.size()}
-  -- Columns count: ${entity.fields.size()}
-  CREATE TABLE IF NOT EXISTS theSchema.${entity.name.lowerSnake} (
+-- Entity: ${entity.pkg.value}.${entity.name.upperCamel}
+-- PK column count: ${entity.primaryKeyFields.size()}
+-- Columns count: ${entity.fields.size()}
+CREATE TABLE IF NOT EXISTS ${entity.dbSchemaPrefix}${entity.name.lowerSnake}
+(
   #foreach( $field in $entity.primaryKeyFields )
     ${field.sqliteColumnDefinition}#if ($foreach.hasNext || $entity.hasNonPrimaryKeyFields),#end
   #end
   #foreach( $field in $entity.nonPrimaryKeyFields )
     ${field.sqliteColumnDefinition}#if ($foreach.hasNext),#end
   #end
-
+##
   #if ($entity.hasPrimaryKeyFields)
     ,
-    $entity.sqlitePrimaryKeyTableConstraint()
+    $entity.sqlitePrimaryKeyTableConstraint
   #end
   ##TODO: unique constraints
   ##TODO: check constraints
-  );
+);
 #end
-

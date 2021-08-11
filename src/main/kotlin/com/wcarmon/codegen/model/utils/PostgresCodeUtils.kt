@@ -1,4 +1,4 @@
-@file:JvmName("PostgresColumnUtils")
+@file:JvmName("PostgresCodeUtils")
 
 package com.wcarmon.codegen.model.util
 

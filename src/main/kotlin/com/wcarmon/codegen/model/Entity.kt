@@ -2,6 +2,7 @@ package com.wcarmon.codegen.model
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.wcarmon.codegen.model.util.sqlitePrimaryKeyTableConstraint
 import com.wcarmon.codegen.model.utils.commaSeparatedColumnAssignment
 import com.wcarmon.codegen.model.utils.commaSeparatedColumns
 import org.atteo.evo.inflector.English
@@ -116,14 +117,9 @@ data class Entity(
 
   val updateSetClause = commaSeparatedColumnAssignment(nonPrimaryKeyFields)
 
-  fun sqlitePrimaryKeyTableConstraint(): String {
-    if (!hasPrimaryKeyFields) {
-      return ""
-    }
+  val dbSchemaPrefix =
+    if (rdbms?.schema?.isBlank() != false) ""
+    else "${rdbms.schema}."
 
-    val csv = primaryKeyFields
-      .map { it.name.lowerSnake }
-      .joinToString(",")
-    return "PRIMARY KEY($csv)"
-  }
+  val sqlitePrimaryKeyTableConstraint = sqlitePrimaryKeyTableConstraint(this)
 }

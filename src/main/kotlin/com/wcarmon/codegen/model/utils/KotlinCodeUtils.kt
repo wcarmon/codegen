@@ -1,4 +1,4 @@
-@file:JvmName("KotlinFieldUtils")
+@file:JvmName("KotlinCodeUtils")
 
 package com.wcarmon.codegen.model.util
 

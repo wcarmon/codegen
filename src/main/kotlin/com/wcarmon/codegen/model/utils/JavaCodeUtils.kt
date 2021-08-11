@@ -1,4 +1,4 @@
-@file:JvmName("JavaFieldUtils")
+@file:JvmName("JavaCodeUtils")
 
 package com.wcarmon.codegen.model.util
 

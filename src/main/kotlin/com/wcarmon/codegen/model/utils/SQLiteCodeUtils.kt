@@ -1,17 +1,17 @@
-@file:JvmName("SQLiteColumnUtils")
+@file:JvmName("SQLiteCodeUtils")
 
 package com.wcarmon.codegen.model.util
 
-import com.wcarmon.codegen.model.BaseFieldType
+import com.wcarmon.codegen.model.*
 import com.wcarmon.codegen.model.BaseFieldType.*
-import com.wcarmon.codegen.model.Field
-import com.wcarmon.codegen.model.LogicalFieldType
-import com.wcarmon.codegen.model.QuoteType
 import com.wcarmon.codegen.model.QuoteType.NONE
 import com.wcarmon.codegen.model.QuoteType.SINGLE
 
+// Quoting info
+// https://www.sqlite.org/lang_keywords.html
+
 // For aligning columns
-private val CHARS_FOR_COLUMN_NAME = 17
+private val CHARS_FOR_COLUMN_NAME = 19
 private val CHARS_FOR_COLUMN_TYPE = 7
 private val CHARS_FOR_DEFAULT_CLAUSE = 13
 private val CHARS_FOR_NULLABLE_CLAUSE = 9
@@ -80,7 +80,7 @@ fun quoteTypeForSQLiteLiterals(base: BaseFieldType): QuoteType = when (base) {
 fun sqliteColumnDefinition(field: Field): String {
   val parts = mutableListOf<String>()
 
-  parts += field.name.lowerSnake.padEnd(CHARS_FOR_COLUMN_NAME, ' ')
+  parts += "\"${field.name.lowerSnake}\"".padEnd(CHARS_FOR_COLUMN_NAME, ' ')
 
   parts += asSQLite(field.type).padEnd(CHARS_FOR_COLUMN_TYPE, ' ')
 
@@ -113,4 +113,17 @@ fun sqliteDefaultValueLiteral(field: Field): String {
 
   return quoteTypeForSQLiteLiterals(field.type.base)
     .wrap(field.defaultValue)
+}
+
+
+fun sqlitePrimaryKeyTableConstraint(entity: Entity): String {
+  if (!entity.hasPrimaryKeyFields) {
+    return ""
+  }
+
+  val csv = entity.primaryKeyFields
+    .map { "\"${it.name.lowerSnake}\"" }
+    .joinToString(",")
+
+  return "PRIMARY KEY ($csv)"
 }
