@@ -2,8 +2,11 @@
 
 package com.wcarmon.codegen.model.util
 
-import com.wcarmon.codegen.model.*
+import com.wcarmon.codegen.model.BaseFieldType
 import com.wcarmon.codegen.model.BaseFieldType.*
+import com.wcarmon.codegen.model.Field
+import com.wcarmon.codegen.model.LogicalFieldType
+import com.wcarmon.codegen.model.QuoteType
 import com.wcarmon.codegen.model.QuoteType.NONE
 import com.wcarmon.codegen.model.QuoteType.SINGLE
 
@@ -113,17 +116,4 @@ fun sqliteDefaultValueLiteral(field: Field): String {
 
   return quoteTypeForSQLiteLiterals(field.type.base)
     .wrap(field.defaultValue)
-}
-
-
-fun sqlitePrimaryKeyTableConstraint(entity: Entity): String {
-  if (!entity.hasPrimaryKeyFields) {
-    return ""
-  }
-
-  val csv = entity.primaryKeyFields
-    .map { "\"${it.name.lowerSnake}\"" }
-    .joinToString(",")
-
-  return "PRIMARY KEY ($csv)"
 }

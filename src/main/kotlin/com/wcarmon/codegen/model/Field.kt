@@ -185,6 +185,10 @@ data class Field(
     sqliteColumnDefinition(this)
   }
 
+  val postgresqlColumnDefinition by lazy {
+    postgresColumnDefinition(this)
+  }
+
   fun javaEqualityExpression(
     identifier0: String,
     identifier1: String,

@@ -3,7 +3,15 @@
 package com.wcarmon.codegen.model.util
 
 import com.wcarmon.codegen.model.BaseFieldType.*
+import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.LogicalFieldType
+
+// For aligning columns
+private val CHARS_FOR_COLUMN_NAME = 19
+private val CHARS_FOR_COLUMN_TYPE = 9
+private val CHARS_FOR_DEFAULT_CLAUSE = 13
+private val CHARS_FOR_NULLABLE_CLAUSE = 9
+
 
 //TODO: handle enums
 fun asPostgreSQL(type: LogicalFieldType, varcharLength: Int = 0): String {
@@ -47,4 +55,31 @@ fun asPostgreSQL(type: LogicalFieldType, varcharLength: Int = 0): String {
 
     USER_DEFINED -> TODO("convert $type")
   }
+}
+
+
+fun postgresColumnDefinition(field: Field): String {
+  val parts = mutableListOf<String>()
+
+  parts += "\"${field.name.lowerSnake}\"".padEnd(CHARS_FOR_COLUMN_NAME, ' ')
+
+  //TODO: fix this
+//  parts += asSQLite(field.type).padEnd(CHARS_FOR_COLUMN_TYPE, ' ')
+
+  // -- nullable clause
+  val nullableClause =
+    if (!field.type.nullable) "NOT NULL"
+    else ""
+
+  parts += nullableClause.padEnd(CHARS_FOR_NULLABLE_CLAUSE, ' ')
+
+  //TODO: fix this
+//  // -- default clause
+//  val defaultClause =
+//    if (field.hasDefault) "DEFAULT ${sqliteDefaultValueLiteral(field)}"
+//    else ""
+//
+//  parts += defaultClause.padEnd(CHARS_FOR_DEFAULT_CLAUSE, ' ')
+
+  return parts.joinToString(" ")
 }

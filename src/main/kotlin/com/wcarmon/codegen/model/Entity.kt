@@ -2,9 +2,9 @@ package com.wcarmon.codegen.model
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import com.wcarmon.codegen.model.util.sqlitePrimaryKeyTableConstraint
 import com.wcarmon.codegen.model.utils.commaSeparatedColumnAssignment
 import com.wcarmon.codegen.model.utils.commaSeparatedColumns
+import com.wcarmon.codegen.model.utils.primaryKeyTableConstraint
 import org.atteo.evo.inflector.English
 
 
@@ -121,5 +121,5 @@ data class Entity(
     if (rdbms?.schema?.isBlank() != false) ""
     else "${rdbms.schema}."
 
-  val sqlitePrimaryKeyTableConstraint = sqlitePrimaryKeyTableConstraint(this)
+  val primaryKeyTableConstraint = primaryKeyTableConstraint(this)
 }

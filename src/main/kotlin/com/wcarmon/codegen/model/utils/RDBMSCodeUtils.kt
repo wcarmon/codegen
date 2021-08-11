@@ -28,3 +28,19 @@ fun commaSeparatedColumns(entity: Entity): String {
 fun commaSeparatedColumnAssignment(fields: List<Field>) = fields
   .map { "${it.name.lowerSnake}=?" }
   .joinToString()
+
+
+/**
+ * TODO: ...
+ */
+fun primaryKeyTableConstraint(entity: Entity): String {
+  if (!entity.hasPrimaryKeyFields) {
+    return ""
+  }
+
+  val csv = entity.primaryKeyFields
+    .map { "\"${it.name.lowerSnake}\"" }
+    .joinToString(",")
+
+  return "PRIMARY KEY ($csv)"
+}
