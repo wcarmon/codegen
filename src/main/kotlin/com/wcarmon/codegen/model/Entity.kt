@@ -115,4 +115,15 @@ data class Entity(
   val pkWhereClause = commaSeparatedColumnAssignment(primaryKeyFields)
 
   val updateSetClause = commaSeparatedColumnAssignment(nonPrimaryKeyFields)
+
+  fun sqlitePrimaryKeyTableConstraint(): String {
+    if (!hasPrimaryKeyFields) {
+      return ""
+    }
+
+    val csv = primaryKeyFields
+      .map { it.name.lowerSnake }
+      .joinToString(",")
+    return "PRIMARY KEY($csv)"
+  }
 }

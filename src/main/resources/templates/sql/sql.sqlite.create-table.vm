@@ -13,9 +13,13 @@
   #foreach( $field in $entity.nonPrimaryKeyFields )
     ${field.sqliteColumnDefinition}#if ($foreach.hasNext),#end
   #end
+
+  #if ($entity.hasPrimaryKeyFields)
+    ,
+    $entity.sqlitePrimaryKeyTableConstraint()
+  #end
+  ##TODO: unique constraints
+  ##TODO: check constraints
   );
 #end
 
-##TODO: unique constraint
-##TODO: PK constraint
-##TODO: check constraint
