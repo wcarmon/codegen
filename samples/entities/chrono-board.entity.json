@@ -35,7 +35,7 @@
       "type": "java.net.URI"
     },
     {
-      "defaultValue": "\"\"",
+      "defaultValue": "",
       "name": "details",
       "type": "String"
     },
@@ -50,7 +50,7 @@
       "type": "com.wcarmon.chrono.model.ChronoHorizon"
     },
     {
-      "defaultValue": "\"\"",
+      "defaultValue": "",
       "name": "iconCode",
       "type": "String"
     },
@@ -60,7 +60,7 @@
       "type": "com.wcarmon.chrono.model.ChronoLevel"
     },
     {
-      "defaultValue": "\"\"",
+      "defaultValue": "",
       "name": "keywords",
       "type": "String",
       "validation": {
