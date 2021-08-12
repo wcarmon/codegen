@@ -66,7 +66,7 @@ data class Field(
       @JsonProperty("jvmSerializerTemplate") jvmSerializerTemplate: String = "",
       @JsonProperty("name") name: Name,
       @JsonProperty("nullable") nullable: Boolean = false,
-      @JsonProperty("precision") precision: Int = 0,
+      @JsonProperty("precision") precision: Int? = null,
       @JsonProperty("rdbms") rdbms: RDBMSColumn? = null,
       @JsonProperty("scale") scale: Int = 0,
       @JsonProperty("signed") signed: Boolean = true,
@@ -76,7 +76,7 @@ data class Field(
     ): Field {
 
       //TODO: missing context
-      require(typeLiteral.isNotBlank()) { "Field.type is required" }
+      require(typeLiteral.isNotBlank()) { "Field.type is required: this=$this" }
 
       //TODO: signed should override whatever is specified on type literal
 
@@ -104,12 +104,14 @@ data class Field(
 
   init {
 
-    val isPrimaryKeyField = rdbms?.positionInPrimaryKey ?: -1 >= 0
+    val isPrimaryKeyField = (rdbms?.positionInPrimaryKey ?: -1) >= 0
     if (isPrimaryKeyField) {
       require(!type.nullable) {
         "Primary key fields cannot be nullable: $this"
       }
     }
+
+    //NOTE: precision and scale are validated on LogicalFieldType
   }
 
   val hasDefault = defaultValue != null
@@ -156,6 +158,10 @@ data class Field(
     newJavaCollectionExpression(type.base)
   }
 
+  val postgresqlColumnDefinition by lazy {
+    postgresColumnDefinition(this)
+  }
+
   val shouldQuoteInString = when (type.base) {
     STRING -> true
     else -> false
@@ -165,24 +171,20 @@ data class Field(
     shouldUseJVMDeserializer(type)
   }
 
-  val unmodifiableJavaCollectionMethod by lazy {
-    unmodifiableJavaCollectionMethod(type.base)
+  val sqliteColumnDefinition by lazy {
+    sqliteColumnDefinition(this)
   }
 
-  val usesStringValidation by lazy {
-    type.base == STRING
+  val unmodifiableJavaCollectionMethod by lazy {
+    unmodifiableJavaCollectionMethod(type.base)
   }
 
   val usesNumericValidation by lazy {
     type.base.isNumeric
   }
 
-  val sqliteColumnDefinition by lazy {
-    sqliteColumnDefinition(this)
-  }
-
-  val postgresqlColumnDefinition by lazy {
-    postgresColumnDefinition(this)
+  val usesStringValidation by lazy {
+    type.base == STRING
   }
 
   fun javaEqualityExpression(

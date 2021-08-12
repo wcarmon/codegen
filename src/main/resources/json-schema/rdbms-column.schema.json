@@ -7,14 +7,38 @@
     "autoIncrement": {
       "type": "boolean"
     },
+    "deserializerTemplate": {
+      "description": "Expression, String -> theType, qualified by the package & possibly the type, use %s for placeholder",
+      "maxLength": 64,
+      "minLength": 1,
+      "type": "string"
+    },
+    "overrideDefaultValue": {
+      "description": "literal for default value, wrap strings in single quotes",
+      "maxLength": 64,
+      "minLength": 1,
+      "type": "string"
+    },
+    "overrideTypeLiteral": {
+      "description": "Allows custom DB type, replaces auto-derived DB type",
+      "maxLength": 64,
+      "minLength": 1,
+      "type": "string"
+    },
     "positionInPrimaryKey": {
-      "exclusiveMinimum": 8,
+      "exclusiveMaximum": 8,
       "minimum": 0,
       "type": "integer"
     },
+    "serializerTemplate": {
+      "description": "Expression, theType -> String, qualified by the package & possibly the type, use %s for placeholder",
+      "maxLength": 64,
+      "minLength": 1,
+      "type": "string"
+    },
     "varcharLength": {
-      "exclusiveMinimum": 4000,
-      "minimum": 0,
+      "exclusiveMinimum": 0,
+      "maximum": 10000,
       "type": "integer"
     }
   },

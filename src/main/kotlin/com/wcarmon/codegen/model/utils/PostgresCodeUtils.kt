@@ -4,7 +4,6 @@ package com.wcarmon.codegen.model.util
 
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.Field
-import com.wcarmon.codegen.model.LogicalFieldType
 import com.wcarmon.codegen.model.utils.rdbmsDefaultValueLiteral
 
 // For aligning columns
@@ -14,52 +13,81 @@ private val CHARS_FOR_DEFAULT_CLAUSE = 13
 private val CHARS_FOR_NULLABLE_CLAUSE = 9
 
 
-//TODO: handle enums
-fun getPostgresTypeLiteral(
-  type: LogicalFieldType,
-  varcharLength: Int = 256,
-): String {
-  require(varcharLength >= 0) { "varcharLength too low: $varcharLength" }
+fun getPostgresTypeLiteral(field: Field): String {
 
-  return when (type.base) {
+  if (field.rdbms != null && field.rdbms.overridesType) {
+    return field.rdbms.overrideTypeLiteral
+  }
+
+  // -- Derive the correct type
+  return when (field.type.base) {
     BOOLEAN -> "BOOLEAN"
     CHAR -> "VARCHAR(4)"
-    DURATION -> "VARCHAR(36)"
-    FLOAT_32 -> "FLOAT4"
-    FLOAT_64 -> "FLOAT8"
-    INT_16 -> "INT2"
-    INT_32 -> "INT4"
-    INT_64 -> "INT8"
-    INT_8 -> "SMALLINT"
+    DURATION -> "VARCHAR(40)"         // only need 37
+    FLOAT_32 -> "REAL"                // FLOAT4
+    FLOAT_64 -> "DOUBLE PRECISION"    // FLOAT8
+    INT_128 -> "NUMERIC(20,0)"
+    INT_16 -> "SMALLINT"              // INT2 == NUMERIC(3,0)
+    INT_64 -> "BIGINT"                // INT8 == NUMERIC(10,0)
+    INT_8 -> "SMALLINT"               // INT2 is the smallest, NUMERIC(2,0)
     MONTH_DAY -> "VARCHAR(16)"
     PATH -> "VARCHAR(256)"
-    PERIOD -> "INTERVAL"
+    PERIOD -> "VARCHAR(40)"           // only need 37
     URL -> "VARCHAR(2048)"
-    UTC_INSTANT -> "VARCHAR(27)"
-    UTC_TIME -> "VARCHAR(15)"
-    UUID -> "UUID"
-    YEAR -> "INT4"
+    UTC_INSTANT -> "VARCHAR(32)"      // only need 27
+    UTC_TIME -> "VARCHAR(16)"         // only need 15
+    UUID -> "VARCHAR(36)"             // PostgreSQL has a UUID type, but why bother :-)
     YEAR_MONTH -> "VARCHAR(32)"
-    ZONE_AGNOSTIC_TIME -> "VARCHAR(12)"
-    ZONE_OFFSET -> "INT4"
+    ZONE_AGNOSTIC_DATE -> "VARCHAR(16)"
+    ZONE_AGNOSTIC_TIME -> "VARCHAR(16)" // only need 12
+    ZONED_DATE_TIME -> "VARCHAR(68)"    // some timezone names are long
+    INT_32,
+    YEAR,
+    ZONE_OFFSET,
+    -> "INTEGER"                        // INT4 == NUMERIC(5,0)
 
-    FLOAT_BIG,
-    INT_128,
-    INT_BIG,
-    ZONE_AGNOSTIC_DATE, //TODO: varchar
-    ZONED_DATE_TIME,
-    MAP,
-    -> TODO("handle getting pg type literal for $type")
+    INT_BIG -> {
+      requireNotNull(field.rdbms) {
+        "field.rdbms is required: field=$field"
+      }
+
+      requireNotNull(field.type.precision) {
+        "Positive field.precision is required: field=$field"
+      }
+
+      "NUMERIC(${field.type.precision}, 0)"
+    }
+
+    FLOAT_BIG -> {
+      requireNotNull(field.rdbms) {
+        "field.rdbms is required: field=$field"
+      }
+
+      require(field.type.scale > 0) {
+        "Positive field.scale is required for float types: field=$field"
+      }
+
+      "NUMERIC(${field.type.precision}, ${field.type.scale})"
+    }
 
     ARRAY,
     LIST,
+    MAP,
     SET,
-    -> "VARCHAR($varcharLength)"
-
     STRING,
     URI,
     USER_DEFINED,
-    -> "VARCHAR($varcharLength)"
+    -> {
+      requireNotNull(field.rdbms) {
+        "field.rdbms is required: field=${field}"
+      }
+
+      requireNotNull(field.rdbms.varcharLength) {
+        "field.rdbms.varcharLength (or field.rdbms.overrideTypeLiteral) is required: field=${field}"
+      }
+
+      "VARCHAR(${field.rdbms.varcharLength})"
+    }
   }
 }
 
@@ -70,7 +98,7 @@ fun postgresColumnDefinition(field: Field): String {
   parts += "\"${field.name.lowerSnake}\""
     .padEnd(CHARS_FOR_COLUMN_NAME, ' ')
 
-  parts += getPostgresTypeLiteral(field.type)
+  parts += getPostgresTypeLiteral(field)
     .padEnd(CHARS_FOR_COLUMN_TYPE, ' ')
 
   // -- nullable clause
@@ -80,11 +108,17 @@ fun postgresColumnDefinition(field: Field): String {
 
   parts += nullableClause.padEnd(CHARS_FOR_NULLABLE_CLAUSE, ' ')
 
-  //TODO: fix this
   // -- default clause
   val defaultClause =
-    if (field.hasDefault) "DEFAULT ${rdbmsDefaultValueLiteral(field)}"
-    else ""
+    if (field.rdbms != null && field.rdbms.overrideDefaultValue != null) {
+      "DEFAULT ${field.rdbms.overrideDefaultValue}"
+
+    } else if (field.hasDefault) {
+      "DEFAULT ${rdbmsDefaultValueLiteral(field)}"
+
+    } else {
+      ""
+    }
 
   parts += defaultClause.padEnd(CHARS_FOR_DEFAULT_CLAUSE, ' ')
 

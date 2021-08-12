@@ -354,4 +354,8 @@ enum class BaseFieldType {
       else -> 0
     }
   }
+
+  val canHavePrecision by lazy {
+    requiresPrecision || this == USER_DEFINED
+  }
 }

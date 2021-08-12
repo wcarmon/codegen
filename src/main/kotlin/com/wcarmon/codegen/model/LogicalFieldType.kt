@@ -1,5 +1,7 @@
 package com.wcarmon.codegen.model
 
+const val MAX_PRECISION = 1_000
+
 /**
  * Represents all the aspects of a field's type (in popular languages)
  *
@@ -13,14 +15,17 @@ data class LogicalFieldType(
   val nullable: Boolean = false,
 
   // -- Only numeric types
-  val precision: Int = 0, // total # significant digits (both sides of decimal point)
+  val precision: Int? = null, // total # significant digits (both sides of decimal point)
   val scale: Int = 0,     // # decimal digits
   val signed: Boolean = true,
 
   /** Is this type limited to a bounded set of values? */
   val enumType: Boolean = false,
 
-  /** Useful for user-defined types, fully qualified */
+  /**
+   * Useful for user-defined types, fully qualified
+   * Use syntax for java, kotlin, golang, rust, typescript, or postgres
+   * */
   val rawTypeLiteral: String,
 
   /**
@@ -48,50 +53,62 @@ data class LogicalFieldType(
 ) {
 
   init {
-    require(precision <= 1_000) { "precision too high: $precision, field=$this" }
-    require(precision >= 0) { "precision too low: $precision, field=$this" }
-
-    require(scale <= precision) { "Scale too high: scale=$scale, precision=$precision, field=$this" }
-    require(scale >= 0) { "Scale too low: $scale" }
-
     if (base.requiresPrecision) {
-      require(precision > 0) { "Precision too low: $this" }
-    } else {
-      require(precision == 0) { "Only numeric types can have precision: $this" }
+      requireNotNull(precision) { "precision is required" }
+    }
+
+    if (!base.canHavePrecision) {
+      require(precision == null) { "Only numeric types can have precision: this=$this" }
+    }
+
+    if (precision != null) {
+      require(precision <= MAX_PRECISION) {
+        "precision too high: precision=$precision, this=$this"
+      }
+
+      require(precision > 0) {
+        "precision must be positive: precision=$precision, this=$this"
+      }
+
+      require(scale <= precision) {
+        "Scale too high: scale=$scale, precision=$precision, this=$this"
+      }
     }
 
     if (!base.canHaveScale) {
-      //TODO: missing context
-      require(scale == 0) { "field cannot have scale: $this" }
+      require(scale == 0) { "field cannot have scale: this=$this" }
     }
+
+    require(scale >= 0) { "Scale must be non-negative: $scale, this=$this" }
+
 
     // -- Serde
     if (jvmDeserializerTemplate.isNotBlank()) {
       require(jvmSerializerTemplate.isNotBlank()) {
-        "jvmSerializer required (to match jvmDeserializer): $this"
+        "jvmSerializerTemplate required (to match jvmDeserializerTemplate): this=$this"
       }
 
       require(jvmDeserializerTemplate.contains("%s")) {
-        "jvmSerializerTemplate must contain a placeholder for the serialized string"
+        "jvmDeserializerTemplate must contain a placeholder for the serialized string: this=$this"
       }
     }
 
     if (jvmSerializerTemplate.isNotBlank()) {
       require(jvmDeserializerTemplate.isNotBlank()) {
-        "jvmDeserializer required (to match jvmSerializer): $this"
+        "jvmDeserializerTemplate required (to match jvmSerializerTemplate): this=$this"
       }
 
       require(jvmSerializerTemplate.contains("%s")) {
-        "jvmSerializerTemplate must contain a placeholder for the field"
+        "jvmSerializerTemplate must contain a placeholder for the field: this=$this"
       }
     }
 
     require(jvmSerializerTemplate.trim() == jvmSerializerTemplate) {
-      "jvmSerializerTemplate must be trimmed: $this"
+      "jvmSerializerTemplate must be trimmed: this=$this"
     }
 
     require(jvmDeserializerTemplate.trim() == jvmDeserializerTemplate) {
-      "jvmDeserializerTemplate must be trimmed: $this"
+      "jvmDeserializerTemplate must be trimmed: this=$this"
     }
 
     // -- Parametric polymorphism
@@ -99,15 +116,16 @@ data class LogicalFieldType(
     when (n) {
       //TODO: missing context
       0 -> require(typeParameters.isEmpty()) {
-        "type parameter not allowed"
+        "type parameter not allowed: this=$this"
       }
 
       1 -> require(typeParameters.size == n) {
-        "exactly 1-type parameter required (add 'typeParameters' to Field)"
+        "exactly 1-type parameter required (add 'typeParameters' to Field): this=$this"
       }
 
       else -> require(typeParameters.size == n) {
-        "type parameters required (add 'typeParameters' to Field): requiredCount=$n, actualCount=${typeParameters.size}"
+        "type parameters required (add 'typeParameters' to Field): " +
+            "requiredCount=$n, actualCount=${typeParameters.size}, this=$this"
       }
     }
   }
