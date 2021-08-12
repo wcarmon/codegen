@@ -4,14 +4,19 @@
     {
       "name": "uuid",
       "rdbms": {
-        "positionInPrimaryKey": 0
+        "positionInPrimaryKey": 0,
+        "varcharLength": 36
       },
       "type": "com.wcarmon.ub.model.UBUuid"
     },
     {
       "name": "name",
+      "rdbms": {
+        "varcharLength": 48
+      },
       "type": "String",
       "validation": {
+        "maxSize": 48,
         "requireNotBlank": true
       }
     },
@@ -32,11 +37,17 @@
       "defaultValue": "null",
       "name": "backgroundImage",
       "nullable": true,
+      "rdbms": {
+        "varcharLength": 1024
+      },
       "type": "java.net.URI"
     },
     {
       "defaultValue": "",
       "name": "details",
+      "rdbms": {
+        "varcharLength": 512
+      },
       "type": "String"
     },
     {
@@ -46,22 +57,40 @@
     },
     {
       "enumType": true,
+      "jvmDeserializerTemplate": "com.wcarmon.chrono.model.ChronoHorizon.parse(%s)",
+      "jvmSerializerTemplate": "%s.valueAsString()",
       "name": "horizon",
+      "rdbms": {
+        "deserializerTemplate": "com.wcarmon.chrono.model.ChronoHorizon.fromDBValue(%s)",
+        "overrideTypeLiteral": "INTEGER",
+        "serializerTemplate": "%s.toDBValue()"
+      },
       "type": "com.wcarmon.chrono.model.ChronoHorizon"
     },
     {
       "defaultValue": "",
       "name": "iconCode",
+      "rdbms": {
+        "varcharLength": 48
+      },
       "type": "String"
     },
     {
       "enumType": true,
       "name": "importance",
+      "rdbms": {
+        "deserializerTemplate": "com.wcarmon.chrono.model.ChronoLevel.fromDBValue(%s)",
+        "overrideTypeLiteral": "INTEGER",
+        "serializerTemplate": "%s.toDBValue()"
+      },
       "type": "com.wcarmon.chrono.model.ChronoLevel"
     },
     {
       "defaultValue": "",
       "name": "keywords",
+      "rdbms": {
+        "varcharLength": 192
+      },
       "type": "String",
       "validation": {
         "maxSize": 128
@@ -77,6 +106,10 @@
     },
     {
       "name": "tags",
+      "rdbms": {
+        "overrideDefaultValue": "''",
+        "varcharLength": 512
+      },
       "type": "Set",
       "typeParameters": [
         "com.wcarmon.chrono.model.ChronoTag"
@@ -88,6 +121,11 @@
       "jvmSerializerTemplate": "%s.toString()",
       "name": "themeColor",
       "nullable": true,
+      "rdbms": {
+        "deserializerTemplate": "com.wcarmon.chrono.model.ChronoColor.parse(%s)",
+        "serializerTemplate": "%s.toString()",
+        "varcharLength": 24
+      },
       "type": "com.wcarmon.chrono.model.ChronoColor"
     }
   ],
