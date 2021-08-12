@@ -175,6 +175,9 @@ data class Field(
     sqliteColumnDefinition(this)
   }
 
+  //TODO: convert to fun,
+  //    accept template placeholder replacement here
+  //    rename
   val unmodifiableJavaCollectionMethod by lazy {
     unmodifiableJavaCollectionMethod(type.base)
   }

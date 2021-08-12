@@ -1,5 +1,6 @@
 @file:JvmName("KotlinCodeUtils")
 
+/** Utilities only useful for generating Kotlin */
 package com.wcarmon.codegen.model.util
 
 import com.wcarmon.codegen.model.BaseFieldType
@@ -46,6 +47,8 @@ fun asKotlin(type: LogicalFieldType) = when (type.base) {
 
 
 /**
+ * See https://kotlinlang.org/docs/basic-types.html
+ *
  * @return kotlin array type literal
  */
 private fun getKotlinArrayType(

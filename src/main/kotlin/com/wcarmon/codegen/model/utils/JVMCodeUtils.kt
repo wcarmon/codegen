@@ -1,15 +1,20 @@
 @file:JvmName("JVMCodeUtils")
 
+/** Utilities common to all JVM languages */
 package com.wcarmon.codegen.model.util
 
 import com.wcarmon.codegen.model.BaseFieldType
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.LogicalFieldType
-import com.wcarmon.codegen.model.QuoteType
 import com.wcarmon.codegen.model.QuoteType.*
 
-fun quoteTypeForJVMLiterals(base: BaseFieldType): QuoteType = when (base) {
+/**
+ * Output only applicable to JVM languages (eg. Java, Kotlin, groovy...)
+ *
+ * @return Quote type for the logical base type
+ */
+fun quoteTypeForJVMLiterals(base: BaseFieldType) = when (base) {
 
   CHAR -> SINGLE
 
@@ -32,7 +37,11 @@ fun quoteTypeForJVMLiterals(base: BaseFieldType): QuoteType = when (base) {
   else -> DOUBLE
 }
 
-
+/**
+ * Output only applicable to JVM languages (eg. Java, Kotlin, groovy...)
+ *
+ * @return the default value literal
+ */
 fun defaultValueLiteralForJVM(field: Field): String? {
   if (field.defaultValue == null) {
     return null
@@ -46,6 +55,11 @@ fun defaultValueLiteralForJVM(field: Field): String? {
     .wrap(field.defaultValue)
 }
 
+/**
+ * See https://docs.oracle.com/en/java/javase/11/docs/api/java.sql/java/sql/ResultSet.html
+ *
+ * @return getter method literal declared on [java.sql.ResultSet]
+ */
 fun jdbcGetter(type: LogicalFieldType): String = when (type.base) {
   BOOLEAN -> "getBoolean"
   FLOAT_32 -> "getFloat"
@@ -54,47 +68,45 @@ fun jdbcGetter(type: LogicalFieldType): String = when (type.base) {
   INT_16 -> "getShort"
   INT_32 -> "getInt"
   INT_64 -> "getLong"
+  INT_8 -> "getByte"
   URL -> "getURL"
-  UTC_INSTANT -> "getString"
   YEAR -> "getInt"
-
-//    CHAR, // 16-bit Unicode character
-//    INT_128
-//    INT_8
-//    INT_BIG
-
-//    DURATION,           // measured in seconds & nanos
-//    MONTH_DAY,          // eg. birthdays
-//    PERIOD,             // measured in years, months (day agnostic) or days (time agnostic)
-//    UTC_TIME,           // eg. daily meeting time, market opening time (y/m/d agnostic)
-//    YEAR_MONTH,         // eg. credit card expiration
-//    ZONE_AGNOSTIC_DATE, // eg. birthdate (tz agnostic)
-//    ZONE_AGNOSTIC_TIME, // eg. store closing time (tz agnostic)
-//    ZONE_OFFSET,        // seconds (with upper bound)
-//    ZONED_DATE_TIME,    // Instant + offset + tz rules
+  ZONE_OFFSET -> "getInt"
 
   ARRAY,
+  DURATION,
   LIST,
   MAP,
+  MONTH_DAY,
   PATH,
+  PERIOD,
   SET,
   STRING,
   URI,
+  USER_DEFINED,
+  UTC_INSTANT,
+  UTC_TIME,
   UUID,
+  YEAR_MONTH,
+  ZONE_AGNOSTIC_DATE,
+  ZONE_AGNOSTIC_TIME,
+  ZONED_DATE_TIME,
   -> "getString"
 
+  // TODO: CHAR, // 16-bit Unicode character
+  // TODO: INT_128
+  // TODO: INT_BIG
 
-  //TODO: handle when enum puts number in database
-  USER_DEFINED ->
-    if (type.enumType) "getString"
-    else "getString"  // User has to serialize somehow
-
-  else -> TODO("add jdbc getter for $type")
+  else -> TODO("Add jdbc getter for $type")
 }
 
 
 /**
+ * Uses expands the template
+ *
  * See [LogicalFieldType.jvmDeserializerTemplate]
+ *
+ * @return expanded template (with %s replaced with [fieldValueExpression])
  */
 fun jvmDeserializeTemplate(
   type: LogicalFieldType,
@@ -119,9 +131,10 @@ fun jvmDeserializeTemplate(
       fieldValueExpression)
   }
 
-  TODO("decide how to deserialise on jvm: $type")
+  TODO("decide how to deserialize on jvm: $type")
 }
 
+//TODO: use JVM Deserializer unless user overrides using [Field::jvmDeserializer]
 fun shouldUseJVMDeserializer(type: LogicalFieldType): Boolean =
   type.jvmSerializerTemplate.isNotBlank()
       || type.base == PATH

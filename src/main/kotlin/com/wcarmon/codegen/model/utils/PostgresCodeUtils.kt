@@ -1,5 +1,6 @@
 @file:JvmName("PostgresCodeUtils")
 
+/** Utilities only useful for generating PostgreSQL code */
 package com.wcarmon.codegen.model.util
 
 import com.wcarmon.codegen.model.BaseFieldType.*
@@ -13,6 +14,11 @@ private val CHARS_FOR_DEFAULT_CLAUSE = 13
 private val CHARS_FOR_NULLABLE_CLAUSE = 9
 
 
+/**
+ * See https://www.postgresql.org/docs/current/datatype.html
+ *
+ * @return Literal for PostgreSQL type
+ */
 fun getPostgresTypeLiteral(field: Field): String {
 
   if (field.rdbms != null && field.rdbms.overridesType) {
@@ -92,6 +98,16 @@ fun getPostgresTypeLiteral(field: Field): String {
 }
 
 
+/**
+ * Builds a complete column definition (For 1 column)
+ *
+ * Trailing commas must be handled by the caller
+ *
+ * See https://www.postgresql.org/docs/current/sql-createtable.html
+ *
+ * @return Sub-expression, part of `CREATE TABLE` statement
+ *   Something like "<field-name> <field-type> <nullability> <default value>"
+ */
 fun postgresColumnDefinition(field: Field): String {
   val parts = mutableListOf<String>()
 

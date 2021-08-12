@@ -1,5 +1,6 @@
 @file:JvmName("JavaCodeUtils")
 
+/** Utilities only useful for generating Java */
 package com.wcarmon.codegen.model.util
 
 import com.wcarmon.codegen.model.BaseFieldType
@@ -8,6 +9,8 @@ import com.wcarmon.codegen.model.LogicalFieldType
 import com.wcarmon.codegen.model.Name
 
 /**
+ * See https://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html
+ *
  * @return literal for Java type
  */
 fun asJava(type: LogicalFieldType): String = when (type.base) {
@@ -42,16 +45,18 @@ fun asJava(type: LogicalFieldType): String = when (type.base) {
   ZONE_AGNOSTIC_TIME -> "java.time.LocalTime"
   ZONE_OFFSET -> "java.time.ZoneOffset"
   ZONED_DATE_TIME -> "java.time.ZonedDateTime"
-  //TODO: might need to convert if specified in json as non-jvm
+
+  //TODO: need to convert when raw is specified in json as non-jvm
   USER_DEFINED -> type.rawTypeLiteral
 }
 
 
 /**
  * Deserializer: Converts from String to the type
- * @returns jvm expression, uses %s as placeholder for field value
  *
  * See [LogicalFieldType.jvmDeserializerTemplate]
+ *
+ * @returns jvm expression, uses %s as placeholder for field value
  */
 fun defaultJavaDeserializerTemplate(type: LogicalFieldType): String = when (type.base) {
   BOOLEAN -> TODO("fix string deserializer for $type.base")
@@ -68,7 +73,7 @@ fun defaultJavaDeserializerTemplate(type: LogicalFieldType): String = when (type
   ZONED_DATE_TIME -> TODO("fix string deserializer for $type.base")
   MAP -> TODO("fix string deserializer for $type.base")
 
-  // TODO: comma separated?
+  // TODO: JSON serialized via Jackson
   ARRAY -> TODO("fix string deserializer for $type.base")
   LIST -> TODO("fix string deserializer for $type.base")
   SET -> TODO("fix string deserializer for $type.base")
@@ -80,9 +85,8 @@ fun defaultJavaDeserializerTemplate(type: LogicalFieldType): String = when (type
   PATH -> "${asJava(type)}.of(%s)"
   STRING -> "String.valueOf(%s)"
   URI -> "${asJava(type)}.create(%s)"
-  UUID -> "${asJava(type)}.fromString(%s)"
-
   URL -> "new ${asJava(type)}(%s)"
+  UUID -> "${asJava(type)}.fromString(%s)"
 
   DURATION,
   MONTH_DAY,
@@ -99,6 +103,7 @@ fun defaultJavaDeserializerTemplate(type: LogicalFieldType): String = when (type
 /**
  * Builds java.lang.Object.equals based comparison expression
  * Useful in POJOs
+ *
  * @return expression for java equality test (for 1 field)
  */
 fun javaEqualityExpression(
@@ -132,7 +137,9 @@ fun javaEqualityExpression(
 
 /**
  * Template should prefix "new" when required
- * @return TODO
+ * Statement terminators (semicolons) must be handled by caller
+ *
+ * @return literal for mutable java collection factory
  */
 fun newJavaCollectionExpression(base: BaseFieldType): String {
 
@@ -149,7 +156,10 @@ fun newJavaCollectionExpression(base: BaseFieldType): String {
   }
 }
 
-//TODO: document
+/**
+ * @return template which invokes creates an unmodifiable version of the collection
+ */
+//TODO: use %s template approach
 fun unmodifiableJavaCollectionMethod(base: BaseFieldType): String {
   require(base.isCollection) {
     "method only for collections: $base"
@@ -162,4 +172,3 @@ fun unmodifiableJavaCollectionMethod(base: BaseFieldType): String {
     else -> TODO("Handle immutable version of: $base")
   }
 }
-
