@@ -81,16 +81,6 @@ data class Entity(
     }
   }
 
-  val sortedFields = fields.sortedBy { it.name.lowerCamel }
-
-  val fieldsWithValidation = fields
-    .filter { it.validation != null }
-    .sortedBy { it.name.lowerCamel }
-
-  val collectionFields = fields
-    .filter { it.type.base.isCollection }
-    .sortedBy { it.name.lowerCamel }
-
   val primaryKeyFields = fields
     .filter { it.rdbms != null }
     .filter { it.rdbms!!.positionInPrimaryKey != null }
@@ -100,33 +90,44 @@ data class Entity(
     .filter { it.rdbms == null || it.rdbms.positionInPrimaryKey == null }
     .sortedBy { it.name.lowerCamel }
 
-  val hasPrimaryKeyFields = primaryKeyFields.isNotEmpty()
 
-  val hasNonPrimaryKeyFields = nonPrimaryKeyFields.isNotEmpty()
+  val collectionFields = fields
+    .filter { it.type.base.isCollection }
+    .sortedBy { it.name.lowerCamel }
+
+  val commaSeparatedColumns = commaSeparatedColumns(this)
 
   val commentForPKFields =
     if (primaryKeyFields.isEmpty()) ""
     else "PK " + English.plural("field", primaryKeyFields.size)
 
-  val hasCollectionFields =
-    fields.any { it.type.base.isCollection }
-
-  val commaSeparatedColumns = commaSeparatedColumns(this)
-
-  val questionMarkStringForInsert = (1..fields.size).map { "?" }.joinToString()
-
-  val pkWhereClause = commaSeparatedColumnAssignment(primaryKeyFields)
-
-  val updateSetClause = commaSeparatedColumnAssignment(nonPrimaryKeyFields)
-
   val dbSchemaPrefix =
     if (rdbms?.schema?.isBlank() != false) ""
     else "${rdbms.schema}."
 
-  val primaryKeyTableConstraint = primaryKeyTableConstraint(this)
+  val fieldsWithValidation = fields
+    .filter { it.validation != null }
+    .sortedBy { it.name.lowerCamel }
+
+  val hasCollectionFields =
+    fields.any { it.type.base.isCollection }
+
+  val hasNonPrimaryKeyFields = nonPrimaryKeyFields.isNotEmpty()
+
+  val hasPrimaryKeyFields = primaryKeyFields.isNotEmpty()
 
   val javaImportsForFields: Set<String> = getJavaImportsForFields(this)
 
   fun javaMethodArgsForPKFields(qualified: Boolean) =
     javaMethodArgsForFields(primaryKeyFields, qualified)
+
+  val pkWhereClause = commaSeparatedColumnAssignment(primaryKeyFields)
+
+  val primaryKeyTableConstraint = primaryKeyTableConstraint(this)
+
+  val questionMarkStringForInsert = (1..fields.size).map { "?" }.joinToString()
+
+  val sortedFields = fields.sortedBy { it.name.lowerCamel }
+
+  val updateSetClause = commaSeparatedColumnAssignment(nonPrimaryKeyFields)
 }
