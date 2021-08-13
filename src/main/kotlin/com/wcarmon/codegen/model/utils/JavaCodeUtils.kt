@@ -3,17 +3,37 @@
 /** Utilities only useful for generating Java */
 package com.wcarmon.codegen.model.util
 
-import com.wcarmon.codegen.model.BaseFieldType
+import com.wcarmon.codegen.model.*
 import com.wcarmon.codegen.model.BaseFieldType.*
-import com.wcarmon.codegen.model.LogicalFieldType
-import com.wcarmon.codegen.model.Name
 
 /**
  * See https://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html
  *
  * @return literal for Java type
  */
-fun asJava(type: LogicalFieldType): String = when (type.base) {
+fun asJava(
+  type: LogicalFieldType,
+  qualified: Boolean = true,
+): String {
+
+  val output = asFullyQualifiedJava(type)
+
+  if (qualified) {
+    return output
+  }
+
+  if (!type.base.isParameterized) {
+    return output.substringAfterLast(".")
+  }
+
+  return unqualifyJavaType(output)
+}
+
+
+fun asFullyQualifiedJava(
+  type: LogicalFieldType,
+): String = when (type.base) {
+
   ARRAY -> type.typeParameters.first() + "[]"
   BOOLEAN -> if (type.nullable) "Boolean" else "boolean"
   CHAR -> if (type.nullable) "Character" else "char"
@@ -171,4 +191,59 @@ fun unmodifiableJavaCollectionMethod(base: BaseFieldType): String {
     SET -> "Collections.unmodifiableSet"
     else -> TODO("Handle immutable version of: $base")
   }
+}
+
+/**
+ * primitive and java.lang classes are skipped
+ *
+ * @return distinct, sorted, fully qualified classes, ready for import
+ */
+fun getJavaImportsForFields(entity: Entity) =
+  entity.fields
+    .filter { it.type.base == USER_DEFINED || !it.type.base.isParameterized }
+    .map { asJava(it.type) }
+    .filter { javaTypeRequiresImport(it) }
+    .toSortedSet()
+
+/**
+ * @return true when JVM compiler cannot automatically resolve the type
+ */
+fun javaTypeRequiresImport(fullyQualifiedJavaType: String): Boolean {
+  if (fullyQualifiedJavaType.startsWith("java.lang")) {
+    return false
+  }
+
+  // primitives
+  if (!fullyQualifiedJavaType.contains(".")) {
+    return false
+  }
+
+  return true
+}
+
+/**
+ * @return comma separated method args clause
+ */
+fun javaMethodArgsForFields(
+  fields: Collection<Field>,
+  qualified: Boolean,
+) =
+  fields
+    .map {
+      "${asJava(it.type, qualified)} ${it.name.lowerCamel}"
+    }
+    .joinToString(", ")
+
+//TODO: the return on investment is low here
+private fun unqualifyJavaType(fullyQualifiedJavaType: String): String {
+
+  //TODO: handle arrays
+
+  // eg. "java.util.Set" or "java.util.List"
+  val delim = "<"
+  val qualifiedUnparameterizedType = fullyQualifiedJavaType.substringBefore(delim)
+
+  return qualifiedUnparameterizedType.substringAfterLast(".") +
+      delim +
+      fullyQualifiedJavaType.substringAfter(delim)
 }

@@ -44,6 +44,12 @@ data class CodeGenRequest(
   val allowOverride: Boolean = true,
 
   /**
+   * Fully qualified Request context class
+   * TODO: explain more here
+   */
+  val jvmContextClass: String = "",
+
+  /**
    * Uses format of String.format
    * See https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html#format(java.lang.String,java.lang.Object...)
    */
@@ -101,6 +107,10 @@ data class CodeGenRequest(
       require(filename.endsWith(TEMPLATE_SUFFIX)) { "template must end with $TEMPLATE_SUFFIX: $template" }
     }
 
+    require(jvmContextClass.trim() == jvmContextClass) {
+      "jvmContextClass must be trimmed: jvmContextClass='$jvmContextClass', this=$this"
+    }
+
     when (outputMode) {
 
       SINGLE_FILE -> {
@@ -139,4 +149,8 @@ data class CodeGenRequest(
 
     else -> TODO("decide how to pretty-print this template")
   }
+
+  val hasContextClass = jvmContextClass.isNotBlank()
+
+  val unqualifiedContextClass = jvmContextClass.substringAfterLast(".")
 }

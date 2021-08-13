@@ -2,6 +2,8 @@ package com.wcarmon.codegen.model
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.wcarmon.codegen.model.util.getJavaImportsForFields
+import com.wcarmon.codegen.model.util.javaMethodArgsForFields
 import com.wcarmon.codegen.model.utils.commaSeparatedColumnAssignment
 import com.wcarmon.codegen.model.utils.commaSeparatedColumns
 import com.wcarmon.codegen.model.utils.primaryKeyTableConstraint
@@ -122,4 +124,9 @@ data class Entity(
     else "${rdbms.schema}."
 
   val primaryKeyTableConstraint = primaryKeyTableConstraint(this)
+
+  val javaImportsForFields: Set<String> = getJavaImportsForFields(this)
+
+  fun javaMethodArgsForPKFields(qualified: Boolean) =
+    javaMethodArgsForFields(primaryKeyFields, qualified)
 }

@@ -4,6 +4,7 @@
 package com.wcarmon.codegen.model.util
 
 import com.wcarmon.codegen.model.BaseFieldType
+import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.LogicalFieldType
 
 //TODO: handle unsigned types
@@ -96,3 +97,31 @@ private fun getKotlinArrayType(
   TODO("determine kotlin array type: base=$base, typeParameters=$typeParameters")
 }
 
+
+/**
+ * @return true when JVM compiler cannot automatically resolve the type
+ */
+fun kotlinTypeRequiresImport(fullyQualifiedJavaType: String): Boolean {
+  if (fullyQualifiedJavaType.startsWith("java.lang.")) {
+    return false
+  }
+
+  if (fullyQualifiedJavaType.startsWith("kotlin.")) {
+    return false
+  }
+
+  // primitives
+  if (!fullyQualifiedJavaType.contains(".")) {
+    return false
+  }
+
+  return true
+}
+
+/**
+ * @return comma separated method args clause
+ */
+fun kotlinMethodArgsForFields(fields: Collection<Field>) =
+  fields
+    .map { "${it.name.lowerCamel}: ${asKotlin(it.type)}" }
+    .joinToString(", ")

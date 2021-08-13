@@ -129,13 +129,16 @@ data class Field(
     defaultValueLiteralForJVM(this)
   }
 
-  val javaType = asJava(type)
+  val javaType = asJava(type, true)
+
+  //TODO: test this on types that are already unqualified
+  val unqualifiedJavaType = asJava(type, false)
 
   val kotlinType = asKotlin(type)
 
   val isCollection: Boolean = type.base.isCollection
 
-  val isPrimaryKeyField = rdbms?.positionInPrimaryKey ?: -1 >= 0
+  val isPrimaryKeyField = (rdbms?.positionInPrimaryKey ?: -1) >= 0
 
   //TODO: move to jackson extensions file
   val jacksonTypeRef by lazy {

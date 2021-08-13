@@ -284,7 +284,8 @@ enum class BaseFieldType {
       SET,
       -> true
 
-      USER_DEFINED -> TODO("Determine if type is parameterized: $this")
+      //TODO: handle user defined parameterized types
+      USER_DEFINED -> false
 
       else -> false
     }
