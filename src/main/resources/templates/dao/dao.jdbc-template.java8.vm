@@ -1,0 +1,124 @@
+package $request.packageName.value
+
+#if ($request.hasContextClass)
+import $request.jvmContextClass;
+#end
+import ${entity.pkg.value}.${entity.name.upperCamel};
+#foreach ($importable in $entity.javaImportsForFields)
+import $importable;
+#end
+import org.springframework.jdbc.core.JdbcTemplate;
+#foreach ($importable in $request.extraJVMImports)
+import $importable;
+#end
+
+import java.time.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
+/**
+ * DAO implementation for {@link ${entity.pkg.value}.${entity.name.upperCamel}}.
+ * <p>
+ * Uses {@link org.springframework.jdbc.core.JdbcTemplate} to execute queries.
+ * <p>
+ * Threadsafe & Reusable after construction
+ */
+public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upperCamel}DAO {
+
+  private final JdbcTemplate jdbcTemplate;
+
+  public ${entity.name.upperCamel}DAO(JdbcTemplate jdbcTemplate){
+    Objects.requireNonNull(jdbcTemplate, "jdbcTemplate is required and null");
+
+    this.jdbcTemplate = jdbcTemplate;
+  }
+
+  #if ($entity.hasPrimaryKeyFields)
+  @Override
+  public void delete(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end ${entity.javaMethodArgsForPKFields(false)} ) {
+    #if($request.hasContextClass)
+    Objects.requireNonNull(context, "context is required and null.");
+    #end
+    $entity.javaPrimaryKeyPreconditionStatements
+
+    //TODO: more here
+  }
+
+  @Override
+  public boolean exists(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end ${entity.javaMethodArgsForPKFields(false)} ) {
+    #if($request.hasContextClass)
+    Objects.requireNonNull(context, "context is required and null.");
+    #end
+    $entity.javaPrimaryKeyPreconditionStatements
+
+    //TODO: more here
+  }
+
+  @Override
+  public ${entity.name.upperCamel} findById(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end ${entity.javaMethodArgsForPKFields(false)} ) {
+    #if($request.hasContextClass)
+    Objects.requireNonNull(context, "context is required and null.");
+    #end
+    $entity.javaPrimaryKeyPreconditionStatements
+
+    //TODO: more here
+  }
+  #end
+
+  @Override
+  public void create(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end ${entity.name.upperCamel} entity) {
+    #if($request.hasContextClass)
+    Objects.requireNonNull(context, "context is required and null.");
+    #end
+    Objects.requireNonNull(entity, "entity is required and null.");
+
+    //TODO: more here
+  }
+
+  @Override
+  public List<${entity.name.upperCamel}> list(#if ($request.hasContextClass)$request.unqualifiedContextClass context#end) {
+    #if($request.hasContextClass)
+    Objects.requireNonNull(context, "context is required and null.");
+    #end
+
+    //TODO: more here
+  }
+
+  @Override
+  public void update(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end ${entity.name.upperCamel} entity) {
+    #if($request.hasContextClass)
+    Objects.requireNonNull(context, "context is required and null.");
+    #end
+    Objects.requireNonNull(entity, "entity is required and null.");
+
+    //TODO: more here
+  }
+
+  @Override
+  public void upsert(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end ${entity.name.upperCamel} entity) {
+    #if($request.hasContextClass)
+    Objects.requireNonNull(context, "context is required and null.");
+    #end
+    Objects.requireNonNull(entity, "entity is required and null.");
+
+    //TODO: more here
+  }
+#foreach( $field in $entity.nonPrimaryKeyFields )
+  @Override
+  public void set${field.name.upperCamel}(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end
+    ${entity.javaMethodArgsForPKFields(false)},
+    ${field.unqualifiedJavaType} newValue) {
+    #if($request.hasContextClass)
+    Objects.requireNonNull(context, "context is required and null.");
+    #end
+    $entity.javaPrimaryKeyPreconditionStatements
+    //TODO: requireNonNull precondition on ${field.unqualifiedJavaType} (except for primitives)
+
+    //TODO: more here
+  }
+
+#end
+}

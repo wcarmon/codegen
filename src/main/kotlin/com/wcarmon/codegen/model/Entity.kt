@@ -2,8 +2,10 @@ package com.wcarmon.codegen.model
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.wcarmon.codegen.model.util.buildJavaPreconditionStatements
 import com.wcarmon.codegen.model.util.getJavaImportsForFields
 import com.wcarmon.codegen.model.util.javaMethodArgsForFields
+import com.wcarmon.codegen.model.util.kotlinMethodArgsForFields
 import com.wcarmon.codegen.model.utils.commaSeparatedColumnAssignment
 import com.wcarmon.codegen.model.utils.commaSeparatedColumns
 import com.wcarmon.codegen.model.utils.primaryKeyTableConstraint
@@ -40,9 +42,6 @@ data class Entity(
   val canFindByPK: Boolean = true,
   val canList: Boolean = true,
   val canUpdate: Boolean = true,
-
-  // Likely easier to specify directly in template
-  val extraImports: Set<String> = setOf(),
 
   // Likely easier to specify directly in template
   // unique, order matters
@@ -118,9 +117,6 @@ data class Entity(
 
   val javaImportsForFields: Set<String> = getJavaImportsForFields(this)
 
-  fun javaMethodArgsForPKFields(qualified: Boolean) =
-    javaMethodArgsForFields(primaryKeyFields, qualified)
-
   val pkWhereClause = commaSeparatedColumnAssignment(primaryKeyFields)
 
   val primaryKeyTableConstraint = primaryKeyTableConstraint(this)
@@ -130,4 +126,14 @@ data class Entity(
   val sortedFields = fields.sortedBy { it.name.lowerCamel }
 
   val updateSetClause = commaSeparatedColumnAssignment(nonPrimaryKeyFields)
+
+  fun javaMethodArgsForPKFields(qualified: Boolean) =
+    javaMethodArgsForFields(primaryKeyFields, qualified)
+
+  fun kotlinMethodArgsForPKFields(qualified: Boolean) =
+    kotlinMethodArgsForFields(primaryKeyFields, qualified)
+
+  val javaPrimaryKeyPreconditionStatements =
+    buildJavaPreconditionStatements(primaryKeyFields)
+      .joinToString("\n\t")
 }

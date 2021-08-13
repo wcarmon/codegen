@@ -1,0 +1,13 @@
+{
+  "$schema": "https://wcarmon.com/schemas/codegen/request.schema.json",
+  "allowOverride": true,
+  "entityConfigDirs": [
+    "file:///home/wcarmon/git-repos/codegen/samples/entities"
+  ],
+  "jvmContextClass": "com.wcarmon.chrono.context.ChronoContext",
+  "outputFileOrDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/java/com/wcarmon/chrono/dao1",
+  "outputFilenameTemplate": "%sDAO.java",
+  "outputMode": "multiple",
+  "package": "com.wcarmon.chrono.dao1",
+  "templateURI": "classpath:/templates/dao/dao.interface.java8.vm"
+}

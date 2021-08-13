@@ -134,6 +134,9 @@ data class Field(
   //TODO: test this on types that are already unqualified
   val unqualifiedJavaType = asJava(type, false)
 
+  //TODO: test this on types that are already unqualified
+  val unqualifiedKotlinType = asKotlin(type, false)
+
   val kotlinType = asKotlin(type)
 
   val isCollection: Boolean = type.base.isCollection

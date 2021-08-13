@@ -43,15 +43,6 @@
       "type": "array",
       "uniqueItems": true
     },
-    "extraImports": {
-      "items": {
-        "type": "string"
-      },
-      "maxItems": 96,
-      "minItems": 0,
-      "type": "array",
-      "uniqueItems": true
-    },
     "fields": {
       "items": {
         "$ref": "field.schema.json"

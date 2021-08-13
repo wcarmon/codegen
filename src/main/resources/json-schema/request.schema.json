@@ -29,6 +29,17 @@
       "type": "array",
       "uniqueItems": true
     },
+    "extraJVMImports": {
+      "description": "fully qualified classes/enums/interfaces to import, no semicolons",
+      "items": {
+        "pattern": "^([a-zA-Z0-9])[a-zA-Z0-9_.]+([a-zA-Z0-9])(.*)?$",
+        "type": "string"
+      },
+      "maxItems": 96,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
     "jvmContextClass": {
       "maxLength": 64,
       "minLength": 1,

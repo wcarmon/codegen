@@ -44,6 +44,11 @@ data class CodeGenRequest(
   val allowOverride: Boolean = true,
 
   /**
+   * fully qualified classes/enums/interfaces to import
+   */
+  val extraJVMImports: Set<String> = setOf(),
+
+  /**
    * Fully qualified Request context class
    * TODO: explain more here
    */
@@ -111,6 +116,9 @@ data class CodeGenRequest(
       "jvmContextClass must be trimmed: jvmContextClass='$jvmContextClass', this=$this"
     }
 
+    //TODO: validate regex on extraJVMImports
+    // See pattern in src/main/resources/json-schema/request.schema.json
+
     when (outputMode) {
 
       SINGLE_FILE -> {
@@ -153,4 +161,6 @@ data class CodeGenRequest(
   val hasContextClass = jvmContextClass.isNotBlank()
 
   val unqualifiedContextClass = jvmContextClass.substringAfterLast(".")
+
+  val sortedExtraJVMImports = extraJVMImports.sorted()
 }

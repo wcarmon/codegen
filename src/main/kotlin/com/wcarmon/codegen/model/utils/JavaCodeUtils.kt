@@ -234,6 +234,30 @@ fun javaMethodArgsForFields(
     }
     .joinToString(", ")
 
+/**
+ * @return semicolon terminated statements to execute preconditions
+ */
+fun buildJavaPreconditionStatements(fields: Collection<Field>): Set<String> {
+
+  val output = mutableSetOf<String>()
+
+  fields.forEach { field ->
+
+    if (field.type.base != STRING && !field.type.nullable) {
+      output +=
+        "Objects.requireNonNull(${field.name.lowerCamel}, \"${field.name.lowerCamel} is required and null.\");"
+    }
+
+    if (field.type.base == STRING) {
+      output +=
+        "Preconditions.checkArgument(StringUtils.isNotBlank(${field.name.lowerCamel}), \"${field.name.lowerCamel} is required and blank.\")"
+    }
+  }
+
+  return output.toSortedSet()
+}
+
+
 //TODO: the return on investment is low here
 private fun unqualifyJavaType(fullyQualifiedJavaType: String): String {
 

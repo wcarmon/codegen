@@ -8,20 +8,18 @@ import ${entity.pkg.value}.${entity.name.upperCamel};
 import $importable;
 #end
 
-
 import java.time.*;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
 /**
- * DAO Contract for {@link ${entity.pkg.value}.${entity.name.upperCamel}}
+ * DAO Contract for {@link ${entity.pkg.value}.${entity.name.upperCamel}}.
  * PK field count: ${entity.primaryKeyFields.size()}
  * Field count: ${entity.fields.size()}
  *
- * Implementations must be ThreadSafe
+ * Implementations must be ThreadSafe.
  */
 public interface ${entity.name.upperCamel}DAO {
 
@@ -34,41 +32,41 @@ public interface ${entity.name.upperCamel}DAO {
    * @param TODO
    */
   ##TODO: Add @param to javadoc for context (dynamic)
-  void delete(#if ($request.hasContextClass) $request.unqualifiedContextClass context,#end ${entity.javaMethodArgsForPKFields(false)} );
+  void delete(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end ${entity.javaMethodArgsForPKFields(false)} );
 
   /**
    * @param TODO
    * @return true when {@link ${entity.pkg.value}.${entity.name.upperCamel}} exists with matching PK
    */
   ##TODO: Add @param to javadoc for context (dynamic)
-  boolean exists(#if ($request.hasContextClass) $request.unqualifiedContextClass context,#end ${entity.javaMethodArgsForPKFields(false)} );
+  boolean exists(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end ${entity.javaMethodArgsForPKFields(false)} );
 
   /**
    * @param TODO
    * @return one {@link ${entity.pkg.value}.${entity.name.upperCamel}} instance (matching PKs) or null
    */
   ##TODO: Add @param to javadoc for context (dynamic)
-  ${entity.name.upperCamel} findById( #if ($request.hasContextClass) $request.unqualifiedContextClass context,#end ${entity.javaMethodArgsForPKFields(false)} );
+  ${entity.name.upperCamel} findById(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end ${entity.javaMethodArgsForPKFields(false)} );
 
   #end
 
   /**
    * Create at-most-one {@link ${entity.pkg.value}.${entity.name.upperCamel}} instance
    */
-  void create(#if ($request.hasContextClass) $request.unqualifiedContextClass context,#end ${entity.name.upperCamel} entity);
+  void create(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end ${entity.name.upperCamel} entity);
 
   /**
    * @return all {@link ${entity.pkg.value}.${entity.name.upperCamel}} entities or empty List (never null)
    */
   ##TODO: Add @param to javadoc for context (dynamic)
-  List<${entity.name.upperCamel}> list(#if ($request.hasContextClass) $request.unqualifiedContextClass context#end);
+  List<${entity.name.upperCamel}> list(#if ($request.hasContextClass)$request.unqualifiedContextClass context#end);
 
   /**
    * Update all (non-PK) fields on one {@link ${entity.pkg.value}.${entity.name.upperCamel}} instance
    * (${entity.nonPrimaryKeyFields.size()} non-PK fields)
    */
   ##TODO: Add @param to javadoc for context (dynamic)
-  void update(#if ($request.hasContextClass) $request.unqualifiedContextClass context,#end ${entity.name.upperCamel} entity);
+  void update(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end ${entity.name.upperCamel} entity);
 
   /**
    * Upsert/Put {@link ${entity.pkg.value}.${entity.name.upperCamel}}
@@ -80,7 +78,7 @@ public interface ${entity.name.upperCamel}DAO {
    * @param entity to update or create
    */
   ##TODO: Add @param to javadoc for context (dynamic)
-  void upsert(#if ($request.hasContextClass) $request.unqualifiedContextClass context,#end ${entity.name.upperCamel} entity);
+  void upsert(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end ${entity.name.upperCamel} entity);
 
 #foreach( $field in $entity.nonPrimaryKeyFields )
   /**
@@ -91,7 +89,7 @@ public interface ${entity.name.upperCamel}DAO {
    * @param newValue - replacement for existing value
    */
   ##TODO: Add @param to javadoc for context (dynamic)
-  void update${field.name.upperCamel}(#if ($request.hasContextClass) $request.unqualifiedContextClass context,#end
+  void set${field.name.upperCamel}(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end
   ${entity.javaMethodArgsForPKFields(false)},
   ${field.unqualifiedJavaType} newValue);
 
