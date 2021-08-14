@@ -2,7 +2,11 @@ package com.wcarmon.codegen.model
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import com.wcarmon.codegen.model.util.*
+import com.wcarmon.codegen.model.util.buildJavaPreconditionStatements
+import com.wcarmon.codegen.model.util.getJavaImportsForFields
+import com.wcarmon.codegen.model.util.javaMethodArgsForFields
+import com.wcarmon.codegen.model.util.kotlinMethodArgsForFields
+import com.wcarmon.codegen.model.utils.buildPreparedStatementSetterStatements
 import com.wcarmon.codegen.model.utils.commaSeparatedColumnAssignment
 import com.wcarmon.codegen.model.utils.commaSeparatedColumns
 import com.wcarmon.codegen.model.utils.primaryKeyTableConstraint

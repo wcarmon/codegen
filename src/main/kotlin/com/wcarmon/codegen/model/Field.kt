@@ -8,6 +8,7 @@ import com.wcarmon.codegen.CREATED_TS_FIELD_NAMES
 import com.wcarmon.codegen.UPDATED_TS_FIELD_NAMES
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.util.*
+import com.wcarmon.codegen.model.utils.buildResultSetGetterExpression
 import kotlin.text.RegexOption.IGNORE_CASE
 
 /**
@@ -116,6 +117,8 @@ data class Field(
     //NOTE: precision and scale are validated on LogicalFieldType
   }
 
+  //TODO: inline many of these after moving the logic out of templates
+
   val hasDefault = defaultValue != null
 
   val shouldDefaultToNull: Boolean by lazy {
@@ -158,13 +161,7 @@ data class Field(
     }
   }
 
-  val jdbcGetter = jdbcGetter(type)
-
-  val jdbcSetter = jdbcSetter(type)
-
   val postgresqlColumnDefinition = postgresColumnDefinition(this)
-
-  val shouldUseJVMDeserializer = shouldUseJVMDeserializer(type)
 
   val sqliteColumnDefinition = sqliteColumnDefinition(this)
 
@@ -183,6 +180,7 @@ data class Field(
 
   val usesNumericValidation = type.base.isNumeric
 
+  //TODO: move to LogicalFieldType
   val usesStringValidation = type.base == STRING
 
   val resultSetGetterExpression by lazy {
@@ -197,6 +195,10 @@ data class Field(
     type.base.isTemporal &&
         UPDATED_TS_FIELD_NAMES.any { name.lowerCamel.equals(it, true) }
 
+  val hasCustomJDBCSerde = rdbms?.hasCustomSerde ?: false
+
+  val hasCustomJVMSerde = type.jvmDeserializerTemplate.isNotBlank()
+
   fun javaEqualityExpression(
     identifier0: String,
     identifier1: String,
@@ -207,10 +209,7 @@ data class Field(
     identifier1
   )
 
-  fun jvmDeserializeTemplate(fieldValueExpression: String) =
-    jvmDeserializeTemplate(type, fieldValueExpression)
-
-  // Only invoke on collection types
+  // GOTCHA: Only invoke on collection types
   fun newJavaCollectionExpression() =
     newJavaCollectionExpression(type)
 }

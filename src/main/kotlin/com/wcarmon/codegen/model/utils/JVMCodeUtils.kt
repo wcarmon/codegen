@@ -55,72 +55,21 @@ fun defaultValueLiteralForJVM(field: Field): String? {
     .wrap(field.defaultValue)
 }
 
-/**
- * See https://docs.oracle.com/en/java/javase/11/docs/api/java.sql/java/sql/ResultSet.html
- *
- * @return setter method literal declared on [java.sql.ResultSet]
- */
-fun jdbcSetter(type: LogicalFieldType) =
-  jdbcGetter(type).replaceFirst("get", "set")
 
 /**
- * See https://docs.oracle.com/en/java/javase/11/docs/api/java.sql/java/sql/ResultSet.html
- *
- * @return getter method literal declared on [java.sql.ResultSet]
- */
-fun jdbcGetter(type: LogicalFieldType) = when (type.base) {
-  BOOLEAN -> "getBoolean"
-  FLOAT_32 -> "getFloat"
-  FLOAT_64 -> "getDouble"
-  FLOAT_BIG -> "getBigDecimal"
-  INT_16 -> "getShort"
-  INT_32 -> "getInt"
-  INT_64 -> "getLong"
-  INT_8 -> "getByte"
-  URL -> "getURL"
-  YEAR -> "getInt"
-  ZONE_OFFSET -> "getInt"
-
-  ARRAY,
-  DURATION,
-  LIST,
-  MAP,
-  MONTH_DAY,
-  PATH,
-  PERIOD,
-  SET,
-  STRING,
-  URI,
-  USER_DEFINED,
-  UTC_INSTANT,
-  UTC_TIME,
-  UUID,
-  YEAR_MONTH,
-  ZONE_AGNOSTIC_DATE,
-  ZONE_AGNOSTIC_TIME,
-  ZONED_DATE_TIME,
-  -> "getString"
-
-  // TODO: CHAR, // 16-bit Unicode character
-  // TODO: INT_128
-  // TODO: INT_BIG
-
-  else -> TODO("Add jdbc getter for $type")
-}
-
-
-/**
- * Uses expands the template
+ * Expands the template
+ * Useful for Jackson, and json stores (eg. ElasticSearch, MongoDB, ...)
  *
  * See [LogicalFieldType.jvmDeserializerTemplate]
  *
  * @return expanded template (with %s replaced with [fieldValueExpression])
  */
-fun jvmDeserializeTemplate(
-  type: LogicalFieldType,
+fun expandJVMDeserializeTemplate(
+  field: Field,
   fieldValueExpression: String,
 ): String {
-  require(shouldUseJVMDeserializer(type)) {
+  val type = field.type
+  check(shouldUseJVMDeserializer(field)) {
     "only invoke when we should use jvm deserializer"
   }
 
@@ -142,58 +91,11 @@ fun jvmDeserializeTemplate(
   TODO("decide how to deserialize on jvm: $type")
 }
 
-//TODO: use JVM Deserializer unless user overrides using [Field::jvmDeserializer]
-fun shouldUseJVMDeserializer(type: LogicalFieldType): Boolean =
-  type.jvmSerializerTemplate.isNotBlank()
-      || type.base == PATH
-      || type.base == URI
-      || type.base == URL
-      || type.base.isTemporal
-      || type.enumType
-
-
-/**
- * statement termination handled by caller
- *
- * @return statements for assigning properties on [java.sql.PreparedStatement]
- */
-fun buildPreparedStatementSetterStatements(
-  fields: List<Field>,
-  firstIndex: Int = 1,
-  preparedStatementIdentifier: String = "ps",
-) =
-  fields.mapIndexed { index, field ->
-    "${preparedStatementIdentifier}.${jdbcSetter(field.type)}(" +
-        "${firstIndex + index}, " +
-        //TODO: need to serialize this
-        "${field.name.lowerCamel})"
-  }
-
-/**
- * @param TODO
- *
- * @return an expression,
- *  expression uses a resultSet getter method,
- *  expression returns a value with type matching [field]
- */
-fun buildResultSetGetterExpression(field: Field): String {
-
-  val fieldValueExpression = """rs.getString("${field.name.lowerSnake}")"""
-
-  // -- Custom Serde
-  if (field.shouldUseJVMDeserializer) {
-    return jvmDeserializeTemplate(field.type, fieldValueExpression)
-  }
-
-  // -- Collections (JSON via Jackson)
-  // Assumes a [com.fasterxml.jackson.core.type.TypeReference] exists
-  // See RowMappers for example
-  if (field.isCollection) {
-    return "to${field.type.rawTypeLiteral}(" +
-        "$fieldValueExpression, " +
-        "${field.name.upperSnake}_TYPE_REF)"
-  }
-
-  // -- Direct assignment
-  return """rs.${jdbcGetter(field.type)}("${field.name.lowerSnake}")"""
-}
+//TODO: document me
+fun shouldUseJVMDeserializer(field: Field): Boolean =
+  field.hasCustomJVMSerde
+      || field.type.base == PATH
+      || field.type.base == URI
+      || field.type.base == URL
+      || field.type.base.isTemporal
+      || field.type.enumType

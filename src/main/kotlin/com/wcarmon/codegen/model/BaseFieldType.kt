@@ -188,9 +188,11 @@ enum class BaseFieldType {
       "float32" to FLOAT_32,
       "float64" to FLOAT_64,
       "instant" to UTC_INSTANT,
+      "int" to INT_32,  // java, kotlin, postgresql, mysql, oracle
       "int16" to INT_16,
       "int32" to INT_32,
       "int64" to INT_64,
+      "integer" to INT_32,  // java, kotlin, postgresql, mysql, oracle
       "list" to LIST,
       "map" to MAP,
       "path" to PATH,
