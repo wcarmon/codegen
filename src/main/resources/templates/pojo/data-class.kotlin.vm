@@ -18,10 +18,8 @@ import java.util.StringJoiner;
 import java.util.TreeSet;
 
 /**
- * Generated file
- * Template: $request.prettyTemplateName
- *
  * Immutable POJO pattern
+ * See: $request.prettyTemplateName
  */
 ##TODO: include class documentation when present
 data class ${entity.name.upperCamel}(

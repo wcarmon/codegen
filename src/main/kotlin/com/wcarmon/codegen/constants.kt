@@ -28,3 +28,18 @@ const val PATTERN_FOR_GEN_REQ_FILE = "glob:**/*.request.json"
 
 /** Velocity */
 const val TEMPLATE_SUFFIX = ".vm"
+
+
+/**
+ * Names for timestamp field
+ * Used to auto set a value on entity creation
+ * Uses camelCase
+ */
+val CREATED_TS_FIELD_NAMES = setOf("created", "createdAt", "createdOn")
+
+/**
+ * Names for timestamp field
+ * Used to auto set a value on entity update
+ * Uses camelCase
+ */
+val UPDATED_TS_FIELD_NAMES = setOf("updated", "updatedAt", "updatedOn")

@@ -1,14 +1,22 @@
 package $request.packageName.value;
 
-import ${entity.pkg}.${entity.name.upperCamel};
 import org.springframework.jdbc.core.RowMapper;
-#if ($entity.hasCollectionFields)import com.fasterxml.jackson.databind.ObjectMapper;#end
-#if ($entity.hasCollectionFields)import com.fasterxml.jackson.core.type.TypeReference;#end
+#if ($entity.hasCollectionFields)
+import com.fasterxml.jackson.databind.ObjectMapper;
+#end
+#if ($entity.hasCollectionFields)
+import com.fasterxml.jackson.core.type.TypeReference;
+#end
+#foreach ($importable in $request.extraJVMImports)
+import $importable;
+#end
 
-import java.io.*;
-import java.math.*;
-import java.net.*;
-import java.nio.file.*;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.net.URI;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Connection;
@@ -16,18 +24,26 @@ import java.sql.NClob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.function.Function;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
+## TODO: Be more granular
+import java.io.*;
+import java.time.*;
+
 
 /**
- * Generated file
- *
  * Maps one row of ResultSet data to ${entity.name.upperCamel} instance
  *
  * See https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/jdbc/core/RowMapper.html
- */
+ * See: $request.prettyTemplateName
+*/
 #if ($entity.hasCollectionFields)
 @SuppressWarnings("unchecked")
 #end
@@ -64,29 +80,12 @@ public final class ${entity.name.upperCamel}RowMapper implements RowMapper<${ent
         // -- $entity.commentForPKFields
         #end
         #foreach ($field in $entity.primaryKeyFields)
-          ## TODO: use the field.javaStringFactory
-        .${field.name.lowerCamel}( ${field.type.rawTypeLiteral}.fromString(
-          rs.${field.jdbcGetter}("${field.name.lowerSnake}")))
+        .${field.name.lowerCamel}($field.resultSetGetterExpression)
         #end
 
         // -- Other Fields
         #foreach ($field in $entity.nonPrimaryKeyFields)
-            ## -- Custom Serde
-            #if ($field.shouldUseJVMDeserializer)
-            .${field.name.lowerCamel}(
-              ${field.jvmDeserializeTemplate("rs.getString(""${field.name.lowerSnake}"")")})
-##
-            ## -- Collections (JSON via Jackson)
-            #elseif ($field.collection)
-            .${field.name.lowerCamel}(
-              to${field.type.rawTypeLiteral}(
-              rs.getString("${field.name.lowerSnake}"), ${field.name.upperSnake}_TYPE_REF))
-##
-            ## -- Direct assignment
-            #else
-            .${field.name.lowerCamel}(
-              rs.${field.jdbcGetter}("${field.name.lowerSnake}"))
-            #end
+        .${field.name.lowerCamel}($field.resultSetGetterExpression)
         #end
     .build();
   }

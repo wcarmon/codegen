@@ -58,9 +58,17 @@ fun defaultValueLiteralForJVM(field: Field): String? {
 /**
  * See https://docs.oracle.com/en/java/javase/11/docs/api/java.sql/java/sql/ResultSet.html
  *
+ * @return setter method literal declared on [java.sql.ResultSet]
+ */
+fun jdbcSetter(type: LogicalFieldType) =
+  jdbcGetter(type).replaceFirst("get", "set")
+
+/**
+ * See https://docs.oracle.com/en/java/javase/11/docs/api/java.sql/java/sql/ResultSet.html
+ *
  * @return getter method literal declared on [java.sql.ResultSet]
  */
-fun jdbcGetter(type: LogicalFieldType): String = when (type.base) {
+fun jdbcGetter(type: LogicalFieldType) = when (type.base) {
   BOOLEAN -> "getBoolean"
   FLOAT_32 -> "getFloat"
   FLOAT_64 -> "getDouble"
@@ -142,3 +150,50 @@ fun shouldUseJVMDeserializer(type: LogicalFieldType): Boolean =
       || type.base == URL
       || type.base.isTemporal
       || type.enumType
+
+
+/**
+ * statement termination handled by caller
+ *
+ * @return statements for assigning properties on [java.sql.PreparedStatement]
+ */
+fun buildPreparedStatementSetterStatements(
+  fields: List<Field>,
+  firstIndex: Int = 1,
+  preparedStatementIdentifier: String = "ps",
+) =
+  fields.mapIndexed { index, field ->
+    "${preparedStatementIdentifier}.${jdbcSetter(field.type)}(" +
+        "${firstIndex + index}, " +
+        //TODO: need to serialize this
+        "${field.name.lowerCamel})"
+  }
+
+/**
+ * @param TODO
+ *
+ * @return an expression,
+ *  expression uses a resultSet getter method,
+ *  expression returns a value with type matching [field]
+ */
+fun buildResultSetGetterExpression(field: Field): String {
+
+  val fieldValueExpression = """rs.getString("${field.name.lowerSnake}")"""
+
+  // -- Custom Serde
+  if (field.shouldUseJVMDeserializer) {
+    return jvmDeserializeTemplate(field.type, fieldValueExpression)
+  }
+
+  // -- Collections (JSON via Jackson)
+  // Assumes a [com.fasterxml.jackson.core.type.TypeReference] exists
+  // See RowMappers for example
+  if (field.isCollection) {
+    return "to${field.type.rawTypeLiteral}(" +
+        "$fieldValueExpression, " +
+        "${field.name.upperSnake}_TYPE_REF)"
+  }
+
+  // -- Direct assignment
+  return """rs.${jdbcGetter(field.type)}("${field.name.lowerSnake}")"""
+}

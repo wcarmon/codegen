@@ -25,6 +25,7 @@ class VelocityBeans {
   @Bean
   fun velocityEngine() = VelocityEngine()
     .also {
+      it.addProperty("directive.foreach.maxloops", "5000")
       it.addProperty("runtime.log.log_invalid_method_calls", "true")
       it.addProperty("runtime.log.log_invalid_references", "true")
       it.addProperty("runtime.strict_mode.enable", "true")

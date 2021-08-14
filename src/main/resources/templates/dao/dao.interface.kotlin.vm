@@ -18,6 +18,7 @@ import java.time.*
  * Field count: ${entity.fields.size()}
  *
  * Implementations must be ThreadSafe
+ * See: $request.prettyTemplateName
  */
 interface ${entity.name.upperCamel}DAO {
 

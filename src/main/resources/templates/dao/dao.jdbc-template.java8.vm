@@ -1,4 +1,4 @@
-package $request.packageName.value
+package $request.packageName.value;
 
 #if ($request.hasContextClass)
 import $request.jvmContextClass;
@@ -24,13 +24,17 @@ import java.util.Set;
  * <p>
  * Uses {@link org.springframework.jdbc.core.JdbcTemplate} to execute queries.
  * <p>
+ * Uses {@link java.sql.PreparedStatement}
+ * <p>
+ * See https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/jdbc/core/JdbcTemplate.html
+ * <p>
  * Threadsafe & Reusable after construction
  */
 public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upperCamel}DAO {
 
   private final JdbcTemplate jdbcTemplate;
 
-  public ${entity.name.upperCamel}DAO(JdbcTemplate jdbcTemplate){
+  public ${entity.name.upperCamel}DAOImpl(JdbcTemplate jdbcTemplate){
     Objects.requireNonNull(jdbcTemplate, "jdbcTemplate is required and null");
 
     this.jdbcTemplate = jdbcTemplate;
@@ -44,7 +48,11 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
     #end
     $entity.javaPrimaryKeyPreconditionStatements
 
-    //TODO: more here
+    int affectedRowCount = jdbcTemplate.update(
+      SQLQueries.DELETE__${entity.name.UpperSnake},
+      ps -> {
+        $entity.preparedStatementSetterStatementsForPK
+      });
   }
 
   @Override
@@ -75,7 +83,14 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
     #end
     Objects.requireNonNull(entity, "entity is required and null.");
 
-    //TODO: more here
+    int affectedRowCount = jdbcTemplate.update(
+      SQLQueries.INSERT__${entity.name.UpperSnake},
+      ps -> {
+        // TODO
+      });
+
+      //TODO: set the updated field  (field.isCreatedTimestamp)
+      //TODO: set the created field (field.isCreatedTimestamp)
   }
 
   @Override
@@ -94,7 +109,13 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
     #end
     Objects.requireNonNull(entity, "entity is required and null.");
 
-    //TODO: more here
+    //TODO: set the updated field  (field.isCreatedTimestamp)
+
+    int affectedRowCount = jdbcTemplate.update(
+      SQLQueries.UPDATE__${entity.name.UpperSnake},
+      ps -> {
+        // TODO
+      });
   }
 
   @Override
@@ -105,6 +126,8 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
     Objects.requireNonNull(entity, "entity is required and null.");
 
     //TODO: more here
+    //TODO: set the updated field  (field.isCreatedTimestamp)
+    //TODO: set the created field
   }
 #foreach( $field in $entity.nonPrimaryKeyFields )
   @Override
@@ -118,6 +141,8 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
     //TODO: requireNonNull precondition on ${field.unqualifiedJavaType} (except for primitives)
 
     //TODO: more here
+
+    //TODO: set the updated field  (field.isCreatedTimestamp)
   }
 
 #end

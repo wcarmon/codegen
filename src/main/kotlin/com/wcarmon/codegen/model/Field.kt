@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.wcarmon.codegen.CREATED_TS_FIELD_NAMES
+import com.wcarmon.codegen.UPDATED_TS_FIELD_NAMES
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.util.*
 import kotlin.text.RegexOption.IGNORE_CASE
@@ -129,15 +131,15 @@ data class Field(
     defaultValueLiteralForJVM(this)
   }
 
-  val javaType = asJava(type, true)
+  val javaType = getJavaTypeLiteral(type, true)
 
   //TODO: test this on types that are already unqualified
-  val unqualifiedJavaType = asJava(type, false)
+  val unqualifiedJavaType = getJavaTypeLiteral(type, false)
 
   //TODO: test this on types that are already unqualified
-  val unqualifiedKotlinType = asKotlin(type, false)
+  val unqualifiedKotlinType = getKotlinTypeLiteral(type, false)
 
-  val kotlinType = asKotlin(type)
+  val kotlinType = getKotlinTypeLiteral(type)
 
   val isCollection: Boolean = type.base.isCollection
 
@@ -145,7 +147,7 @@ data class Field(
 
   //TODO: move to jackson extensions file
   val jacksonTypeRef by lazy {
-    require(type.base.isParameterized) {
+    require(type.isParameterized) {
       "type references are only required for parameterized types"
     }
 
@@ -156,30 +158,21 @@ data class Field(
     }
   }
 
-  val jdbcGetter by lazy {
-    jdbcGetter(type)
-  }
+  val jdbcGetter = jdbcGetter(type)
 
-  val newJavaCollectionExpression by lazy {
-    newJavaCollectionExpression(type.base)
-  }
+  val jdbcSetter = jdbcSetter(type)
 
-  val postgresqlColumnDefinition by lazy {
-    postgresColumnDefinition(this)
-  }
+  val postgresqlColumnDefinition = postgresColumnDefinition(this)
+
+  val shouldUseJVMDeserializer = shouldUseJVMDeserializer(type)
+
+  val sqliteColumnDefinition = sqliteColumnDefinition(this)
 
   val shouldQuoteInString = when (type.base) {
     STRING -> true
     else -> false
   }
 
-  val shouldUseJVMDeserializer by lazy {
-    shouldUseJVMDeserializer(type)
-  }
-
-  val sqliteColumnDefinition by lazy {
-    sqliteColumnDefinition(this)
-  }
 
   //TODO: convert to fun,
   //    accept template placeholder replacement here
@@ -188,13 +181,21 @@ data class Field(
     unmodifiableJavaCollectionMethod(type.base)
   }
 
-  val usesNumericValidation by lazy {
-    type.base.isNumeric
+  val usesNumericValidation = type.base.isNumeric
+
+  val usesStringValidation = type.base == STRING
+
+  val resultSetGetterExpression by lazy {
+    buildResultSetGetterExpression(this)
   }
 
-  val usesStringValidation by lazy {
-    type.base == STRING
-  }
+  val isCreatedTimestamp =
+    type.base.isTemporal &&
+        CREATED_TS_FIELD_NAMES.any { name.lowerCamel.equals(it, true) }
+
+  val isUpdatedTimestamp =
+    type.base.isTemporal &&
+        UPDATED_TS_FIELD_NAMES.any { name.lowerCamel.equals(it, true) }
 
   fun javaEqualityExpression(
     identifier0: String,
@@ -208,4 +209,8 @@ data class Field(
 
   fun jvmDeserializeTemplate(fieldValueExpression: String) =
     jvmDeserializeTemplate(type, fieldValueExpression)
+
+  // Only invoke on collection types
+  fun newJavaCollectionExpression() =
+    newJavaCollectionExpression(type)
 }

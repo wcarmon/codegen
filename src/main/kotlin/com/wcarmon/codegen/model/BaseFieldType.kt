@@ -263,6 +263,7 @@ enum class BaseFieldType {
     }
   }
 
+  //TODO: ambiguous for USER_DEFINED
   val isCollection by lazy {
     when (this) {
       ARRAY,
@@ -270,22 +271,6 @@ enum class BaseFieldType {
       MAP,
       SET,
       -> true
-
-      else -> false
-    }
-  }
-
-  /** true for String, Collections, Enums, Arrays */
-  val isParameterized by lazy {
-    when (this) {
-      ARRAY,
-      LIST,
-      MAP,
-      SET,
-      -> true
-
-      //TODO: handle user defined parameterized types
-      USER_DEFINED -> false
 
       else -> false
     }

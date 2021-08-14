@@ -1,5 +1,7 @@
 package com.wcarmon.codegen.model
 
+import com.wcarmon.codegen.model.BaseFieldType.*
+
 const val MAX_PRECISION = 1_000
 
 /**
@@ -129,4 +131,20 @@ data class LogicalFieldType(
       }
     }
   }
+
+  /** true for String, Collections, Enums, Arrays */
+  val isParameterized by lazy {
+    when (base) {
+      ARRAY,
+      LIST,
+      MAP,
+      SET,
+      -> true
+
+      USER_DEFINED -> typeParameters.isNotEmpty()
+
+      else -> false
+    }
+  }
+
 }

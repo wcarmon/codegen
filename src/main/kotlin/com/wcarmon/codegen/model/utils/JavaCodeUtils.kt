@@ -11,18 +11,18 @@ import com.wcarmon.codegen.model.BaseFieldType.*
  *
  * @return literal for Java type
  */
-fun asJava(
+fun getJavaTypeLiteral(
   type: LogicalFieldType,
   qualified: Boolean = true,
 ): String {
 
-  val output = asFullyQualifiedJava(type)
+  val output = getFullyQualifiedJavaTypeLiteral(type)
 
   if (qualified) {
     return output
   }
 
-  if (!type.base.isParameterized) {
+  if (!type.isParameterized) {
     return output.substringAfterLast(".")
   }
 
@@ -30,7 +30,7 @@ fun asJava(
 }
 
 
-fun asFullyQualifiedJava(
+fun getFullyQualifiedJavaTypeLiteral(
   type: LogicalFieldType,
 ): String = when (type.base) {
 
@@ -102,11 +102,11 @@ fun defaultJavaDeserializerTemplate(type: LogicalFieldType): String = when (type
   INT_32 -> "Integer.parseInt(%s)"
   INT_64 -> "Long.parseLong(%s)"
   INT_8 -> "Byte.parseByte(%s)"
-  PATH -> "${asJava(type)}.of(%s)"
+  PATH -> "${getJavaTypeLiteral(type)}.of(%s)"
   STRING -> "String.valueOf(%s)"
-  URI -> "${asJava(type)}.create(%s)"
-  URL -> "new ${asJava(type)}(%s)"
-  UUID -> "${asJava(type)}.fromString(%s)"
+  URI -> "${getJavaTypeLiteral(type)}.create(%s)"
+  URL -> "new ${getJavaTypeLiteral(type)}(%s)"
+  UUID -> "${getJavaTypeLiteral(type)}.fromString(%s)"
 
   DURATION,
   MONTH_DAY,
@@ -116,7 +116,7 @@ fun defaultJavaDeserializerTemplate(type: LogicalFieldType): String = when (type
   UTC_TIME,
   YEAR,
   YEAR_MONTH,
-  -> "${asJava(type)}.parse(%s)"
+  -> "${getJavaTypeLiteral(type)}.parse(%s)"
 }
 
 //TODO: handle enums
@@ -161,18 +161,18 @@ fun javaEqualityExpression(
  *
  * @return literal for mutable java collection factory
  */
-fun newJavaCollectionExpression(base: BaseFieldType): String {
+fun newJavaCollectionExpression(type: LogicalFieldType): String {
 
-  require(base.isCollection) {
-    "method only for collections: $base"
+  require(type.base.isCollection) {
+    "I can only instantiate native collections: failedType=$type"
   }
 
-  return when (base) {
+  return when (type.base) {
     ARRAY -> TODO("Handle creating arrays (need to know size)")
     LIST -> "ArrayList<>()"
     MAP -> "HashMap<>()"
     SET -> "HashSet<>()"
-    else -> TODO("Handle instantiating: $base")
+    else -> TODO("Handle instantiating: $type")
   }
 }
 
@@ -200,8 +200,8 @@ fun unmodifiableJavaCollectionMethod(base: BaseFieldType): String {
  */
 fun getJavaImportsForFields(entity: Entity) =
   entity.fields
-    .filter { it.type.base == USER_DEFINED || !it.type.base.isParameterized }
-    .map { asJava(it.type) }
+    .filter { it.type.base == USER_DEFINED || !it.type.isParameterized }
+    .map { getJavaTypeLiteral(it.type) }
     .filter { javaTypeRequiresImport(it) }
     .toSortedSet()
 
@@ -230,7 +230,7 @@ fun javaMethodArgsForFields(
 ) =
   fields
     .map {
-      "${asJava(it.type, qualified)} ${it.name.lowerCamel}"
+      "${getJavaTypeLiteral(it.type, qualified)} ${it.name.lowerCamel}"
     }
     .joinToString(", ")
 
@@ -243,12 +243,12 @@ fun buildJavaPreconditionStatements(fields: Collection<Field>): Set<String> {
 
   fields.forEach { field ->
 
-    if (field.type.base != STRING && !field.type.nullable) {
+    if (!field.usesStringValidation && !field.type.nullable) {
       output +=
         "Objects.requireNonNull(${field.name.lowerCamel}, \"${field.name.lowerCamel} is required and null.\");"
     }
 
-    if (field.type.base == STRING) {
+    if (field.usesStringValidation) {
       output +=
         "Preconditions.checkArgument(StringUtils.isNotBlank(${field.name.lowerCamel}), \"${field.name.lowerCamel} is required and blank.\")"
     }

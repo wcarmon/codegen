@@ -8,18 +8,18 @@ import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.LogicalFieldType
 
-fun asKotlin(
+fun getKotlinTypeLiteral(
   type: LogicalFieldType,
   qualified: Boolean = true,
 ): String {
 
-  val output = asFullyQualifiedKotlin(type)
+  val output = getFullyQualifiedKotlinTypeLiteral(type)
 
   if (qualified) {
     return output
   }
 
-  if (!type.base.isParameterized) {
+  if (!type.isParameterized) {
     return output.substringAfterLast(".")
   }
 
@@ -27,7 +27,7 @@ fun asKotlin(
 }
 
 //TODO: handle unsigned types
-fun asFullyQualifiedKotlin(type: LogicalFieldType) = when (type.base) {
+fun getFullyQualifiedKotlinTypeLiteral(type: LogicalFieldType) = when (type.base) {
   ARRAY -> getKotlinArrayType(type.base, type.typeParameters)
   BOOLEAN -> "Boolean"
   CHAR -> "Char"
@@ -148,7 +148,7 @@ fun kotlinMethodArgsForFields(
 ) =
   fields
     .map {
-      "${it.name.lowerCamel}: ${asKotlin(it.type, qualified)}"
+      "${it.name.lowerCamel}: ${getKotlinTypeLiteral(it.type, qualified)}"
     }
     .joinToString(", ")
 
