@@ -35,10 +35,9 @@ class EntityConfigParserImpl(
 //    val validationResult: Set<ValidationMessage> = schema.validate(json)
 
     LOG.debug("Parsing file: $entityConfigFile")
-    val parsed = objectReader.readValue(
+
+    return objectReader.readValue(
       entityConfigFile.toFile(),
       Entity::class.java)
-
-    return parsed
   }
 }

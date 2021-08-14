@@ -146,11 +146,9 @@ fun kotlinMethodArgsForFields(
   fields: Collection<Field>,
   qualified: Boolean,
 ) =
-  fields
-    .map {
-      "${it.name.lowerCamel}: ${getKotlinTypeLiteral(it.type, qualified)}"
-    }
-    .joinToString(", ")
+  fields.joinToString(", ") {
+    "${it.name.lowerCamel}: ${getKotlinTypeLiteral(it.type, qualified)}"
+  }
 
 
 //TODO: the return on investment is low here

@@ -2,14 +2,7 @@ package com.wcarmon.codegen.model
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import com.wcarmon.codegen.model.util.buildJavaPreconditionStatements
-import com.wcarmon.codegen.model.util.getJavaImportsForFields
-import com.wcarmon.codegen.model.util.javaMethodArgsForFields
-import com.wcarmon.codegen.model.util.kotlinMethodArgsForFields
-import com.wcarmon.codegen.model.utils.buildPreparedStatementSetterStatements
-import com.wcarmon.codegen.model.utils.commaSeparatedColumnAssignment
-import com.wcarmon.codegen.model.utils.commaSeparatedColumns
-import com.wcarmon.codegen.model.utils.primaryKeyTableConstraint
+import com.wcarmon.codegen.model.util.*
 import org.atteo.evo.inflector.English
 
 
@@ -87,12 +80,12 @@ data class Entity(
     .sortedBy { it.rdbms!!.positionInPrimaryKey!! }
 
   val nonPrimaryKeyFields = fields
-    .filter { it.rdbms == null || it.rdbms.positionInPrimaryKey == null }
+    .filter { it.rdbms?.positionInPrimaryKey == null }
     .sortedBy { it.name.lowerCamel }
 
 
   val collectionFields = fields
-    .filter { it.type.base.isCollection }
+    .filter { it.effectiveBaseType.isCollection }
     .sortedBy { it.name.lowerCamel }
 
   val commaSeparatedColumns = commaSeparatedColumns(this)
@@ -110,7 +103,7 @@ data class Entity(
     .sortedBy { it.name.lowerCamel }
 
   val hasCollectionFields =
-    fields.any { it.type.base.isCollection }
+    fields.any { it.effectiveBaseType.isCollection }
 
   val hasNonPrimaryKeyFields = nonPrimaryKeyFields.isNotEmpty()
 
@@ -122,7 +115,7 @@ data class Entity(
 
   val primaryKeyTableConstraint = primaryKeyTableConstraint(this)
 
-  val questionMarkStringForInsert = (1..fields.size).map { "?" }.joinToString()
+  val questionMarkStringForInsert = (1..fields.size).joinToString { "?" }
 
   val sortedFields = fields.sortedBy { it.name.lowerCamel }
 
@@ -139,9 +132,7 @@ data class Entity(
       .joinToString("\n\t")
 
   val commaSeparatedPKIdentifiers by lazy {
-    primaryKeyFields
-      .map { it.name.lowerCamel }
-      .joinToString(", ")
+    primaryKeyFields.joinToString(", ") { it.name.lowerCamel }
   }
 
   val preparedStatementSetterStatementsForPK by lazy {
@@ -154,5 +145,11 @@ data class Entity(
         separator = "\n",
         postfix = ";",
       )
+  }
+
+  val jdbcSerializedPKFields by lazy {
+    primaryKeyFields.map {
+      jdbcSerializedFieldExpression(it)
+    }.joinToString(", ")
   }
 }

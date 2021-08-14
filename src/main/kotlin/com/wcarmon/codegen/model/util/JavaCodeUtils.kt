@@ -70,33 +70,20 @@ fun getFullyQualifiedJavaTypeLiteral(
   USER_DEFINED -> type.rawTypeLiteral
 }
 
+//TODO: document me
+fun defaultJavaSerializeTemplate(type: LogicalFieldType): String = when (type.base) {
+  else -> TODO("handle java ")
+}
+
 
 /**
  * Deserializer: Converts from String to the type
  *
- * See [LogicalFieldType.jvmDeserializerTemplate]
+ * See [LogicalFieldType.jvmDeserializeTemplate]
  *
  * @returns jvm expression, uses %s as placeholder for field value
  */
-fun defaultJavaDeserializerTemplate(type: LogicalFieldType): String = when (type.base) {
-  BOOLEAN -> TODO("fix string deserializer for $type.base")
-  CHAR -> TODO("fix string deserializer for $type.base")
-  FLOAT_32 -> TODO("fix string deserializer for $type.base")
-  FLOAT_64 -> TODO("fix string deserializer for $type.base")
-  FLOAT_BIG -> TODO("fix string deserializer for $type.base")
-  INT_128 -> TODO("fix string deserializer for $type.base")
-  INT_BIG -> TODO("fix string deserializer for $type.base")
-
-  ZONE_AGNOSTIC_DATE -> TODO("fix string deserializer for $type.base")
-  ZONE_AGNOSTIC_TIME -> TODO("fix string deserializer for $type.base")
-  ZONE_OFFSET -> TODO("fix string deserializer for $type.base")
-  ZONED_DATE_TIME -> TODO("fix string deserializer for $type.base")
-  MAP -> TODO("fix string deserializer for $type.base")
-
-  // TODO: JSON serialized via Jackson
-  ARRAY -> TODO("fix string deserializer for $type.base")
-  LIST -> TODO("fix string deserializer for $type.base")
-  SET -> TODO("fix string deserializer for $type.base")
+fun defaultJavaDeserializeTemplate(type: LogicalFieldType): String = when (type.base) {
 
   INT_16 -> "Short.parseShort(%s)"
   INT_32 -> "Integer.parseInt(%s)"
@@ -116,7 +103,19 @@ fun defaultJavaDeserializerTemplate(type: LogicalFieldType): String = when (type
   UTC_TIME,
   YEAR,
   YEAR_MONTH,
+  ZONE_AGNOSTIC_DATE,
+  ZONE_AGNOSTIC_TIME,
+  ZONED_DATE_TIME,
   -> "${getJavaTypeLiteral(type)}.parse(%s)"
+
+  // TODO: JSON serialized via Jackson
+  ARRAY,
+  LIST,
+  MAP,
+  SET,
+  -> TODO("fix jackson string deserializer for $type")
+
+  else -> "%s"
 }
 
 //TODO: handle enums
@@ -200,7 +199,7 @@ fun unmodifiableJavaCollectionMethod(base: BaseFieldType): String {
  */
 fun getJavaImportsForFields(entity: Entity) =
   entity.fields
-    .filter { it.type.base == USER_DEFINED || !it.type.isParameterized }
+    .filter { it.effectiveBaseType == USER_DEFINED || !it.type.isParameterized }
     .map { getJavaTypeLiteral(it.type) }
     .filter { javaTypeRequiresImport(it) }
     .toSortedSet()
@@ -228,11 +227,9 @@ fun javaMethodArgsForFields(
   fields: Collection<Field>,
   qualified: Boolean,
 ) =
-  fields
-    .map {
-      "${getJavaTypeLiteral(it.type, qualified)} ${it.name.lowerCamel}"
-    }
-    .joinToString(", ")
+  fields.joinToString(", ") {
+    "${getJavaTypeLiteral(it.type, qualified)} ${it.name.lowerCamel}"
+  }
 
 /**
  * @return semicolon terminated statements to execute preconditions

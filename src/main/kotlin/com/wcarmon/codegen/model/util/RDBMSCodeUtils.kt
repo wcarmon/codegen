@@ -1,7 +1,7 @@
 @file:JvmName("RDBMSColumnUtils")
 
 /** Utilities common to all RDBMS */
-package com.wcarmon.codegen.model.utils
+package com.wcarmon.codegen.model.util
 
 import com.wcarmon.codegen.model.BaseFieldType
 import com.wcarmon.codegen.model.BaseFieldType.*
@@ -20,7 +20,7 @@ fun commaSeparatedColumns(entity: Entity): String {
     .map { it.name.lowerSnake }
 
   val nonPK = entity.fields
-    .filter { it.rdbms == null || it.rdbms.positionInPrimaryKey == null }
+    .filter { it.rdbms?.positionInPrimaryKey == null }
     .map { it.name.lowerSnake }
     .sorted()
 
@@ -35,9 +35,8 @@ fun commaSeparatedColumns(entity: Entity): String {
  *
  * @return comma separated column assignment expressions (eg. "foo=?, bar=?")
  */
-fun commaSeparatedColumnAssignment(fields: List<Field>) = fields
-  .map { "${it.name.lowerSnake}=?" }
-  .joinToString()
+fun commaSeparatedColumnAssignment(fields: List<Field>) =
+  fields.joinToString { "${it.name.lowerSnake}=?" }
 
 
 /**
@@ -57,9 +56,7 @@ fun primaryKeyTableConstraint(entity: Entity): String {
     return ""
   }
 
-  val csv = entity.primaryKeyFields
-    .map { "\"${it.name.lowerSnake}\"" }
-    .joinToString(",")
+  val csv = entity.primaryKeyFields.joinToString(",") { "\"${it.name.lowerSnake}\"" }
 
   return "PRIMARY KEY ($csv)"
 }
@@ -122,6 +119,6 @@ fun rdbmsDefaultValueLiteral(field: Field): String {
     return "NULL"
   }
 
-  return quoteTypeForRDBMSLiteral(field.type.base)
+  return quoteTypeForRDBMSLiteral(field.effectiveBaseType)
     .wrap(field.defaultValue)
 }

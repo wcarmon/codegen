@@ -31,7 +31,7 @@ data class RDBMSColumn(
    *
    * No statement terminator required (no trailing semicolon)
    */
-  val deserializerTemplate: String = "",
+  val deserializeTemplate: String = "",
 
   /**
    * instance method or static method/function
@@ -41,7 +41,7 @@ data class RDBMSColumn(
    *
    * No statement terminator required (no trailing semicolon)
    */
-  val serializerTemplate: String = "",
+  val serializeTemplate: String = "",
 
   /**
    * Replace the auto-derived type with this literal
@@ -68,32 +68,32 @@ data class RDBMSColumn(
     }
 
     // -- Serde
-    if (deserializerTemplate.isNotBlank()) {
-      require(serializerTemplate.isNotBlank()) {
-        "(rdbms) serializerTemplate required (to match deserializerTemplate): this=$this"
+    if (deserializeTemplate.isNotBlank()) {
+      require(serializeTemplate.isNotBlank()) {
+        "(rdbms) serializeTemplate required (to match deserializeTemplate): this=$this"
       }
 
-      require(deserializerTemplate.contains("%s")) {
-        "(rdbms) deserializerTemplate must contain a placeholder for the serialized string: this=$this"
-      }
-    }
-
-    if (serializerTemplate.isNotBlank()) {
-      require(deserializerTemplate.isNotBlank()) {
-        "(rdbms) deserializerTemplate required (to match serializerTemplate): this=$this"
-      }
-
-      require(serializerTemplate.contains("%s")) {
-        "(rdbms) serializerTemplate must contain a placeholder for the field: this=$this"
+      require(deserializeTemplate.contains("%s")) {
+        "(rdbms) deserializeTemplate must contain a placeholder for the serialized string: this=$this"
       }
     }
 
-    require(serializerTemplate.trim() == serializerTemplate) {
-      "(rdbms) serializerTemplate must be trimmed: this=$this"
+    if (serializeTemplate.isNotBlank()) {
+      require(deserializeTemplate.isNotBlank()) {
+        "(rdbms) deserializeTemplate required (to match serializeTemplate): this=$this"
+      }
+
+      require(serializeTemplate.contains("%s")) {
+        "(rdbms) serializeTemplate must contain a placeholder for the field: this=$this"
+      }
     }
 
-    require(deserializerTemplate.trim() == deserializerTemplate) {
-      "(rdbms) deserializerTemplate must be trimmed: this=$this"
+    require(serializeTemplate.trim() == serializeTemplate) {
+      "(rdbms) serializeTemplate must be trimmed: this=$this"
+    }
+
+    require(deserializeTemplate.trim() == deserializeTemplate) {
+      "(rdbms) deserializeTemplate must be trimmed: this=$this"
     }
 
     require(overrideTypeLiteral.length < MAX_TYPE_LITERAL_LENGTH) {
@@ -110,7 +110,7 @@ data class RDBMSColumn(
     //TODO: warn in situations where varcharLength will be ignored
   }
 
-  val hasCustomSerde = deserializerTemplate.isNotBlank() || serializerTemplate.isNotBlank()
+  val hasCustomSerde = deserializeTemplate.isNotBlank() || serializeTemplate.isNotBlank()
 
   val overridesType = overrideTypeLiteral.isNotBlank()
 }

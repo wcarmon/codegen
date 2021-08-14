@@ -38,7 +38,7 @@ data class LogicalFieldType(
    *
    * No statement terminator required (no trailing semicolon)
    */
-  val jvmDeserializerTemplate: String = "",
+  val jvmDeserializeTemplate: String = "",
 
   /**
    * instance method or static method/function
@@ -48,7 +48,7 @@ data class LogicalFieldType(
    *
    * No statement terminator required (no trailing semicolon)
    */
-  val jvmSerializerTemplate: String = "",
+  val jvmSerializeTemplate: String = "",
 
   // -- Only for Collections & Generic types (Parametric polymorphism)
   val typeParameters: List<String> = listOf(),
@@ -85,37 +85,36 @@ data class LogicalFieldType(
 
 
     // -- Serde
-    if (jvmDeserializerTemplate.isNotBlank()) {
-      require(jvmSerializerTemplate.isNotBlank()) {
-        "jvmSerializerTemplate required (to match jvmDeserializerTemplate): this=$this"
+    if (jvmDeserializeTemplate.isNotBlank()) {
+      require(jvmSerializeTemplate.isNotBlank()) {
+        "jvmSerializeTemplate required (to match jvmDeserializeTemplate): this=$this"
       }
 
-      require(jvmDeserializerTemplate.contains("%s")) {
-        "jvmDeserializerTemplate must contain a placeholder for the serialized string: this=$this"
-      }
-    }
-
-    if (jvmSerializerTemplate.isNotBlank()) {
-      require(jvmDeserializerTemplate.isNotBlank()) {
-        "jvmDeserializerTemplate required (to match jvmSerializerTemplate): this=$this"
-      }
-
-      require(jvmSerializerTemplate.contains("%s")) {
-        "jvmSerializerTemplate must contain a placeholder for the field: this=$this"
+      require(jvmDeserializeTemplate.contains("%s")) {
+        "jvmDeserializeTemplate must contain a placeholder for the serialized string: this=$this"
       }
     }
 
-    require(jvmSerializerTemplate.trim() == jvmSerializerTemplate) {
-      "jvmSerializerTemplate must be trimmed: this=$this"
+    if (jvmSerializeTemplate.isNotBlank()) {
+      require(jvmDeserializeTemplate.isNotBlank()) {
+        "jvmDeserializeTemplate required (to match jvmSerializeTemplate): this=$this"
+      }
+
+      require(jvmSerializeTemplate.contains("%s")) {
+        "jvmSerializeTemplate must contain a placeholder for the field: this=$this"
+      }
     }
 
-    require(jvmDeserializerTemplate.trim() == jvmDeserializerTemplate) {
-      "jvmDeserializerTemplate must be trimmed: this=$this"
+    require(jvmSerializeTemplate.trim() == jvmSerializeTemplate) {
+      "jvmSerializeTemplate must be trimmed: this=$this"
+    }
+
+    require(jvmDeserializeTemplate.trim() == jvmDeserializeTemplate) {
+      "jvmDeserializeTemplate must be trimmed: this=$this"
     }
 
     // -- Parametric polymorphism
-    val n = base.requiredTypeParameterCount
-    when (n) {
+    when (val n = base.requiredTypeParameterCount) {
       //TODO: missing context
       0 -> require(typeParameters.isEmpty()) {
         "type parameter not allowed: this=$this"

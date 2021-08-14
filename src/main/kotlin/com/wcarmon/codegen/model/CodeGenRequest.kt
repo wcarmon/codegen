@@ -70,7 +70,7 @@ data class CodeGenRequest(
 ) {
 
   @JsonIgnore
-  val cleanOutput = outputFileOrDirectory.normalize().toAbsolutePath()
+  val cleanOutput: Path = outputFileOrDirectory.normalize().toAbsolutePath()
 
   /**
    * eg. file: or classpath:
@@ -151,10 +151,9 @@ data class CodeGenRequest(
     }
   }
 
-  val prettyTemplateName = when {
-    template is ClassPathResource -> "classpath:${template.path}"
-    template is FileSystemResource -> template.uri.toString()
-
+  val prettyTemplateName = when (template) {
+    is ClassPathResource -> "classpath:${template.path}"
+    is FileSystemResource -> template.uri.toString()
     else -> TODO("decide how to pretty-print this template")
   }
 

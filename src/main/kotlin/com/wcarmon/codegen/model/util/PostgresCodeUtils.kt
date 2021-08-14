@@ -5,13 +5,12 @@ package com.wcarmon.codegen.model.util
 
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.Field
-import com.wcarmon.codegen.model.utils.rdbmsDefaultValueLiteral
 
 // For aligning columns
-private val CHARS_FOR_COLUMN_NAME = 20
-private val CHARS_FOR_COLUMN_TYPE = 12
-private val CHARS_FOR_DEFAULT_CLAUSE = 13
-private val CHARS_FOR_NULLABLE_CLAUSE = 9
+private const val CHARS_FOR_COLUMN_NAME = 20
+private const val CHARS_FOR_COLUMN_TYPE = 12
+private const val CHARS_FOR_DEFAULT_CLAUSE = 13
+private const val CHARS_FOR_NULLABLE_CLAUSE = 9
 
 
 /**
@@ -126,7 +125,7 @@ fun postgresColumnDefinition(field: Field): String {
 
   // -- default clause
   val defaultClause =
-    if (field.rdbms != null && field.rdbms.overrideDefaultValue != null) {
+    if (field.rdbms?.overrideDefaultValue != null) {
       "DEFAULT ${field.rdbms.overrideDefaultValue}"
 
     } else if (field.hasDefault) {

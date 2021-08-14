@@ -5,14 +5,13 @@ package com.wcarmon.codegen.model.util
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.LogicalFieldType
-import com.wcarmon.codegen.model.utils.rdbmsDefaultValueLiteral
 
 
 // For aligning columns
-private val CHARS_FOR_COLUMN_NAME = 20
-private val CHARS_FOR_COLUMN_TYPE = 7
-private val CHARS_FOR_DEFAULT_CLAUSE = 13
-private val CHARS_FOR_NULLABLE_CLAUSE = 9
+private const val CHARS_FOR_COLUMN_NAME = 20
+private const val CHARS_FOR_COLUMN_TYPE = 7
+private const val CHARS_FOR_DEFAULT_CLAUSE = 13
+private const val CHARS_FOR_NULLABLE_CLAUSE = 9
 
 /**
  * See https://www.sqlite.org/datatype3.html

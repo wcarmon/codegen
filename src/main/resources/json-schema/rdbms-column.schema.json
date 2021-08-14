@@ -7,7 +7,7 @@
     "autoIncrement": {
       "type": "boolean"
     },
-    "deserializerTemplate": {
+    "deserializeTemplate": {
       "description": "Expression, String -> theType, qualified by the package & possibly the type, use %s for placeholder",
       "maxLength": 64,
       "minLength": 1,
@@ -30,7 +30,7 @@
       "minimum": 0,
       "type": "integer"
     },
-    "serializerTemplate": {
+    "serializeTemplate": {
       "description": "Expression, theType -> String, qualified by the package & possibly the type, use %s for placeholder",
       "maxLength": 64,
       "minLength": 1,

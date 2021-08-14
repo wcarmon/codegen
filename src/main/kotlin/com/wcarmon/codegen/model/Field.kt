@@ -8,7 +8,6 @@ import com.wcarmon.codegen.CREATED_TS_FIELD_NAMES
 import com.wcarmon.codegen.UPDATED_TS_FIELD_NAMES
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.util.*
-import com.wcarmon.codegen.model.utils.buildResultSetGetterExpression
 import kotlin.text.RegexOption.IGNORE_CASE
 
 /**
@@ -65,8 +64,8 @@ data class Field(
       @JsonProperty("defaultValue") defaultValue: String? = null,
       @JsonProperty("documentation") documentation: Documentation = Documentation.EMPTY,
       @JsonProperty("enumType") enumType: Boolean = false,
-      @JsonProperty("jvmDeserializerTemplate") jvmDeserializerTemplate: String = "",
-      @JsonProperty("jvmSerializerTemplate") jvmSerializerTemplate: String = "",
+      @JsonProperty("jvmDeserializeTemplate") jvmDeserializeTemplate: String = "",
+      @JsonProperty("jvmSerializeTemplate") jvmSerializeTemplate: String = "",
       @JsonProperty("name") name: Name,
       @JsonProperty("nullable") nullable: Boolean = false,
       @JsonProperty("precision") precision: Int? = null,
@@ -91,8 +90,8 @@ data class Field(
         type = LogicalFieldType(
           base = BaseFieldType.parse(typeLiteral),
           enumType = enumType,
-          jvmDeserializerTemplate = jvmDeserializerTemplate,
-          jvmSerializerTemplate = jvmSerializerTemplate,
+          jvmDeserializeTemplate = jvmDeserializeTemplate,
+          jvmSerializeTemplate = jvmSerializeTemplate,
           nullable = nullable,
           precision = precision,
           rawTypeLiteral = typeLiteral,
@@ -134,6 +133,21 @@ data class Field(
     defaultValueLiteralForJVM(this)
   }
 
+  /**
+   * Defaults to a reasonable RDBMS equivalent
+   * Allows override via [RDBMSColumn.overrideTypeLiteral]
+   */
+  val effectiveBaseType by lazy {
+    if (rdbms != null
+      && rdbms.overrideTypeLiteral.isNotBlank()
+    ) {
+      BaseFieldType.parse(rdbms.overrideTypeLiteral)
+
+    } else {
+      type.base
+    }
+  }
+
   val javaType = getJavaTypeLiteral(type, true)
 
   //TODO: test this on types that are already unqualified
@@ -144,7 +158,7 @@ data class Field(
 
   val kotlinType = getKotlinTypeLiteral(type)
 
-  val isCollection: Boolean = type.base.isCollection
+  val isCollection: Boolean = effectiveBaseType.isCollection
 
   val isPrimaryKeyField = (rdbms?.positionInPrimaryKey ?: -1) >= 0
 
@@ -154,7 +168,7 @@ data class Field(
       "type references are only required for parameterized types"
     }
 
-    when (type.base) {
+    when (effectiveBaseType) {
       LIST -> "List<${type.typeParameters[0]}>"
       SET -> "Set<${type.typeParameters[0]}>"
       else -> TODO("Build TypeReference for $this")
@@ -165,7 +179,7 @@ data class Field(
 
   val sqliteColumnDefinition = sqliteColumnDefinition(this)
 
-  val shouldQuoteInString = when (type.base) {
+  val shouldQuoteInString = when (effectiveBaseType) {
     STRING -> true
     else -> false
   }
@@ -175,34 +189,34 @@ data class Field(
   //    accept template placeholder replacement here
   //    rename
   val unmodifiableJavaCollectionMethod by lazy {
-    unmodifiableJavaCollectionMethod(type.base)
+    unmodifiableJavaCollectionMethod(effectiveBaseType)
   }
 
-  val usesNumericValidation = type.base.isNumeric
+  val usesNumericValidation = effectiveBaseType.isNumeric
 
   //TODO: move to LogicalFieldType
-  val usesStringValidation = type.base == STRING
+  val usesStringValidation = effectiveBaseType == STRING
 
   val resultSetGetterExpression by lazy {
     buildResultSetGetterExpression(this)
   }
 
   val isCreatedTimestamp =
-    type.base.isTemporal &&
+    effectiveBaseType.isTemporal &&
         CREATED_TS_FIELD_NAMES.any { name.lowerCamel.equals(it, true) }
 
   val isUpdatedTimestamp =
-    type.base.isTemporal &&
+    effectiveBaseType.isTemporal &&
         UPDATED_TS_FIELD_NAMES.any { name.lowerCamel.equals(it, true) }
 
   val hasCustomJDBCSerde = rdbms?.hasCustomSerde ?: false
 
-  val hasCustomJVMSerde = type.jvmDeserializerTemplate.isNotBlank()
+  val hasCustomJVMSerde = type.jvmDeserializeTemplate.isNotBlank()
 
   fun javaEqualityExpression(
     identifier0: String,
     identifier1: String,
-  ) = com.wcarmon.codegen.model.util.javaEqualityExpression(
+  ) = javaEqualityExpression(
     type,
     name,
     identifier0,

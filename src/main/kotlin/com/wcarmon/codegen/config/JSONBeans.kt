@@ -1,9 +1,7 @@
 package com.wcarmon.codegen.config
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.springframework.context.annotation.Bean
@@ -21,8 +19,9 @@ class JSONBeans {
     .setSerializationInclusion(JsonInclude.Include.NON_NULL)!!
 
   @Bean
-  fun objectReader(objectMapper: ObjectMapper) = objectMapper.reader()
+  fun objectReader(objectMapper: ObjectMapper): ObjectReader = objectMapper.reader()
 
   @Bean
-  fun objectWriter(objectMapper: ObjectMapper) = objectMapper.writerWithDefaultPrettyPrinter()
+  fun objectWriter(objectMapper: ObjectMapper): ObjectWriter =
+    objectMapper.writerWithDefaultPrettyPrinter()
 }

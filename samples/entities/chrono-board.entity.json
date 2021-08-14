@@ -4,9 +4,9 @@
     {
       "name": "uuid",
       "rdbms": {
-        "deserializerTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
+        "deserializeTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
         "positionInPrimaryKey": 0,
-        "serializerTemplate": "%s.toString()",
+        "serializeTemplate": "%s.toString()",
         "varcharLength": 36
       },
       "type": "com.wcarmon.ub.model.UBUuid"
@@ -59,13 +59,13 @@
     },
     {
       "enumType": true,
-      "jvmDeserializerTemplate": "com.wcarmon.chrono.model.ChronoHorizon.parse(%s)",
-      "jvmSerializerTemplate": "%s.valueAsString()",
+      "jvmDeserializeTemplate": "com.wcarmon.chrono.model.ChronoHorizon.parse(%s)",
+      "jvmSerializeTemplate": "%s.valueAsString()",
       "name": "horizon",
       "rdbms": {
-        "deserializerTemplate": "com.wcarmon.chrono.model.ChronoHorizon.fromDBValue(%s)",
+        "deserializeTemplate": "com.wcarmon.chrono.model.ChronoHorizon.fromDBValue(%s)",
         "overrideTypeLiteral": "INTEGER",
-        "serializerTemplate": "%s.toDBValue()"
+        "serializeTemplate": "%s.toDBValue()"
       },
       "type": "com.wcarmon.chrono.model.ChronoHorizon"
     },
@@ -81,9 +81,9 @@
       "enumType": true,
       "name": "importance",
       "rdbms": {
-        "deserializerTemplate": "com.wcarmon.chrono.model.ChronoLevel.fromDBValue(%s)",
+        "deserializeTemplate": "com.wcarmon.chrono.model.ChronoLevel.fromDBValue(%s)",
         "overrideTypeLiteral": "INTEGER",
-        "serializerTemplate": "%s.toDBValue()"
+        "serializeTemplate": "%s.toDBValue()"
       },
       "type": "com.wcarmon.chrono.model.ChronoLevel"
     },
@@ -119,13 +119,13 @@
     },
     {
       "defaultValue": "null",
-      "jvmDeserializerTemplate": "com.wcarmon.chrono.model.ChronoColor.parse(%s)",
-      "jvmSerializerTemplate": "%s.toString()",
+      "jvmDeserializeTemplate": "com.wcarmon.chrono.model.ChronoColor.parse(%s)",
+      "jvmSerializeTemplate": "%s.toString()",
       "name": "themeColor",
       "nullable": true,
       "rdbms": {
-        "deserializerTemplate": "com.wcarmon.chrono.model.ChronoColor.parse(%s)",
-        "serializerTemplate": "%s.toString()",
+        "deserializeTemplate": "com.wcarmon.chrono.model.ChronoColor.parse(%s)",
+        "serializeTemplate": "%s.toString()",
         "varcharLength": 24
       },
       "type": "com.wcarmon.chrono.model.ChronoColor"

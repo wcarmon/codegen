@@ -60,7 +60,7 @@ fun defaultValueLiteralForJVM(field: Field): String? {
  * Expands the template
  * Useful for Jackson, and json stores (eg. ElasticSearch, MongoDB, ...)
  *
- * See [LogicalFieldType.jvmDeserializerTemplate]
+ * See [LogicalFieldType.jvmDeserializeTemplate]
  *
  * @return expanded template (with %s replaced with [fieldValueExpression])
  */
@@ -69,13 +69,13 @@ fun expandJVMDeserializeTemplate(
   fieldValueExpression: String,
 ): String {
   val type = field.type
-  check(shouldUseJVMDeserializer(field)) {
+  check(shouldUseJVMSerde(field)) {
     "only invoke when we should use jvm deserializer"
   }
 
-  if (type.jvmDeserializerTemplate.isNotBlank()) {
+  if (type.jvmDeserializeTemplate.isNotBlank()) {
     return String.format(
-      type.jvmDeserializerTemplate,
+      type.jvmDeserializeTemplate,
       fieldValueExpression)
   }
 
@@ -84,7 +84,7 @@ fun expandJVMDeserializeTemplate(
     || type.enumType
   ) {
     return String.format(
-      defaultJavaDeserializerTemplate(type),
+      defaultJavaDeserializeTemplate(type),
       fieldValueExpression)
   }
 
@@ -92,10 +92,10 @@ fun expandJVMDeserializeTemplate(
 }
 
 //TODO: document me
-fun shouldUseJVMDeserializer(field: Field): Boolean =
+private fun shouldUseJVMSerde(field: Field): Boolean =
   field.hasCustomJVMSerde
-      || field.type.base == PATH
-      || field.type.base == URI
-      || field.type.base == URL
-      || field.type.base.isTemporal
+      || field.effectiveBaseType == PATH
+      || field.effectiveBaseType == URI
+      || field.effectiveBaseType == URL
+      || field.effectiveBaseType.isTemporal
       || field.type.enumType
