@@ -72,7 +72,16 @@ fun getFullyQualifiedJavaTypeLiteral(
 
 //TODO: document me
 fun defaultJavaSerializeTemplate(type: LogicalFieldType): String = when (type.base) {
-  else -> TODO("handle java ")
+
+  // TODO: JSON serialized via Jackson
+  ARRAY,
+  LIST,
+  MAP,
+  SET,
+  -> TODO("fix jackson serializer for $type")
+
+  //TODO: more branches here
+  else -> "%s.toString()"
 }
 
 

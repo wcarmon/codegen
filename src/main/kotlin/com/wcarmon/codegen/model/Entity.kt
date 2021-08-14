@@ -135,21 +135,40 @@ data class Entity(
     primaryKeyFields.joinToString(", ") { it.name.lowerCamel }
   }
 
+  // TODO: emphase that it's Java only (or generalize)
+  val preparedStatementSetterStatements by lazy {
+
+    //TODO: Must use getters here (not property access)
+    //TODO: Must prefix field getter (not statement) with "entity."
+
+    val pk = buildPreparedStatementSetterStatements(
+      fields = primaryKeyFields,
+      firstIndex = 1,
+      preparedStatementIdentifier = "ps",
+    )
+
+    val nonPk = buildPreparedStatementSetterStatements(
+      fields = nonPrimaryKeyFields,
+      firstIndex = primaryKeyFields.size + 1,
+      preparedStatementIdentifier = "ps",
+    )
+
+    (pk + nonPk)
+      .joinToString(separator = "\n") { "$it;" }
+  }
+
   val preparedStatementSetterStatementsForPK by lazy {
     buildPreparedStatementSetterStatements(
       fields = primaryKeyFields,
       firstIndex = 1,
       preparedStatementIdentifier = "ps",
     )
-      .joinToString(
-        separator = "\n",
-        postfix = ";",
-      )
+      .joinToString(separator = "\n") { "$it;" }
   }
 
   val jdbcSerializedPKFields by lazy {
-    primaryKeyFields.map {
+    primaryKeyFields.joinToString(", ") {
       jdbcSerializedFieldExpression(it)
-    }.joinToString(", ")
+    }
   }
 }

@@ -11,6 +11,10 @@ import com.wcarmon.codegen.model.Field
  *
  * This handles correct column indexing on PreparedStatements
  *
+ * @param firstIndex TODO
+ * @param fields
+ * @param preparedStatementIdentifier TODO
+ *
  * @return statements for assigning properties on [java.sql.PreparedStatement]
  */
 fun buildPreparedStatementSetterStatements(
@@ -29,7 +33,7 @@ fun buildPreparedStatementSetterStatements(
 /**
  * @param field
  * @param columnIndex
- * @param preparedStatementIdentifier
+ * @param preparedStatementIdentifier prefix for PreparedStatement setter
  *
  * @return statement for assigning field on PreparedStatement
  *   eg. "ps.setString(7, foo.toString())"
@@ -51,7 +55,7 @@ fun buildPreparedStatementSetterStatement(
 
 /**
  * @return an expression, expression converts field to value suitable for JDBC
- * eg. "foo.toString()"
+ * eg. "myField.toString()"
  */
 fun jdbcSerializedFieldExpression(field: Field): String {
 
