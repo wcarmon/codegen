@@ -18,18 +18,18 @@ import java.util.StringJoiner;
 import java.util.TreeSet;
 
 /**
- * Template: $request.prettyTemplateName
- *
- * Immutable POJO pattern
+ * Immutable POJO
+ * <p>
+ * See $request.prettyTemplateName
  */
 ##TODO: include class documentation when present
 @JsonDeserialize(builder = ${entity.name.upperCamel}.${entity.name.upperCamel}Builder.class)
 public final class ${entity.name.upperCamel} {
 
   #foreach( $field in $entity.sortedFields )
-
+##
   /**
-    ##TODO: include field documentation when present
+    ##TODO: include field documentation when present (move logic to field class)
     #if($field.primaryKeyField)
      * Primary key
     #end
