@@ -2,6 +2,8 @@ package com.wcarmon.codegen.model
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.wcarmon.codegen.model.FieldReadStyle.DIRECT
+import com.wcarmon.codegen.model.FieldReadStyle.GETTER
 import com.wcarmon.codegen.model.util.*
 import org.atteo.evo.inflector.English
 
@@ -135,19 +137,17 @@ data class Entity(
     primaryKeyFields.joinToString(", ") { it.name.lowerCamel }
   }
 
-  // TODO: emphase that it's Java only (or generalize)
-  val preparedStatementSetterStatements by lazy {
-
-    //TODO: Must use getters here (not property access)
-    //TODO: Must prefix field getter (not statement) with "entity."
+  val javaPreparedStatementSetterStatements by lazy {
 
     val pk = buildPreparedStatementSetterStatements(
+      fieldReadStyle = GETTER, //TODO: for kotlin, use DIRECT
       fields = primaryKeyFields,
       firstIndex = 1,
       preparedStatementIdentifier = "ps",
     )
 
     val nonPk = buildPreparedStatementSetterStatements(
+      fieldReadStyle = GETTER, //TODO: for kotlin, use DIRECT
       fields = nonPrimaryKeyFields,
       firstIndex = primaryKeyFields.size + 1,
       preparedStatementIdentifier = "ps",
@@ -159,6 +159,7 @@ data class Entity(
 
   val preparedStatementSetterStatementsForPK by lazy {
     buildPreparedStatementSetterStatements(
+      fieldReadStyle = DIRECT,
       fields = primaryKeyFields,
       firstIndex = 1,
       preparedStatementIdentifier = "ps",
@@ -166,9 +167,15 @@ data class Entity(
       .joinToString(separator = "\n") { "$it;" }
   }
 
+  val jdbcSerializedPKFieldGetters by lazy {
+    primaryKeyFields.joinToString(", ") {
+      jdbcSerializedFieldExpression(it, GETTER)
+    }
+  }
+
   val jdbcSerializedPKFields by lazy {
     primaryKeyFields.joinToString(", ") {
-      jdbcSerializedFieldExpression(it)
+      jdbcSerializedFieldExpression(it, DIRECT)
     }
   }
 }
