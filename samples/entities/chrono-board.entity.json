@@ -109,7 +109,9 @@
     {
       "name": "tags",
       "rdbms": {
+        "deserializeTemplate": "toSet(%s, TAGS_TYPE_REF)",
         "overrideDefaultValue": "''",
+        "serializeTemplate": "objectWriter.writeValueAsString(%s)",
         "varcharLength": 512
       },
       "type": "Set",

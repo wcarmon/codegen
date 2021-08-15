@@ -104,7 +104,10 @@ data class Entity(
     .filter { it.validation != null }
     .sortedBy { it.name.lowerCamel }
 
-  val hasCollectionFields =
+  val requiresObjectWriter =
+    fields.any { it.effectiveBaseType.isCollection }
+
+  val requiresObjectReader =
     fields.any { it.effectiveBaseType.isCollection }
 
   val hasNonPrimaryKeyFields = nonPrimaryKeyFields.isNotEmpty()
@@ -137,9 +140,11 @@ data class Entity(
     primaryKeyFields.joinToString(", ") { it.name.lowerCamel }
   }
 
-  val javaPreparedStatementSetterStatements by lazy {
+  // For INSERT, PK fields are first
+  val javaInsertPreparedStatementSetterStatements by lazy {
 
     val pk = buildPreparedStatementSetterStatements(
+      fieldReadPrefix = "entity.",
       fieldReadStyle = GETTER, //TODO: for kotlin, use DIRECT
       fields = primaryKeyFields,
       firstIndex = 1,
@@ -147,6 +152,7 @@ data class Entity(
     )
 
     val nonPk = buildPreparedStatementSetterStatements(
+      fieldReadPrefix = "entity.",
       fieldReadStyle = GETTER, //TODO: for kotlin, use DIRECT
       fields = nonPrimaryKeyFields,
       firstIndex = primaryKeyFields.size + 1,
@@ -156,6 +162,52 @@ data class Entity(
     (pk + nonPk)
       .joinToString(separator = "\n") { "$it;" }
   }
+
+  // For UPDATE, PK fields are last
+  val javaUpdatePreparedStatementSetterStatements by lazy {
+
+    val nonPk = buildPreparedStatementSetterStatements(
+      fieldReadPrefix = "entity.",
+      fieldReadStyle = GETTER, //TODO: for kotlin, use DIRECT
+      fields = nonPrimaryKeyFields,
+      firstIndex = 1,
+      preparedStatementIdentifier = "ps",
+    )
+
+    val pk = buildPreparedStatementSetterStatements(
+      fieldReadPrefix = "entity.",
+      fieldReadStyle = GETTER, //TODO: for kotlin, use DIRECT
+      fields = primaryKeyFields,
+      firstIndex = nonPrimaryKeyFields.size + 1,
+      preparedStatementIdentifier = "ps",
+    )
+
+    (nonPk + pk)
+      .joinToString(separator = "\n") { "$it;" }
+  }
+
+  fun updateFieldPreparedStatementSetterStatements(field: Field): String {
+
+    val columnSetterStatement = buildPreparedStatementSetterStatement(
+      columnIndex = 1,
+      field = field,
+      fieldReadPrefix = "",
+      fieldReadStyle = DIRECT,
+      preparedStatementIdentifier = "ps",
+    )
+
+    val pk = buildPreparedStatementSetterStatements(
+      fieldReadPrefix = "",
+      fieldReadStyle = DIRECT,
+      fields = primaryKeyFields,
+      firstIndex = 2,
+      preparedStatementIdentifier = "ps",
+    )
+
+    return (listOf(columnSetterStatement) + pk)
+      .joinToString(separator = "\n") { "$it;" }
+  }
+
 
   val preparedStatementSetterStatementsForPK by lazy {
     buildPreparedStatementSetterStatements(

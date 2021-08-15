@@ -1,10 +1,8 @@
 package $request.packageName.value;
 
 import org.springframework.jdbc.core.RowMapper;
-#if ($entity.hasCollectionFields)
+#if ($entity.requiresObjectReader)
 import com.fasterxml.jackson.databind.ObjectMapper;
-#end
-#if ($entity.hasCollectionFields)
 import com.fasterxml.jackson.core.type.TypeReference;
 #end
 #foreach ($importable in $request.extraJVMImports)
@@ -34,7 +32,6 @@ import java.util.Objects;
 import java.util.Set;
 
 ## TODO: Be more granular
-import java.io.*;
 import java.time.*;
 
 
@@ -44,12 +41,12 @@ import java.time.*;
  * See https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/jdbc/core/RowMapper.html
  * See: $request.prettyTemplateName
 */
-#if ($entity.hasCollectionFields)
+#if ($entity.requiresObjectReader)
 @SuppressWarnings("unchecked")
 #end
 public final class ${entity.name.upperCamel}RowMapper implements RowMapper<${entity.name.upperCamel}> {
 
-  #if ($entity.hasCollectionFields)
+  #if ($entity.requiresObjectReader)
     #foreach ($field in $entity.collectionFields)
     private static final TypeReference<${field.jacksonTypeRef}> ${field.name.upperSnake}_TYPE_REF =
       new TypeReference<>(){};
@@ -90,7 +87,7 @@ public final class ${entity.name.upperCamel}RowMapper implements RowMapper<${ent
     .build();
   }
 
-  #if ($entity.hasCollectionFields)
+  #if ($entity.requiresObjectReader)
   /**
    * Deserialize to a java.util.List
    *

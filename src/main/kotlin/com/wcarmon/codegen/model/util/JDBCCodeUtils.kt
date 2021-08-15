@@ -5,6 +5,9 @@ package com.wcarmon.codegen.model.util
 import com.wcarmon.codegen.model.BaseFieldType
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.Field
+import com.wcarmon.codegen.model.FieldReadStyle
+import com.wcarmon.codegen.model.FieldReadStyle.DIRECT
+import com.wcarmon.codegen.model.FieldReadStyle.GETTER
 
 /**
  * Statement termination handled by caller
@@ -18,6 +21,8 @@ import com.wcarmon.codegen.model.Field
  * @return statements for assigning properties on [java.sql.PreparedStatement]
  */
 fun buildPreparedStatementSetterStatements(
+  fieldReadPrefix: String = "",
+  fieldReadStyle: FieldReadStyle,
   fields: List<Field>,
   firstIndex: Int = 1,
   preparedStatementIdentifier: String = "ps",
@@ -26,59 +31,90 @@ fun buildPreparedStatementSetterStatements(
     buildPreparedStatementSetterStatement(
       columnIndex = firstIndex + index,
       field = field,
+      fieldReadPrefix = fieldReadPrefix,
+      fieldReadStyle = fieldReadStyle,
       preparedStatementIdentifier = preparedStatementIdentifier,
     )
   }
 
 /**
- * @param field
  * @param columnIndex
+ * @param field
+ * @param fieldReadPrefix  scope for reading field.  eg. "myEntity."
+ * @param fieldReadStyle
  * @param preparedStatementIdentifier prefix for PreparedStatement setter
  *
  * @return statement for assigning field on PreparedStatement
  *   eg. "ps.setString(7, foo.toString())"
  */
 fun buildPreparedStatementSetterStatement(
-  field: Field,
   columnIndex: Int,
+  field: Field,
+  fieldReadPrefix: String = "",
+  fieldReadStyle: FieldReadStyle,
   preparedStatementIdentifier: String = "ps",
 ): String {
+  require(fieldReadPrefix.trim() == fieldReadPrefix) {
+    "fieldReadPrefix must be trimmed: $fieldReadPrefix"
+  }
+
+  //TODO: handle when you might call .toString on a null field (or null output from getter)
+  val serializedFieldExpression = jdbcSerializedFieldExpression(
+    field = field,
+    fieldReadStyle = fieldReadStyle,
+    fieldReadPrefix = fieldReadPrefix,
+  )
 
   // eg. "setLong"
   val setterMethodName =
     getDefaultPreparedStatementSetter(field.effectiveBaseType)
 
-  val serializedFieldExpression = jdbcSerializedFieldExpression(field)
+  if (field.type.nullable) {
+//    setterMethodName = "setNull"
+    //TODO: use ps.setNull when the value is null on a nullable column
+    //    you will get NPE on ps.setInt if you skip this
+  }
 
   return "${preparedStatementIdentifier}.${setterMethodName}($columnIndex, ${serializedFieldExpression})"
 }
 
 /**
- * @return an expression, expression converts field to value suitable for JDBC
- * eg. "myField.toString()"
+ * @param field
+ * @param fieldReadStyle
+ * @param fieldReadPrefix  TODO
+ *
+ * @return an expression which converts [Field] to a value JDBC will accept
+ * eg. "myEntity.myField.toString()"
  */
-fun jdbcSerializedFieldExpression(field: Field): String {
+fun jdbcSerializedFieldExpression(
+  field: Field,
+  fieldReadStyle: FieldReadStyle,
+  fieldReadPrefix: String = "",
+): String {
+  check(fieldReadPrefix.trim() == fieldReadPrefix) {
+    "fieldReadPrefix must be trimmed: $fieldReadPrefix"
+  }
 
-  //eg "%s.toString()"
+  //eg. "%s.toString()"
+  //eg. "objectWriter.writeValueAsString(%s)"
   val fieldSerializeExpressionTemplate =
     if (shouldUseCustomJDBCSerde(field)) {
       getJDBCSerializeTemplate(field)
-
-    } else if (field.isCollection) {
-      // Use [com.fasterxml.jackson.core.type.TypeReference] for type-safe deserializing
-      //TODO: fix me
-      "from${field.type.rawTypeLiteral}(%s, ${field.name.upperSnake}_TYPE_REF)"
 
     } else {
       "%s"
     }
 
+  val fieldReadExpression = when (fieldReadStyle) {
+    DIRECT -> field.name.lowerCamel
+    GETTER -> "get${field.name.upperCamel}()"
+  }
+
   return String.format(
     fieldSerializeExpressionTemplate,
-    field.name.lowerCamel
+    fieldReadPrefix + fieldReadExpression
   )
 }
-
 
 /**
  * Builds an expression to retrieve one [Field] from DB
@@ -128,6 +164,7 @@ private fun shouldUseCustomJDBCSerde(field: Field): Boolean =
   field.hasCustomJDBCSerde
       || field.effectiveBaseType in setOf(PATH, URI, URL)
       || field.effectiveBaseType.isTemporal
+      || field.isCollection
       || field.type.enumType
 
 /**

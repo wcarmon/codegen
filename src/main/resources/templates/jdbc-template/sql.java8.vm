@@ -75,5 +75,15 @@ public final class SQLQueries {
     "INSERT INTO \"${entity.name.lowerSnake}\""
     + " ($entity.commaSeparatedColumns)"
     + " VALUES ($entity.questionMarkStringForInsert)";
+
+  #if($entity.hasPrimaryKeyFields)
+    #foreach ($field in $entity.nonPrimaryKeyFields)
+      public static final String PATCH__${entity.name.upperSnake}__${field.name.upperSnake} =
+        "UPDATE \"${entity.name.lowerSnake}\""
+        + " SET $field.name.lowerSnake=?"
+        + " WHERE $entity.pkWhereClause";
+
+    #end
+  #end
 #end
 }

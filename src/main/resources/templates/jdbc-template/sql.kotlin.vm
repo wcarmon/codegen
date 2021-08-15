@@ -91,4 +91,16 @@ package $request.packageName.value
     VALUES ($entity.questionMarkStringForInsert)
     """.trimIndent()
 
+  #if($entity.hasPrimaryKeyFields)
+    #foreach ($field in $entity.nonPrimaryKeyFields)
+    val PATCH__${entity.name.upperSnake}__${field.name.upperSnake} =
+      """
+      UPDATE "${entity.name.lowerSnake}"
+      SET $field.name.lowerSnake=?
+      WHERE $entity.pkWhereClause
+      """.trimIndent()
+
+    #end
+  #end
+
 #end
