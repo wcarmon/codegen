@@ -116,6 +116,8 @@ data class Entity(
 
   val javaImportsForFields: Set<String> = getJavaImportsForFields(this)
 
+  val kotlinImportsForFields: Set<String> = getKotlinImportsForFields(this)
+
   val pkWhereClause = commaSeparatedColumnAssignment(primaryKeyFields)
 
   val primaryKeyTableConstraint = primaryKeyTableConstraint(this)
@@ -208,7 +210,7 @@ data class Entity(
       .joinToString(separator = "\n") { "$it;" }
   }
 
-
+  //TODO: kotlin doesn't require trailing semicolons
   val preparedStatementSetterStatementsForPK by lazy {
     buildPreparedStatementSetterStatements(
       fieldReadStyle = DIRECT,

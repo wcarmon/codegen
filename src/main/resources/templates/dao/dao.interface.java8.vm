@@ -87,12 +87,12 @@ public interface ${entity.name.upperCamel}DAO {
    * <p>
    * Set one field: {@link ${entity.pkg.value}.${entity.name.upperCamel}#${field.name.lowerCamel}}
    *
-   * @param newValue - replacement for existing value
+   * @param ${field.name.lowerCamel} - replacement for existing value
    */
   ##TODO: Add @param to javadoc for context (dynamic)
   void set${field.name.upperCamel}(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end
-  ${entity.javaMethodArgsForPKFields(false)},
-  ${field.unqualifiedJavaType} newValue);
+    ${entity.javaMethodArgsForPKFields(false)},
+    ${field.unqualifiedJavaType} ${field.name.lowerCamel});
 
 #end
 }

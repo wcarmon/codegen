@@ -1,1 +1,114 @@
-//TODO: fix /home/wcarmon/git-repos/codegen/src/main/resources/templates/dao/dao.jdbc-template.kotlin.vm
+package $request.packageName.value
+
+import ${entity.pkg.value}.${entity.name.upperCamel}
+import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.PreparedStatementSetter
+import org.springframework.jdbc.core.RowMapper
+#if ($request.hasContextClass)
+import $request.jvmContextClass
+#end
+#foreach ($importable in $entity.kotlinImportsForFields)
+import $importable
+#end
+#foreach ($importable in $request.extraJVMImports)
+import $importable
+#end
+#if ($entity.requiresObjectWriter)
+import com.fasterxml.jackson.databind.ObjectWriter
+#end
+
+##TODO: confirm I need this
+import java.time.*
+
+
+/**
+ * DAO implementation for [${entity.pkg.value}.${entity.name.upperCamel}].
+ * Uses [org.springframework.jdbc.core.JdbcTemplate] to execute queries.
+ * Uses [java.sql.PreparedStatement]
+ *
+ * See https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/jdbc/core/JdbcTemplate.html
+ * Threadsafe & Reusable after construction
+ */
+class ${entity.name.upperCamel}DAOImpl(
+  private val jdbcTemplate: JdbcTemplate,
+
+  #if ($entity.requiresObjectWriter)
+  /** To serialize collection fields */
+  private val objectWriter: ObjectWriter,
+  #end
+
+  private val rowMapper: RowMapper<${entity.name.upperCamel}>,
+
+): ${entity.name.upperCamel}DAO {
+
+#if ($entity.hasPrimaryKeyFields)
+  override fun delete(#if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end ${entity.kotlinMethodArgsForPKFields(false)}) {
+    //TODO: kotlin preconditions on String args
+
+    val affectedRowCount =
+      jdbcTemplate.update(DELETE__${entity.name.upperSnake}) { ps ->
+          $entity.preparedStatementSetterStatementsForPK
+      }
+  }
+
+  override fun exists(#if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end ${entity.kotlinMethodArgsForPKFields(false)}): Boolean {
+    //TODO: kotlin preconditions on String args
+
+    val result = jdbcTemplate.queryForObject(
+      ROW_EXISTS__${entity.name.upperSnake},
+      Int::class.java,
+      $entity.jdbcSerializedPKFields)
+
+    return 1 == result
+  }
+
+  override fun findById(#if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end ${entity.kotlinMethodArgsForPKFields(false)}): ${entity.name.upperCamel}? {
+    //TODO: kotlin preconditions on String args
+
+    val results =
+      jdbcTemplate.query(
+        SELECT_BY_PK__${entity.name.upperSnake},
+        PreparedStatementSetter { ps ->
+          $entity.preparedStatementSetterStatementsForPK
+        },
+        rowMapper)
+
+    if (results.isEmpty()) {
+      return null
+    }
+
+    if (results.size > 1) {
+      //TODO: include PK arg(s)
+      throw IllegalStateException("Multiple rows match the PK: context=#[[$]]#context, results=#[[$]]#results")
+    }
+
+    return results[0]
+  }
+
+  override fun create(#if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end entity: ${entity.name.upperCamel}) {
+    TODO("finish this method")
+  }
+
+  override fun list(#if ($request.hasContextClass)context: $request.unqualifiedContextClass#end): List<${entity.name.upperCamel}> {
+    TODO("finish this method")
+  }
+
+  override fun update(#if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end entity: ${entity.name.upperCamel}) {
+    TODO("finish this method")
+  }
+
+  override fun upsert(#if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end entity: ${entity.name.upperCamel}) {
+    TODO("finish this method")
+  }
+
+  // -- Patch methods
+  #foreach( $field in $entity.nonPrimaryKeyFields )
+    override fun set${field.name.upperCamel}(#if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end
+    ${entity.kotlinMethodArgsForPKFields(false)},
+    ${field.name.lowerCamel}: ${field.unqualifiedKotlinType}) {
+      TODO("finish this method")
+    }
+
+  #end
+#end
+}

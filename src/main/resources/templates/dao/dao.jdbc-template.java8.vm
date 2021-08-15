@@ -1,18 +1,17 @@
 package $request.packageName.value;
 
+import ${entity.pkg.value}.${entity.name.upperCamel};
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 #if ($request.hasContextClass)
 import $request.jvmContextClass;
 #end
-import ${entity.pkg.value}.${entity.name.upperCamel};
 #foreach ($importable in $entity.javaImportsForFields)
 import $importable;
 #end
-import org.springframework.jdbc.core.JdbcTemplate;
 #foreach ($importable in $request.extraJVMImports)
 import $importable;
 #end
-import org.springframework.jdbc.core.RowMapper;
-
 #if ($entity.requiresObjectWriter)
 import com.fasterxml.jackson.databind.ObjectWriter;
 #end
@@ -92,7 +91,7 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
       Integer.class,
       $entity.jdbcSerializedPKFields);
 
-    return result != null && result == 1;
+    return null != result  && 1 == result;
   }
 
   @Override
@@ -114,6 +113,7 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
     }
 
     if (results.size() > 1) {
+      //TODO: include PK arg(s)
       throw new IllegalStateException("Multiple rows match the PK: context=" + context + ", results=" + results);
     }
 
@@ -189,6 +189,7 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
     //TODO: set the created field
   }
 
+  // -- Patch methods
 #foreach( $field in $entity.nonPrimaryKeyFields )
   @Override
   public void set${field.name.upperCamel}(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end

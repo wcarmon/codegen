@@ -84,12 +84,12 @@ interface ${entity.name.upperCamel}DAO {
   *
   * Set one field: {@link ${entity.pkg.value}.${entity.name.upperCamel}#${field.name.lowerCamel}}
   *
-  * @param newValue - replacement for existing value
+  * @param ${field.name.lowerCamel} - replacement for existing value
   */
   ##TODO: Add @param to kotlindoc for context (dynamic)
   fun set${field.name.upperCamel}(#if ($request.hasContextClass) context: $request.unqualifiedContextClass,#end
-  ${entity.kotlinMethodArgsForPKFields(false)},
-  newValue: ${field.unqualifiedKotlinType})
+    ${entity.kotlinMethodArgsForPKFields(false)},
+    ${field.name.lowerCamel}: ${field.unqualifiedKotlinType})
 
 #end
   }

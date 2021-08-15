@@ -5,6 +5,7 @@ package com.wcarmon.codegen.model.util
 
 import com.wcarmon.codegen.model.BaseFieldType
 import com.wcarmon.codegen.model.BaseFieldType.*
+import com.wcarmon.codegen.model.Entity
 import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.LogicalFieldType
 
@@ -65,56 +66,13 @@ fun getFullyQualifiedKotlinTypeLiteral(type: LogicalFieldType) = when (type.base
   if (type.nullable) "$it?" else it
 }
 
-
-/**
- * See https://kotlinlang.org/docs/basic-types.html
- *
- * @return kotlin array type literal
- */
-private fun getKotlinArrayType(
-  base: BaseFieldType,
-  typeParameters: List<String>,
-): String {
-  check(base == ARRAY) { "Only invoke for arrays" }
-  check(typeParameters.size == 1) { "exactly 1 type param required" }
-
-  if (
-    setOf(
-      "byte",
-      "int8",
-      "java.lang.byte",
-      "kotlin.byte",
-    ).contains(typeParameters[0].lowercase())
-  ) {
-    return "ByteArray"
-  }
-
-  if (
-    setOf(
-      "int",
-      "int32",
-      "integer",
-      "java.lang.int",
-      "java.lang.integer",
-      "kotlin.int",
-    ).contains(typeParameters[0].lowercase())
-  ) {
-    return "IntArray"
-  }
-
-  if (
-    setOf(
-      "double",
-      "float64",
-      "java.lang.double",
-      "kotlin.double",
-    ).contains(typeParameters[0].lowercase())
-  ) {
-    return "DoubleArray"
-  }
-
-  TODO("determine kotlin array type: base=$base, typeParameters=$typeParameters")
-}
+fun getKotlinImportsForFields(entity: Entity) =
+  entity.fields
+    .filter { it.effectiveBaseType == USER_DEFINED || !it.type.isParameterized }
+    .map { getKotlinTypeLiteral(it.type) }
+    .map { it.removeSuffix("?") }
+    .filter { kotlinTypeRequiresImport(it) }
+    .toSortedSet()
 
 
 /**
@@ -165,4 +123,55 @@ private fun unqualifyKotlinType(fullyQualifiedKotlinType: String): String {
   return qualifiedUnparameterizedType.substringAfterLast(".") +
       delim +
       fullyQualifiedKotlinType.substringAfter(delim)
+}
+
+
+/**
+ * See https://kotlinlang.org/docs/basic-types.html
+ *
+ * @return kotlin array type literal
+ */
+private fun getKotlinArrayType(
+  base: BaseFieldType,
+  typeParameters: List<String>,
+): String {
+  check(base == ARRAY) { "Only invoke for arrays" }
+  check(typeParameters.size == 1) { "exactly 1 type param required" }
+
+  if (
+    setOf(
+      "byte",
+      "int8",
+      "java.lang.byte",
+      "kotlin.byte",
+    ).contains(typeParameters[0].lowercase())
+  ) {
+    return "ByteArray"
+  }
+
+  if (
+    setOf(
+      "int",
+      "int32",
+      "integer",
+      "java.lang.int",
+      "java.lang.integer",
+      "kotlin.int",
+    ).contains(typeParameters[0].lowercase())
+  ) {
+    return "IntArray"
+  }
+
+  if (
+    setOf(
+      "double",
+      "float64",
+      "java.lang.double",
+      "kotlin.double",
+    ).contains(typeParameters[0].lowercase())
+  ) {
+    return "DoubleArray"
+  }
+
+  TODO("determine kotlin array type: base=$base, typeParameters=$typeParameters")
 }
