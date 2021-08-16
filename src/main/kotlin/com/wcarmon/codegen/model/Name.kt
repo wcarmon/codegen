@@ -22,7 +22,7 @@ data class Name(
   companion object {
     @JvmStatic
     @JsonCreator
-    fun build(camelCase: String) = Name(camelCase)
+    fun parse(camelCase: String) = Name(camelCase)
   }
 
   init {

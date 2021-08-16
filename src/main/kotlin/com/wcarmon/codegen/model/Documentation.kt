@@ -12,7 +12,7 @@ data class Documentation(
   companion object {
     @JvmStatic
     @JsonCreator
-    fun build(value: String) = Documentation(value)
+    fun parse(value: String) = Documentation(value)
 
     fun fromLinesAsJavadoc(lines: Collection<String>): Documentation {
       TODO()

@@ -23,25 +23,8 @@ data class RDBMSColumn(
 
   val varcharLength: Int? = null,
 
-  /**
-   * fully qualified static function/method
-   * Use %s as a placeholder for the serialized string
-   *
-   * eg. "com.foo.MyType.fromDBString(%s)"
-   *
-   * No statement terminator required (no trailing semicolon)
-   */
-  val deserializeTemplate: String = "",
-
-  /**
-   * instance method or static method/function
-   * Use %s as a placeholder for the field
-   *
-   * eg. "%s.toDBString()"
-   *
-   * No statement terminator required (no trailing semicolon)
-   */
-  val serializeTemplate: String = "",
+  //TODO: should I default to INLINE?
+  val serde: Serde? = null,
 
   /**
    * Replace the auto-derived type with this literal
@@ -67,35 +50,6 @@ data class RDBMSColumn(
       }
     }
 
-    // -- Serde
-    if (deserializeTemplate.isNotBlank()) {
-      require(serializeTemplate.isNotBlank()) {
-        "(rdbms) serializeTemplate required (to match deserializeTemplate): this=$this"
-      }
-
-      require(deserializeTemplate.contains("%s")) {
-        "(rdbms) deserializeTemplate must contain a placeholder for the serialized string: this=$this"
-      }
-    }
-
-    if (serializeTemplate.isNotBlank()) {
-      require(deserializeTemplate.isNotBlank()) {
-        "(rdbms) deserializeTemplate required (to match serializeTemplate): this=$this"
-      }
-
-      require(serializeTemplate.contains("%s")) {
-        "(rdbms) serializeTemplate must contain a placeholder for the field: this=$this"
-      }
-    }
-
-    require(serializeTemplate.trim() == serializeTemplate) {
-      "(rdbms) serializeTemplate must be trimmed: this=$this"
-    }
-
-    require(deserializeTemplate.trim() == deserializeTemplate) {
-      "(rdbms) deserializeTemplate must be trimmed: this=$this"
-    }
-
     require(overrideTypeLiteral.length < MAX_TYPE_LITERAL_LENGTH) {
       "overrideTypeLiteral too long: $overrideTypeLiteral, this=$this"
     }
@@ -110,7 +64,7 @@ data class RDBMSColumn(
     //TODO: warn in situations where varcharLength will be ignored
   }
 
-  val hasCustomSerde = deserializeTemplate.isNotBlank() || serializeTemplate.isNotBlank()
+  val hasCustomSerde = serde != null
 
   val overridesType = overrideTypeLiteral.isNotBlank()
 }
