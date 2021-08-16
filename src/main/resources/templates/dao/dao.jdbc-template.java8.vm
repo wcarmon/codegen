@@ -16,6 +16,7 @@ import $importable;
 import com.fasterxml.jackson.databind.ObjectWriter;
 #end
 
+import java.sql.Types;
 import java.time.*;
 import java.util.Collection;
 import java.util.Collections;

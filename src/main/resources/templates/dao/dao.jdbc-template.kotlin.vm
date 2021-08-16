@@ -16,6 +16,7 @@ import $importable
 #if ($entity.requiresObjectWriter)
 import com.fasterxml.jackson.databind.ObjectWriter
 #end
+import java.sql.Types
 
 ##TODO: confirm I need this
 import java.time.*
@@ -43,7 +44,7 @@ class ${entity.name.upperCamel}DAOImpl(
 
 #if ($entity.hasPrimaryKeyFields)
   override fun delete(#if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end ${entity.kotlinMethodArgsForPKFields(false)}) {
-    //TODO: kotlin preconditions on String args
+    //TODO: kotlin preconditions on PK fields (see FieldValidation)
 
     val affectedRowCount =
       jdbcTemplate.update(DELETE__${entity.name.upperSnake}) { ps ->
@@ -52,7 +53,7 @@ class ${entity.name.upperCamel}DAOImpl(
   }
 
   override fun exists(#if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end ${entity.kotlinMethodArgsForPKFields(false)}): Boolean {
-    //TODO: kotlin preconditions on String args
+    //TODO: kotlin preconditions on PK fields (see FieldValidation)
 
     val result = jdbcTemplate.queryForObject(
       ROW_EXISTS__${entity.name.upperSnake},
@@ -63,7 +64,7 @@ class ${entity.name.upperCamel}DAOImpl(
   }
 
   override fun findById(#if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end ${entity.kotlinMethodArgsForPKFields(false)}): ${entity.name.upperCamel}? {
-    //TODO: kotlin preconditions on String args
+    //TODO: kotlin preconditions on PK fields (see FieldValidation)
 
     val results =
       jdbcTemplate.query(
@@ -86,7 +87,13 @@ class ${entity.name.upperCamel}DAOImpl(
   }
 
   override fun create(#if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end entity: ${entity.name.upperCamel}) {
-    TODO("finish this method")
+
+    val affectedRowCount = jdbcTemplate.update(
+      INSERT__${entity.name.upperSnake},
+      { ps ->
+        $entity.kotlinInsertPreparedStatementSetterStatements
+      },
+    )
   }
 
   override fun list(#if ($request.hasContextClass)context: $request.unqualifiedContextClass#end): List<${entity.name.upperCamel}> {
