@@ -14,17 +14,8 @@
     "enumType": {
       "type": "boolean"
     },
-    "jvmDeserializeTemplate": {
-      "description": "Expression, String -> theType, qualified by the package & possibly the type, use %s for placeholder",
-      "maxLength": 64,
-      "minLength": 1,
-      "type": "string"
-    },
-    "jvmSerializeTemplate": {
-      "description": "Expression, theType -> String, qualified by the package & possibly the type, use %s for placeholder",
-      "maxLength": 64,
-      "minLength": 1,
-      "type": "string"
+    "jvm": {
+      "$ref": "jvm-field.schema.json"
     },
     "name": {
       "maxLength": 48,

@@ -1,0 +1,17 @@
+{
+  "$id": "https://wcarmon.com/schemas/codegen/jvm-field.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "extra config for JVM fields",
+  "properties": {
+    "serde": {
+      "$ref": "serde.schema.json"
+    }
+  },
+  "propertyNames": {
+    "pattern": "^[$]?[A-Za-z_][A-Za-z0-9]*$"
+  },
+  "required": [],
+  "title": "JVM Field config",
+  "type": "object"
+}

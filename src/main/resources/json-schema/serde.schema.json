@@ -1,0 +1,26 @@
+{
+  "$id": "https://wcarmon.com/schemas/codegen/serde.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Pair of Serializer & Deserializer templates",
+  "properties": {
+    "deserializeTemplate": {
+      "description": "Expression, String -> theType, qualified by the package & possibly the type, use %s for placeholder",
+      "maxLength": 64,
+      "minLength": 1,
+      "type": "string"
+    },
+    "serializeTemplate": {
+      "description": "Expression, theType -> String, qualified by the package & possibly the type, use %s for placeholder",
+      "maxLength": 64,
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "deserializeTemplate",
+    "serializeTemplate"
+  ],
+  "title": "Serde",
+  "type": "object"
+}

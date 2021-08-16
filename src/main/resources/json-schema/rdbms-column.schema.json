@@ -7,12 +7,6 @@
     "autoIncrement": {
       "type": "boolean"
     },
-    "deserializeTemplate": {
-      "description": "Expression, String -> theType, qualified by the package & possibly the type, use %s for placeholder",
-      "maxLength": 64,
-      "minLength": 1,
-      "type": "string"
-    },
     "overrideDefaultValue": {
       "description": "literal for default value, wrap strings in single quotes",
       "maxLength": 64,
@@ -30,11 +24,8 @@
       "minimum": 0,
       "type": "integer"
     },
-    "serializeTemplate": {
-      "description": "Expression, theType -> String, qualified by the package & possibly the type, use %s for placeholder",
-      "maxLength": 64,
-      "minLength": 1,
-      "type": "string"
+    "serde": {
+      "$ref": "serde.schema.json"
     },
     "varcharLength": {
       "exclusiveMinimum": 0,
