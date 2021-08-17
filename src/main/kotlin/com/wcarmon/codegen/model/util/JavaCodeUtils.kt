@@ -52,33 +52,6 @@ fun commaSeparatedJavaMethodArgs(
 
 
 /**
- * primitive and java.lang classes are skipped
- *
- * @return distinct, sorted, fully qualified classes, ready for import
- */
-fun javaImportsForFields(entity: Entity) =
-  entity.fields
-    .filter { it.effectiveBaseType == USER_DEFINED || !it.type.isParameterized }
-    .map { javaTypeLiteral(it.type) }
-    .filter { javaTypeRequiresImport(it) }
-    .toSortedSet()
-
-
-//TODO: document me
-private fun defaultJavaSerializeTemplate(type: LogicalFieldType) = when (type.base) {
-
-  // TODO: JSON serialized via Jackson
-  ARRAY,
-  LIST,
-  MAP,
-  SET,
-  -> TODO("fix jackson serializer for $type")
-
-  //TODO: more branches here
-  else -> ExpressionTemplate("%s.toString()")
-}
-
-/**
  * Useful for Jackson, and json stores (eg. ElasticSearch, MongoDB, ...)
  *
  * See [com.wcarmon.codegen.model.Serde]
@@ -100,11 +73,140 @@ private fun defaultJavaSerializeTemplate(type: LogicalFieldType) = when (type.ba
 //  }
 
 //TODO: document me
-private fun defaultJavaSerde(field: Field): Serde =
+fun defaultJavaSerde(field: Field): Serde =
   Serde(
     deserializeTemplate = defaultJavaDeserializeTemplate(field.type),
     serializeTemplate = defaultJavaSerializeTemplate(field.type),
   )
+
+
+/**
+ * primitive and java.lang classes are skipped
+ *
+ * @return distinct, sorted, fully qualified classes, ready for import
+ */
+fun javaImportsForFields(entity: Entity) =
+  entity.fields
+    .filter { it.effectiveBaseType == USER_DEFINED || !it.type.isParameterized }
+    .map { javaTypeLiteral(it.type) }
+    .filter { javaTypeRequiresImport(it) }
+    .toSortedSet()
+
+/**
+ * See https://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html
+ *
+ * @return literal for Java type
+ */
+fun javaTypeLiteral(
+  type: LogicalFieldType,
+  qualified: Boolean = true,
+): String {
+
+  val output = fullyQualifiedJavaTypeLiteral(type)
+
+  if (qualified) {
+    return output
+  }
+
+  if (!type.isParameterized) {
+    return output.substringAfterLast(".")
+  }
+
+  return unqualifyJavaType(output)
+}
+
+/**
+ * Template should prefix "new" when required
+ * Statement terminators (semicolons) must be handled by caller
+ *
+ * @return literal for mutable java collection factory
+ */
+fun newJavaCollectionExpression(type: LogicalFieldType): String {
+
+  check(type.base.isCollection) {
+    "I can only instantiate native collections: failedType=$type"
+  }
+
+  return when (type.base) {
+    ARRAY -> TODO("Handle creating arrays (need to know size)")
+    LIST -> "ArrayList<>()"
+    MAP -> "HashMap<>()"
+    SET -> "HashSet<>()"
+    else -> TODO("Handle instantiating: $type")
+  }
+}
+
+
+//TODO: handle enums
+
+/**
+ * Builds java.lang.Object.equals based comparison expression
+ * Useful in POJOs
+ *
+ * @return expression for java equality test (for 1 field)
+ */
+fun javaEqualityExpression(
+  type: LogicalFieldType,
+  fieldName: Name,
+  identifier0: String,
+  identifier1: String,
+): Expression {
+  require(identifier0.isNotBlank())
+  require(identifier1.isNotBlank())
+
+  if (type.enumType || type.base == BOOLEAN || type.base == CHAR) {
+    return RawStringExpression("$identifier0.${fieldName.lowerCamel} == $identifier1.${fieldName.lowerCamel}")
+  }
+
+  if (type.base == FLOAT_64) {
+    return RawStringExpression(
+      "Double.compare($identifier0.${fieldName.lowerCamel}, $identifier1.${fieldName.lowerCamel}) == 0")
+  }
+
+  if (type.base == FLOAT_32) {
+    return RawStringExpression(
+      "Float.compare($identifier0.${fieldName.lowerCamel}, $identifier1.${fieldName.lowerCamel}) == 0")
+  }
+
+  if (type.base == ARRAY) {
+    return RawStringExpression(
+      "Arrays.deepEquals($identifier0.${fieldName.lowerCamel}, $identifier1.${fieldName.lowerCamel})")
+  }
+
+  return RawStringExpression(
+    "Objects.equals($identifier0.${fieldName.lowerCamel}, $identifier1.${fieldName.lowerCamel})")
+}
+
+/**
+ * @return template which invokes creates an unmodifiable version of the collection
+ */
+//TODO: use %s template approach
+fun unmodifiableJavaCollectionMethod(base: BaseFieldType): String {
+  require(base.isCollection) {
+    "method only for collections: $base"
+  }
+
+  return when (base) {
+    LIST -> "Collections.unmodifiableList"
+    MAP -> "Collections.unmodifiableMap"
+    SET -> "Collections.unmodifiableSet"
+    else -> TODO("Handle immutable version of: $base")
+  }
+}
+
+//TODO: document me
+private fun defaultJavaSerializeTemplate(type: LogicalFieldType) = when (type.base) {
+
+  // TODO: JSON serialized via Jackson
+  ARRAY,
+  LIST,
+  MAP,
+  SET,
+  -> TODO("fix jackson serializer for $type")
+
+  //TODO: more branches here
+  else -> ExpressionTemplate("%s.toString()")
+}
 
 private fun fullyQualifiedJavaTypeLiteral(
   type: LogicalFieldType,
@@ -146,70 +248,6 @@ private fun fullyQualifiedJavaTypeLiteral(
   USER_DEFINED -> type.rawTypeLiteral
 }
 
-
-/**
- * See https://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html
- *
- * @return literal for Java type
- */
-private fun javaTypeLiteral(
-  type: LogicalFieldType,
-  qualified: Boolean = true,
-): String {
-
-  val output = fullyQualifiedJavaTypeLiteral(type)
-
-  if (qualified) {
-    return output
-  }
-
-  if (!type.isParameterized) {
-    return output.substringAfterLast(".")
-  }
-
-  return unqualifyJavaType(output)
-}
-
-//TODO: handle enums
-
-/**
- * Builds java.lang.Object.equals based comparison expression
- * Useful in POJOs
- *
- * @return expression for java equality test (for 1 field)
- */
-private fun javaEqualityExpression(
-  type: LogicalFieldType,
-  fieldName: Name,
-  identifier0: String,
-  identifier1: String,
-): Expression {
-  require(identifier0.isNotBlank())
-  require(identifier1.isNotBlank())
-
-  if (type.enumType || type.base == BOOLEAN || type.base == CHAR) {
-    return RawStringExpression("$identifier0.${fieldName.lowerCamel} == $identifier1.${fieldName.lowerCamel}")
-  }
-
-  if (type.base == FLOAT_64) {
-    return RawStringExpression(
-      "Double.compare($identifier0.${fieldName.lowerCamel}, $identifier1.${fieldName.lowerCamel}) == 0")
-  }
-
-  if (type.base == FLOAT_32) {
-    return RawStringExpression(
-      "Float.compare($identifier0.${fieldName.lowerCamel}, $identifier1.${fieldName.lowerCamel}) == 0")
-  }
-
-  if (type.base == ARRAY) {
-    return RawStringExpression(
-      "Arrays.deepEquals($identifier0.${fieldName.lowerCamel}, $identifier1.${fieldName.lowerCamel})")
-  }
-
-  return RawStringExpression(
-    "Objects.equals($identifier0.${fieldName.lowerCamel}, $identifier1.${fieldName.lowerCamel})")
-}
-
 /**
  * @return true when JVM compiler cannot automatically resolve the type
  */
@@ -224,44 +262,6 @@ private fun javaTypeRequiresImport(fullyQualifiedJavaType: String): Boolean {
   }
 
   return true
-}
-
-/**
- * Template should prefix "new" when required
- * Statement terminators (semicolons) must be handled by caller
- *
- * @return literal for mutable java collection factory
- */
-private fun newJavaCollectionExpression(type: LogicalFieldType): String {
-
-  check(type.base.isCollection) {
-    "I can only instantiate native collections: failedType=$type"
-  }
-
-  return when (type.base) {
-    ARRAY -> TODO("Handle creating arrays (need to know size)")
-    LIST -> "ArrayList<>()"
-    MAP -> "HashMap<>()"
-    SET -> "HashSet<>()"
-    else -> TODO("Handle instantiating: $type")
-  }
-}
-
-/**
- * @return template which invokes creates an unmodifiable version of the collection
- */
-//TODO: use %s template approach
-private fun unmodifiableJavaCollectionMethod(base: BaseFieldType): String {
-  require(base.isCollection) {
-    "method only for collections: $base"
-  }
-
-  return when (base) {
-    LIST -> "Collections.unmodifiableList"
-    MAP -> "Collections.unmodifiableMap"
-    SET -> "Collections.unmodifiableSet"
-    else -> TODO("Handle immutable version of: $base")
-  }
 }
 
 //TODO: the return on investment is low here
