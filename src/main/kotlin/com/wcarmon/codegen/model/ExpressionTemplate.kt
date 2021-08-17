@@ -1,11 +1,14 @@
 package com.wcarmon.codegen.model
 
 import com.fasterxml.jackson.annotation.JsonCreator
+import com.wcarmon.codegen.model.ast.Expression
+import com.wcarmon.codegen.model.ast.RawStringExpression
 
 /**
  * A template which can be formatted/expanded with [String.format]
  */
 data class ExpressionTemplate(
+  /** Contains %s */
   private val value: String,
 ) {
 
@@ -15,6 +18,7 @@ data class ExpressionTemplate(
     @JvmStatic
     fun parse(v: String) = ExpressionTemplate(v)
 
+    /** Direct serialization & deserialization (no wrapper/parser methods)*/
     @JvmStatic
     val INLINE = ExpressionTemplate("%s")
   }
@@ -34,6 +38,6 @@ data class ExpressionTemplate(
   }
 
   //TODO: document me
-  fun expand(replacement: String) =
-    String.format(value, replacement)
+  fun expand(replacement: String): Expression =
+    RawStringExpression(String.format(value, replacement))
 }

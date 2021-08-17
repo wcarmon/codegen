@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.wcarmon.codegen.model.FieldReadStyle.DIRECT
 import com.wcarmon.codegen.model.FieldReadStyle.GETTER
+import com.wcarmon.codegen.model.TargetLanguage.JAVA_08
+import com.wcarmon.codegen.model.TargetLanguage.KOTLIN_JVM_1_4
 import com.wcarmon.codegen.model.util.*
 import org.atteo.evo.inflector.English
 
@@ -114,7 +116,7 @@ data class Entity(
 
   val hasPrimaryKeyFields = primaryKeyFields.isNotEmpty()
 
-  val javaImportsForFields: Set<String> = getJavaImportsForFields(this)
+  val javaImportsForFields: Set<String> = javaImportsForFields(this)
 
   val kotlinImportsForFields: Set<String> = getKotlinImportsForFields(this)
 
@@ -129,7 +131,7 @@ data class Entity(
   val updateSetClause = commaSeparatedColumnAssignment(nonPrimaryKeyFields)
 
   fun javaMethodArgsForPKFields(qualified: Boolean) =
-    javaMethodArgsForFields(primaryKeyFields, qualified)
+    commaSeparatedJavaMethodArgs(primaryKeyFields, qualified)
 
   fun kotlinMethodArgsForPKFields(qualified: Boolean) =
     kotlinMethodArgsForFields(primaryKeyFields, qualified)
@@ -142,94 +144,136 @@ data class Entity(
     primaryKeyFields.joinToString(", ") { it.name.lowerCamel }
   }
 
-  // For INSERT, PK fields are first
-  val javaInsertPreparedStatementSetterStatements by lazy {
-
-    val pk = buildPreparedStatementSetterStatements(
+  val kotlinInsertPreparedStatementSetterStatements by lazy {
+    val pk = buildPreparedStatementSetters(
       fieldReadPrefix = "entity.",
-      fieldReadStyle = GETTER, //TODO: for kotlin, use DIRECT
+      fieldReadStyle = DIRECT,
       fields = primaryKeyFields,
       firstIndex = 1,
+      targetLanguage = KOTLIN_JVM_1_4,
       preparedStatementIdentifier = "ps",
     )
 
-    val nonPk = buildPreparedStatementSetterStatements(
+    val nonPk = buildPreparedStatementSetters(
       fieldReadPrefix = "entity.",
-      fieldReadStyle = GETTER, //TODO: for kotlin, use DIRECT
+      fieldReadStyle = DIRECT,
       fields = nonPrimaryKeyFields,
       firstIndex = primaryKeyFields.size + 1,
       preparedStatementIdentifier = "ps",
+      targetLanguage = KOTLIN_JVM_1_4,
+    )
+
+    (pk + nonPk).joinToString(separator = "\n")
+  }
+
+  // For INSERT, PK fields are first
+  val javaInsertPreparedStatementSetterStatements by lazy {
+
+    val targetLanguage = JAVA_08
+    val pk = buildPreparedStatementSetters(
+      fieldReadPrefix = "entity.",
+      fieldReadStyle = GETTER,
+      fields = primaryKeyFields,
+      firstIndex = 1,
+      preparedStatementIdentifier = "ps",
+      targetLanguage = targetLanguage,
+    )
+
+    val nonPk = buildPreparedStatementSetters(
+      fieldReadPrefix = "entity.",
+      fieldReadStyle = GETTER,
+      fields = nonPrimaryKeyFields,
+      firstIndex = primaryKeyFields.size + 1,
+      preparedStatementIdentifier = "ps",
+      targetLanguage = targetLanguage,
     )
 
     (pk + nonPk)
-      .joinToString(separator = "\n") { "$it;" }
+      .map {
+        it.serialize(targetLanguage)
+      }
+      .joinToString("\n")
   }
 
   // For UPDATE, PK fields are last
   val javaUpdatePreparedStatementSetterStatements by lazy {
 
-    val nonPk = buildPreparedStatementSetterStatements(
+    val targetLanguage = JAVA_08
+    val nonPk = buildPreparedStatementSetters(
       fieldReadPrefix = "entity.",
-      fieldReadStyle = GETTER, //TODO: for kotlin, use DIRECT
+      fieldReadStyle = GETTER,
       fields = nonPrimaryKeyFields,
       firstIndex = 1,
+      targetLanguage = targetLanguage,
       preparedStatementIdentifier = "ps",
     )
 
-    val pk = buildPreparedStatementSetterStatements(
+    val pk = buildPreparedStatementSetters(
       fieldReadPrefix = "entity.",
-      fieldReadStyle = GETTER, //TODO: for kotlin, use DIRECT
+      fieldReadStyle = GETTER,
       fields = primaryKeyFields,
       firstIndex = nonPrimaryKeyFields.size + 1,
       preparedStatementIdentifier = "ps",
+      targetLanguage = targetLanguage,
     )
 
     (nonPk + pk)
-      .joinToString(separator = "\n") { "$it;" }
+      .map { it.serialize(targetLanguage) }
+      .joinToString(separator = "\n")
   }
 
-  fun updateFieldPreparedStatementSetterStatements(field: Field): String {
+  fun javaUpdateFieldPreparedStatementSetterStatements(field: Field): String {
 
-    val columnSetterStatement = buildPreparedStatementSetterStatement(
+    val targetLanguage = JAVA_08
+    val columnSetterStatement = buildPreparedStatementSetter(
       columnIndex = 1,
       field = field,
       fieldReadPrefix = "",
       fieldReadStyle = DIRECT,
       preparedStatementIdentifier = "ps",
+      targetLanguage = targetLanguage,
     )
 
-    val pk = buildPreparedStatementSetterStatements(
+    val pk = buildPreparedStatementSetters(
       fieldReadPrefix = "",
       fieldReadStyle = DIRECT,
       fields = primaryKeyFields,
       firstIndex = 2,
       preparedStatementIdentifier = "ps",
+      targetLanguage = targetLanguage,
     )
 
     return (listOf(columnSetterStatement) + pk)
-      .joinToString(separator = "\n") { "$it;" }
+      .map { it.serialize(targetLanguage) }
+      .joinToString(separator = "\n")
   }
 
-  //TODO: kotlin doesn't require trailing semicolons
-  val preparedStatementSetterStatementsForPK by lazy {
-    buildPreparedStatementSetterStatements(
+  val kotlinPreparedStatementSetterStatementsForPK by lazy {
+    buildPreparedStatementSetters(
       fieldReadStyle = DIRECT,
       fields = primaryKeyFields,
       firstIndex = 1,
       preparedStatementIdentifier = "ps",
+      targetLanguage = KOTLIN_JVM_1_4,
     )
-      .joinToString(separator = "\n") { "$it;" }
+      .joinToString(separator = "\n")
   }
 
-  val jdbcSerializedPKFieldGetters by lazy {
-    primaryKeyFields.joinToString(", ") {
-      jdbcSerializedFieldExpression(it, GETTER)
-    }
+  val javaPreparedStatementSetterStatementsForPK by lazy {
+    val targetLanguage = JAVA_08
+
+    buildPreparedStatementSetters(
+      fieldReadStyle = DIRECT,
+      fields = primaryKeyFields,
+      firstIndex = 1,
+      preparedStatementIdentifier = "ps",
+      targetLanguage = targetLanguage,
+    )
+      .map { it.serialize(targetLanguage) }
+      .joinToString(separator = "\n")
   }
 
   val jdbcSerializedPKFields by lazy {
-    primaryKeyFields.joinToString(", ") {
-      jdbcSerializedFieldExpression(it, DIRECT)
-    }
+    commaSeparatedJavaFields(primaryKeyFields)
   }
 }

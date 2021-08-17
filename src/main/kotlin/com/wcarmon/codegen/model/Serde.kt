@@ -14,21 +14,23 @@ data class Serde(
    *
    * No statement terminator required (no trailing semicolon)
    */
-  val deserialize: ExpressionTemplate,
+  val deserializeTemplate: ExpressionTemplate,
 
   /**
    * instance method or static method/function
    * Use %s as a placeholder for the field
    *
    * eg. "%s.toJsonString()"
+   * eg. "objectWriter.writeValueAsString(%s)"
    *
    * No statement terminator required (no trailing semicolon)
    */
-  val serialize: ExpressionTemplate,
+  val serializeTemplate: ExpressionTemplate,
 ) {
 
   companion object {
 
+    /** Direct serialization & deserialization (no wrapper/parser methods)*/
     @JvmStatic
     val INLINE: Serde = Serde(
       ExpressionTemplate.INLINE,

@@ -30,26 +30,6 @@ data class LogicalFieldType(
    * */
   val rawTypeLiteral: String,
 
-  /**
-   * fully qualified static function/method
-   * Use %s as a placeholder for the serialized string
-   *
-   * eg. "com.foo.MyType.fromString(%s)"
-   *
-   * No statement terminator required (no trailing semicolon)
-   */
-  val jvmDeserializeTemplate: String = "",
-
-  /**
-   * instance method or static method/function
-   * Use %s as a placeholder for the field
-   *
-   * eg. "%s.toJsonString()"
-   *
-   * No statement terminator required (no trailing semicolon)
-   */
-  val jvmSerializeTemplate: String = "",
-
   // -- Only for Collections & Generic types (Parametric polymorphism)
   val typeParameters: List<String> = listOf(),
 ) {
@@ -84,35 +64,6 @@ data class LogicalFieldType(
     require(scale >= 0) { "Scale must be non-negative: $scale, this=$this" }
 
 
-    // -- Serde
-    if (jvmDeserializeTemplate.isNotBlank()) {
-      require(jvmSerializeTemplate.isNotBlank()) {
-        "jvmSerializeTemplate required (to match jvmDeserializeTemplate): this=$this"
-      }
-
-      require(jvmDeserializeTemplate.contains("%s")) {
-        "jvmDeserializeTemplate must contain a placeholder for the serialized string: this=$this"
-      }
-    }
-
-    if (jvmSerializeTemplate.isNotBlank()) {
-      require(jvmDeserializeTemplate.isNotBlank()) {
-        "jvmDeserializeTemplate required (to match jvmSerializeTemplate): this=$this"
-      }
-
-      require(jvmSerializeTemplate.contains("%s")) {
-        "jvmSerializeTemplate must contain a placeholder for the field: this=$this"
-      }
-    }
-
-    require(jvmSerializeTemplate.trim() == jvmSerializeTemplate) {
-      "jvmSerializeTemplate must be trimmed: this=$this"
-    }
-
-    require(jvmDeserializeTemplate.trim() == jvmDeserializeTemplate) {
-      "jvmDeserializeTemplate must be trimmed: this=$this"
-    }
-
     // -- Parametric polymorphism
     when (val n = base.requiredTypeParameterCount) {
       //TODO: missing context
@@ -145,5 +96,4 @@ data class LogicalFieldType(
       else -> false
     }
   }
-
 }

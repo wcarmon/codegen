@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.wcarmon.codegen.CREATED_TS_FIELD_NAMES
 import com.wcarmon.codegen.UPDATED_TS_FIELD_NAMES
 import com.wcarmon.codegen.model.BaseFieldType.*
+import com.wcarmon.codegen.model.TargetLanguage.JAVA_08
 import com.wcarmon.codegen.model.util.*
 import kotlin.text.RegexOption.IGNORE_CASE
 
@@ -53,6 +54,8 @@ data class Field(
 
   val rdbms: RDBMSColumn? = null,
 
+  val jvm: JVMField = JVMField(),
+
   val validation: FieldValidation? = null,
 ) {
 
@@ -64,8 +67,7 @@ data class Field(
       @JsonProperty("defaultValue") defaultValue: String? = null,
       @JsonProperty("documentation") documentation: Documentation = Documentation.EMPTY,
       @JsonProperty("enumType") enumType: Boolean = false,
-      @JsonProperty("jvmDeserializeTemplate") jvmDeserializeTemplate: String = "",
-      @JsonProperty("jvmSerializeTemplate") jvmSerializeTemplate: String = "",
+      @JsonProperty("jvm") jvmField: JVMField? = null,
       @JsonProperty("name") name: Name,
       @JsonProperty("nullable") nullable: Boolean = false,
       @JsonProperty("precision") precision: Int? = null,
@@ -85,13 +87,12 @@ data class Field(
       return Field(
         defaultValue = defaultValue,
         documentation = documentation,
+        jvm = jvmField ?: JVMField(),
         name = name,
         rdbms = rdbms,
         type = LogicalFieldType(
           base = BaseFieldType.parse(typeLiteral),
           enumType = enumType,
-          jvmDeserializeTemplate = jvmDeserializeTemplate,
-          jvmSerializeTemplate = jvmSerializeTemplate,
           nullable = nullable,
           precision = precision,
           rawTypeLiteral = typeLiteral,
@@ -148,10 +149,10 @@ data class Field(
     }
   }
 
-  val javaType = getJavaTypeLiteral(type, true)
+  val javaType = javaTypeLiteral(type, true)
 
   //TODO: test this on types that are already unqualified
-  val unqualifiedJavaType = getJavaTypeLiteral(type, false)
+  val unqualifiedJavaType = javaTypeLiteral(type, false)
 
   //TODO: test this on types that are already unqualified
   val unqualifiedKotlinType = getKotlinTypeLiteral(type, false)
@@ -197,8 +198,12 @@ data class Field(
   //TODO: move to LogicalFieldType
   val usesStringValidation = effectiveBaseType == STRING
 
-  val resultSetGetterExpression by lazy {
-    buildResultSetGetterExpression(this)
+
+  val javaResultSetGetterExpression by lazy {
+    buildResultSetGetterExpression(
+      field = this,
+      targetLanguage = JAVA_08)
+      .serialize(JAVA_08)
   }
 
   val isCreatedTimestamp =
@@ -211,8 +216,9 @@ data class Field(
 
   val hasCustomJDBCSerde = rdbms?.hasCustomSerde ?: false
 
-  val hasCustomJVMSerde = type.jvmDeserializeTemplate.isNotBlank()
+  val hasCustomJVMSerde = jvm.hasCustomSerde
 
+  //TODO: invoke serialize
   fun javaEqualityExpression(
     identifier0: String,
     identifier1: String,

@@ -18,13 +18,39 @@ enum class TargetLanguage {
   TYPESCRIPT_4,
   ;
 
-  fun onJVM() = when (this) {
-    JAVA_08,
-    JAVA_11,
-    JAVA_17,
-    KOTLIN_JVM_1_4,
-    -> true
+  val onJVM by lazy {
+    when (this) {
+      JAVA_08,
+      JAVA_11,
+      JAVA_17,
+      KOTLIN_JVM_1_4,
+      -> true
 
-    else -> false
+      else -> false
+    }
+  }
+
+  val requiresStatementTerminator by lazy {
+    when (this) {
+      C_17,
+      CPP_14,
+      CPP_17,
+      CPP_20,
+      DART_2,
+      JAVA_08,
+      JAVA_11,
+      JAVA_17,
+      TYPESCRIPT_4,
+      -> true
+
+      KOTLIN_JVM_1_4,
+      GOLANG_1_7,
+      PYTHON_3,
+      -> false
+
+      RUST_1_54 -> TODO()
+      SQL -> TODO()
+      SWIFT_5 -> TODO()
+    }
   }
 }
