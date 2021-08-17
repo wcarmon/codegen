@@ -25,6 +25,21 @@ import com.wcarmon.codegen.model.TargetLanguage
  */
 fun interface Expression {
 
-  /** Serialize to Java code */
-  fun serialize(targetLanguage: TargetLanguage): String
+  /**
+   * Serialize to Kotlin/Java/Rust/Golang/... code
+   * @param targetLanguage
+   * @param terminate only affects languages which require statement terminators (eg. java, c, c++)
+   *    converts an expression into a statement
+   */
+  fun serialize(
+    targetLanguage: TargetLanguage,
+    terminate: Boolean,
+  ): String
+
+  /** Convenience helper */
+  fun serialize(
+    targetLanguage: TargetLanguage,
+  ) = serialize(
+    targetLanguage,
+    targetLanguage.requiresStatementTerminator)
 }

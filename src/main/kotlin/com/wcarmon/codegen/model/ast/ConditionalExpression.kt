@@ -15,7 +15,10 @@ data class ConditionalExpression(
   val expressionForFalse: Expression? = null,
 ) : Expression {
 
-  override fun serialize(targetLanguage: TargetLanguage) = when (targetLanguage) {
+  override fun serialize(
+    targetLanguage: TargetLanguage,
+    terminate: Boolean,
+  ) = when (targetLanguage) {
     C_17,
     CPP_14,
     CPP_17,
@@ -24,14 +27,16 @@ data class ConditionalExpression(
     JAVA_08,
     JAVA_11,
     JAVA_17,
-    KOTLIN_JVM_1_4,
     TYPESCRIPT_4,
-    -> cStyle(targetLanguage)
+    -> cStyle(targetLanguage, terminate)
+
+    KOTLIN_JVM_1_4,
+    -> cStyle(targetLanguage, false)
 
     GOLANG_1_7,
     RUST_1_54,
     SWIFT_5,
-    -> noParens(targetLanguage)
+    -> noParens(targetLanguage, false)
 
     PYTHON_3 -> pythonStyle(targetLanguage)
 
@@ -40,37 +45,43 @@ data class ConditionalExpression(
 //    else -> TODO("serialize: targetLanguage=$targetLanguage, this=$this")
   }
 
-  private fun cStyle(targetLanguage: TargetLanguage) =
+  private fun cStyle(
+    targetLanguage: TargetLanguage,
+    terminate: Boolean = false,
+  ) =
     if (expressionForFalse == null) {
       """
-      |if (${condition.serialize(targetLanguage)}) {
-      |  ${expressionForTrue.serialize(targetLanguage)}   
+      |if (${condition.serialize(targetLanguage, false)}) {
+      |  ${expressionForTrue.serialize(targetLanguage, terminate)}   
       |}
       """
 
     } else {
       """
-      |if (${condition.serialize(targetLanguage)}) {
-      |  ${expressionForTrue.serialize(targetLanguage)}   
+      |if (${condition.serialize(targetLanguage, false)}) {
+      |  ${expressionForTrue.serialize(targetLanguage, terminate)}   
       |} else {
-      |  ${expressionForFalse.serialize(targetLanguage)}
+      |  ${expressionForFalse.serialize(targetLanguage, terminate)}
       |}
       """
     }.trimMargin()
 
-  private fun noParens(targetLanguage: TargetLanguage) =
+  private fun noParens(
+    targetLanguage: TargetLanguage,
+    terminate: Boolean = false,
+  ) =
     if (expressionForFalse == null) {
       """
-      |if ${condition.serialize(targetLanguage)} {
-      |  ${expressionForTrue.serialize(targetLanguage)}
+      |if ${condition.serialize(targetLanguage, false)} {
+      |  ${expressionForTrue.serialize(targetLanguage, terminate)}
       |}
       """
     } else {
       """
-      |if ${condition.serialize(targetLanguage)} {
-      |  ${expressionForTrue.serialize(targetLanguage)}
+      |if ${condition.serialize(targetLanguage, false)} {
+      |  ${expressionForTrue.serialize(targetLanguage, terminate)}
       |} else {
-      |  ${expressionForFalse.serialize(targetLanguage)}
+      |  ${expressionForFalse.serialize(targetLanguage, terminate)}
       |}
       """
     }.trimMargin()
@@ -78,15 +89,15 @@ data class ConditionalExpression(
   private fun pythonStyle(targetLanguage: TargetLanguage) =
     if (expressionForFalse == null) {
       """
-      |if ${condition.serialize(targetLanguage)}:
-      |  ${expressionForTrue.serialize(targetLanguage)}
+      |if ${condition.serialize(targetLanguage, false)}:
+      |  ${expressionForTrue.serialize(targetLanguage, false)}
       """
     } else {
       """
-      |if ${condition.serialize(targetLanguage)}:
-      |  ${expressionForTrue.serialize(targetLanguage)}
+      |if ${condition.serialize(targetLanguage, false)}:
+      |  ${expressionForTrue.serialize(targetLanguage, false)}
       |else:          
-      |  ${expressionForFalse.serialize(targetLanguage)}
+      |  ${expressionForFalse.serialize(targetLanguage, false)}
       """
     }.trimMargin()
 

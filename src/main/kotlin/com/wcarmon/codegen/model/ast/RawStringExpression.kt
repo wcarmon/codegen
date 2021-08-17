@@ -13,5 +13,8 @@ data class RawStringExpression(
 ) : Expression {
 
   /** Assume text is already fit for target language */
-  override fun serialize(targetLanguage: TargetLanguage): String = text
+  override fun serialize(
+    targetLanguage: TargetLanguage,
+    terminate: Boolean,
+  ): String = text
 }
