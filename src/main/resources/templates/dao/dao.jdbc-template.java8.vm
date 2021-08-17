@@ -76,7 +76,7 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
     int affectedRowCount = jdbcTemplate.update(
       SQLQueries.DELETE__${entity.name.upperSnake},
       ps -> {
-        $entity.preparedStatementSetterStatementsForPK
+        $entity.javaPreparedStatementSetterStatementsForPK
       });
   }
 
@@ -105,7 +105,7 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
     List<${entity.name.upperCamel}> results = jdbcTemplate.query(
         SQLQueries.SELECT_BY_PK__${entity.name.upperSnake},
         ps -> {
-          $entity.preparedStatementSetterStatementsForPK
+          $entity.javaPreparedStatementSetterStatementsForPK
         },
         rowMapper);
 
@@ -209,7 +209,7 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
       SQLQueries.PATCH__${entity.name.upperSnake}__${field.name.upperSnake},
       ps -> {
         try {
-          $entity.updateFieldPreparedStatementSetterStatements($field)
+          $entity.javaUpdateFieldPreparedStatementSetterStatements($field)
 
         } catch (Exception ex) {
           throw new RuntimeException("Failed to patch ${entity.name.upperCamel}.${field.name.lowerCamel}: " +

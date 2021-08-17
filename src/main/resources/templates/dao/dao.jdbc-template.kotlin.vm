@@ -48,7 +48,7 @@ class ${entity.name.upperCamel}DAOImpl(
 
     val affectedRowCount =
       jdbcTemplate.update(DELETE__${entity.name.upperSnake}) { ps ->
-          $entity.preparedStatementSetterStatementsForPK
+          $entity.kotlinPreparedStatementSetterStatementsForPK
       }
   }
 
@@ -70,7 +70,7 @@ class ${entity.name.upperCamel}DAOImpl(
       jdbcTemplate.query(
         SELECT_BY_PK__${entity.name.upperSnake},
         PreparedStatementSetter { ps ->
-          $entity.preparedStatementSetterStatementsForPK
+          $entity.kotlinPreparedStatementSetterStatementsForPK
         },
         rowMapper)
 
