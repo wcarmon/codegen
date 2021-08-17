@@ -50,7 +50,6 @@ data class PreparedStatementNonNullSetterExpression(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
   ) =
-    //TODO: use terminate
     "${getPreparedStatementPrefix()}$setter($columnIndex, ${
       newValueExpression.serialize(targetLanguage, false)
     })" + serializeTerminator(terminate)

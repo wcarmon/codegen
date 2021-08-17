@@ -6,7 +6,6 @@ package com.wcarmon.codegen.model.util
 import com.wcarmon.codegen.model.BaseFieldType
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.Field
-import com.wcarmon.codegen.model.LogicalFieldType
 import com.wcarmon.codegen.model.QuoteType.*
 
 /**
@@ -54,48 +53,3 @@ fun defaultValueLiteralForJVM(field: Field): String? {
   return quoteTypeForJVMLiterals(field.type.base)
     .wrap(field.defaultValue)
 }
-
-
-/**
- * Expands the template
- * Useful for Jackson, and json stores (eg. ElasticSearch, MongoDB, ...)
- *
- * See [LogicalFieldType.jvmDeserializeTemplate]
- *
- * @return expanded template (with %s replaced with [fieldValueExpression])
- */
-fun expandJVMDeserializeTemplate(
-  field: Field,
-  fieldValueExpression: String,
-): String {
-  val type = field.type
-  check(shouldUseJVMSerde(field)) {
-    "only invoke when we should use jvm deserializer"
-  }
-
-  if (type.jvmDeserializeTemplate.isNotBlank()) {
-    return String.format(
-      type.jvmDeserializeTemplate,
-      fieldValueExpression)
-  }
-
-  if (type.base.isTemporal
-    || type.base in setOf(PATH, URI, URL)
-    || type.enumType
-  ) {
-    return String.format(
-      defaultJavaDeserializeTemplate(type),
-      fieldValueExpression)
-  }
-
-  TODO("decide how to deserialize on jvm: $type")
-}
-
-//TODO: document me
-private fun shouldUseJVMSerde(field: Field): Boolean =
-  field.hasCustomJVMSerde
-      || field.effectiveBaseType == PATH
-      || field.effectiveBaseType == URI
-      || field.effectiveBaseType == URL
-      || field.effectiveBaseType.isTemporal
-      || field.type.enumType

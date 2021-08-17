@@ -41,8 +41,6 @@ data class ConditionalExpression(
     PYTHON_3 -> pythonStyle(targetLanguage)
 
     SQL -> TODO("Conditionals in SQL are not supported here")
-
-//    else -> TODO("serialize: targetLanguage=$targetLanguage, this=$this")
   }
 
   private fun cStyle(
@@ -54,6 +52,7 @@ data class ConditionalExpression(
       |if (${condition.serialize(targetLanguage, false)}) {
       |  ${expressionForTrue.serialize(targetLanguage, terminate)}   
       |}
+      |
       """
 
     } else {
@@ -63,6 +62,7 @@ data class ConditionalExpression(
       |} else {
       |  ${expressionForFalse.serialize(targetLanguage, terminate)}
       |}
+      |
       """
     }.trimMargin()
 
@@ -75,6 +75,7 @@ data class ConditionalExpression(
       |if ${condition.serialize(targetLanguage, false)} {
       |  ${expressionForTrue.serialize(targetLanguage, terminate)}
       |}
+      |
       """
     } else {
       """
@@ -83,6 +84,7 @@ data class ConditionalExpression(
       |} else {
       |  ${expressionForFalse.serialize(targetLanguage, terminate)}
       |}
+      |
       """
     }.trimMargin()
 
@@ -91,6 +93,7 @@ data class ConditionalExpression(
       """
       |if ${condition.serialize(targetLanguage, false)}:
       |  ${expressionForTrue.serialize(targetLanguage, false)}
+      |
       """
     } else {
       """
@@ -98,6 +101,7 @@ data class ConditionalExpression(
       |  ${expressionForTrue.serialize(targetLanguage, false)}
       |else:          
       |  ${expressionForFalse.serialize(targetLanguage, false)}
+      |
       """
     }.trimMargin()
 

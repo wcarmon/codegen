@@ -7,9 +7,14 @@ import com.wcarmon.codegen.model.Name
 import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.model.TargetLanguage.*
 
-//TODO: document me
+/**
+ * TODO: document class
+ *
+ * @param fieldReadPrefix   //TODO: document me
+ */
 data class FieldReadExpression(
   val fieldName: Name,
+  val fieldReadPrefix: String = "",
   val overrideFieldReadStyle: FieldReadStyle? = null,
 ) : Expression {
 
@@ -17,10 +22,12 @@ data class FieldReadExpression(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
   ) =
-    when (getFieldReadStyle(targetLanguage)) {
-      DIRECT -> getDirectFieldName(targetLanguage)
-      GETTER -> "get${fieldName.upperCamel}()"
-    } + serializeTerminator(terminate)
+    fieldReadPrefix +
+        when (getFieldReadStyle(targetLanguage)) {
+          DIRECT -> getDirectFieldName(targetLanguage)
+          GETTER -> "get${fieldName.upperCamel}()"
+        } +
+        serializeTerminator(terminate)
 
   private fun getDirectFieldName(targetLanguage: TargetLanguage) =
     when (targetLanguage) {

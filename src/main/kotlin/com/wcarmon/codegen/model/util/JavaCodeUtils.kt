@@ -5,32 +5,108 @@ package com.wcarmon.codegen.model.util
 
 import com.wcarmon.codegen.model.*
 import com.wcarmon.codegen.model.BaseFieldType.*
+import com.wcarmon.codegen.model.ast.Expression
+import com.wcarmon.codegen.model.ast.RawStringExpression
 
 /**
- * See https://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html
- *
- * @return literal for Java type
+ * @return semicolon terminated statements to execute preconditions
  */
-fun getJavaTypeLiteral(
-  type: LogicalFieldType,
-  qualified: Boolean = true,
-): String {
+fun buildJavaPreconditionStatements(fields: Collection<Field>): Set<String> {
 
-  val output = getFullyQualifiedJavaTypeLiteral(type)
+  val output = mutableSetOf<String>()
 
-  if (qualified) {
-    return output
+  fields.forEach { field ->
+
+    if (!field.usesStringValidation && !field.type.nullable) {
+      output +=
+        "Objects.requireNonNull(${field.name.lowerCamel}, \"${field.name.lowerCamel} is required and null.\");"
+    }
+
+    if (field.usesStringValidation) {
+      output +=
+        "Preconditions.checkArgument(StringUtils.isNotBlank(${field.name.lowerCamel}), \"${field.name.lowerCamel} is required and blank.\")"
+    }
   }
 
-  if (!type.isParameterized) {
-    return output.substringAfterLast(".")
-  }
-
-  return unqualifyJavaType(output)
+  return output.toSortedSet()
 }
 
 
-fun getFullyQualifiedJavaTypeLiteral(
+//TODO: document me
+fun commaSeparatedJavaFields(
+  fields: Collection<Field>,
+) =
+  fields.map { it.name.lowerCamel }
+    .joinToString(", ")
+
+/**
+ * @return comma separated method args clause
+ */
+fun commaSeparatedJavaMethodArgs(
+  fields: Collection<Field>,
+  qualified: Boolean,
+) =
+  fields.joinToString(", ") {
+    "${javaTypeLiteral(it.type, qualified)} ${it.name.lowerCamel}"
+  }
+
+
+/**
+ * primitive and java.lang classes are skipped
+ *
+ * @return distinct, sorted, fully qualified classes, ready for import
+ */
+fun javaImportsForFields(entity: Entity) =
+  entity.fields
+    .filter { it.effectiveBaseType == USER_DEFINED || !it.type.isParameterized }
+    .map { javaTypeLiteral(it.type) }
+    .filter { javaTypeRequiresImport(it) }
+    .toSortedSet()
+
+
+//TODO: document me
+private fun defaultJavaSerializeTemplate(type: LogicalFieldType) = when (type.base) {
+
+  // TODO: JSON serialized via Jackson
+  ARRAY,
+  LIST,
+  MAP,
+  SET,
+  -> TODO("fix jackson serializer for $type")
+
+  //TODO: more branches here
+  else -> ExpressionTemplate("%s.toString()")
+}
+
+/**
+ * Useful for Jackson, and json stores (eg. ElasticSearch, MongoDB, ...)
+ *
+ * See [com.wcarmon.codegen.model.Serde]
+ * See [com.wcarmon.codegen.model.RDBMSColumn.serde]
+ */
+//private fun getJavaDeserializeTemplate(field: Field): ExpressionTemplate =
+//  if (field.jvm.serde != null) {
+//    field.jvm.serde.deserialize
+//
+//  } else if (field.type.base.isTemporal
+//    || field.type.base in setOf(PATH, URI, URL)
+//    || field.type.enumType
+//  ) {
+//    defaultJavaDeserializeTemplate(field.type)
+//
+//  } else {
+//    //TODO: identity?
+//    TODO("decide how to deserialize on jvm: ${field.type}")
+//  }
+
+//TODO: document me
+private fun defaultJavaSerde(field: Field): Serde =
+  Serde(
+    deserializeTemplate = defaultJavaDeserializeTemplate(field.type),
+    serializeTemplate = defaultJavaSerializeTemplate(field.type),
+  )
+
+private fun fullyQualifiedJavaTypeLiteral(
   type: LogicalFieldType,
 ): String = when (type.base) {
 
@@ -70,98 +146,85 @@ fun getFullyQualifiedJavaTypeLiteral(
   USER_DEFINED -> type.rawTypeLiteral
 }
 
-//TODO: document me
-fun defaultJavaSerializeTemplate(type: LogicalFieldType): String = when (type.base) {
-
-  // TODO: JSON serialized via Jackson
-  ARRAY,
-  LIST,
-  MAP,
-  SET,
-  -> TODO("fix jackson serializer for $type")
-
-  //TODO: more branches here
-  else -> "%s.toString()"
-}
-
 
 /**
- * Deserializer: Converts from String to the type
+ * See https://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html
  *
- * See [LogicalFieldType.jvmDeserializeTemplate]
- *
- * @returns jvm expression, uses %s as placeholder for field value
+ * @return literal for Java type
  */
-fun defaultJavaDeserializeTemplate(type: LogicalFieldType): String = when (type.base) {
+private fun javaTypeLiteral(
+  type: LogicalFieldType,
+  qualified: Boolean = true,
+): String {
 
-  INT_16 -> "Short.parseShort(%s)"
-  INT_32 -> "Integer.parseInt(%s)"
-  INT_64 -> "Long.parseLong(%s)"
-  INT_8 -> "Byte.parseByte(%s)"
-  PATH -> "${getJavaTypeLiteral(type)}.of(%s)"
-  STRING -> "String.valueOf(%s)"
-  URI -> "${getJavaTypeLiteral(type)}.create(%s)"
-  URL -> "new ${getJavaTypeLiteral(type)}(%s)"
-  UUID -> "${getJavaTypeLiteral(type)}.fromString(%s)"
+  val output = fullyQualifiedJavaTypeLiteral(type)
 
-  DURATION,
-  MONTH_DAY,
-  PERIOD,
-  USER_DEFINED,
-  UTC_INSTANT,
-  UTC_TIME,
-  YEAR,
-  YEAR_MONTH,
-  ZONE_AGNOSTIC_DATE,
-  ZONE_AGNOSTIC_TIME,
-  ZONED_DATE_TIME,
-  -> "${getJavaTypeLiteral(type)}.parse(%s)"
+  if (qualified) {
+    return output
+  }
 
-  // TODO: JSON serialized via Jackson
-  ARRAY,
-  LIST,
-  MAP,
-  SET,
-  -> TODO("fix jackson string deserializer for $type")
+  if (!type.isParameterized) {
+    return output.substringAfterLast(".")
+  }
 
-  else -> "%s"
+  return unqualifyJavaType(output)
 }
 
 //TODO: handle enums
+
 /**
  * Builds java.lang.Object.equals based comparison expression
  * Useful in POJOs
  *
  * @return expression for java equality test (for 1 field)
  */
-fun javaEqualityExpression(
+private fun javaEqualityExpression(
   type: LogicalFieldType,
   fieldName: Name,
   identifier0: String,
   identifier1: String,
-): String {
+): Expression {
   require(identifier0.isNotBlank())
   require(identifier1.isNotBlank())
 
   if (type.enumType || type.base == BOOLEAN || type.base == CHAR) {
-    return "$identifier0.${fieldName.lowerCamel} == $identifier1.${fieldName.lowerCamel}"
+    return RawStringExpression("$identifier0.${fieldName.lowerCamel} == $identifier1.${fieldName.lowerCamel}")
   }
 
   if (type.base == FLOAT_64) {
-    return "Double.compare($identifier0.${fieldName.lowerCamel}, $identifier1.${fieldName.lowerCamel}) == 0"
+    return RawStringExpression(
+      "Double.compare($identifier0.${fieldName.lowerCamel}, $identifier1.${fieldName.lowerCamel}) == 0")
   }
 
   if (type.base == FLOAT_32) {
-    return "Float.compare($identifier0.${fieldName.lowerCamel}, $identifier1.${fieldName.lowerCamel}) == 0"
+    return RawStringExpression(
+      "Float.compare($identifier0.${fieldName.lowerCamel}, $identifier1.${fieldName.lowerCamel}) == 0")
   }
 
   if (type.base == ARRAY) {
-    return "Arrays.deepEquals($identifier0.${fieldName.lowerCamel}, $identifier1.${fieldName.lowerCamel})"
+    return RawStringExpression(
+      "Arrays.deepEquals($identifier0.${fieldName.lowerCamel}, $identifier1.${fieldName.lowerCamel})")
   }
 
-  return "Objects.equals($identifier0.${fieldName.lowerCamel}, $identifier1.${fieldName.lowerCamel})"
+  return RawStringExpression(
+    "Objects.equals($identifier0.${fieldName.lowerCamel}, $identifier1.${fieldName.lowerCamel})")
 }
 
+/**
+ * @return true when JVM compiler cannot automatically resolve the type
+ */
+private fun javaTypeRequiresImport(fullyQualifiedJavaType: String): Boolean {
+  if (fullyQualifiedJavaType.startsWith("java.lang")) {
+    return false
+  }
+
+  // primitives
+  if (!fullyQualifiedJavaType.contains(".")) {
+    return false
+  }
+
+  return true
+}
 
 /**
  * Template should prefix "new" when required
@@ -169,9 +232,9 @@ fun javaEqualityExpression(
  *
  * @return literal for mutable java collection factory
  */
-fun newJavaCollectionExpression(type: LogicalFieldType): String {
+private fun newJavaCollectionExpression(type: LogicalFieldType): String {
 
-  require(type.base.isCollection) {
+  check(type.base.isCollection) {
     "I can only instantiate native collections: failedType=$type"
   }
 
@@ -188,7 +251,7 @@ fun newJavaCollectionExpression(type: LogicalFieldType): String {
  * @return template which invokes creates an unmodifiable version of the collection
  */
 //TODO: use %s template approach
-fun unmodifiableJavaCollectionMethod(base: BaseFieldType): String {
+private fun unmodifiableJavaCollectionMethod(base: BaseFieldType): String {
   require(base.isCollection) {
     "method only for collections: $base"
   }
@@ -200,69 +263,6 @@ fun unmodifiableJavaCollectionMethod(base: BaseFieldType): String {
     else -> TODO("Handle immutable version of: $base")
   }
 }
-
-/**
- * primitive and java.lang classes are skipped
- *
- * @return distinct, sorted, fully qualified classes, ready for import
- */
-fun getJavaImportsForFields(entity: Entity) =
-  entity.fields
-    .filter { it.effectiveBaseType == USER_DEFINED || !it.type.isParameterized }
-    .map { getJavaTypeLiteral(it.type) }
-    .filter { javaTypeRequiresImport(it) }
-    .toSortedSet()
-
-/**
- * @return true when JVM compiler cannot automatically resolve the type
- */
-fun javaTypeRequiresImport(fullyQualifiedJavaType: String): Boolean {
-  if (fullyQualifiedJavaType.startsWith("java.lang")) {
-    return false
-  }
-
-  // primitives
-  if (!fullyQualifiedJavaType.contains(".")) {
-    return false
-  }
-
-  return true
-}
-
-/**
- * @return comma separated method args clause
- */
-fun javaMethodArgsForFields(
-  fields: Collection<Field>,
-  qualified: Boolean,
-) =
-  fields.joinToString(", ") {
-    "${getJavaTypeLiteral(it.type, qualified)} ${it.name.lowerCamel}"
-  }
-
-/**
- * @return semicolon terminated statements to execute preconditions
- */
-fun buildJavaPreconditionStatements(fields: Collection<Field>): Set<String> {
-
-  val output = mutableSetOf<String>()
-
-  fields.forEach { field ->
-
-    if (!field.usesStringValidation && !field.type.nullable) {
-      output +=
-        "Objects.requireNonNull(${field.name.lowerCamel}, \"${field.name.lowerCamel} is required and null.\");"
-    }
-
-    if (field.usesStringValidation) {
-      output +=
-        "Preconditions.checkArgument(StringUtils.isNotBlank(${field.name.lowerCamel}), \"${field.name.lowerCamel} is required and blank.\")"
-    }
-  }
-
-  return output.toSortedSet()
-}
-
 
 //TODO: the return on investment is low here
 private fun unqualifyJavaType(fullyQualifiedJavaType: String): String {
@@ -277,3 +277,48 @@ private fun unqualifyJavaType(fullyQualifiedJavaType: String): String {
       delim +
       fullyQualifiedJavaType.substringAfter(delim)
 }
+
+
+/**
+ * Deserializer: Converts from String to the type
+ *
+ * See [com.wcarmon.codegen.model.Serde]
+ *
+ * @returns jvm expression, uses %s as placeholder for field value
+ */
+private fun defaultJavaDeserializeTemplate(type: LogicalFieldType) =
+  ExpressionTemplate(
+    when (type.base) {
+
+      INT_16 -> "Short.parseShort(%s)"
+      INT_32 -> "Integer.parseInt(%s)"
+      INT_64 -> "Long.parseLong(%s)"
+      INT_8 -> "Byte.parseByte(%s)"
+      PATH -> "${javaTypeLiteral(type)}.of(%s)"
+      STRING -> "String.valueOf(%s)"
+      URI -> "${javaTypeLiteral(type)}.create(%s)"
+      URL -> "new ${javaTypeLiteral(type)}(%s)"
+      UUID -> "${javaTypeLiteral(type)}.fromString(%s)"
+
+      DURATION,
+      MONTH_DAY,
+      PERIOD,
+      USER_DEFINED,
+      UTC_INSTANT,
+      UTC_TIME,
+      YEAR,
+      YEAR_MONTH,
+      ZONE_AGNOSTIC_DATE,
+      ZONE_AGNOSTIC_TIME,
+      ZONED_DATE_TIME,
+      -> "${javaTypeLiteral(type)}.parse(%s)"
+
+      // TODO: JSON serialized via Jackson
+      ARRAY,
+      LIST,
+      MAP,
+      SET,
+      -> TODO("fix jackson string deserializer for $type")
+
+      else -> "%s"
+    })
