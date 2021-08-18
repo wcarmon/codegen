@@ -30,6 +30,7 @@ import java.time.*
  * See https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/jdbc/core/JdbcTemplate.html
  * Threadsafe & Reusable after construction
  */
+@Suppress("MagicNumber", "TooManyFunctions") // column & placeholder numbers
 class ${entity.name.upperCamel}DAOImpl(
   private val jdbcTemplate: JdbcTemplate,
 
@@ -46,21 +47,18 @@ class ${entity.name.upperCamel}DAOImpl(
   override fun delete(#if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end ${entity.kotlinMethodArgsForPKFields(false)}) {
     //TODO: kotlin preconditions on PK fields (see FieldValidation)
 
-    val affectedRowCount =
-      jdbcTemplate.update(DELETE__${entity.name.upperSnake}) { ps ->
-          $entity.kotlinPreparedStatementSetterStatementsForPK
-      }
+    jdbcTemplate.update(DELETE__${entity.name.upperSnake}) { ps ->
+        $entity.kotlinPreparedStatementSetterStatementsForPK
+    }
   }
 
   override fun exists(#if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end ${entity.kotlinMethodArgsForPKFields(false)}): Boolean {
     //TODO: kotlin preconditions on PK fields (see FieldValidation)
 
-    val result = jdbcTemplate.queryForObject(
+    return 1 == jdbcTemplate.queryForObject(
       ROW_EXISTS__${entity.name.upperSnake},
       Int::class.java,
       $entity.jdbcSerializedPKFields)
-
-    return 1 == result
   }
 
   override fun findById(#if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end ${entity.kotlinMethodArgsForPKFields(false)}): ${entity.name.upperCamel}? {
@@ -90,18 +88,27 @@ class ${entity.name.upperCamel}DAOImpl(
 
     val affectedRowCount = jdbcTemplate.update(
       INSERT__${entity.name.upperSnake},
-      { ps ->
+    ) { ps ->
         $entity.kotlinInsertPreparedStatementSetterStatements
-      },
-    )
+      }
+
+    check(affectedRowCount == 1){ "1-row should have been inserted for entity=#[[$]]#entity" }
   }
 
   override fun list(#if ($request.hasContextClass)context: $request.unqualifiedContextClass#end): List<${entity.name.upperCamel}> {
-    TODO("finish this method")
+    return jdbcTemplate.query(
+      SELECT_ALL__${entity.name.upperSnake},
+      rowMapper
+    )
   }
 
   override fun update(#if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end entity: ${entity.name.upperCamel}) {
-    TODO("finish this method")
+
+    jdbcTemplate.update(
+      UPDATE__${entity.name.upperSnake}
+    ) { ps ->
+        $entity.kotlinUpdatePreparedStatementSetterStatements
+    }
   }
 
   override fun upsert(#if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end entity: ${entity.name.upperCamel}) {
@@ -110,10 +117,18 @@ class ${entity.name.upperCamel}DAOImpl(
 
   // -- Patch methods
   #foreach( $field in $entity.nonPrimaryKeyFields )
-    override fun set${field.name.upperCamel}(#if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end
-    ${entity.kotlinMethodArgsForPKFields(false)},
-    ${field.name.lowerCamel}: ${field.unqualifiedKotlinType}) {
-      TODO("finish this method")
+    override fun set${field.name.upperCamel}(
+      #if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end
+      ${entity.kotlinMethodArgsForPKFields(false)},
+      ${field.name.lowerCamel}: ${field.unqualifiedKotlinType}) {
+
+      //TODO: '${field.name.lowerCamel}' field validation here (since not part of the POJO validation)
+
+      jdbcTemplate.update(
+        PATCH__${entity.name.upperSnake}__${field.name.upperSnake}
+      ) { ps ->
+        $entity.kotlinUpdateFieldPreparedStatementSetterStatements($field)
+      }
     }
 
   #end

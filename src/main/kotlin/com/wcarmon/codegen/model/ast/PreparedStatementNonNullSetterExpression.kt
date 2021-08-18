@@ -15,8 +15,9 @@ import com.wcarmon.codegen.model.TargetLanguage.*
 data class PreparedStatementNonNullSetterExpression(
   val columnIndex: Int,
   val newValueExpression: Expression,
-  val preparedStatementIdentifier: String = "ps", //TODO: make a type for this
   val setter: MethodName,
+
+  val preparedStatementIdentifier: String = "ps", //TODO: make a type for this
 ) : Expression {
 
   init {
@@ -50,14 +51,17 @@ data class PreparedStatementNonNullSetterExpression(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
   ) =
-    "${getPreparedStatementPrefix()}$setter($columnIndex, ${
+    "${preparedStatementPrefix}$setter($columnIndex, ${
       newValueExpression.serialize(targetLanguage, false)
     })" + serializeTerminator(terminate)
 
   private fun handleKotlin(targetLanguage: TargetLanguage) =
-    handleJava(targetLanguage, false)
+    "${preparedStatementPrefix}$setter($columnIndex, ${
+      newValueExpression.serialize(targetLanguage, false)
+    })"
 
-  private fun getPreparedStatementPrefix() =
+  private val preparedStatementPrefix by lazy {
     if (preparedStatementIdentifier.isBlank()) ""
     else "${preparedStatementIdentifier}."
+  }
 }

@@ -20,22 +20,16 @@ import java.sql.JDBCType
  * @return statements for assigning properties on [java.sql.PreparedStatement]
  */
 fun buildPreparedStatementSetters(
-  //TODO: too many fields :-)
-  fieldReadPrefix: String = "",
-  fieldReadStyle: FieldReadStyle,
+  cfg: PreparedStatementBuilderConfig,
   fields: List<Field>,
+
   firstIndex: Int = 1,
-  targetLanguage: TargetLanguage,
-  preparedStatementIdentifier: String = "ps",
 ): List<Expression> =
   fields.mapIndexed { index, field ->
     buildPreparedStatementSetter(
+      cfg = cfg,
       columnIndex = firstIndex + index,
       field = field,
-      fieldReadPrefix = fieldReadPrefix,
-      fieldReadStyle = fieldReadStyle,
-      preparedStatementIdentifier = preparedStatementIdentifier,
-      targetLanguage = targetLanguage,
     )
   }
 
@@ -50,28 +44,22 @@ fun buildPreparedStatementSetters(
  *   eg. "ps.setString(7, foo.toString())"
  */
 fun buildPreparedStatementSetter(
-  //TODO: too many fields, use a data class
+  cfg: PreparedStatementBuilderConfig,
   columnIndex: Int,
   field: Field,
-  fieldReadPrefix: String = "",
-  fieldReadStyle: FieldReadStyle,
-  preparedStatementIdentifier: String = "ps",
-  targetLanguage: TargetLanguage,
 ): Expression {
-  require(fieldReadPrefix.trim() == fieldReadPrefix) {
-    "fieldReadPrefix must be trimmed: $fieldReadPrefix"
-  }
 
   val expressionForNonNull =
     PreparedStatementNonNullSetterExpression(
       columnIndex = columnIndex,
       newValueExpression = jdbcFieldReadExpression(
+        assertNonNull = field.type.nullable && cfg.allowFieldNonNullAssertion,
         field = field,
-        fieldReadPrefix = fieldReadPrefix,
-        fieldReadStyle = fieldReadStyle,
-        targetLanguage = targetLanguage,
+        fieldReadPrefix = cfg.fieldReadPrefix,
+        fieldReadStyle = cfg.fieldReadStyle,
+        targetLanguage = cfg.targetLanguage,
       ),
-      preparedStatementIdentifier = preparedStatementIdentifier,
+      preparedStatementIdentifier = cfg.preparedStatementIdentifier,
       setter = defaultPreparedStatementSetter(field.effectiveBaseType),
     )
 
@@ -81,13 +69,13 @@ fun buildPreparedStatementSetter(
       condition = NullComparisonExpression(
         FieldReadExpression(
           fieldName = field.name,
-          fieldReadPrefix = fieldReadPrefix,
-          overrideFieldReadStyle = fieldReadStyle,
+          fieldReadPrefix = cfg.fieldReadPrefix,
+          overrideFieldReadStyle = cfg.fieldReadStyle,
         )),
       expressionForTrue = PreparedStatementNullSetterExpression(
         columnIndex = columnIndex,
         columnType = jdbcType(field.effectiveBaseType),
-        preparedStatementIdentifier = preparedStatementIdentifier,
+        preparedStatementIdentifier = cfg.preparedStatementIdentifier,
       ),
       expressionForFalse = expressionForNonNull,
     )
@@ -128,9 +116,6 @@ fun buildResultSetGetterExpression(
 }
 
 /**
- * @param field
- * @param fieldReadStyle
- * @param fieldReadPrefix  TODO
  *
  * handles type conversion using Serde
  *
@@ -138,6 +123,8 @@ fun buildResultSetGetterExpression(
  * eg. "myEntity.myField.toString()"
  */
 private fun jdbcFieldReadExpression(
+  //TODO: too many args
+  assertNonNull: Boolean = false,
   field: Field,
   fieldReadPrefix: String = "",
   fieldReadStyle: FieldReadStyle,
@@ -152,6 +139,7 @@ private fun jdbcFieldReadExpression(
   }
 
   val fieldReadExpression = FieldReadExpression(
+    assertNonNull = assertNonNull,
     fieldName = field.name,
     fieldReadPrefix = fieldReadPrefix,
     overrideFieldReadStyle = fieldReadStyle,

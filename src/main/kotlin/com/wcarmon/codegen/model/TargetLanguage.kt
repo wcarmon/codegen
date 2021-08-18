@@ -1,5 +1,8 @@
 package com.wcarmon.codegen.model
 
+import com.wcarmon.codegen.model.FieldReadStyle.DIRECT
+import com.wcarmon.codegen.model.FieldReadStyle.GETTER
+
 enum class TargetLanguage {
   C_17,
   CPP_14,
@@ -17,6 +20,28 @@ enum class TargetLanguage {
   SWIFT_5,
   TYPESCRIPT_4,
   ;
+
+  val fieldReadStyle by lazy {
+    if (usesGetters) GETTER
+    else DIRECT
+  }
+
+  val usesGetters by lazy {
+    when (this) {
+      C_17,
+      GOLANG_1_7,
+      KOTLIN_JVM_1_4,
+      SQL,
+      TYPESCRIPT_4,
+      -> false
+
+      JAVA_08,
+      JAVA_11,
+      JAVA_17,
+      -> true
+      else -> TODO("does this language use getters?: $this")
+    }
+  }
 
   val onJVM by lazy {
     when (this) {

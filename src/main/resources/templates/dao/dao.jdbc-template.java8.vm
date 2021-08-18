@@ -109,7 +109,8 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
         },
         rowMapper);
 
-    if (null == results || results.isEmpty()) {
+    // Invariant: results is never null
+    if (results.isEmpty()) {
       return null;
     }
 
@@ -186,8 +187,6 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
     Objects.requireNonNull(entity, "entity is required and null.");
 
     //TODO: more here
-    //TODO: set the updated field  (field.isCreatedTimestamp)
-    //TODO: set the created field
   }
 
   // -- Patch methods

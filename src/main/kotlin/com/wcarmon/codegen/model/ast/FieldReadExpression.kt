@@ -14,6 +14,8 @@ import com.wcarmon.codegen.model.TargetLanguage.*
  */
 data class FieldReadExpression(
   val fieldName: Name,
+
+  val assertNonNull: Boolean = false,
   val fieldReadPrefix: String = "",
   val overrideFieldReadStyle: FieldReadStyle? = null,
 ) : Expression {
@@ -24,10 +26,16 @@ data class FieldReadExpression(
   ) =
     fieldReadPrefix +
         when (getFieldReadStyle(targetLanguage)) {
-          DIRECT -> getDirectFieldName(targetLanguage)
+          DIRECT -> getDirectFieldName(targetLanguage) + nonNullSnippet
           GETTER -> "get${fieldName.upperCamel}()"
         } +
         serializeTerminator(terminate)
+
+  // Kotlin non-null assertion
+  private val nonNullSnippet by lazy {
+    if (assertNonNull) "!!"
+    else ""
+  }
 
   private fun getDirectFieldName(targetLanguage: TargetLanguage) =
     when (targetLanguage) {

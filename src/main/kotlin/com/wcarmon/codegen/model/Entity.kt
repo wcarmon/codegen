@@ -3,9 +3,9 @@ package com.wcarmon.codegen.model
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.wcarmon.codegen.model.FieldReadStyle.DIRECT
-import com.wcarmon.codegen.model.FieldReadStyle.GETTER
 import com.wcarmon.codegen.model.TargetLanguage.JAVA_08
 import com.wcarmon.codegen.model.TargetLanguage.KOTLIN_JVM_1_4
+import com.wcarmon.codegen.model.ast.RawStringExpression
 import com.wcarmon.codegen.model.util.*
 import org.atteo.evo.inflector.English
 
@@ -145,102 +145,116 @@ data class Entity(
   }
 
   val kotlinInsertPreparedStatementSetterStatements by lazy {
-    val pk = buildPreparedStatementSetters(
-      fieldReadPrefix = "entity.",
-      fieldReadStyle = DIRECT,
-      fields = primaryKeyFields,
-      firstIndex = 1,
-      targetLanguage = KOTLIN_JVM_1_4,
-      preparedStatementIdentifier = "ps",
-    )
+    buildInsertPreparedStatementSetterStatements(KOTLIN_JVM_1_4)
+  }
 
-    val nonPk = buildPreparedStatementSetters(
-      fieldReadPrefix = "entity.",
-      fieldReadStyle = DIRECT,
-      fields = nonPrimaryKeyFields,
-      firstIndex = primaryKeyFields.size + 1,
-      preparedStatementIdentifier = "ps",
-      targetLanguage = KOTLIN_JVM_1_4,
-    )
+  val javaInsertPreparedStatementSetterStatements by lazy {
+    buildInsertPreparedStatementSetterStatements(JAVA_08)
+  }
 
-    (pk + nonPk).joinToString(separator = "\n")
+  val kotlinUpdatePreparedStatementSetterStatements by lazy {
+    buildUpdatePreparedStatementSetterStatements(KOTLIN_JVM_1_4)
+  }
+
+  val javaUpdatePreparedStatementSetterStatements by lazy {
+    buildUpdatePreparedStatementSetterStatements(JAVA_08)
+  }
+
+  fun javaUpdateFieldPreparedStatementSetterStatements(field: Field) =
+    buildUpdateFieldPreparedStatementSetterStatements(field, JAVA_08)
+
+  fun kotlinUpdateFieldPreparedStatementSetterStatements(field: Field) =
+    buildUpdateFieldPreparedStatementSetterStatements(field, KOTLIN_JVM_1_4)
+
+  val kotlinPreparedStatementSetterStatementsForPK by lazy {
+    buildPreparedStatementSetterStatementsForPK(KOTLIN_JVM_1_4)
+  }
+
+  val javaPreparedStatementSetterStatementsForPK by lazy {
+    buildPreparedStatementSetterStatementsForPK(JAVA_08)
+  }
+
+  val jdbcSerializedPKFields by lazy {
+    commaSeparatedJavaFields(primaryKeyFields)
   }
 
   // For INSERT, PK fields are first
-  val javaInsertPreparedStatementSetterStatements by lazy {
+  private fun buildInsertPreparedStatementSetterStatements(
+    targetLanguage: TargetLanguage,
+  ): String {
 
-    val targetLanguage = JAVA_08
-    val pk = buildPreparedStatementSetters(
+    val cfg = PreparedStatementBuilderConfig(
       fieldReadPrefix = "entity.",
-      fieldReadStyle = GETTER,
-      fields = primaryKeyFields,
-      firstIndex = 1,
-      preparedStatementIdentifier = "ps",
       targetLanguage = targetLanguage,
     )
 
+    val pk = buildPreparedStatementSetters(
+      cfg = cfg,
+      fields = primaryKeyFields,
+      firstIndex = 1,
+    )
+
     val nonPk = buildPreparedStatementSetters(
-      fieldReadPrefix = "entity.",
-      fieldReadStyle = GETTER,
+      cfg = cfg,
       fields = nonPrimaryKeyFields,
       firstIndex = primaryKeyFields.size + 1,
-      preparedStatementIdentifier = "ps",
-      targetLanguage = targetLanguage,
     )
 
-    (pk + nonPk)
-      .map {
-        it.serialize(targetLanguage)
-      }
-      .joinToString("\n")
-  }
-
-  // For UPDATE, PK fields are last
-  val javaUpdatePreparedStatementSetterStatements by lazy {
-
-    val targetLanguage = JAVA_08
-    val nonPk = buildPreparedStatementSetters(
-      fieldReadPrefix = "entity.",
-      fieldReadStyle = GETTER,
-      fields = nonPrimaryKeyFields,
-      firstIndex = 1,
-      targetLanguage = targetLanguage,
-      preparedStatementIdentifier = "ps",
-    )
-
-    val pk = buildPreparedStatementSetters(
-      fieldReadPrefix = "entity.",
-      fieldReadStyle = GETTER,
-      fields = primaryKeyFields,
-      firstIndex = nonPrimaryKeyFields.size + 1,
-      preparedStatementIdentifier = "ps",
-      targetLanguage = targetLanguage,
-    )
-
-    (nonPk + pk)
+    return (pk + nonPk)
       .map { it.serialize(targetLanguage) }
       .joinToString(separator = "\n")
   }
 
-  fun javaUpdateFieldPreparedStatementSetterStatements(field: Field): String {
+  // NOTE: For UPDATE, PK fields are last
+  private fun buildUpdatePreparedStatementSetterStatements(
+    targetLanguage: TargetLanguage,
+  ): String {
 
-    val targetLanguage = JAVA_08
-    val columnSetterStatement = buildPreparedStatementSetter(
-      columnIndex = 1,
-      field = field,
-      fieldReadPrefix = "",
-      fieldReadStyle = DIRECT,
-      preparedStatementIdentifier = "ps",
+    val cfg = PreparedStatementBuilderConfig(
+      fieldReadPrefix = "entity.",
       targetLanguage = targetLanguage,
+      preparedStatementIdentifier = "ps",
+    )
+
+    val nonPk = buildPreparedStatementSetters(
+      cfg = cfg,
+      fields = nonPrimaryKeyFields,
+      firstIndex = 1,
     )
 
     val pk = buildPreparedStatementSetters(
-      fieldReadPrefix = "",
+      cfg = cfg,
+      fields = primaryKeyFields,
+      firstIndex = nonPrimaryKeyFields.size + 1,
+    )
+
+    val separator = RawStringExpression("\n\t\t// Primary key field(s)")
+
+    return (nonPk + separator + pk)
+      .map { it.serialize(targetLanguage) }
+      .joinToString(separator = "\n")
+  }
+
+  private fun buildUpdateFieldPreparedStatementSetterStatements(
+    field: Field,
+    targetLanguage: TargetLanguage,
+  ): String {
+    val cfg = PreparedStatementBuilderConfig(
+      allowFieldNonNullAssertion = false,
       fieldReadStyle = DIRECT,
+      targetLanguage = targetLanguage,
+    )
+
+    val columnSetterStatement = buildPreparedStatementSetter(
+      cfg = cfg,
+      columnIndex = 1,
+      field = field,
+    )
+
+    val pk = buildPreparedStatementSetters(
+      cfg = cfg,
       fields = primaryKeyFields,
       firstIndex = 2,
-      preparedStatementIdentifier = "ps",
-      targetLanguage = targetLanguage,
     )
 
     return (listOf(columnSetterStatement) + pk)
@@ -248,32 +262,16 @@ data class Entity(
       .joinToString(separator = "\n")
   }
 
-  val kotlinPreparedStatementSetterStatementsForPK by lazy {
+  private fun buildPreparedStatementSetterStatementsForPK(
+    targetLanguage: TargetLanguage,
+  ) =
     buildPreparedStatementSetters(
-      fieldReadStyle = DIRECT,
+      cfg = PreparedStatementBuilderConfig(
+        targetLanguage = targetLanguage,
+      ),
       fields = primaryKeyFields,
       firstIndex = 1,
-      preparedStatementIdentifier = "ps",
-      targetLanguage = KOTLIN_JVM_1_4,
-    )
-      .joinToString(separator = "\n")
-  }
-
-  val javaPreparedStatementSetterStatementsForPK by lazy {
-    val targetLanguage = JAVA_08
-
-    buildPreparedStatementSetters(
-      fieldReadStyle = DIRECT,
-      fields = primaryKeyFields,
-      firstIndex = 1,
-      preparedStatementIdentifier = "ps",
-      targetLanguage = targetLanguage,
     )
       .map { it.serialize(targetLanguage) }
       .joinToString(separator = "\n")
-  }
-
-  val jdbcSerializedPKFields by lazy {
-    commaSeparatedJavaFields(primaryKeyFields)
-  }
 }
