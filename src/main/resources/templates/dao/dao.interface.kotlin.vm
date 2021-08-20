@@ -8,7 +8,6 @@ import ${entity.pkg.value}.${entity.name.upperCamel}
 import $importable
 #end
 
-
 import java.time.*
 
 
@@ -31,21 +30,21 @@ interface ${entity.name.upperCamel}DAO {
   * @param TODO
   */
   ##TODO: Add @param to javadoc for context (dynamic)
-  fun delete(#if ($request.hasContextClass) context: $request.unqualifiedContextClass,#end ${entity.kotlinMethodArgsForPKFields(false)} )
+  fun delete(#if ($request.hasContextClass) context: $request.unqualifiedContextClass,#end ${entity.kotlinMethodArgsForPKFields(false)})
 
   /**
   * @param TODO
   * @return true when {@link ${entity.pkg.value}.${entity.name.upperCamel}} exists with matching PK
   */
   ##TODO: Add @param to kotlindoc for context (dynamic)
-  fun exists(#if ($request.hasContextClass) context: $request.unqualifiedContextClass,#end ${entity.kotlinMethodArgsForPKFields(false)} ): Boolean
+  fun exists(#if ($request.hasContextClass) context: $request.unqualifiedContextClass,#end ${entity.kotlinMethodArgsForPKFields(false)}): Boolean
 
   /**
   * @param TODO
   * @return one {@link ${entity.pkg.value}.${entity.name.upperCamel}} instance (matching PKs) or null
   */
   ##TODO: Add @param to kotlindoc for context (dynamic)
-  fun findById( #if ($request.hasContextClass) context: $request.unqualifiedContextClass,#end ${entity.kotlinMethodArgsForPKFields(false)} ): ${entity.name.upperCamel}?
+  fun findById( #if ($request.hasContextClass) context: $request.unqualifiedContextClass,#end ${entity.kotlinMethodArgsForPKFields(false)}): ${entity.name.upperCamel}?
 #end
 
   /**

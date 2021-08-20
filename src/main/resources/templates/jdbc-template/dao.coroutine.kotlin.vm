@@ -1,0 +1,132 @@
+package $request.packageName.value
+
+import ${entity.pkg.value}.${entity.name.upperCamel}
+import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.PreparedStatementSetter
+import org.springframework.jdbc.core.RowMapper
+#if ($request.hasContextClass)
+import $request.jvmContextClass
+#end
+#foreach ($importable in $entity.kotlinImportsForFields)
+import $importable
+#end
+#foreach ($importable in $request.extraJVMImports)
+import $importable
+#end
+#if ($entity.requiresObjectWriter)
+import com.fasterxml.jackson.databind.ObjectWriter
+#end
+import java.sql.Types
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
+/**
+ * DAO implementation for [${entity.pkg.value}.${entity.name.upperCamel}].
+ * Uses [org.springframework.jdbc.core.JdbcTemplate] to execute queries.
+ * Uses [java.sql.PreparedStatement]
+ *
+ * See https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/jdbc/core/JdbcTemplate.html
+ * Threadsafe & Reusable after construction
+ */
+@Suppress("MagicNumber", "TooManyFunctions") // column & placeholder numbers
+class ${entity.name.upperCamel}DAOImpl(
+  private val jdbcTemplate: JdbcTemplate,
+
+#if ($entity.requiresObjectWriter)
+/** To serialize collection fields */
+private val objectWriter: ObjectWriter,
+#end
+
+private val rowMapper: RowMapper<${entity.name.upperCamel}>,
+
+) : ${entity.name.upperCamel}DAO {
+
+#if ($entity.hasPrimaryKeyFields)
+  override suspend fun delete(${entity.kotlinMethodArgsForPKFields(false)}): Unit = withContext(Dispatchers.IO) {
+    //TODO: kotlin preconditions on PK fields (see FieldValidation)
+
+    jdbcTemplate.update(DELETE__${entity.name.upperSnake}) { ps ->
+        $entity.kotlinPreparedStatementSetterStatementsForPK
+    }
+  }
+
+  override suspend fun exists(${entity.kotlinMethodArgsForPKFields(false)}): Boolean = withContext(Dispatchers.IO) {
+    //TODO: kotlin preconditions on PK fields (see FieldValidation)
+
+    1 == jdbcTemplate.queryForObject(
+      ROW_EXISTS__${entity.name.upperSnake},
+      Int::class.java,
+      $entity.jdbcSerializedPKFields)
+  }
+
+  override suspend fun findById(#if ($request.hasContextClass)#end ${entity.kotlinMethodArgsForPKFields(false)}): ${entity.name.upperCamel}? = withContext(Dispatchers.IO) {
+    //TODO: kotlin preconditions on PK fields (see FieldValidation)
+
+    val results =
+      jdbcTemplate.query(
+        SELECT_BY_PK__${entity.name.upperSnake},
+        PreparedStatementSetter { ps ->
+          $entity.kotlinPreparedStatementSetterStatementsForPK
+        },
+        rowMapper)
+
+    if (results.isEmpty()) {
+      return@withContext null
+    }
+
+    if (results.size > 1) {
+      //TODO: include PK arg(s)
+      throw IllegalStateException("Multiple rows match the PK: context=#[[$]]#coroutineContext, results=#[[$]]#results")
+    }
+
+    results[0]
+  }
+#end
+
+  override suspend fun create(#if ($request.hasContextClass)#end entity: ${entity.name.upperCamel}): Unit = withContext(Dispatchers.IO) {
+
+    val affectedRowCount = jdbcTemplate.update(
+      INSERT__${entity.name.upperSnake},
+    ) { ps ->
+        $entity.kotlinInsertPreparedStatementSetterStatements
+      }
+
+    check(affectedRowCount == 1){ "1-row should have been inserted for entity=#[[$]]#entity" }
+  }
+
+  override suspend fun list(#if ($request.hasContextClass)context: $request.unqualifiedContextClass#end): List<${entity.name.upperCamel}> = withContext(Dispatchers.IO) {
+    jdbcTemplate.query(
+      SELECT_ALL__${entity.name.upperSnake},
+      rowMapper
+    )
+  }
+
+  override suspend fun update(#if ($request.hasContextClass)#end entity: ${entity.name.upperCamel}): Unit = withContext(Dispatchers.IO) {
+
+   jdbcTemplate.update(
+      UPDATE__${entity.name.upperSnake}
+    ) { ps ->
+        $entity.kotlinUpdatePreparedStatementSetterStatements
+    }
+  }
+
+  override suspend fun upsert(#if ($request.hasContextClass)#end entity: ${entity.name.upperCamel}): Unit = withContext(Dispatchers.IO) {
+    TODO("finish this method")
+  }
+
+  // -- Patch methods
+#foreach( $field in $entity.nonPrimaryKeyFields )
+  override suspend fun set${field.name.upperCamel}(
+    ${entity.kotlinMethodArgsForPKFields(false)},
+    ${field.name.lowerCamel}: ${field.unqualifiedKotlinType}): Unit = withContext(Dispatchers.IO) {
+
+    //TODO: '${field.name.lowerCamel}' field validation here (since not part of the POJO validation)
+      jdbcTemplate.update(
+        PATCH__${entity.name.upperSnake}__${field.name.upperSnake}
+      ) { ps ->
+        $entity.kotlinUpdateFieldPreparedStatementSetterStatements($field)
+      }
+  }
+
+#end
+}
