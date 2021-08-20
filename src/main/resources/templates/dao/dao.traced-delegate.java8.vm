@@ -27,6 +27,8 @@ import java.util.Set;
  * Relies on the Context class ($request.unqualifiedContextClass) to:
  * 1. provide the current {@link Span}
  * 2. build a new child Context, with a new {@link Span}
+ *
+ * Threadsafe & Reusable after construction
  */
 public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.upperCamel}DAO {
 
@@ -221,7 +223,9 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
 
 #end
 
-  /** Wrap the DAO call with proper span cleanup */
+  /**
+   * Wrap the DAO call with proper span cleanup
+   */
   private void wrapDAOCall(Span span, Runnable daoCall) {
     Objects.requireNonNull(span, "span is required and missing.");
     Objects.requireNonNull(daoCall, "daoCall is required and missing.");
@@ -230,10 +234,7 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
       daoCall.run();
 
     } catch (Exception ex) {
-      span.setTag("error", true);
-      span.setTag("error.kind", ex.getClass().getName());
-      span.setTag("error.object", exceptionSerializer.apply(ex));
-
+      applyExceptionToSpan(span, ex);
       throw ex;
 
     } finally {
@@ -241,7 +242,9 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
     }
   }
 
-  /** Wrap the DAO call with proper span cleanup */
+  /**
+   * Wrap the DAO call with proper span cleanup
+   */
   private <T> T wrapDAOCall(Span span, Supplier<T> daoCall) {
     Objects.requireNonNull(span, "span is required and missing.");
     Objects.requireNonNull(daoCall, "daoCall is required and missing.");
@@ -250,14 +253,17 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
       return daoCall.get();
 
     } catch (Exception ex) {
-      span.setTag("error", true);
-      span.setTag("error.kind", ex.getClass().getName());
-      span.setTag("error.object", exceptionSerializer.apply(ex));
-
+      applyExceptionToSpan(span, ex);
       throw ex;
 
     } finally {
       span.finish();
     }
+  }
+
+  private void applyExceptionToSpan(Span span, Exception ex) {
+    span.setTag("error", true);
+    span.setTag("error.kind", ex.getClass().getName());
+    span.setTag("error.object", exceptionSerializer.apply(ex));
   }
 }

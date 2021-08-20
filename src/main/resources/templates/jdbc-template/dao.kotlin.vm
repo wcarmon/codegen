@@ -83,6 +83,7 @@ class ${entity.name.upperCamel}DAOImpl(
 
     return results[0]
   }
+#end
 
   override fun create(#if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end entity: ${entity.name.upperCamel}) {
 
@@ -132,5 +133,4 @@ class ${entity.name.upperCamel}DAOImpl(
     }
 
   #end
-#end
 }
