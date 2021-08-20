@@ -13,5 +13,5 @@
   "outputFilenameTemplate": "%sDAOImpl.kt",
   "outputMode": "multiple",
   "package": "com.wcarmon.chrono.dao30",
-  "templateURI": "classpath:/templates/dao/dao.jdbc-template.kotlin.vm"
+  "templateURI": "classpath:/templates/jdbc-template/dao.kotlin.vm"
 }

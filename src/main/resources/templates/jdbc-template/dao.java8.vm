@@ -67,7 +67,7 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
 
   #if ($entity.hasPrimaryKeyFields)
   @Override
-  public void delete(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end ${entity.javaMethodArgsForPKFields(false)} ) {
+  public void delete(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end ${entity.javaMethodArgsForPKFields(false)}) {
     #if($request.hasContextClass)
     Objects.requireNonNull(context, "context is required and null.");
     #end
@@ -81,7 +81,7 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
   }
 
   @Override
-  public boolean exists(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end ${entity.javaMethodArgsForPKFields(false)} ) {
+  public boolean exists(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end ${entity.javaMethodArgsForPKFields(false)}) {
     #if($request.hasContextClass)
     Objects.requireNonNull(context, "context is required and null.");
     #end
@@ -96,7 +96,7 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
   }
 
   @Override
-  public ${entity.name.upperCamel} findById(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end ${entity.javaMethodArgsForPKFields(false)} ) {
+  public ${entity.name.upperCamel} findById(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end ${entity.javaMethodArgsForPKFields(false)}) {
     #if($request.hasContextClass)
     Objects.requireNonNull(context, "context is required and null.");
     #end
@@ -199,8 +199,9 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
     Objects.requireNonNull(context, "context is required and null.");
     #end
     $entity.javaPrimaryKeyPreconditionStatements
+    #if ($field.type.nullable)
     //TODO: requireNonNull precondition on ${field.unqualifiedJavaType} (except for primitives)
-    //  field.type.nullable=$field.type.nullable
+    #end
 
     //TODO: field validation here (since not part of the POJO validation)
 

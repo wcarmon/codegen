@@ -1,1 +1,263 @@
-// TODO: improve /home/wcarmon/git-repos/codegen/src/main/resources/templates/dao/dao.traced-delegate.java8.vm
+package $request.packageName.value;
+
+import ${entity.pkg.value}.${entity.name.upperCamel};
+#if ($request.hasContextClass)
+import $request.jvmContextClass;
+#end
+#foreach ($importable in $entity.javaImportsForFields)
+import $importable;
+#end
+#foreach ($importable in $request.extraJVMImports)
+import $importable;
+#end
+import io.opentracing.Tracer;
+import io.opentracing.Span;
+
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
+/**
+ * OpenTracing based Traced DAO
+ * <p>
+ * Uses Delegation pattern
+ * <p>
+ * Relies on the Context class ($request.unqualifiedContextClass) to:
+ * 1. provide the current {@link Span}
+ * 2. build a new child Context, with a new {@link Span}
+ */
+public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.upperCamel}DAO {
+
+  private static final String ENTITY_TYPE_NAME = "${entity.name.upperCamel}";
+
+  /**
+   * Delegation Pattern: All DAO calls are delegated to this
+   */
+  private final ${entity.name.upperCamel}DAO realDAO;
+
+  /**
+   * Converts exception to a string for {@link io.opentracing.Span#setTag}
+   */
+  private final Function<#[[Exception]]#, String> exceptionSerializer;
+
+  private final Tracer tracer;
+
+  public ${entity.name.upperCamel}TracedDAO(
+      ${entity.name.upperCamel}DAO realDAO,
+      Tracer tracer,
+      Function<#[[Exception]]#, String> exceptionSerializer) {
+
+    Objects.requireNonNull(exceptionSerializer, "exceptionSerializer is required");
+    Objects.requireNonNull(realDAO, "realDAO is required");
+    Objects.requireNonNull(tracer, "tracer is required");
+
+    this.exceptionSerializer = exceptionSerializer;
+    this.realDAO = realDAO;
+    this.tracer = tracer;
+  }
+
+#if ($entity.hasPrimaryKeyFields)
+  @Override
+  public void delete($request.unqualifiedContextClass context, ${entity.javaMethodArgsForPKFields(false)}) {
+    Objects.requireNonNull(context, "context is required and missing.");
+    //TODO: preconditions on ok field(s)
+
+    final Span span = tracer.buildSpan("jdbc::delete")
+        .asChildOf(context.currentSpan())
+        .ignoreActiveSpan()
+        .withTag("entityType", ENTITY_TYPE_NAME)
+        #foreach($pk in $entity.primaryKeyFields)
+        .withTag("$pk.name.lowerCamel", String.valueOf($pk.name.lowerCamel))
+        #end
+        .start();
+
+    final $request.unqualifiedContextClass childContext = context.withCurrentSpan(span);
+    wrapDAOCall(
+        span,
+        () -> realDAO.delete(childContext, $entity.commaSeparatedPKIdentifiers));
+  }
+
+  @Override
+  public boolean exists($request.unqualifiedContextClass context, ${entity.javaMethodArgsForPKFields(false)}) {
+    Objects.requireNonNull(context, "context is required and missing.");
+    //TODO: preconditions on ok field(s)
+
+    final Span span = tracer.buildSpan("jdbc::exists")
+        .asChildOf(context.currentSpan())
+        .ignoreActiveSpan()
+        .withTag("entityType", ENTITY_TYPE_NAME)
+        #foreach($pk in $entity.primaryKeyFields)
+        .withTag("$pk.name.lowerCamel", String.valueOf($pk.name.lowerCamel))
+        #end
+        .start();
+
+      final $request.unqualifiedContextClass childContext = context.withCurrentSpan(span);
+      return wrapDAOCall(
+        span,
+        () -> realDAO.exists(childContext, $entity.commaSeparatedPKIdentifiers));
+  }
+
+  @Override
+  public ${entity.name.upperCamel} findById($request.unqualifiedContextClass context, ${entity.javaMethodArgsForPKFields(false)}) {
+    Objects.requireNonNull(context, "context is required and missing.");
+    //TODO: preconditions on ok field(s)
+
+    final Span span = tracer.buildSpan("jdbc::findById")
+        .asChildOf(context.currentSpan())
+        .ignoreActiveSpan()
+        .withTag("entityType", ENTITY_TYPE_NAME)
+        #foreach($pk in $entity.primaryKeyFields)
+        .withTag("$pk.name.lowerCamel", String.valueOf($pk.name.lowerCamel))
+        #end
+        .start();
+
+      final $request.unqualifiedContextClass childContext = context.withCurrentSpan(span);
+      return wrapDAOCall(
+        span,
+        () -> realDAO.findById(childContext, $entity.commaSeparatedPKIdentifiers));
+  }
+#end
+  @Override
+  public void create($request.unqualifiedContextClass context, ${entity.name.upperCamel} entity) {
+    Objects.requireNonNull(context, "context is required and missing.");
+    Objects.requireNonNull(entity, "entity is required and missing.");
+
+    final Span span = tracer.buildSpan("jdbc::create")
+        .asChildOf(context.currentSpan())
+        .ignoreActiveSpan()
+        .withTag("entityType", ENTITY_TYPE_NAME)
+        #foreach($pk in $entity.primaryKeyFields)
+        .withTag("$pk.name.lowerCamel", String.valueOf(entity.get${pk.name.upperCamel}()))
+        #end
+        .start();
+
+    final $request.unqualifiedContextClass childContext = context.withCurrentSpan(span);
+    wrapDAOCall(
+        span,
+        () -> realDAO.create(childContext, entity));
+  }
+
+  @Override
+  public List<${entity.name.upperCamel}> list(#if ($request.hasContextClass)$request.unqualifiedContextClass context#end) {
+    Objects.requireNonNull(context, "context is required and missing.");
+
+    final Span span = tracer.buildSpan("jdbc::list")
+        .asChildOf(context.currentSpan())
+        .ignoreActiveSpan()
+        .withTag("entityType", ENTITY_TYPE_NAME)
+        .start();
+
+    final $request.unqualifiedContextClass childContext = context.withCurrentSpan(span);
+    return wrapDAOCall(
+        span,
+        () -> realDAO.list(childContext));
+  }
+
+  @Override
+  public void update(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end ${entity.name.upperCamel} entity) {
+    Objects.requireNonNull(context, "context is required and missing.");
+    Objects.requireNonNull(entity, "entity is required and missing.");
+
+    final Span span = tracer.buildSpan("jdbc::update")
+        .asChildOf(context.currentSpan())
+        .ignoreActiveSpan()
+        .withTag("entityType", ENTITY_TYPE_NAME)
+        .start();
+
+    final $request.unqualifiedContextClass childContext = context.withCurrentSpan(span);
+    wrapDAOCall(
+        span,
+        () -> realDAO.update(childContext, entity));
+  }
+
+  @Override
+  public void upsert(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end ${entity.name.upperCamel} entity) {
+    Objects.requireNonNull(context, "context is required and missing.");
+    Objects.requireNonNull(entity, "entity is required and missing.");
+
+    final Span span = tracer.buildSpan("jdbc::upsert")
+        .asChildOf(context.currentSpan())
+        .ignoreActiveSpan()
+        .withTag("entityType", ENTITY_TYPE_NAME)
+        .start();
+
+    final $request.unqualifiedContextClass childContext = context.withCurrentSpan(span);
+    wrapDAOCall(
+        span,
+        () -> realDAO.upsert(childContext, entity));
+  }
+
+  // -- Patch methods
+#foreach( $field in $entity.nonPrimaryKeyFields )
+  @Override
+  public void set${field.name.upperCamel}(
+      $request.unqualifiedContextClass context,
+      ${entity.javaMethodArgsForPKFields(false)},
+      ${field.unqualifiedJavaType} ${field.name.lowerCamel}) {
+
+    Objects.requireNonNull(context, "context is required and null.");
+    #if ($field.type.nullable)
+    //TODO: requireNonNull precondition on ${field.unqualifiedJavaType} (except for primitives)
+    #end
+
+    //TODO: field validation here (since not part of the POJO validation)
+
+    final Span span = tracer.buildSpan("jdbc::patch")
+        .asChildOf(context.currentSpan())
+        .ignoreActiveSpan()
+        .withTag("entityType", ENTITY_TYPE_NAME)
+        .withTag("fieldName", "$field.name.lowerCamel")
+        .start();
+
+    wrapDAOCall(
+        span,
+        () -> realDAO.set${field.name.upperCamel}(
+            context.withCurrentSpan(span),
+            $entity.commaSeparatedPKIdentifiers,
+            ${field.name.lowerCamel}));
+  }
+
+#end
+
+  /** Wrap the DAO call with proper span cleanup */
+  private void wrapDAOCall(Span span, Runnable daoCall) {
+    Objects.requireNonNull(span, "span is required and missing.");
+    Objects.requireNonNull(daoCall, "daoCall is required and missing.");
+
+    try {
+      daoCall.run();
+
+    } catch (Exception ex) {
+      span.setTag("error", true);
+      span.setTag("error.kind", ex.getClass().getName());
+      span.setTag("error.object", exceptionSerializer.apply(ex));
+
+      throw ex;
+
+    } finally {
+      span.finish();
+    }
+  }
+
+  /** Wrap the DAO call with proper span cleanup */
+  private <T> T wrapDAOCall(Span span, Supplier<T> daoCall) {
+    Objects.requireNonNull(span, "span is required and missing.");
+    Objects.requireNonNull(daoCall, "daoCall is required and missing.");
+
+    try {
+      return daoCall.get();
+
+    } catch (Exception ex) {
+      span.setTag("error", true);
+      span.setTag("error.kind", ex.getClass().getName());
+      span.setTag("error.object", exceptionSerializer.apply(ex));
+
+      throw ex;
+
+    } finally {
+      span.finish();
+    }
+  }
+}
