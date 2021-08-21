@@ -1,6 +1,6 @@
 # Overview
 - Managing MySQL containers
-
+- for MySQL, Schema == Database
 
 # Install
 - See https://hub.docker.com/_/mysql
@@ -45,7 +45,8 @@ exit;
 
 # Hydrate
 ```bash
-mysql --port=13306 --host=127.0.0.1 --user=test --password=test1 testdb < ~/tmp/my-sql-statements.sql
+SQL_INIT_FILE=~/tmp/my-sql-statements.sql;
+mysql --port=13306 --host=127.0.0.1 --user=test --password=test1 testdb < $SQL_INIT_FILE
 ```
 TODO: mount volume to /docker-entrypoint-initdb.d
 
