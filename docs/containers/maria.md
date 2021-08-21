@@ -46,7 +46,6 @@ exit;
 # Hydrate
 ```bash
 SQL_INIT_FILE=~/tmp/my-sql-statements.sql;
-SQL_INIT_FILE=/home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/java/com/wcarmon/chrono/create-tables.maria.sql
 mysql --port=13307 --host=127.0.0.1 --user=test --password=test1 testdb < $SQL_INIT_FILE
 ```
 TODO: mount volume to /docker-entrypoint-initdb.d

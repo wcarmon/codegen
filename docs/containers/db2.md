@@ -1,14 +1,16 @@
 # Overview
 - Info for dealing with legacy software (DB2)
-- Note: DB2INSTANCE is the username
+- Note: DB2INSTANCE env var defines the username ("db2inst1")
+- case insensitive
+
 
 # Install
 - See https://hub.docker.com/r/ibmcom/db2
 ```bash
-docker pull ibmcom/db2:11.5.6.0;
 docker pull ibmcom/db2:11.5.5.1;
 docker pull ibmcom/db2:11.5.4.0;
 ```
+
 
 # Run
 ```bash

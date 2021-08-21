@@ -1,1 +1,27 @@
--- TODO: oracle
+-- See https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/CREATE-TABLE.html#GUID-F9CE0CC3-13AE-4744-A43C-EAC7A71AAAB6
+-- See https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/Data-Types.html#GUID-A3C0D836-BADB-44E5-A5D4-265BA5968483
+-- See $request.prettyTemplateName
+##
+#foreach ($entity in $entities)
+
+-- Entity: ${entity.pkg.value}.${entity.name.upperCamel}
+-- PK column count: ${entity.primaryKeyFields.size()}
+-- Columns count: ${entity.fields.size()}
+CREATE TABLE IF NOT EXISTS ${entity.dbSchemaPrefix}${entity.name.lowerSnake}
+(
+  #foreach( $field in $entity.primaryKeyFields )
+    ##TODO: fix types
+    ${field.postgresqlColumnDefinition}#if ($foreach.hasNext || $entity.hasNonPrimaryKeyFields),#end
+  #end
+  #foreach( $field in $entity.nonPrimaryKeyFields )
+    ${field.postgresqlColumnDefinition}#if ($foreach.hasNext),#end
+  #end
+  ##
+  #if ($entity.hasPrimaryKeyFields)
+  ,
+    $entity.primaryKeyTableConstraint
+  #end
+  ##TODO: unique constraints
+  ##TODO: check constraints
+);
+#end
