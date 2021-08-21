@@ -46,16 +46,17 @@ sudo netstat -pant | grep 5432;
 
 
 # Debug
-```
+```bash
 docker run \
 -it \
 --rm postgres:13 \
 bash;
 ```
+TODO: add docker exec (see mysql.md for example)
 
 
 # Cleanup
-```
+```bash
 docker stop test-pg1;
 docker rm $(docker ps -a -q) || true;
 docker ps;

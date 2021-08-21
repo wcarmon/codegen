@@ -4,8 +4,8 @@
   "entityConfigDirs": [
     "file:///home/wcarmon/git-repos/codegen/samples/entities"
   ],
-  "outputFileOrDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/java/com/wcarmon/chrono/mysql.create-tables.sql",
+  "outputFileOrDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/java/com/wcarmon/chrono/create-tables.mysql.sql",
   "outputMode": "single",
   "package": "",
-  "templateURI": "classpath:/templates/sql/sql.create-table.mysql.vm"
+  "templateURI": "classpath:/templates/sql/create-table.mysql.vm"
 }
