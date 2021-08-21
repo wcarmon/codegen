@@ -8,6 +8,7 @@ import com.wcarmon.codegen.CREATED_TS_FIELD_NAMES
 import com.wcarmon.codegen.UPDATED_TS_FIELD_NAMES
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.TargetLanguage.JAVA_08
+import com.wcarmon.codegen.model.TargetLanguage.KOTLIN_JVM_1_4
 import com.wcarmon.codegen.model.util.*
 import kotlin.text.RegexOption.IGNORE_CASE
 
@@ -198,6 +199,12 @@ data class Field(
   //TODO: move to LogicalFieldType
   val usesStringValidation = effectiveBaseType == STRING
 
+  val kotlinResultSetGetterExpression by lazy {
+    buildResultSetGetterExpression(
+      field = this,
+      targetLanguage = KOTLIN_JVM_1_4)
+      .serialize(KOTLIN_JVM_1_4)
+  }
 
   val javaResultSetGetterExpression by lazy {
     buildResultSetGetterExpression(

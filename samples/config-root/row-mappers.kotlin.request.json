@@ -10,5 +10,6 @@
   "outputFileOrDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/java/com/wcarmon/chrono/rowmappers30",
   "outputFilenameTemplate": "%sRowMapper.kt",
   "outputMode": "multiple",
+  "package": "com.wcarmon.chrono.rowmappers30",
   "templateURI": "classpath:/templates/jdbc-template/row-mapper.kotlin.vm"
 }

@@ -1,4 +1,98 @@
-//TODO: /home/wcarmon/git-repos/codegen/src/main/resources/templates/jdbc-template/row-mapper.kotlin.vm
+// see /home/wcarmon/git-repos/modern-jvm/trading-dao-jdbc/src/main/kotlin/com/wcarmon/trading/dao/rowmapper/convert.kt
+
+package $request.packageName.value
+
+#foreach ($importable in $entity.kotlinImportsForFields)
+import $importable
+#end
+import org.springframework.jdbc.core.RowMapper
+#if ($entity.requiresObjectReader)
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.core.type.TypeReference
+#end
+#foreach ($importable in $request.extraJVMImports)
+import $importable
+#end
+
+import java.sql.ResultSet
+import java.time.format.DateTimeFormatter
 
 
-see /home/wcarmon/git-repos/modern-jvm/trading-dao-jdbc/src/main/kotlin/com/wcarmon/trading/dao/rowmapper/convert.kt
+/**
+ * Maps one row of ResultSet data to ${entity.name.upperCamel} instance
+ *
+ * See https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/jdbc/core/RowMapper.html
+ */
+#if ($entity.requiresObjectReader)
+##@SuppressWarnings("unchecked")
+#end
+class ${entity.name.upperCamel}RowMapper(
+#if ($entity.requiresObjectReader)
+  private val objectMapper: ObjectMapper,
+#end
+) : RowMapper<${entity.name.upperCamel}> {
+
+  companion object {
+    #foreach ($field in $entity.collectionFields)
+    private val ${field.name.upperSnake}_TYPE_REF =
+      object : TypeReference<${field.jacksonTypeRef}> () {}
+    #end
+  }
+
+  /**
+   * Maps $entity.fields.size()-fields from ResultSet
+   *
+   * @return ${entity.name.upperCamel} instance
+   */
+  override fun mapRow(rs: ResultSet, rowNum: Int): ${entity.name.upperCamel} =
+    ${entity.name.upperCamel}(
+      #if (!$entity.primaryKeyFields.isEmpty())
+      // -- $entity.commentForPKFields
+      #end
+      #foreach ($field in $entity.primaryKeyFields)
+      ${field.name.lowerCamel} = $field.kotlinResultSetGetterExpression,
+      #end
+
+      // -- Other Fields
+      #foreach ($field in $entity.nonPrimaryKeyFields)
+      ${field.name.lowerCamel} = $field.kotlinResultSetGetterExpression,
+      #end
+    )
+
+
+  #if ($entity.requiresObjectReader)
+  /**
+   * Deserialize to a java.util.List
+   *
+   * @param serialized json version of list data
+   * @param <L> complete type, (including the List)
+   * @return a new List (possibly empty, never null)
+   */
+  @Suppress("UnusedPrivateMember")
+  private fun <T> toList(serialized: String?, typeRef: TypeReference<T>): T {
+    if( serialized == null || serialized.trim().isEmpty() ) {
+      @Suppress("UNCHECKED_CAST")
+      return listOf<Any>() as T
+    }
+
+    return objectMapper.readValue(serialized, typeRef)
+  }
+
+  /**
+   * Deserialize to a java.util.Set
+   *
+   * @param serialized json version of set data
+   * @param <S> complete type, (including the Set)
+   * @return a new Set (possibly empty, never null)
+   */
+  @Suppress("UnusedPrivateMember")
+  private fun <T> toSet(serialized: String?, typeRef: TypeReference<T>): T {
+    if( serialized == null || serialized.trim().isEmpty() ) {
+      @Suppress("UNCHECKED_CAST")
+      return setOf<Any>() as T
+    }
+
+    return objectMapper.readValue(serialized, typeRef)
+  }
+  #end
+}

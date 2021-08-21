@@ -1,5 +1,6 @@
 package $request.packageName.value;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import java.math.BigDecimal;
@@ -23,6 +24,7 @@ import java.util.TreeSet;
  * See $request.prettyTemplateName
  */
 ##TODO: include class documentation when present
+@JsonPropertyOrder(alphabetic = true)
 @JsonDeserialize(builder = ${entity.name.upperCamel}.${entity.name.upperCamel}Builder.class)
 public final class ${entity.name.upperCamel} {
 

@@ -18,9 +18,6 @@ import com.fasterxml.jackson.databind.ObjectWriter
 #end
 import java.sql.Types
 
-##TODO: confirm I need this
-import java.time.*
-
 
 /**
  * DAO implementation for [${entity.pkg.value}.${entity.name.upperCamel}].

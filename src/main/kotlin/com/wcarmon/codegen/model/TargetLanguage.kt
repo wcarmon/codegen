@@ -55,6 +55,26 @@ enum class TargetLanguage {
     }
   }
 
+  val isKotlin by lazy {
+    when (this) {
+      KOTLIN_JVM_1_4,
+      -> true
+
+      else -> false
+    }
+  }
+
+  val isJava by lazy {
+    when (this) {
+      JAVA_08,
+      JAVA_11,
+      JAVA_17,
+      -> true
+
+      else -> false
+    }
+  }
+
   val requiresStatementTerminator by lazy {
     when (this) {
       C_17,

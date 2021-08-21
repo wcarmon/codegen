@@ -45,7 +45,7 @@ fun commaSeparatedColumnAssignment(fields: List<Field>) =
  * Maria:   https://mariadb.com/kb/en/create-table/
  * MySQL:   TODO:
  * Oracle:  https://docs.oracle.com/cd/B19306_01/server.102/b14200/statements_7002.htm
- * PG:      https://www.postgresql.org/docs/current/sql-createtable.html
+ * Postgre: https://www.postgresql.org/docs/current/sql-createtable.html
  * SQLite:  https://www.sqlite.org/syntax/table-constraint.html
  *
  * @return Primary key (Table) Constraint expression
@@ -102,7 +102,7 @@ fun quoteTypeForRDBMSLiteral(base: BaseFieldType): QuoteType = when (base) {
  * Maria:   TODO
  * MySQL:   TODO
  * Oracle:  TODO
- * PG:      https://www.postgresql.org/docs/current/sql-createtable.html
+ * Postgres: https://www.postgresql.org/docs/current/sql-createtable.html
  * SQLite:  TODO
  *
  * Adds appropriate quotes when required

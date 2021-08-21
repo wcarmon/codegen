@@ -1,5 +1,6 @@
 package $request.packageName.value
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import java.math.BigDecimal;
@@ -18,6 +19,7 @@ import java.util.TreeSet;
  * See $request.prettyTemplateName
  */
 ##TODO: include class documentation when present
+@JsonPropertyOrder(alphabetic = true)
 data class ${entity.name.upperCamel}(
   #foreach( $field in $entity.primaryKeyFields )
       /** PK field */

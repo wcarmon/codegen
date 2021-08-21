@@ -99,7 +99,7 @@ fun buildResultSetGetterExpression(
   field: Field,
   resultSetIdentifier: String = "rs",
   targetLanguage: TargetLanguage,
-): Expression { //TODO: is there a more granular return type I should use
+): Expression {
 
   val fieldReadExpression = ResultSetGetterExpression(
     fieldName = field.name,
@@ -108,7 +108,7 @@ fun buildResultSetGetterExpression(
   ).serialize(targetLanguage, false)
 
   // -- Wrap the field read expression in the serde expression
-  return jdbcSerde(field)
+  return jdbcSerde(field, targetLanguage)
     .deserializeTemplate
     .expand(
       fieldReadExpression
@@ -145,7 +145,7 @@ private fun jdbcFieldReadExpression(
     overrideFieldReadStyle = fieldReadStyle,
   )
 
-  return jdbcSerde(field)
+  return jdbcSerde(field, targetLanguage)
     .serializeTemplate
     .expand(
       fieldReadExpression.serialize(
@@ -153,27 +153,20 @@ private fun jdbcFieldReadExpression(
         terminate))
 }
 
-
-private fun jdbcSerde(field: Field): Serde =
+//TODO: simplify this (break kotlin and java out to separate methods)
+private fun jdbcSerde(
+  field: Field,
+  targetLanguage: TargetLanguage,
+): Serde =
   if (field.rdbms != null &&
     field.rdbms.serde != null
   ) {
     // -- User override is highest priority
     field.rdbms.serde
 
-  } else if (field.isCollection) {
-    // Use [com.fasterxml.jackson.core.type.TypeReference] for type-safe deserializing
-    Serde(
-      deserializeTemplate = ExpressionTemplate(
-        "to${field.type.rawTypeLiteral}(%s, ${field.name.upperSnake}_TYPE_REF)"),
-
-      //TODO: Kotlin:  myCollection.map { it.label }.sortedBy { it }.joinToString(MY_COLLECTION_DELIM),
-      serializeTemplate = TODO("fix this "),
-    )
-
   } else if (requiresJDBCSerde(field)) {
-    // -- Fallback to java serializer
-    defaultJavaSerde(field)
+    // -- Fallback to jvm serializer
+    defaultJVMSerde(field)
 
   } else {
     Serde.INLINE

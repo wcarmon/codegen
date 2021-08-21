@@ -3,11 +3,10 @@
 /** Utilities only useful for generating Kotlin */
 package com.wcarmon.codegen.model.util
 
-import com.wcarmon.codegen.model.BaseFieldType
+import com.wcarmon.codegen.model.*
 import com.wcarmon.codegen.model.BaseFieldType.*
-import com.wcarmon.codegen.model.Entity
-import com.wcarmon.codegen.model.Field
-import com.wcarmon.codegen.model.LogicalFieldType
+
+//TODO: make most of these private
 
 fun getKotlinTypeLiteral(
   type: LogicalFieldType,
@@ -26,6 +25,7 @@ fun getKotlinTypeLiteral(
 
   return unqualifyKotlinType(output)
 }
+
 
 //TODO: handle unsigned types
 fun getFullyQualifiedKotlinTypeLiteral(type: LogicalFieldType) = when (type.base) {
@@ -175,3 +175,5 @@ private fun getKotlinArrayType(
 
   TODO("determine kotlin array type: base=$base, typeParameters=$typeParameters")
 }
+
+

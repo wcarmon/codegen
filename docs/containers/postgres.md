@@ -1,6 +1,11 @@
 # Overview
-- Managing PG containers
+- Managing PostgreSQL containers
 
+
+# Install
+```
+docker pull postgres:13;
+```
 
 # Run
 ```
@@ -20,7 +25,7 @@ sudo netstat -pant | grep 5432;
 ```
 
 
-# Connect locally
+# Connect client (locally)
 ```
 /usr/bin/psql \
 --host=127.0.0.1 \
