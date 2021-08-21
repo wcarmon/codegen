@@ -3,8 +3,11 @@
 /** Utilities only useful for generating Kotlin */
 package com.wcarmon.codegen.model.util
 
-import com.wcarmon.codegen.model.*
+import com.wcarmon.codegen.model.BaseFieldType
 import com.wcarmon.codegen.model.BaseFieldType.*
+import com.wcarmon.codegen.model.Entity
+import com.wcarmon.codegen.model.Field
+import com.wcarmon.codegen.model.LogicalFieldType
 
 //TODO: make most of these private
 

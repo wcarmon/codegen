@@ -3,11 +3,9 @@ package $request.packageName.value;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.net.URI;
-import java.net.URL;
-import java.time.*;
+#foreach ($importable in $entity.javaImportsForFields)
+import $importable;
+#end
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

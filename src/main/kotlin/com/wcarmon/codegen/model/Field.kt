@@ -234,7 +234,7 @@ data class Field(
     name,
     identifier0,
     identifier1
-  )
+  ).serialize(JAVA_08)
 
   // GOTCHA: Only invoke on collection types
   fun newJavaCollectionExpression() =

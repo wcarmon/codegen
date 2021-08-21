@@ -185,7 +185,7 @@ class ${entity.name.upperCamel}TracedDAO(
 
   private fun applyExceptionToSpan(span: Span, ex: Exception) {
     span.setTag("error", true)
-    span.setTag("error.kind", ex.javaClass.getName())
+    span.setTag("error.kind", ex.javaClass.name)
     span.setTag("error.object", exceptionSerializer.apply(ex))
   }
 }
