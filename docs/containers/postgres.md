@@ -7,6 +7,7 @@
 docker pull postgres:13;
 ```
 
+
 # Run
 ```
 docker run \
@@ -26,6 +27,7 @@ sudo netstat -pant | grep 5432;
 
 
 # Connect client (locally)
+- See https://www.postgresql.org/docs/13/app-psql.html
 ```
 /usr/bin/psql \
 --host=127.0.0.1 \
