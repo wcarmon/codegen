@@ -1,6 +1,5 @@
 package $request.packageName.value;
 
-import ${entity.pkg.value}.${entity.name.upperCamel};
 #if ($request.hasContextClass)
 import $request.jvmContextClass;
 #end
@@ -27,7 +26,7 @@ import java.util.Set;
  * Relies on the Context class ($request.unqualifiedContextClass) to:
  * 1. provide the current {@link Span}
  * 2. build a new child Context, with a new {@link Span}
- *
+  * <p>
  * Threadsafe & Reusable after construction
  */
 public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.upperCamel}DAO {

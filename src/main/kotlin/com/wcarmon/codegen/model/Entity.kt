@@ -171,7 +171,9 @@ data class Entity(
   }
 
   val javaPreparedStatementSetterStatementsForPK by lazy {
-    buildPreparedStatementSetterStatementsForPK(JAVA_08)
+    buildPreparedStatementSetterStatementsForPK(
+      JAVA_08,
+      DIRECT)
   }
 
   val jdbcSerializedPKFields by lazy {
@@ -264,9 +266,11 @@ data class Entity(
 
   private fun buildPreparedStatementSetterStatementsForPK(
     targetLanguage: TargetLanguage,
+    fieldReadStyle: FieldReadStyle = targetLanguage.fieldReadStyle,
   ) =
     buildPreparedStatementSetters(
       cfg = PreparedStatementBuilderConfig(
+        fieldReadStyle = fieldReadStyle,
         targetLanguage = targetLanguage,
       ),
       fields = primaryKeyFields,

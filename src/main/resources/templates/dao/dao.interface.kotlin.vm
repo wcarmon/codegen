@@ -3,7 +3,9 @@ package $request.packageName.value
 #if ($request.hasContextClass)
 import $request.jvmContextClass
 #end
-import ${entity.pkg.value}.${entity.name.upperCamel}
+#foreach ($importable in $request.extraJVMImports)
+import $importable
+#end
 #foreach ($importable in $entity.javaImportsForFields)
 import $importable
 #end
@@ -19,6 +21,7 @@ import java.time.*
  * Implementations must be ThreadSafe
  * See: $request.prettyTemplateName
  */
+@Suppress("TooManyFunctions")
 interface ${entity.name.upperCamel}DAO {
 
 #if ($entity.hasPrimaryKeyFields)

@@ -1,0 +1,38 @@
+package $request.packageName.value;
+
+import io.opentracing.Tracer;
+import java.util.function.Function;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+#foreach ($importable in $request.extraJVMImports)
+import $importable;
+#end
+
+/**
+ * OpenTracing based Traced DAO Beans
+ * <p>
+ * See {@link io.opentracing.Tracer}
+ */
+@Configuration
+public class TracedDAOBeans {
+
+  @Bean
+  Function<#[[Exception]]#, String> exceptionSerializer() {
+    return Throwable::toString;
+  }
+
+#foreach ($entity in $entities)
+  @Bean
+  ${entity.name.upperCamel}DAO ${entity.name.lowerCamel}TracedDAO(
+      Tracer tracer,
+      Function<#[[Exception]]#, String> exceptionSerializer,
+      ${entity.name.upperCamel}DAOImpl realDao) {
+
+    return new ${entity.name.upperCamel}TracedDAO(
+        realDao,
+        tracer,
+        exceptionSerializer);
+  }
+
+#end
+}

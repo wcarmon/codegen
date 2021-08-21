@@ -1,0 +1,32 @@
+package $request.packageName.value;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.RowMapper;
+#foreach ($importable in $request.extraJVMImports)
+import $importable;
+#end
+
+/**
+ * RowMapper Beans
+ * <p>
+ * See {@link org.springframework.jdbc.core.RowMapper}
+ */
+@Configuration
+public class RowMapperBeans {
+
+#foreach ($entity in $entities)
+  @Bean
+  #if ($entity.requiresObjectReader)
+  RowMapper<${entity.name.upperCamel}> ${entity.name.lowerCamel}RowMapper(ObjectMapper objectMapper) {
+    return new ${entity.name.upperCamel}RowMapper(objectMapper);
+##
+  #else
+  RowMapper<${entity.name.upperCamel}> ${entity.name.lowerCamel}RowMapper() {
+    return new ${entity.name.upperCamel}RowMapper();
+  #end
+  }
+
+#end
+}

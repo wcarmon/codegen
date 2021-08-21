@@ -6,6 +6,7 @@
   ],
   "extraJVMImports": [
     "com.wcarmon.chrono.dao01.*",
+    "com.wcarmon.chrono.model01.*",
     "com.wcarmon.chrono.sql01.SQLQueries"
   ],
   "jvmContextClass": "com.wcarmon.chrono.context.ChronoContext",
