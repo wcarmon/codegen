@@ -7,5 +7,5 @@
   "outputFileOrDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/java/com/wcarmon/chrono/create-tables/oracle.sql",
   "outputMode": "single",
   "package": "",
-  "templateURI": "classpath:/templates/sql/create-table.oracle.vm"
+  "templateURI": "classpath:/templates/sql/create-table.oracle.ftl"
 }

@@ -12,5 +12,5 @@
   "outputFilenameTemplate": "%sTracedDAO.java",
   "outputMode": "multiple",
   "package": "com.wcarmon.chrono.dao01",
-  "templateURI": "classpath:/templates/dao/dao.traced-delegate.java8.vm"
+  "templateURI": "classpath:/templates/dao/traced-delegate.java8.ftl"
 }

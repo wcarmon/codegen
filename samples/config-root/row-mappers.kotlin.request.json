@@ -11,5 +11,5 @@
   "outputFilenameTemplate": "%sRowMapper.kt",
   "outputMode": "multiple",
   "package": "com.wcarmon.chrono.rowmappers30",
-  "templateURI": "classpath:/templates/jdbc-template/row-mapper.kotlin.vm"
+  "templateURI": "classpath:/templates/jdbc-template/row-mapper.kotlin.ftl"
 }

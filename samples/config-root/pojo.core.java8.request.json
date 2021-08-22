@@ -8,5 +8,5 @@
   "outputFilenameTemplate": "%s.java",
   "outputMode": "multiple",
   "package": "com.wcarmon.chrono.model01",
-  "templateURI": "classpath:/templates/pojo/pojo.core.java8.vm"
+  "templateURI": "classpath:/templates/pojo/pojo.core.java8.ftl"
 }

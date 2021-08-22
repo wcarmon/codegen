@@ -11,5 +11,5 @@
   "outputFilenameTemplate": "%sRowMapper.java",
   "outputMode": "multiple",
   "package": "com.wcarmon.chrono.rowmappers01",
-  "templateURI": "classpath:/templates/jdbc-template/row-mapper.java8.vm"
+  "templateURI": "classpath:/templates/jdbc-template/row-mapper.java8.ftl"
 }

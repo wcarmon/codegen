@@ -7,5 +7,5 @@
   "outputFileOrDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/proto/request-response.proto",
   "outputMode": "single",
   "package": "com.wcarmon.chrono.grpc",
-  "templateURI": "classpath:/templates/grpc/request-response.vm"
+  "templateURI": "classpath:/templates/grpc/request-response.ftl"
 }

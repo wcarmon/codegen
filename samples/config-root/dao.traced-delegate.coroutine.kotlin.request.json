@@ -13,5 +13,5 @@
   "outputFilenameTemplate": "%sTracedDAO.kt",
   "outputMode": "multiple",
   "package": "com.wcarmon.chrono.dao31",
-  "templateURI": "classpath:/templates/dao/dao.traced-delegate.coroutine.kotlin.vm"
+  "templateURI": "classpath:/templates/dao/traced-delegate.coroutine.kotlin.ftl"
 }

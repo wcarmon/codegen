@@ -8,5 +8,5 @@
   "outputFilenameTemplate": "%s.kt",
   "outputMode": "multiple",
   "package": "com.wcarmon.chrono.model30",
-  "templateURI": "classpath:/templates/pojo/data-class.kotlin.vm"
+  "templateURI": "classpath:/templates/pojo/data-class.kotlin.ftl"
 }
