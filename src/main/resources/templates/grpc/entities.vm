@@ -5,9 +5,7 @@ syntax = "proto3";
 
 option java_multiple_files = true;
 option java_package = "$request.packageName.value";
-
-//TODO: fix this line
-option java_outer_classname = "HelloWorldProto";
+option optimize_for = SPEED;
 
 package ${request.packageName.value};
 

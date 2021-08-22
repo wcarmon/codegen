@@ -14,32 +14,46 @@ fun buildProtoBufMessageFields(
   nonPKFields: Collection<Field>,
 ): List<Expression> {
 
-  var counter = 0
   val output = mutableListOf<Expression>()
 
   output += RawStringExpression("// -- PK field(s)")
-  output += pkFields.map {
-    counter++
-    "${protobufTypeLiteral(it.type)} ${it.name.lowerSnake} = $counter;"
-  }.map {
-    RawStringExpression(it)
-  }
+
+  output += buildFieldDeclarationExpressions(pkFields, 1)
 
   output += RawStringExpression("")
   output += RawStringExpression("// -- Other fields")
 
-  output += nonPKFields.map {
-    counter++
-    "${protobufTypeLiteral(it.type)} ${it.name.lowerSnake} = $counter;"
-  }.map {
-    RawStringExpression(it)
-  }
+  output += buildFieldDeclarationExpressions(nonPKFields, pkFields.size)
 
   return output
 }
 
+private fun buildFieldDeclarationExpressions(
+  fields: Collection<Field>,
+  firstFieldNumber: Int = 1,
+): List<Expression> =
+  fields.mapIndexed { index, field ->
 
-//TODO: get the effective protobuf type (allows user override in json config)
+    val repeatedPrefix =
+      if (field.protobuf.repeated) "repeated "
+      else ""
+
+    "${repeatedPrefix}${effectiveType(field)} ${field.name.lowerSnake} = ${index + firstFieldNumber};"
+
+  }.map {
+    RawStringExpression(it)
+  }
+
+
+private fun effectiveType(field: Field): String {
+
+  if (field.protobuf.overrideTypeLiteral.isNotBlank()) {
+    return field.protobuf.overrideTypeLiteral
+  }
+
+  return protobufTypeLiteral(field.type)
+}
+
 /**
  * See https://developers.google.com/protocol-buffers/docs/proto3#scalar
  */
@@ -61,13 +75,23 @@ private fun protobufTypeLiteral(
   YEAR_MONTH,
   ZONE_AGNOSTIC_DATE,
   ZONE_AGNOSTIC_TIME,
+  ZONED_DATE_TIME,
   -> "string"
 
   FLOAT_32 -> "float"
   FLOAT_64 -> "double"
-  INT_16 -> "int32"
-  INT_32 -> "int32"
-  INT_64, UTC_INSTANT -> "int64"
+
+  INT_16,
+  INT_32,
+  -> "int32"
+
+  INT_64,
+  YEAR,
+  UTC_INSTANT,
+  -> "int64"
+
+  USER_DEFINED -> TODO("Add a type override in field.protobuf.overrideTypeLiteral: $type")
+
 //  ARRAY -> TODO()   //TODO: repeated
 //  FLOAT_BIG -> TODO()
 //  INT_128 -> TODO()
@@ -76,11 +100,9 @@ private fun protobufTypeLiteral(
 //  LIST -> TODO()    //TODO: repeated
 //  MAP -> TODO()
 //  SET -> TODO()     //TODO: repeated
-//  USER_DEFINED -> TODO()
 //  UTC_TIME -> TODO()
-//  YEAR -> TODO()
 //  ZONE_OFFSET -> TODO()
-//  ZONED_DATE_TIME -> TODO()
 
-  else -> "FIX_${type.base}"
+
+  else -> "//TODO: fix TYPE=${type.base}"
 }

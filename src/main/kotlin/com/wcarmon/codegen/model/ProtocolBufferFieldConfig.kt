@@ -6,8 +6,19 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 @JsonPropertyOrder(alphabetic = true)
 data class ProtocolBufferFieldConfig(
 
+  val deprecated: Boolean = false,
+
   /**
    * A standard type or fully-qualified, user-defined message type
+   * See https://developers.google.com/protocol-buffers/docs/proto3#scalar
    */
-  val overrideType: String = "",
+  val overrideTypeLiteral: String = "",
+
+  val serde: Serde? = null,
+
+  val repeated: Boolean = false,
+
+  //TODO: support oneOf
+
+  //TODO: support Maps: https://developers.google.com/protocol-buffers/docs/proto3#maps
 )

@@ -3,6 +3,9 @@
   "fields": [
     {
       "name": "uuid",
+      "protobuf": {
+        "overrideTypeLiteral": "string"
+      },
       "rdbms": {
         "positionInPrimaryKey": 0,
         "serde": {
@@ -68,6 +71,13 @@
         }
       },
       "name": "horizon",
+      "protobuf": {
+        "overrideTypeLiteral": "int32",
+        "serde": {
+          "deserializeTemplate": "com.wcarmon.chrono.model.ChronoHorizon.fromValue(%s)",
+          "serializeTemplate": "%s.value"
+        }
+      },
       "rdbms": {
         "overrideTypeLiteral": "INTEGER",
         "serde": {
@@ -88,6 +98,13 @@
     {
       "enumType": true,
       "name": "importance",
+      "protobuf": {
+        "overrideTypeLiteral": "int32",
+        "serde": {
+          "deserializeTemplate": "com.wcarmon.chrono.model.ChronoLevel.fromValue(%s)",
+          "serializeTemplate": "%s.value"
+        }
+      },
       "rdbms": {
         "overrideTypeLiteral": "INTEGER",
         "serde": {
@@ -118,6 +135,10 @@
     },
     {
       "name": "tags",
+      "protobuf": {
+        "overrideTypeLiteral": "string",
+        "repeated": true
+      },
       "rdbms": {
         "overrideDefaultValue": "''",
         "serde": {
@@ -141,6 +162,13 @@
       },
       "name": "themeColor",
       "nullable": true,
+      "protobuf": {
+        "overrideTypeLiteral": "string",
+        "serde": {
+          "deserializeTemplate": "com.wcarmon.chrono.model.ChronoColor.parse(%s)",
+          "serializeTemplate": "%s.toString()"
+        }
+      },
       "rdbms": {
         "serde": {
           "deserializeTemplate": "com.wcarmon.chrono.model.ChronoColor.parse(%s)",

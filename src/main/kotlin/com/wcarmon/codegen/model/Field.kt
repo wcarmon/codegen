@@ -57,7 +57,7 @@ data class Field(
 
   val jvm: JVMField = JVMField(),
 
-  val protobuf: ProtocolBufferFieldConfig? = null,
+  val protobuf: ProtocolBufferFieldConfig = ProtocolBufferFieldConfig(),
 
   val validation: FieldValidation? = null,
 ) {
@@ -93,7 +93,7 @@ data class Field(
         documentation = documentation,
         jvm = jvmField ?: JVMField(),
         name = name,
-        protobuf = protobuf,
+        protobuf = protobuf ?: ProtocolBufferFieldConfig(),
         rdbms = rdbms,
         type = LogicalFieldType(
           base = BaseFieldType.parse(typeLiteral),

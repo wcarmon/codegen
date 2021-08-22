@@ -4,24 +4,19 @@
   "additionalProperties": false,
   "description": "configuration for protocol buffer 3 fields",
   "properties": {
-    "overrideType": {
-      "enum": [
-        "bool",
-        "bytes",
-        "double",
-        "fixed32",
-        "fixed64",
-        "float",
-        "int32",
-        "int64",
-        "sfixed32",
-        "sfixed64",
-        "sint32",
-        "sint64",
-        "string",
-        "uint32",
-        "uint64"
-      ]
+    "deprecated": {
+      "type": "boolean"
+    },
+    "overrideTypeLiteral": {
+      "description": "User defined type or standard protobuf type",
+      "maxLength": 64,
+      "type": "string"
+    },
+    "repeated": {
+      "type": "boolean"
+    },
+    "serde": {
+      "$ref": "serde.schema.json"
     }
   },
   "propertyNames": {
