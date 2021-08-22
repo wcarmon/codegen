@@ -5,8 +5,7 @@ import com.wcarmon.codegen.input.OutputFileNameBuilder
 import com.wcarmon.codegen.model.CodeGenRequest
 import com.wcarmon.codegen.model.Entity
 import org.apache.logging.log4j.LogManager
-import org.apache.velocity.Template
-import org.apache.velocity.VelocityContext
+import java.io.Writer
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -30,7 +29,7 @@ class CodeGenerator(
    * Use case #1:
    * Use when each entity goes into separate output file.
    *
-   * Template should expect "entity" object in the velocity context
+   * Template should expect "entity" object available
    *
    * See also [generateOneFileForEntities]
    */
@@ -38,7 +37,7 @@ class CodeGenerator(
     entities: Collection<Entity>,
     fileNameBuilder: OutputFileNameBuilder,
     request: CodeGenRequest,
-    template: Template,
+    template: freemarker.template.Template,
     allowOverwrite: Boolean = true,
   ) {
     require(entities.isNotEmpty()) { "no entities passed" }
@@ -62,13 +61,17 @@ class CodeGenerator(
         return@forEach
       }
 
-      val context = VelocityContext(mapOf(
+      val dataForTemplate = mapOf(
         "entity" to entity,
         "request" to request
-      ))
+      )
 
       Files.newBufferedWriter(dest).use { writer ->
-        template.merge(context, writer)
+        mergeAndStream(
+          dataForTemplate = dataForTemplate,
+          template = template,
+          writer = writer,
+        )
       }
 
       onAfterGenerateFile.accept(dest)
@@ -86,7 +89,7 @@ class CodeGenerator(
   fun generateOneFileForEntities(
     entities: Collection<Entity>,
     request: CodeGenRequest,
-    template: Template,
+    template: freemarker.template.Template,
     allowOverwrite: Boolean = true,
   ) {
     require(entities.isNotEmpty()) { "no entities passed" }
@@ -106,15 +109,25 @@ class CodeGenerator(
       }
     }
 
-    val context = VelocityContext(mapOf(
+    val dataForTemplate = mapOf(
       "entities" to entities,
       "request" to request
-    ))
+    )
 
     Files.newBufferedWriter(outputFile).use { writer ->
-      template.merge(context, writer)
+      mergeAndStream(
+        dataForTemplate = dataForTemplate,
+        template = template,
+        writer = writer,
+      )
     }
 
     onAfterGenerateFile.accept(outputFile)
   }
+
+  private fun mergeAndStream(
+    dataForTemplate: Map<String, Any>,
+    template: freemarker.template.Template,
+    writer: Writer,
+  ) = template.process(dataForTemplate, writer)
 }

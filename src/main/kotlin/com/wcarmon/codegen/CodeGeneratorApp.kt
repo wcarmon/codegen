@@ -8,7 +8,6 @@ import com.wcarmon.codegen.model.Entity
 import com.wcarmon.codegen.model.OutputMode.SINGLE_FILE
 import org.apache.commons.lang3.StringUtils
 import org.apache.logging.log4j.LogManager
-import org.apache.velocity.Template
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.context.annotation.Configuration
 import java.nio.file.Files
@@ -20,7 +19,7 @@ class CodeGeneratorApp(
   private val entityConfigParser: EntityConfigParser,
   private val generator: CodeGenerator,
   private val objectReader: ObjectReader,
-  private val templateLoader: (Path) -> Template,
+  private val templateFinder: (Path) -> freemarker.template.Template,
 ) {
 
   companion object {
@@ -68,7 +67,7 @@ class CodeGeneratorApp(
     entities: Collection<Entity>,
   ) {
 
-    val template = templateLoader(request.template.file.toPath())
+    val template = templateFinder(request.template.file.toPath())
 
     if (request.outputMode == SINGLE_FILE) {
       generator.generateOneFileForEntities(

@@ -93,6 +93,7 @@ configurations.all {
     "org.atteo:evo-inflector:1.3",
     "org.awaitility:awaitility-kotlin:4.0.3",
     "org.awaitility:awaitility:4.0.3",
+    "org.freemarker:freemarker:2.3.31",
     "org.jetbrains.kotlin:kotlin-compiler-embeddable:1.5.30-M1",
     "org.jetbrains.kotlin:kotlin-reflect:1.5.30-M1",
     "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:1.5.30-M1",
@@ -161,6 +162,7 @@ dependencies {
   implementation("org.apache.velocity.tools:velocity-tools-generic")
   implementation("org.apache.velocity:velocity-engine-core")
   implementation("org.atteo:evo-inflector")
+  implementation("org.freemarker:freemarker")
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.springframework.boot:spring-boot-starter")

@@ -1,0 +1,5 @@
+[#ftl]
+[#-- @implicitly included --]
+[#-- @ftlvariable name="entities" type="java.util.Collection<com.wcarmon.codegen.model.Entity>" --]
+[#-- @ftlvariable name="entity" type="com.wcarmon.codegen.model.Entity" --]
+[#-- @ftlvariable name="request" type="com.wcarmon.codegen.model.CodeGenRequest" --]

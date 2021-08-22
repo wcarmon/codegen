@@ -12,5 +12,5 @@
   "outputFilenameTemplate": "%sDAO.kt",
   "outputMode": "multiple",
   "package": "com.wcarmon.chrono.dao30",
-  "templateURI": "classpath:/templates/dao/dao.interface.kotlin.vm"
+  "templateURI": "classpath:/templates/dao/interface.kotlin.ftl"
 }

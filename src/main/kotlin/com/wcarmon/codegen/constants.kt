@@ -26,8 +26,12 @@ const val PATTERN_FOR_ENTITY_FILE = "glob:**/*.entity.json"
  */
 const val PATTERN_FOR_GEN_REQ_FILE = "glob:**/*.request.json"
 
+/** Freemarker */
+const val TEMPLATE_SUFFIX = ".ftl"
+
 /** Velocity */
-const val TEMPLATE_SUFFIX = ".vm"
+//const val TEMPLATE_SUFFIX = ".vm"
+
 
 
 /**

@@ -12,5 +12,5 @@
   "outputFilenameTemplate": "%sDAO.java",
   "outputMode": "multiple",
   "package": "com.wcarmon.chrono.dao01",
-  "templateURI": "classpath:/templates/dao/dao.interface.java8.vm"
+  "templateURI": "classpath:/templates/dao/interface.java8.ftl"
 }
