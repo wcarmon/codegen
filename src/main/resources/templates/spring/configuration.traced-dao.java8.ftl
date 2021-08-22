@@ -17,7 +17,7 @@ import ${importable};
 public class TracedDAOBeans {
 
   @Bean
-  Function<#[[Exception]]#, String> exceptionSerializer() {
+  Function<${r"Exception"}, String> exceptionSerializer() {
     return Throwable::toString;
   }
 
@@ -25,7 +25,7 @@ public class TracedDAOBeans {
   @Bean
   ${entity.name.upperCamel}DAO ${entity.name.lowerCamel}TracedDAO(
       Tracer tracer,
-      Function<#[[Exception]]#, String> exceptionSerializer,
+      Function<${r"Exception"}, String> exceptionSerializer,
       ${entity.name.upperCamel}DAOImpl realDao) {
 
     return new ${entity.name.upperCamel}TracedDAO(

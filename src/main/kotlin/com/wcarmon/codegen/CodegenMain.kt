@@ -5,7 +5,6 @@ package com.wcarmon.codegen
 import com.wcarmon.codegen.config.CodegenBeans
 import com.wcarmon.codegen.config.FreemarkerBeans
 import com.wcarmon.codegen.config.JSONBeans
-import com.wcarmon.codegen.config.VelocityBeans
 import org.apache.logging.log4j.LogManager
 import org.springframework.boot.Banner
 import org.springframework.boot.SpringApplication

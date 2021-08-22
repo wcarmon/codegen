@@ -1,6 +1,8 @@
 package ${request.packageName.value};
 
+<#if request.jvmContextClass?has_content>
 import ${request.jvmContextClass};
+</#if>
 <#list request.extraJVMImports as importable>
 import ${importable};
 </#list>

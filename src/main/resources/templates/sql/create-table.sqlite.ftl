@@ -1,7 +1,7 @@
 -- See https://www.sqlite.org/lang_createtable.html
 -- See https://www.sqlite.org/datatype3.html
 -- See ${request.prettyTemplateName}
-##
+<#-- -->
 <#list entities as entity>
 
 -- Entity: ${entity.pkg.value}.${entity.name.upperCamel}

@@ -1,6 +1,8 @@
 package ${request.packageName.value};
 
-import $request.jvmContextClass;
+<#if request.jvmContextClass?has_content>
+import ${request.jvmContextClass};
+</#if>
 <#list entity.javaImportsForFields as importable>
 import ${importable};
 </#list>
@@ -68,14 +70,14 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
         .ignoreActiveSpan()
         .withTag("entityType", ENTITY_TYPE_NAME)
         <#list entity.primaryKeyFields as pk>
-        .withTag("$pk.name.lowerCamel", String.valueOf($pk.name.lowerCamel))
+        .withTag("${pk.name.lowerCamel}", String.valueOf(${pk.name.lowerCamel}))
         </#list>
         .start();
 
     final ${request.unqualifiedContextClass} childContext = context.withCurrentSpan(span);
     wrapDAOCall(
         span,
-        () -> realDAO.delete(childContext, $entity.commaSeparatedPKIdentifiers));
+        () -> realDAO.delete(childContext, ${entity.commaSeparatedPKIdentifiers}));
   }
 
   @Override
@@ -88,14 +90,14 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
         .ignoreActiveSpan()
         .withTag("entityType", ENTITY_TYPE_NAME)
         <#list entity.primaryKeyFields as pk>
-        .withTag("$pk.name.lowerCamel", String.valueOf($pk.name.lowerCamel))
+        .withTag("${pk.name.lowerCamel}", String.valueOf(${pk.name.lowerCamel}))
         </#list>
         .start();
 
       final ${request.unqualifiedContextClass} childContext = context.withCurrentSpan(span);
       return wrapDAOCall(
         span,
-        () -> realDAO.exists(childContext, $entity.commaSeparatedPKIdentifiers));
+        () -> realDAO.exists(childContext, ${entity.commaSeparatedPKIdentifiers}));
   }
 
   @Override
@@ -108,14 +110,14 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
         .ignoreActiveSpan()
         .withTag("entityType", ENTITY_TYPE_NAME)
         <#list entity.primaryKeyFields as pk>
-        .withTag("$pk.name.lowerCamel", String.valueOf($pk.name.lowerCamel))
+        .withTag("${pk.name.lowerCamel}", String.valueOf(${pk.name.lowerCamel}))
         </#list>
         .start();
 
       final ${request.unqualifiedContextClass} childContext = context.withCurrentSpan(span);
       return wrapDAOCall(
         span,
-        () -> realDAO.findById(childContext, $entity.commaSeparatedPKIdentifiers));
+        () -> realDAO.findById(childContext, ${entity.commaSeparatedPKIdentifiers}));
   }
 </#if>
   @Override
@@ -128,7 +130,7 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
         .ignoreActiveSpan()
         .withTag("entityType", ENTITY_TYPE_NAME)
         <#list entity.primaryKeyFields as pk>
-        .withTag("$pk.name.lowerCamel", String.valueOf(entity.get${pk.name.upperCamel}()))
+        .withTag("${pk.name.lowerCamel}", String.valueOf(entity.get${pk.name.upperCamel}()))
         </#list>
         .start();
 
@@ -207,14 +209,14 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
         .asChildOf(context.currentSpan())
         .ignoreActiveSpan()
         .withTag("entityType", ENTITY_TYPE_NAME)
-        .withTag("fieldName", "$field.name.lowerCamel")
+        .withTag("fieldName", "${field.name.lowerCamel}")
         .start();
 
     wrapDAOCall(
         span,
         () -> realDAO.set${field.name.upperCamel}(
             context.withCurrentSpan(span),
-            $entity.commaSeparatedPKIdentifiers,
+            ${entity.commaSeparatedPKIdentifiers},
             ${field.name.lowerCamel}));
   }
 

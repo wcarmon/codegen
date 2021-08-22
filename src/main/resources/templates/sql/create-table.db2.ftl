@@ -1,7 +1,7 @@
 -- See https://www.ibm.com/docs/en/db2-for-zos/11?topic=statements-create-table
 -- See https://www.ibm.com/docs/en/db2-for-zos/11?topic=columns-data-types
 -- See ${request.prettyTemplateName}
-##
+<#-- -->
 <#list entities as entity>
 
 -- Entity: ${entity.pkg.value}.${entity.name.upperCamel}

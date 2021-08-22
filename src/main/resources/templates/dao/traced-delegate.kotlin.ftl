@@ -1,6 +1,8 @@
 package ${request.packageName.value}
 
-import $request.jvmContextClass
+<#if request.jvmContextClass?has_content>
+import ${request.jvmContextClass}
+</#if>
 <#list entity.javaImportsForFields as importable>
 import ${importable}
 </#list>
@@ -33,7 +35,7 @@ class ${entity.name.upperCamel}TracedDAO(
   private val realDAO: ${entity.name.upperCamel}DAO,
 
   /** Converts exception to a string for [io.opentracing.Span#setTag] */
-  private val exceptionSerializer: Function<#[[Exception]]#, String>,
+  private val exceptionSerializer: Function<${r"Exception"}, String>,
 
 ) : ${entity.name.upperCamel}DAO {
 
@@ -46,13 +48,13 @@ class ${entity.name.upperCamel}TracedDAO(
       .ignoreActiveSpan()
       .withTag("entityType", ENTITY_TYPE_NAME)
       <#list entity.primaryKeyFields as pk>
-      .withTag("$pk.name.lowerCamel", ${pk.name.lowerCamel}.toString())
+      .withTag("${pk.name.lowerCamel}", ${pk.name.lowerCamel}.toString())
       </#list>
       .start()
 
     val childContext = context.withCurrentSpan(span)
     wrapDAOCall(span) {
-      realDAO.delete(childContext, $entity.commaSeparatedPKIdentifiers)
+      realDAO.delete(childContext, ${entity.commaSeparatedPKIdentifiers})
     }
   }
 
@@ -64,13 +66,13 @@ class ${entity.name.upperCamel}TracedDAO(
       .ignoreActiveSpan()
       .withTag("entityType", ENTITY_TYPE_NAME)
       <#list entity.primaryKeyFields as pk>
-      .withTag("$pk.name.lowerCamel", ${pk.name.lowerCamel}.toString())
+      .withTag("${pk.name.lowerCamel}", ${pk.name.lowerCamel}.toString())
       </#list>
       .start()
 
     val childContext = context.withCurrentSpan(span)
     return wrapDAOCall(span) {
-      realDAO.exists(childContext, $entity.commaSeparatedPKIdentifiers)
+      realDAO.exists(childContext, ${entity.commaSeparatedPKIdentifiers})
     }
   }
 
@@ -82,13 +84,13 @@ class ${entity.name.upperCamel}TracedDAO(
       .ignoreActiveSpan()
       .withTag("entityType", ENTITY_TYPE_NAME)
       <#list entity.primaryKeyFields as pk>
-      .withTag("$pk.name.lowerCamel", ${pk.name.lowerCamel}.toString())
+      .withTag("${pk.name.lowerCamel}", ${pk.name.lowerCamel}.toString())
       </#list>
       .start()
 
     val childContext = context.withCurrentSpan(span)
     return wrapDAOCall(span) {
-      realDAO.findById(childContext, $entity.commaSeparatedPKIdentifiers)
+      realDAO.findById(childContext, ${entity.commaSeparatedPKIdentifiers})
     }
   }
 </#if>
@@ -99,7 +101,7 @@ class ${entity.name.upperCamel}TracedDAO(
       .ignoreActiveSpan()
       .withTag("entityType", ENTITY_TYPE_NAME)
       <#list entity.primaryKeyFields as pk>
-      .withTag("$pk.name.lowerCamel", entity.${pk.name.lowerCamel}.toString())
+      .withTag("${pk.name.lowerCamel}", entity.${pk.name.lowerCamel}.toString())
       </#list>
       .start()
 
@@ -161,13 +163,13 @@ class ${entity.name.upperCamel}TracedDAO(
       .asChildOf(context.currentSpan())
       .ignoreActiveSpan()
       .withTag("entityType", ENTITY_TYPE_NAME)
-      .withTag("fieldName", "$field.name.lowerCamel")
+      .withTag("fieldName", "${field.name.lowerCamel}")
       .start()
 
     wrapDAOCall(span) {
       realDAO.set${field.name.upperCamel}(
         context.withCurrentSpan(span),
-        $entity.commaSeparatedPKIdentifiers,
+        ${entity.commaSeparatedPKIdentifiers},
         ${field.name.lowerCamel}
       )
     }
@@ -190,7 +192,7 @@ class ${entity.name.upperCamel}TracedDAO(
 
   private fun applyExceptionToSpan(span: Span, ex: Exception) {
     span.setTag("error", true)
-    span.setTag("error.kind", ex.javaClass.getName())
+    span.setTag("error.kind", ex.javaClass.name)
     span.setTag("error.object", exceptionSerializer.apply(ex))
   }
 }

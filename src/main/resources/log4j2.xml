@@ -80,6 +80,8 @@
       <AppenderRef ref="asyncAppender"/>
     </logger>
 
+    <!--  TODO: add freemarker -->
+
     <Root level="debug">
       <AppenderRef ref="asyncAppender"/>
     </Root>

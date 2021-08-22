@@ -3,7 +3,9 @@ package ${request.packageName.value}
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.PreparedStatementSetter
 import org.springframework.jdbc.core.RowMapper
-import $request.jvmContextClass
+<#if request.jvmContextClass?has_content>
+import ${request.jvmContextClass}
+</#if>
 <#list entity.kotlinImportsForFields as importable>
 import ${importable}
 </#list>
@@ -43,7 +45,7 @@ private val rowMapper: RowMapper<${entity.name.upperCamel}>,
     //TODO: kotlin preconditions on PK fields (see FieldValidation)
 
     jdbcTemplate.update(DELETE__${entity.name.upperSnake}) { ps ->
-        $entity.kotlinPreparedStatementSetterStatementsForPK
+        ${entity.kotlinPreparedStatementSetterStatementsForPK}
     }
   }
 
@@ -53,7 +55,7 @@ private val rowMapper: RowMapper<${entity.name.upperCamel}>,
     1 == jdbcTemplate.queryForObject(
       ROW_EXISTS__${entity.name.upperSnake},
       Int::class.java,
-      $entity.jdbcSerializedPKFields)
+      ${entity.jdbcSerializedPKFields})
   }
 
   override suspend fun findById(${entity.kotlinMethodArgsForPKFields(false)}): ${entity.name.upperCamel}? = withContext(Dispatchers.IO) {
@@ -63,7 +65,7 @@ private val rowMapper: RowMapper<${entity.name.upperCamel}>,
       jdbcTemplate.query(
         SELECT_BY_PK__${entity.name.upperSnake},
         PreparedStatementSetter { ps ->
-          $entity.kotlinPreparedStatementSetterStatementsForPK
+          ${entity.kotlinPreparedStatementSetterStatementsForPK}
         },
         rowMapper)
 
@@ -73,7 +75,7 @@ private val rowMapper: RowMapper<${entity.name.upperCamel}>,
 
     if (results.size > 1) {
       //TODO: include PK arg(s)
-      throw IllegalStateException("Multiple rows match the PK: context=#[[$]]#coroutineContext, results=#[[$]]#results")
+      throw IllegalStateException("Multiple rows match the PK: context=${r"$"}coroutineContext, results=${r"$"}results")
     }
 
     results[0]
@@ -85,13 +87,13 @@ private val rowMapper: RowMapper<${entity.name.upperCamel}>,
     val affectedRowCount = jdbcTemplate.update(
       INSERT__${entity.name.upperSnake},
     ) { ps ->
-        $entity.kotlinInsertPreparedStatementSetterStatements
+        ${entity.kotlinInsertPreparedStatementSetterStatements}
       }
 
-    check(affectedRowCount == 1){ "1-row should have been inserted for entity=#[[$]]#entity" }
+    check(affectedRowCount == 1){ "1-row should have been inserted for entity=${r"$"}entity" }
   }
 
-  override suspend fun list(context: ${request.unqualifiedContextClass}): List<${entity.name.upperCamel}> = withContext(Dispatchers.IO) {
+  override suspend fun list(): List<${entity.name.upperCamel}> = withContext(Dispatchers.IO) {
     jdbcTemplate.query(
       SELECT_ALL__${entity.name.upperSnake},
       rowMapper
@@ -103,7 +105,7 @@ private val rowMapper: RowMapper<${entity.name.upperCamel}>,
    jdbcTemplate.update(
       UPDATE__${entity.name.upperSnake}
     ) { ps ->
-        $entity.kotlinUpdatePreparedStatementSetterStatements
+        ${entity.kotlinUpdatePreparedStatementSetterStatements}
     }
   }
 
@@ -121,7 +123,7 @@ private val rowMapper: RowMapper<${entity.name.upperCamel}>,
       jdbcTemplate.update(
         PATCH__${entity.name.upperSnake}__${field.name.upperSnake}
       ) { ps ->
-        $entity.kotlinUpdateFieldPreparedStatementSetterStatements($field)
+        ${entity.kotlinUpdateFieldPreparedStatementSetterStatements(field)}
       }
   }
 

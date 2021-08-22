@@ -1,6 +1,7 @@
-## Generates proto file
-## Use ./gradlew generateProto to make java classes
-##
+<#--
+Generates proto file
+To make java classes, use: ./gradlew generateProto
+-->
 syntax = "proto3";
 
 import "entities.proto";
@@ -65,7 +66,7 @@ message Update${entity.name.upperCamel}Response {
 }
 
   <#list entity.nonPrimaryKeyFields as field>
-  //TODO: patch ${entity.name.upperCamel}Proto.$field.name.lowerCamel
+  //TODO: patch ${entity.name.upperCamel}Proto.${field.name.lowerCamel}
   </#list>
 </#if>
 </#list>

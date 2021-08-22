@@ -3,7 +3,9 @@ package ${request.packageName.value}
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.PreparedStatementSetter
 import org.springframework.jdbc.core.RowMapper
-import $request.jvmContextClass
+<#if request.jvmContextClass?has_content>
+import ${request.jvmContextClass}
+</#if>
 <#list entity.kotlinImportsForFields as importable>
 import ${importable}
 </#list>
@@ -42,7 +44,7 @@ class ${entity.name.upperCamel}DAOImpl(
     //TODO: kotlin preconditions on PK fields (see FieldValidation)
 
     jdbcTemplate.update(DELETE__${entity.name.upperSnake}) { ps ->
-        $entity.kotlinPreparedStatementSetterStatementsForPK
+        ${entity.kotlinPreparedStatementSetterStatementsForPK}
     }
   }
 
@@ -52,7 +54,7 @@ class ${entity.name.upperCamel}DAOImpl(
     return 1 == jdbcTemplate.queryForObject(
       ROW_EXISTS__${entity.name.upperSnake},
       Int::class.java,
-      $entity.jdbcSerializedPKFields)
+      ${entity.jdbcSerializedPKFields})
   }
 
   override fun findById(context: ${request.unqualifiedContextClass}, ${entity.kotlinMethodArgsForPKFields(false)}): ${entity.name.upperCamel}? {
@@ -62,7 +64,7 @@ class ${entity.name.upperCamel}DAOImpl(
       jdbcTemplate.query(
         SELECT_BY_PK__${entity.name.upperSnake},
         PreparedStatementSetter { ps ->
-          $entity.kotlinPreparedStatementSetterStatementsForPK
+          ${entity.kotlinPreparedStatementSetterStatementsForPK}
         },
         rowMapper)
 
@@ -72,7 +74,7 @@ class ${entity.name.upperCamel}DAOImpl(
 
     if (results.size > 1) {
       //TODO: include PK arg(s)
-      throw IllegalStateException("Multiple rows match the PK: context=#[[$]]#context, results=#[[$]]#results")
+      throw IllegalStateException("Multiple rows match the PK: context=${r"$"}context, results=${r"$"}results")
     }
 
     return results[0]
@@ -84,10 +86,10 @@ class ${entity.name.upperCamel}DAOImpl(
     val affectedRowCount = jdbcTemplate.update(
       INSERT__${entity.name.upperSnake},
     ) { ps ->
-        $entity.kotlinInsertPreparedStatementSetterStatements
+        ${entity.kotlinInsertPreparedStatementSetterStatements}
       }
 
-    check(affectedRowCount == 1){ "1-row should have been inserted for entity=#[[$]]#entity" }
+    check(affectedRowCount == 1){ "1-row should have been inserted for entity=${r"$"}entity" }
   }
 
   override fun list(context: ${request.unqualifiedContextClass}): List<${entity.name.upperCamel}> {
@@ -102,7 +104,7 @@ class ${entity.name.upperCamel}DAOImpl(
     jdbcTemplate.update(
       UPDATE__${entity.name.upperSnake}
     ) { ps ->
-        $entity.kotlinUpdatePreparedStatementSetterStatements
+        ${entity.kotlinUpdatePreparedStatementSetterStatements}
     }
   }
 
@@ -122,7 +124,7 @@ class ${entity.name.upperCamel}DAOImpl(
       jdbcTemplate.update(
         PATCH__${entity.name.upperSnake}__${field.name.upperSnake}
       ) { ps ->
-        $entity.kotlinUpdateFieldPreparedStatementSetterStatements($field)
+        ${entity.kotlinUpdateFieldPreparedStatementSetterStatements(field)}
       }
     }
 

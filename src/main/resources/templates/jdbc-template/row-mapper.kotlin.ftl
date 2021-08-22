@@ -40,22 +40,22 @@ class ${entity.name.upperCamel}RowMapper(
   }
 
   /**
-   * Maps $entity.fields.size()-fields from ResultSet
+   * Maps ${entity.fields?size}-fields from ResultSet
    *
    * @return ${entity.name.upperCamel} instance
    */
   override fun mapRow(rs: ResultSet, rowNum: Int): ${entity.name.upperCamel} =
     ${entity.name.upperCamel}(
       <#if !entity.primaryKeyFields?has_content>
-      // -- $entity.commentForPKFields
+      // -- ${entity.commentForPKFields}
       </#if>
       <#list entity.primaryKeyFields as field>
-      ${field.name.lowerCamel} = $field.kotlinResultSetGetterExpression,
+      ${field.name.lowerCamel} = ${field.kotlinResultSetGetterExpression},
       </#list>
 
       // -- Other Fields
       <#list entity.nonPrimaryKeyFields as field>
-      ${field.name.lowerCamel} = $field.kotlinResultSetGetterExpression,
+      ${field.name.lowerCamel} = ${field.kotlinResultSetGetterExpression},
       </#list>
     )
 

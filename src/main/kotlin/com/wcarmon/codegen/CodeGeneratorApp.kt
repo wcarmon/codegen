@@ -43,14 +43,15 @@ class CodeGeneratorApp(
 
         val entities = findEntityConfigs(codeGenRequest.entityConfigDirs)
 
-        LOG.info("Found entity configs for request: count={}, names=[{}]",
+        LOG.info("Found entity configs for request: count={}, names=[{}], template={}",
           entities.size,
           StringUtils.truncate(
             entities
               .map { it.name.upperCamel }
               .sortedBy { it }
               .joinToString(),
-            256))
+            256),
+          codeGenRequest.template.toString())
 
         // -- Enforce unique entity names
         val entityNames = entities.map { it.name.lowerCamel }

@@ -23,9 +23,9 @@ package ${request.packageName.value}
    */
   val SELECT_BY_PK__${entity.name.upperSnake} =
     """
-    SELECT $entity.commaSeparatedColumns
+    SELECT ${entity.commaSeparatedColumns}
     FROM "${entity.name.lowerSnake}"
-    WHERE $entity.pkWhereClause"
+    WHERE ${entity.pkWhereClause}"
     """.trimIndent()
 
   /**
@@ -37,7 +37,7 @@ package ${request.packageName.value}
     """
     SELECT COUNT(*)
     FROM "${entity.name.lowerSnake}"
-    WHERE $entity.pkWhereClause
+    WHERE ${entity.pkWhereClause}
     """.trimIndent()
 
   /**
@@ -50,8 +50,8 @@ package ${request.packageName.value}
     """
     UPDATE "${entity.name.lowerSnake}"
     SET
-      $entity.updateSetClause
-    WHERE $entity.pkWhereClause
+      ${entity.updateSetClause}
+    WHERE ${entity.pkWhereClause}
     """.trimIndent()
 
   /**
@@ -62,7 +62,7 @@ package ${request.packageName.value}
   val DELETE__${entity.name.upperSnake} =
     """
     DELETE FROM "${entity.name.lowerSnake}"
-    WHERE $entity.pkWhereClause
+    WHERE ${entity.pkWhereClause}
     """.trimIndent()
   </#if>
 
@@ -73,7 +73,7 @@ package ${request.packageName.value}
    */
   val SELECT_ALL__${entity.name.upperSnake} =
     """
-    SELECT $entity.commaSeparatedColumns
+    SELECT ${entity.commaSeparatedColumns}
     FROM "${entity.name.lowerSnake}"
     """.trimIndent()
 
@@ -86,9 +86,9 @@ package ${request.packageName.value}
   val INSERT__${entity.name.upperSnake} =
     """
     INSERT INTO "${entity.name.lowerSnake}" (
-      $entity.commaSeparatedColumns
+      ${entity.commaSeparatedColumns}
     )
-    VALUES ($entity.questionMarkStringForInsert)
+    VALUES (${entity.questionMarkStringForInsert})
     """.trimIndent()
 
   <#if entity.hasPrimaryKeyFields>
@@ -96,8 +96,8 @@ package ${request.packageName.value}
     val PATCH__${entity.name.upperSnake}__${field.name.upperSnake} =
       """
       UPDATE "${entity.name.lowerSnake}"
-      SET $field.name.lowerSnake=?
-      WHERE $entity.pkWhereClause
+      SET ${field.name.lowerSnake}=?
+      WHERE ${entity.pkWhereClause}
       """.trimIndent()
 
     </#list>

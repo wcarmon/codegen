@@ -21,20 +21,20 @@ import java.util.TreeSet;
  * <p>
  * See ${request.prettyTemplateName}
  */
-##TODO: include class documentation when present
+<#-- TODO: include class documentation when present-->
 @JsonPropertyOrder(alphabetic = true)
 @JsonDeserialize(builder = ${entity.name.upperCamel}.${entity.name.upperCamel}Builder.class)
 public final class ${entity.name.upperCamel} {
 
   <#list entity.sortedFields as field>
-##
+<#-- -->
   /**
-    ##TODO: include field documentation when present (move logic to field class)
+<#--  TODO: include field documentation when present (move logic to field class)-->
     <#if field.primaryKeyField>
      * Primary key
     </#if>
   */
-  private final $field.javaType ${field.name.lowerCamel};
+  private final ${field.javaType} ${field.name.lowerCamel};
   </#list>
 
   private ${entity.name.upperCamel}( ${entity.name.upperCamel}Builder builder ) {
@@ -57,12 +57,12 @@ public final class ${entity.name.upperCamel} {
     ${entity.name.upperCamel} that = (${entity.name.upperCamel}) o;
     <#list entity.sortedFields as field>
       <#if field?is_first>
-      return $field.javaEqualityExpression("this", "that")
+      return ${field.javaEqualityExpression("this", "that")}
       <#elseif field?is_last>
-        && $field.javaEqualityExpression("this", "that");
+        && ${field.javaEqualityExpression("this", "that")};
 <#--      TODO: handle arrays:  Arrays.equals-->
       <#else>
-        && $field.javaEqualityExpression("this", "that")
+        && ${field.javaEqualityExpression("this", "that")}
       </#if>
     </#list>
   }
@@ -71,13 +71,13 @@ public final class ${entity.name.upperCamel} {
   public int hashCode() {
     return Objects.hash(
     <#list entity.sortedFields as field>
-      $field.name.lowerCamel<#if field?is_last>;<#else>,</#if>
+      ${field.name.lowerCamel}<#if field?is_last>);<#else>,</#if>
     </#list>
   }
 
   <#list entity.sortedFields as field>
-    public $field.javaType get${field.name.upperCamel}() {
-      return this.$field.name.lowerCamel;
+    public ${field.javaType} get${field.name.upperCamel}() {
+      return this.${field.name.lowerCamel}
     }
 
   </#list>
@@ -87,9 +87,9 @@ public final class ${entity.name.upperCamel} {
     return new StringJoiner(", ", ${entity.name.upperCamel}.class.getSimpleName() + "[", "]")
     <#list entity.sortedFields as field>
       <#if field.shouldQuoteInString>
-      .add("$field.name.lowerCamel='" + $field.name.lowerCamel + "'")
+      .add("${field.name.lowerCamel}='" + ${field.name.lowerCamel} + "'")
       <#else>
-      .add("$field.name.lowerCamel=" + $field.name.lowerCamel)
+      .add("${field.name.lowerCamel}=" + ${field.name.lowerCamel})
       </#if>
     </#list>
     .toString();
@@ -101,9 +101,9 @@ public final class ${entity.name.upperCamel} {
 
   @JsonPOJOBuilder(withPrefix = "", buildMethodName = "build")
   public static class ${entity.name.upperCamel}Builder {
-##TODO: set default values on fields here
+<#-- TODO: set default values on fields here-->
     <#list entity.sortedFields as field>
-    private $field.javaType ${field.name.lowerCamel};
+    private ${field.javaType} ${field.name.lowerCamel};
     </#list>
 
     ${entity.name.upperCamel}Builder() {
@@ -111,15 +111,15 @@ public final class ${entity.name.upperCamel} {
 
     <#list entity.sortedFields as field>
     public ${entity.name.upperCamel}Builder ${field.name.lowerCamel}(${field.javaType} value) {
-      this.$field.name.lowerCamel = value;
+      this.${field.name.lowerCamel} = value;
       return this;
     }
 
       <#if field.collection>
 
         public ${entity.name.upperCamel}Builder ${field.name.lowerCamel}(${field.type.typeParameters[0]} value) {
-          if (this.$field.name.lowerCamel == null) {
-            this.$field.name.lowerCamel = new $field.newJavaCollectionExpression();
+          if (this.${field.name.lowerCamel} == null) {
+            this.${field.name.lowerCamel} = new ${field.newJavaCollectionExpression()};
           }
 
           this.${field.name.lowerCamel}.add(value);

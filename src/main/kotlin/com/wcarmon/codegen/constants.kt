@@ -33,7 +33,6 @@ const val TEMPLATE_SUFFIX = ".ftl"
 //const val TEMPLATE_SUFFIX = ".vm"
 
 
-
 /**
  * Names for timestamp field
  * Used to auto set a value on entity creation

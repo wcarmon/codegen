@@ -21,7 +21,7 @@ public class RowMapperBeans {
   <#if entity.requiresObjectReader>
   RowMapper<${entity.name.upperCamel}> ${entity.name.lowerCamel}RowMapper(ObjectMapper objectMapper) {
     return new ${entity.name.upperCamel}RowMapper(objectMapper);
-##
+<#-- -->
   <#else>
   RowMapper<${entity.name.upperCamel}> ${entity.name.lowerCamel}RowMapper() {
     return new ${entity.name.upperCamel}RowMapper();

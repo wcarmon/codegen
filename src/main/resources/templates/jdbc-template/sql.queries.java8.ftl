@@ -20,9 +20,9 @@ public final class SQLQueries {
    * Columns count: ${entity.fields?size}
    */
   public static final String SELECT_BY_PK__${entity.name.upperSnake} =
-    "SELECT $entity.commaSeparatedColumns"
+    "SELECT ${entity.commaSeparatedColumns}"
     + " FROM \"${entity.name.lowerSnake}\""
-    + " WHERE $entity.pkWhereClause";
+    + " WHERE ${entity.pkWhereClause}";
 
   /**
    * Test for existence of 1-row
@@ -32,7 +32,7 @@ public final class SQLQueries {
   public static final String ROW_EXISTS__${entity.name.upperSnake} =
     "SELECT COUNT(*)"
     + " FROM \"${entity.name.lowerSnake}\""
-    + " WHERE $entity.pkWhereClause";
+    + " WHERE ${entity.pkWhereClause}";
 
   /**
    * Update 1-row
@@ -43,8 +43,8 @@ public final class SQLQueries {
   public static final String UPDATE__${entity.name.upperSnake} =
     "UPDATE \"${entity.name.lowerSnake}\""
     + " SET"
-    + " $entity.updateSetClause"
-    + " WHERE $entity.pkWhereClause";
+    + " ${entity.updateSetClause}"
+    + " WHERE ${entity.pkWhereClause}";
 
   /**
    * Delete 1-row
@@ -53,7 +53,7 @@ public final class SQLQueries {
    */
   public static final String DELETE__${entity.name.upperSnake} =
     "DELETE FROM \"${entity.name.lowerSnake}\""
-    + " WHERE $entity.pkWhereClause";
+    + " WHERE ${entity.pkWhereClause}";
   </#if>
 
   /**
@@ -62,7 +62,7 @@ public final class SQLQueries {
    * Columns count: ${entity.fields?size}
    */
   public static final String SELECT_ALL__${entity.name.upperSnake} =
-    "SELECT $entity.commaSeparatedColumns"
+    "SELECT ${entity.commaSeparatedColumns}"
     + " FROM \"${entity.name.lowerSnake}\"";
 
   /**
@@ -73,15 +73,15 @@ public final class SQLQueries {
    */
   public static final String INSERT__${entity.name.upperSnake} =
     "INSERT INTO \"${entity.name.lowerSnake}\""
-    + " ($entity.commaSeparatedColumns)"
-    + " VALUES ($entity.questionMarkStringForInsert)";
+    + " (${entity.commaSeparatedColumns})"
+    + " VALUES (${entity.questionMarkStringForInsert})";
 
   <#if entity.hasPrimaryKeyFields>
     <#list entity.nonPrimaryKeyFields as field>
       public static final String PATCH__${entity.name.upperSnake}__${field.name.upperSnake} =
         "UPDATE \"${entity.name.lowerSnake}\""
-        + " SET $field.name.lowerSnake=?"
-        + " WHERE $entity.pkWhereClause";
+        + " SET ${field.name.lowerSnake}=?"
+        + " WHERE ${entity.pkWhereClause}";
 
     </#list>
   </#if>

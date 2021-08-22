@@ -61,7 +61,7 @@ public final class ${entity.name.upperCamel}RowMapper implements RowMapper<${ent
   </#if>
 
   /**
-   * Maps $entity.fields.size()-fields from ResultSet
+   * Maps ${entity.fields?size}-fields from ResultSet
    *
    * @return ${entity.name.upperCamel} instance
    */
@@ -71,15 +71,15 @@ public final class ${entity.name.upperCamel}RowMapper implements RowMapper<${ent
 
     return ${entity.name.upperCamel}.builder()
         <#if !entity.primaryKeyFields?has_content>
-        // -- $entity.commentForPKFields
+        // -- ${entity.commentForPKFields}
         </#if>
         <#list entity.primaryKeyFields as field>
-        .${field.name.lowerCamel}($field.javaResultSetGetterExpression)
+        .${field.name.lowerCamel}(${field.javaResultSetGetterExpression})
         </#list>
 
         // -- Other Fields
         <#list entity.nonPrimaryKeyFields as field>
-        .${field.name.lowerCamel}($field.javaResultSetGetterExpression)
+        .${field.name.lowerCamel}(${field.javaResultSetGetterExpression})
         </#list>
     .build();
   }

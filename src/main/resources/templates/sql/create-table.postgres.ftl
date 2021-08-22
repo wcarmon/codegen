@@ -1,7 +1,7 @@
 -- See https://www.postgresql.org/docs/current/sql-createtable.html
 -- See https://www.postgresql.org/docs/current/datatype.html
 -- See ${request.prettyTemplateName}
-##
+<#-- -->
 <#list entities as entity>
 
 -- Entity: ${entity.pkg.value}.${entity.name.upperCamel}
