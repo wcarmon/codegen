@@ -48,6 +48,8 @@ data class CodeGenRequest(
    */
   val extraJVMImports: Set<String> = setOf(),
 
+  val extraProtobufImports: Set<String> = setOf(),
+
   /**
    * Fully qualified Request context class
    * TODO: explain more here

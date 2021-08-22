@@ -13,7 +13,7 @@ package ${request.packageName.value};
 
 // Entity: ${entity.pkg.value}.${entity.name.upperCamel}
 // Field count: ${entity.fields.size()}
-message $entity.name.UpperCamel {
+message ${entity.name.UpperCamel}Proto {
   $entity.protocolBufferFields
 }
 

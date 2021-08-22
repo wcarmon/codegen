@@ -23,7 +23,8 @@ fun buildProtoBufMessageFields(
   output += RawStringExpression("")
   output += RawStringExpression("// -- Other fields")
 
-  output += buildFieldDeclarationExpressions(nonPKFields, pkFields.size)
+  output += buildFieldDeclarationExpressions(
+    nonPKFields, 1 + pkFields.size)
 
   return output
 }
