@@ -7,5 +7,5 @@
   "outputFileOrDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/proto/entities.proto",
   "outputMode": "single",
   "package": "com.wcarmon.chrono.grpc",
-  "templateURI": "classpath:/templates/grpc/entities.ftl"
+  "templateURI": "classpath:/templates/proto/entities.ftl"
 }

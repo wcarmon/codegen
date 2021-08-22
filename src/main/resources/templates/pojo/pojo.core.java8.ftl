@@ -77,7 +77,7 @@ public final class ${entity.name.upperCamel} {
 
   <#list entity.sortedFields as field>
     public ${field.javaType} get${field.name.upperCamel}() {
-      return this.${field.name.lowerCamel}
+      return this.${field.name.lowerCamel};
     }
 
   </#list>
