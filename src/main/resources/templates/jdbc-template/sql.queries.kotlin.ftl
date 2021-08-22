@@ -1,5 +1,5 @@
 @file:JvmName("SQLQueries")
-package $request.packageName.value
+package ${request.packageName.value}
 
 /* -------------------------------------------------------------------
  * SQL Queries
@@ -9,19 +9,19 @@ package $request.packageName.value
  * Useful for {@link java.sql.PreparedStatement}
  *   and {@link org.springframework.jdbc.core.JdbcTemplate}
  *
- * See: $request.prettyTemplateName
+ * See: ${request.prettyTemplateName}
  * -------------------------------------------------------------------
  */
-#foreach ($entity in $entities)
+<#list entities as entity>
 
-  #if($entity.hasPrimaryKeyFields)
+  <#if entity.hasPrimaryKeyFields>
   /**
    * Find-by-PK
    * Entity: {@link ${entity.pkg.value}.${entity.name.upperCamel}}
-   * PK column count: ${entity.primaryKeyFields.size()}
-   * Columns count: ${entity.fields.size()}
+   * PK column count: ${entity.primaryKeyFields?size}
+   * Columns count: ${entity.fields?size}
    */
-  val SELECT_BY_PK__${entity.name.UpperSnake} =
+  val SELECT_BY_PK__${entity.name.upperSnake} =
     """
     SELECT $entity.commaSeparatedColumns
     FROM "${entity.name.lowerSnake}"
@@ -31,9 +31,9 @@ package $request.packageName.value
   /**
    * Test for existence of 1-row
    * Entity: {@link ${entity.pkg.value}.${entity.name.upperCamel}}
-   * PK column count: ${entity.primaryKeyFields.size()}
+   * PK column count: ${entity.primaryKeyFields?size}
    */
-  val ROW_EXISTS__${entity.name.UpperSnake} =
+  val ROW_EXISTS__${entity.name.upperSnake} =
     """
     SELECT COUNT(*)
     FROM "${entity.name.lowerSnake}"
@@ -43,10 +43,10 @@ package $request.packageName.value
   /**
    * Update 1-row
    * Entity: {@link ${entity.pkg.value}.${entity.name.upperCamel}}
-   * PK column count: ${entity.primaryKeyFields.size()}
-   * Columns count: ${entity.fields.size()}
+   * PK column count: ${entity.primaryKeyFields?size}
+   * Columns count: ${entity.fields?size}
    */
-  val UPDATE__${entity.name.UpperSnake} =
+  val UPDATE__${entity.name.upperSnake} =
     """
     UPDATE "${entity.name.lowerSnake}"
     SET
@@ -57,21 +57,21 @@ package $request.packageName.value
   /**
    * Delete 1-row
    * Entity: {@link ${entity.pkg.value}.${entity.name.upperCamel}}
-   * PK column count: ${entity.primaryKeyFields.size()}
+   * PK column count: ${entity.primaryKeyFields?size}
    */
-  val DELETE__${entity.name.UpperSnake} =
+  val DELETE__${entity.name.upperSnake} =
     """
     DELETE FROM "${entity.name.lowerSnake}"
     WHERE $entity.pkWhereClause
     """.trimIndent()
-  #end
+  </#if>
 
   /**
    * Select all rows
    * Entity: {@link ${entity.pkg.value}.${entity.name.upperCamel}}
-   * Columns count: ${entity.fields.size()}
+   * Columns count: ${entity.fields?size}
    */
-  val SELECT_ALL__${entity.name.UpperSnake} =
+  val SELECT_ALL__${entity.name.upperSnake} =
     """
     SELECT $entity.commaSeparatedColumns
     FROM "${entity.name.lowerSnake}"
@@ -80,10 +80,10 @@ package $request.packageName.value
   /**
    * Insert 1-row
    * Entity: {@link ${entity.pkg.value}.${entity.name.upperCamel}}
-   * PK column count: ${entity.primaryKeyFields.size()}
-   * Columns count: ${entity.fields.size()}
+   * PK column count: ${entity.primaryKeyFields?size}
+   * Columns count: ${entity.fields?size}
    */
-  val INSERT__${entity.name.UpperSnake} =
+  val INSERT__${entity.name.upperSnake} =
     """
     INSERT INTO "${entity.name.lowerSnake}" (
       $entity.commaSeparatedColumns
@@ -91,8 +91,8 @@ package $request.packageName.value
     VALUES ($entity.questionMarkStringForInsert)
     """.trimIndent()
 
-  #if($entity.hasPrimaryKeyFields)
-    #foreach ($field in $entity.nonPrimaryKeyFields)
+  <#if entity.hasPrimaryKeyFields>
+    <#list entity.nonPrimaryKeyFields as field>
     val PATCH__${entity.name.upperSnake}__${field.name.upperSnake} =
       """
       UPDATE "${entity.name.lowerSnake}"
@@ -100,7 +100,7 @@ package $request.packageName.value
       WHERE $entity.pkWhereClause
       """.trimIndent()
 
-    #end
-  #end
+    </#list>
+  </#if>
 
-#end
+</#list>

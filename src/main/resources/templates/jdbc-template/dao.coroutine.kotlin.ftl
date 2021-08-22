@@ -1,20 +1,18 @@
-package $request.packageName.value
+package ${request.packageName.value}
 
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.PreparedStatementSetter
 import org.springframework.jdbc.core.RowMapper
-#if ($request.hasContextClass)
 import $request.jvmContextClass
-#end
-#foreach ($importable in $entity.kotlinImportsForFields)
-import $importable
-#end
-#foreach ($importable in $request.extraJVMImports)
-import $importable
-#end
-#if ($entity.requiresObjectWriter)
+<#list entity.kotlinImportsForFields as importable>
+import ${importable}
+</#list>
+<#list request.extraJVMImports as importable>
+import ${importable}
+</#list>
+<#if entity.requiresObjectWriter>
 import com.fasterxml.jackson.databind.ObjectWriter
-#end
+</#if>
 import java.sql.Types
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -31,16 +29,16 @@ import kotlinx.coroutines.withContext
 class ${entity.name.upperCamel}DAOImpl(
   private val jdbcTemplate: JdbcTemplate,
 
-#if ($entity.requiresObjectWriter)
+<#if entity.requiresObjectWriter>
 /** To serialize collection fields */
 private val objectWriter: ObjectWriter,
-#end
+</#if>
 
 private val rowMapper: RowMapper<${entity.name.upperCamel}>,
 
 ) : ${entity.name.upperCamel}DAO {
 
-#if ($entity.hasPrimaryKeyFields)
+<#if entity.hasPrimaryKeyFields>
   override suspend fun delete(${entity.kotlinMethodArgsForPKFields(false)}): Unit = withContext(Dispatchers.IO) {
     //TODO: kotlin preconditions on PK fields (see FieldValidation)
 
@@ -58,7 +56,7 @@ private val rowMapper: RowMapper<${entity.name.upperCamel}>,
       $entity.jdbcSerializedPKFields)
   }
 
-  override suspend fun findById(#if ($request.hasContextClass)#end ${entity.kotlinMethodArgsForPKFields(false)}): ${entity.name.upperCamel}? = withContext(Dispatchers.IO) {
+  override suspend fun findById(${entity.kotlinMethodArgsForPKFields(false)}): ${entity.name.upperCamel}? = withContext(Dispatchers.IO) {
     //TODO: kotlin preconditions on PK fields (see FieldValidation)
 
     val results =
@@ -80,9 +78,9 @@ private val rowMapper: RowMapper<${entity.name.upperCamel}>,
 
     results[0]
   }
-#end
+</#if>
 
-  override suspend fun create(#if ($request.hasContextClass)#end entity: ${entity.name.upperCamel}): Unit = withContext(Dispatchers.IO) {
+  override suspend fun create(entity: ${entity.name.upperCamel}): Unit = withContext(Dispatchers.IO) {
 
     val affectedRowCount = jdbcTemplate.update(
       INSERT__${entity.name.upperSnake},
@@ -93,14 +91,14 @@ private val rowMapper: RowMapper<${entity.name.upperCamel}>,
     check(affectedRowCount == 1){ "1-row should have been inserted for entity=#[[$]]#entity" }
   }
 
-  override suspend fun list(#if ($request.hasContextClass)context: $request.unqualifiedContextClass#end): List<${entity.name.upperCamel}> = withContext(Dispatchers.IO) {
+  override suspend fun list(context: ${request.unqualifiedContextClass}): List<${entity.name.upperCamel}> = withContext(Dispatchers.IO) {
     jdbcTemplate.query(
       SELECT_ALL__${entity.name.upperSnake},
       rowMapper
     )
   }
 
-  override suspend fun update(#if ($request.hasContextClass)#end entity: ${entity.name.upperCamel}): Unit = withContext(Dispatchers.IO) {
+  override suspend fun update(entity: ${entity.name.upperCamel}): Unit = withContext(Dispatchers.IO) {
 
    jdbcTemplate.update(
       UPDATE__${entity.name.upperSnake}
@@ -109,12 +107,12 @@ private val rowMapper: RowMapper<${entity.name.upperCamel}>,
     }
   }
 
-  override suspend fun upsert(#if ($request.hasContextClass)#end entity: ${entity.name.upperCamel}): Unit = withContext(Dispatchers.IO) {
+  override suspend fun upsert(entity: ${entity.name.upperCamel}): Unit = withContext(Dispatchers.IO) {
     TODO("finish this method")
   }
 
   // -- Patch methods
-#foreach( $field in $entity.nonPrimaryKeyFields )
+<#list entity.nonPrimaryKeyFields as field>
   override suspend fun set${field.name.upperCamel}(
     ${entity.kotlinMethodArgsForPKFields(false)},
     ${field.name.lowerCamel}: ${field.unqualifiedKotlinType}): Unit = withContext(Dispatchers.IO) {
@@ -127,5 +125,5 @@ private val rowMapper: RowMapper<${entity.name.upperCamel}>,
       }
   }
 
-#end
+</#list>
 }

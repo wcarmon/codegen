@@ -1,16 +1,16 @@
-package $request.packageName.value
+package ${request.packageName.value}
 
-#if ($request.hasContextClass)
 import $request.jvmContextClass
-#end
-#foreach ($importable in $entity.javaImportsForFields)
-import $importable
-#end
-#foreach ($importable in $request.extraJVMImports)
-import $importable
-#end
-import io.opentracing.Tracer
+<#list entity.javaImportsForFields as importable>
+import ${importable}
+</#list>
+<#list request.extraJVMImports as importable>
+import ${importable}
+</#list>
 import io.opentracing.Span
+import io.opentracing.Tracer
+import kotlin.coroutines.coroutineContext
+import kotlinx.coroutines.withContext
 
 import java.util.function.Function
 
@@ -21,7 +21,7 @@ private const val ENTITY_TYPE_NAME = "${entity.name.upperCamel}"
  *
  * Uses Delegation pattern
  *
- * Relies on the Context class ($request.unqualifiedContextClass) to:
+ * Relies on the Context class (${request.unqualifiedContextClass}) to:
  * 1. provide the current [Span]
  * 2. build a new child Context, with a new [Span]
  *
@@ -39,148 +39,138 @@ class ${entity.name.upperCamel}TracedDAO(
 
 ) : ${entity.name.upperCamel}DAO {
 
-#if ($entity.hasPrimaryKeyFields)
-  override fun delete(context: $request.unqualifiedContextClass, ${entity.kotlinMethodArgsForPKFields(false)}) {
+<#if entity.hasPrimaryKeyFields>
+  override suspend fun delete(${entity.kotlinMethodArgsForPKFields(false)}) {
     //TODO: kotlin preconditions on PK fields (see FieldValidation)
 
     val span = tracer.buildSpan("jdbc::delete")
-      .asChildOf(context.currentSpan())
+      .asChildOf(coroutineContext[SpanElement]?.span)
       .ignoreActiveSpan()
       .withTag("entityType", ENTITY_TYPE_NAME)
-      #foreach($pk in $entity.primaryKeyFields)
+      <#list entity.primaryKeyFields as pk>
       .withTag("$pk.name.lowerCamel", ${pk.name.lowerCamel}.toString())
-      #end
+      </#list>
       .start()
 
-    val childContext = context.withCurrentSpan(span)
     wrapDAOCall(span) {
-      realDAO.delete(childContext, $entity.commaSeparatedPKIdentifiers)
+      realDAO.delete($entity.commaSeparatedPKIdentifiers)
     }
   }
 
-  override fun exists(#if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end ${entity.kotlinMethodArgsForPKFields(false)}): Boolean {
+  override suspend fun exists(${entity.kotlinMethodArgsForPKFields(false)}): Boolean {
     //TODO: kotlin preconditions on PK fields (see FieldValidation)
 
     val span = tracer.buildSpan("jdbc::exists")
-      .asChildOf(context.currentSpan())
+      .asChildOf(coroutineContext[SpanElement]?.span)
       .ignoreActiveSpan()
       .withTag("entityType", ENTITY_TYPE_NAME)
-      #foreach($pk in $entity.primaryKeyFields)
+      <#list entity.primaryKeyFields as pk>
       .withTag("$pk.name.lowerCamel", ${pk.name.lowerCamel}.toString())
-      #end
+      </#list>
       .start()
 
-    val childContext = context.withCurrentSpan(span)
     return wrapDAOCall(span) {
-      realDAO.exists(childContext, $entity.commaSeparatedPKIdentifiers)
+      realDAO.exists($entity.commaSeparatedPKIdentifiers)
     }
   }
 
-  override fun findById(#if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end ${entity.kotlinMethodArgsForPKFields(false)}): ${entity.name.upperCamel}? {
+  override suspend fun findById(${entity.kotlinMethodArgsForPKFields(false)}): ${entity.name.upperCamel}? {
     //TODO: kotlin preconditions on PK fields (see FieldValidation)
 
     val span = tracer.buildSpan("jdbc::findById")
-      .asChildOf(context.currentSpan())
+      .asChildOf(coroutineContext[SpanElement]?.span)
       .ignoreActiveSpan()
       .withTag("entityType", ENTITY_TYPE_NAME)
-      #foreach($pk in $entity.primaryKeyFields)
+      <#list entity.primaryKeyFields as pk>
       .withTag("$pk.name.lowerCamel", ${pk.name.lowerCamel}.toString())
-      #end
+      </#list>
       .start()
 
-    val childContext = context.withCurrentSpan(span)
     return wrapDAOCall(span) {
-      realDAO.findById(childContext, $entity.commaSeparatedPKIdentifiers)
+      realDAO.findById($entity.commaSeparatedPKIdentifiers)
     }
   }
-#end
+</#if>
 
-  override fun create(#if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end entity: ${entity.name.upperCamel}) {
+  override suspend fun create(entity: ${entity.name.upperCamel}) {
     val span = tracer.buildSpan("jdbc::create")
-      .asChildOf(context.currentSpan())
+      .asChildOf(coroutineContext[SpanElement]?.span)
       .ignoreActiveSpan()
       .withTag("entityType", ENTITY_TYPE_NAME)
-      #foreach($pk in $entity.primaryKeyFields)
+      <#list entity.primaryKeyFields as pk>
       .withTag("$pk.name.lowerCamel", entity.${pk.name.lowerCamel}.toString())
-      #end
+      </#list>
       .start()
 
-    val childContext = context.withCurrentSpan(span)
     wrapDAOCall(span) {
-      realDAO.create(childContext, entity)
+      realDAO.create(entity)
     }
   }
 
-  override fun list(#if ($request.hasContextClass)context: $request.unqualifiedContextClass#end): List<${entity.name.upperCamel}> {
+  override suspend fun list(context: ${request.unqualifiedContextClass}): List<${entity.name.upperCamel}> {
     val span = tracer.buildSpan("jdbc::list")
-        .asChildOf(context.currentSpan())
+        .asChildOf(coroutineContext[SpanElement]?.span)
         .ignoreActiveSpan()
         .withTag("entityType", ENTITY_TYPE_NAME)
         .start()
 
-    val childContext = context.withCurrentSpan(span)
     return wrapDAOCall(span) {
-      realDAO.list(childContext)
+      realDAO.list()
     }
   }
 
-  override fun update(#if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end entity: ${entity.name.upperCamel}) {
+  override suspend fun update(entity: ${entity.name.upperCamel}) {
     val span = tracer.buildSpan("jdbc::update")
-        .asChildOf(context.currentSpan())
+        .asChildOf(coroutineContext[SpanElement]?.span)
         .ignoreActiveSpan()
         .withTag("entityType", ENTITY_TYPE_NAME)
         .start()
 
-    val childContext = context.withCurrentSpan(span)
     wrapDAOCall(span) {
-      realDAO.update(childContext, entity)
+      realDAO.update(entity)
     }
   }
 
-  override fun upsert(#if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end entity: ${entity.name.upperCamel}) {
+  override suspend fun upsert(entity: ${entity.name.upperCamel}) {
     val span = tracer.buildSpan("jdbc::upsert")
-        .asChildOf(context.currentSpan())
+        .asChildOf(coroutineContext[SpanElement]?.span)
         .ignoreActiveSpan()
         .withTag("entityType", ENTITY_TYPE_NAME)
         .start()
 
-    val childContext = context.withCurrentSpan(span)
     wrapDAOCall(span) {
-      realDAO.upsert(childContext, entity)
+      realDAO.upsert(entity)
     }
   }
 
   // -- Patch methods
-#foreach( $field in $entity.nonPrimaryKeyFields )
-  override fun set${field.name.upperCamel}(
-    context: $request.unqualifiedContextClass,
+<#list entity.nonPrimaryKeyFields as field>
+  override suspend fun set${field.name.upperCamel}(
     ${entity.kotlinMethodArgsForPKFields(false)},
     ${field.name.lowerCamel}: ${field.unqualifiedKotlinType}) {
 
     //TODO: '${field.name.lowerCamel}' field validation here (since not part of the POJO validation)
 
     val span = tracer.buildSpan("jdbc::patch")
-      .asChildOf(context.currentSpan())
+      .asChildOf(coroutineContext[SpanElement]?.span)
       .ignoreActiveSpan()
       .withTag("entityType", ENTITY_TYPE_NAME)
       .withTag("fieldName", "$field.name.lowerCamel")
       .start()
 
     wrapDAOCall(span) {
-      realDAO.set${field.name.upperCamel}(
-        context.withCurrentSpan(span),
-        $entity.commaSeparatedPKIdentifiers,
-        ${field.name.lowerCamel}
-      )
+      realDAO.set${field.name.upperCamel}($entity.commaSeparatedPKIdentifiers, ${field.name.lowerCamel})
     }
   }
 
-#end
+</#list>
 
   /** Wrap the DAO call with proper span cleanup */
-  private fun <T> wrapDAOCall(span: Span, daoCall: () -> T) =
+  private suspend fun <T> wrapDAOCall(span: Span, daoCall: suspend () -> T) =
     try {
-      daoCall()
+      withContext(SpanElement(span)) {
+        daoCall()
+      }
 
     } catch (ex: Exception) {
       applyExceptionToSpan(span, ex)
@@ -192,7 +182,7 @@ class ${entity.name.upperCamel}TracedDAO(
 
   private fun applyExceptionToSpan(span: Span, ex: Exception) {
     span.setTag("error", true)
-    span.setTag("error.kind", ex.javaClass.getName())
+    span.setTag("error.kind", ex.javaClass.name)
     span.setTag("error.object", exceptionSerializer.apply(ex))
   }
 }

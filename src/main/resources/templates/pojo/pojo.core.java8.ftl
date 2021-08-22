@@ -1,11 +1,11 @@
-package $request.packageName.value;
+package ${request.packageName.value};
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-#foreach ($importable in $entity.javaImportsForFields)
-import $importable;
-#end
+<#list entity.javaImportsForFields as importable>
+import ${importable};
+</#list>
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,34 +19,34 @@ import java.util.TreeSet;
 /**
  * Immutable POJO
  * <p>
- * See $request.prettyTemplateName
+ * See ${request.prettyTemplateName}
  */
 ##TODO: include class documentation when present
 @JsonPropertyOrder(alphabetic = true)
 @JsonDeserialize(builder = ${entity.name.upperCamel}.${entity.name.upperCamel}Builder.class)
 public final class ${entity.name.upperCamel} {
 
-  #foreach( $field in $entity.sortedFields )
+  <#list entity.sortedFields as field>
 ##
   /**
     ##TODO: include field documentation when present (move logic to field class)
-    #if($field.primaryKeyField)
+    <#if field.primaryKeyField>
      * Primary key
-    #end
+    </#if>
   */
   private final $field.javaType ${field.name.lowerCamel};
-  #end
+  </#list>
 
   private ${entity.name.upperCamel}( ${entity.name.upperCamel}Builder builder ) {
     //TODO: Validation here
 
-    #foreach( $field in $entity.sortedFields )
-      #if($field.collection)
+    <#list entity.sortedFields as field>
+      <#if field.collection>
       this.${field.name.lowerCamel} = ${field.unmodifiableJavaCollectionMethod}(builder.${field.name.lowerCamel});
-      #else
+      <#else>
       this.${field.name.lowerCamel} = builder.${field.name.lowerCamel};
-      #end
-    #end
+      </#if>
+    </#list>
   }
 
   @Override
@@ -55,43 +55,43 @@ public final class ${entity.name.upperCamel} {
     if (o == null || getClass() != o.getClass()) return false;
 
     ${entity.name.upperCamel} that = (${entity.name.upperCamel}) o;
-    #foreach ($field in $entity.sortedFields)
-      #if ($foreach.first)
+    <#list entity.sortedFields as field>
+      <#if field?is_first>
       return $field.javaEqualityExpression("this", "that")
-      #elseif ($foreach.last)
+      <#elseif field?is_last>
         && $field.javaEqualityExpression("this", "that");
-      ##TODO: handle arrays:  Arrays.equals
-      #else
+<#--      TODO: handle arrays:  Arrays.equals-->
+      <#else>
         && $field.javaEqualityExpression("this", "that")
-      #end
-    #end
+      </#if>
+    </#list>
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(
-    #foreach( $field in $entity.sortedFields )
-      $field.name.lowerCamel#if ($foreach.last));#else,#end
-    #end
+    <#list entity.sortedFields as field>
+      $field.name.lowerCamel<#if field?is_last>;<#else>,</#if>
+    </#list>
   }
 
-  #foreach( $field in $entity.sortedFields )
+  <#list entity.sortedFields as field>
     public $field.javaType get${field.name.upperCamel}() {
       return this.$field.name.lowerCamel;
     }
 
-  #end
+  </#list>
 
   @Override
   public String toString() {
     return new StringJoiner(", ", ${entity.name.upperCamel}.class.getSimpleName() + "[", "]")
-    #foreach( $field in $entity.sortedFields )
-      #if ($field.shouldQuoteInString)
+    <#list entity.sortedFields as field>
+      <#if field.shouldQuoteInString>
       .add("$field.name.lowerCamel='" + $field.name.lowerCamel + "'")
-      #else
+      <#else>
       .add("$field.name.lowerCamel=" + $field.name.lowerCamel)
-      #end
-    #end
+      </#if>
+    </#list>
     .toString();
   }
 
@@ -102,20 +102,20 @@ public final class ${entity.name.upperCamel} {
   @JsonPOJOBuilder(withPrefix = "", buildMethodName = "build")
   public static class ${entity.name.upperCamel}Builder {
 ##TODO: set default values on fields here
-    #foreach( $field in $entity.sortedFields )
+    <#list entity.sortedFields as field>
     private $field.javaType ${field.name.lowerCamel};
-    #end
+    </#list>
 
     ${entity.name.upperCamel}Builder() {
     }
 
-    #foreach( $field in $entity.sortedFields )
+    <#list entity.sortedFields as field>
     public ${entity.name.upperCamel}Builder ${field.name.lowerCamel}(${field.javaType} value) {
       this.$field.name.lowerCamel = value;
       return this;
     }
 
-      #if($field.collection)
+      <#if field.collection>
 
         public ${entity.name.upperCamel}Builder ${field.name.lowerCamel}(${field.type.typeParameters[0]} value) {
           if (this.$field.name.lowerCamel == null) {
@@ -125,8 +125,8 @@ public final class ${entity.name.upperCamel} {
           this.${field.name.lowerCamel}.add(value);
           return this;
         }
-      #end
-    #end
+      </#if>
+    </#list>
 
     public ${entity.name.upperCamel} build() {
       return new ${entity.name.upperCamel}(this);

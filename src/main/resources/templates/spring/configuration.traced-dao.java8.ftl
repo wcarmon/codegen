@@ -1,12 +1,12 @@
-package $request.packageName.value;
+package ${request.packageName.value};
 
 import io.opentracing.Tracer;
 import java.util.function.Function;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-#foreach ($importable in $request.extraJVMImports)
-import $importable;
-#end
+<#list request.extraJVMImports as importable>
+import ${importable};
+</#list>
 
 /**
  * OpenTracing based Traced DAO Beans
@@ -21,7 +21,7 @@ public class TracedDAOBeans {
     return Throwable::toString;
   }
 
-#foreach ($entity in $entities)
+<#list entities as entity>
   @Bean
   ${entity.name.upperCamel}DAO ${entity.name.lowerCamel}TracedDAO(
       Tracer tracer,
@@ -34,5 +34,5 @@ public class TracedDAOBeans {
         exceptionSerializer);
   }
 
-#end
+</#list>
 }

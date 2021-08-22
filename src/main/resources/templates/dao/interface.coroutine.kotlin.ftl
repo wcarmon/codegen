@@ -1,26 +1,26 @@
-package $request.packageName.value
+package ${request.packageName.value}
 
-#foreach ($importable in $request.extraJVMImports)
-import $importable
-#end
-#foreach ($importable in $entity.javaImportsForFields)
-import $importable
-#end
+<#list request.extraJVMImports as importable>
+import ${importable}
+</#list>
+<#list entity.javaImportsForFields as importable>
+import ${importable}
+</#list>
 
 
 /**
  * DAO Contract for [${entity.pkg.value}.${entity.name.upperCamel}]
- * PK field count: ${entity.primaryKeyFields.size()}
- * Field count: ${entity.fields.size()}
+ * PK field count: ${entity.primaryKeyFields?size}
+ * Field count: ${entity.fields?size}
  *
  * Assumes coroutines & context passed thru coroutineContext.
  * Implementations must be ThreadSafe
- * See: $request.prettyTemplateName
+ * See: ${request.prettyTemplateName}
  */
 @Suppress("TooManyFunctions")
 interface ${entity.name.upperCamel}DAO {
 
-#if ($entity.hasPrimaryKeyFields)
+<#if entity.hasPrimaryKeyFields>
  /**
   * Delete at-most-one existing {@link ${entity.pkg.value}.${entity.name.upperCamel}} instance
   *
@@ -41,7 +41,7 @@ interface ${entity.name.upperCamel}DAO {
    * @return one {@link ${entity.pkg.value}.${entity.name.upperCamel}} instance (matching PKs) or null
    */
   suspend fun findById( ${entity.kotlinMethodArgsForPKFields(false)}): ${entity.name.upperCamel}?
-#end
+</#if>
 
   /**
    * Create at-most-one {@link ${entity.pkg.value}.${entity.name.upperCamel}} instance
@@ -55,7 +55,7 @@ interface ${entity.name.upperCamel}DAO {
 
   /**
    * Update all (non-PK) fields on one {@link ${entity.pkg.value}.${entity.name.upperCamel}} instance
-   * (${entity.nonPrimaryKeyFields.size()} non-PK fields)
+   * (${entity.nonPrimaryKeyFields?size} non-PK fields)
    */
   suspend fun update(entity: ${entity.name.upperCamel})
 
@@ -70,7 +70,7 @@ interface ${entity.name.upperCamel}DAO {
    */
   suspend fun upsert(entity: ${entity.name.upperCamel})
 
-#foreach( $field in $entity.nonPrimaryKeyFields )
+<#list entity.nonPrimaryKeyFields as field>
   /**
    * Patch/Set
    *
@@ -83,5 +83,5 @@ interface ${entity.name.upperCamel}DAO {
     ${field.name.lowerCamel}: ${field.unqualifiedKotlinType}
   )
 
-#end
+</#list>
   }

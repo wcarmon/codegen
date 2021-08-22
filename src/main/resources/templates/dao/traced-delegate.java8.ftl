@@ -1,14 +1,12 @@
-package $request.packageName.value;
+package ${request.packageName.value};
 
-#if ($request.hasContextClass)
 import $request.jvmContextClass;
-#end
-#foreach ($importable in $entity.javaImportsForFields)
-import $importable;
-#end
-#foreach ($importable in $request.extraJVMImports)
-import $importable;
-#end
+<#list entity.javaImportsForFields as importable>
+import ${importable};
+</#list>
+<#list request.extraJVMImports as importable>
+import ${importable};
+</#list>
 import io.opentracing.Tracer;
 import io.opentracing.Span;
 
@@ -23,7 +21,7 @@ import java.util.Set;
  * <p>
  * Uses Delegation pattern
  * <p>
- * Relies on the Context class ($request.unqualifiedContextClass) to:
+ * Relies on the Context class (${request.unqualifiedContextClass}) to:
  * 1. provide the current {@link Span}
  * 2. build a new child Context, with a new {@link Span}
   * <p>
@@ -41,14 +39,14 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
   /**
    * Converts exception to a string for {@link io.opentracing.Span#setTag}
    */
-  private final Function<#[[Exception]]#, String> exceptionSerializer;
+  private final Function<${r"Exception"}, String> exceptionSerializer;
 
   private final Tracer tracer;
 
   public ${entity.name.upperCamel}TracedDAO(
       ${entity.name.upperCamel}DAO realDAO,
       Tracer tracer,
-      Function<#[[Exception]]#, String> exceptionSerializer) {
+      Function<${r"Exception"}, String> exceptionSerializer) {
 
     Objects.requireNonNull(exceptionSerializer, "exceptionSerializer is required");
     Objects.requireNonNull(realDAO, "realDAO is required");
@@ -59,9 +57,9 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
     this.tracer = tracer;
   }
 
-#if ($entity.hasPrimaryKeyFields)
+<#if entity.hasPrimaryKeyFields>
   @Override
-  public void delete($request.unqualifiedContextClass context, ${entity.javaMethodArgsForPKFields(false)}) {
+  public void delete(${request.unqualifiedContextClass} context, ${entity.javaMethodArgsForPKFields(false)}) {
     Objects.requireNonNull(context, "context is required and missing.");
     //TODO: preconditions on ok field(s)
 
@@ -69,19 +67,19 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
         .asChildOf(context.currentSpan())
         .ignoreActiveSpan()
         .withTag("entityType", ENTITY_TYPE_NAME)
-        #foreach($pk in $entity.primaryKeyFields)
+        <#list entity.primaryKeyFields as pk>
         .withTag("$pk.name.lowerCamel", String.valueOf($pk.name.lowerCamel))
-        #end
+        </#list>
         .start();
 
-    final $request.unqualifiedContextClass childContext = context.withCurrentSpan(span);
+    final ${request.unqualifiedContextClass} childContext = context.withCurrentSpan(span);
     wrapDAOCall(
         span,
         () -> realDAO.delete(childContext, $entity.commaSeparatedPKIdentifiers));
   }
 
   @Override
-  public boolean exists($request.unqualifiedContextClass context, ${entity.javaMethodArgsForPKFields(false)}) {
+  public boolean exists(${request.unqualifiedContextClass} context, ${entity.javaMethodArgsForPKFields(false)}) {
     Objects.requireNonNull(context, "context is required and missing.");
     //TODO: preconditions on ok field(s)
 
@@ -89,19 +87,19 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
         .asChildOf(context.currentSpan())
         .ignoreActiveSpan()
         .withTag("entityType", ENTITY_TYPE_NAME)
-        #foreach($pk in $entity.primaryKeyFields)
+        <#list entity.primaryKeyFields as pk>
         .withTag("$pk.name.lowerCamel", String.valueOf($pk.name.lowerCamel))
-        #end
+        </#list>
         .start();
 
-      final $request.unqualifiedContextClass childContext = context.withCurrentSpan(span);
+      final ${request.unqualifiedContextClass} childContext = context.withCurrentSpan(span);
       return wrapDAOCall(
         span,
         () -> realDAO.exists(childContext, $entity.commaSeparatedPKIdentifiers));
   }
 
   @Override
-  public ${entity.name.upperCamel} findById($request.unqualifiedContextClass context, ${entity.javaMethodArgsForPKFields(false)}) {
+  public ${entity.name.upperCamel} findById(${request.unqualifiedContextClass} context, ${entity.javaMethodArgsForPKFields(false)}) {
     Objects.requireNonNull(context, "context is required and missing.");
     //TODO: preconditions on ok field(s)
 
@@ -109,19 +107,19 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
         .asChildOf(context.currentSpan())
         .ignoreActiveSpan()
         .withTag("entityType", ENTITY_TYPE_NAME)
-        #foreach($pk in $entity.primaryKeyFields)
+        <#list entity.primaryKeyFields as pk>
         .withTag("$pk.name.lowerCamel", String.valueOf($pk.name.lowerCamel))
-        #end
+        </#list>
         .start();
 
-      final $request.unqualifiedContextClass childContext = context.withCurrentSpan(span);
+      final ${request.unqualifiedContextClass} childContext = context.withCurrentSpan(span);
       return wrapDAOCall(
         span,
         () -> realDAO.findById(childContext, $entity.commaSeparatedPKIdentifiers));
   }
-#end
+</#if>
   @Override
-  public void create($request.unqualifiedContextClass context, ${entity.name.upperCamel} entity) {
+  public void create(${request.unqualifiedContextClass} context, ${entity.name.upperCamel} entity) {
     Objects.requireNonNull(context, "context is required and missing.");
     Objects.requireNonNull(entity, "entity is required and missing.");
 
@@ -129,19 +127,19 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
         .asChildOf(context.currentSpan())
         .ignoreActiveSpan()
         .withTag("entityType", ENTITY_TYPE_NAME)
-        #foreach($pk in $entity.primaryKeyFields)
+        <#list entity.primaryKeyFields as pk>
         .withTag("$pk.name.lowerCamel", String.valueOf(entity.get${pk.name.upperCamel}()))
-        #end
+        </#list>
         .start();
 
-    final $request.unqualifiedContextClass childContext = context.withCurrentSpan(span);
+    final ${request.unqualifiedContextClass} childContext = context.withCurrentSpan(span);
     wrapDAOCall(
         span,
         () -> realDAO.create(childContext, entity));
   }
 
   @Override
-  public List<${entity.name.upperCamel}> list(#if ($request.hasContextClass)$request.unqualifiedContextClass context#end) {
+  public List<${entity.name.upperCamel}> list(${request.unqualifiedContextClass} context) {
     Objects.requireNonNull(context, "context is required and missing.");
 
     final Span span = tracer.buildSpan("jdbc::list")
@@ -150,14 +148,14 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
         .withTag("entityType", ENTITY_TYPE_NAME)
         .start();
 
-    final $request.unqualifiedContextClass childContext = context.withCurrentSpan(span);
+    final ${request.unqualifiedContextClass} childContext = context.withCurrentSpan(span);
     return wrapDAOCall(
         span,
         () -> realDAO.list(childContext));
   }
 
   @Override
-  public void update(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end ${entity.name.upperCamel} entity) {
+  public void update(${request.unqualifiedContextClass} context, ${entity.name.upperCamel} entity) {
     Objects.requireNonNull(context, "context is required and missing.");
     Objects.requireNonNull(entity, "entity is required and missing.");
 
@@ -167,14 +165,14 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
         .withTag("entityType", ENTITY_TYPE_NAME)
         .start();
 
-    final $request.unqualifiedContextClass childContext = context.withCurrentSpan(span);
+    final ${request.unqualifiedContextClass} childContext = context.withCurrentSpan(span);
     wrapDAOCall(
         span,
         () -> realDAO.update(childContext, entity));
   }
 
   @Override
-  public void upsert(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end ${entity.name.upperCamel} entity) {
+  public void upsert(${request.unqualifiedContextClass} context, ${entity.name.upperCamel} entity) {
     Objects.requireNonNull(context, "context is required and missing.");
     Objects.requireNonNull(entity, "entity is required and missing.");
 
@@ -184,24 +182,24 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
         .withTag("entityType", ENTITY_TYPE_NAME)
         .start();
 
-    final $request.unqualifiedContextClass childContext = context.withCurrentSpan(span);
+    final ${request.unqualifiedContextClass} childContext = context.withCurrentSpan(span);
     wrapDAOCall(
         span,
         () -> realDAO.upsert(childContext, entity));
   }
 
   // -- Patch methods
-#foreach( $field in $entity.nonPrimaryKeyFields )
+<#list entity.nonPrimaryKeyFields as field>
   @Override
   public void set${field.name.upperCamel}(
-      $request.unqualifiedContextClass context,
+      ${request.unqualifiedContextClass} context,
       ${entity.javaMethodArgsForPKFields(false)},
       ${field.unqualifiedJavaType} ${field.name.lowerCamel}) {
 
     Objects.requireNonNull(context, "context is required and null.");
-    #if ($field.type.nullable)
+    <#if field.type.nullable>
     //TODO: requireNonNull precondition on ${field.unqualifiedJavaType} (except for primitives)
-    #end
+    </#if>
 
     //TODO: field validation here (since not part of the POJO validation)
 
@@ -220,7 +218,7 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
             ${field.name.lowerCamel}));
   }
 
-#end
+</#list>
 
   /**
    * Wrap the DAO call with proper span cleanup

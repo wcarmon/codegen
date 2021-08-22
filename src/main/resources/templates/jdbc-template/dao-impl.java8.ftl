@@ -1,20 +1,18 @@
-package $request.packageName.value;
+package ${request.packageName.value};
 
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-#if ($request.hasContextClass)
 import $request.jvmContextClass;
-#end
-#foreach ($importable in $entity.javaImportsForFields)
-import $importable;
-#end
-#foreach ($importable in $request.extraJVMImports)
-import $importable;
-#end
-#if ($entity.requiresObjectWriter)
+<#list entity.javaImportsForFields as importable>
+import ${importable};
+</#list>
+<#list request.extraJVMImports as importable>
+import ${importable};
+</#list>
+<#if entity.requiresObjectWriter>
 import com.fasterxml.jackson.databind.ObjectWriter;
-#end
+</#if>
 
 import java.sql.Types;
 import java.util.Collection;
@@ -38,38 +36,36 @@ import java.util.Set;
 public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upperCamel}DAO {
 
   private final JdbcTemplate jdbcTemplate;
-  #if ($entity.requiresObjectWriter)
+  <#if entity.requiresObjectWriter>
   /** To serialize collection fields */
   private final ObjectWriter objectWriter;
-  #end
+  </#if>
   private final RowMapper<${entity.name.upperCamel}> rowMapper;
 
   public ${entity.name.upperCamel}DAOImpl(
     JdbcTemplate jdbcTemplate,
-    #if ($entity.requiresObjectWriter)
+    <#if entity.requiresObjectWriter>
     ObjectWriter objectWriter,
-    #end
+    </#if>
     RowMapper<${entity.name.upperCamel}> rowMapper) {
 
     Objects.requireNonNull(jdbcTemplate, "jdbcTemplate is required and null");
-    #if ($entity.requiresObjectWriter)
+    <#if entity.requiresObjectWriter>
     Objects.requireNonNull(objectWriter, "objectWriter is required and null");
-    #end
+    </#if>
     Objects.requireNonNull(rowMapper, "rowMapper is required and null");
 
     this.jdbcTemplate = jdbcTemplate;
-    #if ($entity.requiresObjectWriter)
+    <#if entity.requiresObjectWriter>
     this.objectWriter = objectWriter;
-    #end
+    </#if>
     this.rowMapper = rowMapper;
   }
 
-  #if ($entity.hasPrimaryKeyFields)
+  <#if entity.hasPrimaryKeyFields>
   @Override
-  public void delete(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end ${entity.javaMethodArgsForPKFields(false)}) {
-    #if($request.hasContextClass)
+  public void delete(${request.unqualifiedContextClass} context,${entity.javaMethodArgsForPKFields(false)}) {
     Objects.requireNonNull(context, "context is required and null.");
-    #end
     $entity.javaPrimaryKeyPreconditionStatements
 
     int affectedRowCount = jdbcTemplate.update(
@@ -80,10 +76,8 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
   }
 
   @Override
-  public boolean exists(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end ${entity.javaMethodArgsForPKFields(false)}) {
-    #if($request.hasContextClass)
+  public boolean exists(${request.unqualifiedContextClass} context,${entity.javaMethodArgsForPKFields(false)}) {
     Objects.requireNonNull(context, "context is required and null.");
-    #end
     $entity.javaPrimaryKeyPreconditionStatements
 
     Integer result = jdbcTemplate.queryForObject(
@@ -95,10 +89,8 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
   }
 
   @Override
-  public ${entity.name.upperCamel} findById(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end ${entity.javaMethodArgsForPKFields(false)}) {
-    #if($request.hasContextClass)
+  public ${entity.name.upperCamel} findById(${request.unqualifiedContextClass} context,${entity.javaMethodArgsForPKFields(false)}) {
     Objects.requireNonNull(context, "context is required and null.");
-    #end
     $entity.javaPrimaryKeyPreconditionStatements
 
     List<${entity.name.upperCamel}> results = jdbcTemplate.query(
@@ -120,13 +112,11 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
 
     return results.get(0);
   }
-  #end
+  </#if>
 
   @Override
-  public void create(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end ${entity.name.upperCamel} entity) {
-    #if($request.hasContextClass)
+  public void create(${request.unqualifiedContextClass} context,${entity.name.upperCamel} entity) {
     Objects.requireNonNull(context, "context is required and null.");
-    #end
     Objects.requireNonNull(entity, "entity is required and null.");
 
     int affectedRowCount = jdbcTemplate.update(
@@ -145,10 +135,8 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
   }
 
   @Override
-  public List<${entity.name.upperCamel}> list(#if ($request.hasContextClass)$request.unqualifiedContextClass context#end) {
-    #if($request.hasContextClass)
+  public List<${entity.name.upperCamel}> list(${request.unqualifiedContextClass} context) {
     Objects.requireNonNull(context, "context is required and null.");
-    #end
 
     return Collections.unmodifiableList(
       jdbcTemplate.query(
@@ -157,10 +145,8 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
   }
 
   @Override
-  public void update(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end ${entity.name.upperCamel} entity) {
-    #if($request.hasContextClass)
+  public void update(${request.unqualifiedContextClass} context,${entity.name.upperCamel} entity) {
     Objects.requireNonNull(context, "context is required and null.");
-    #end
     Objects.requireNonNull(entity, "entity is required and null.");
 
     int affectedRowCount = jdbcTemplate.update(
@@ -179,28 +165,25 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
   }
 
   @Override
-  public void upsert(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end ${entity.name.upperCamel} entity) {
-    #if($request.hasContextClass)
+  public void upsert(${request.unqualifiedContextClass} context,${entity.name.upperCamel} entity) {
     Objects.requireNonNull(context, "context is required and null.");
-    #end
     Objects.requireNonNull(entity, "entity is required and null.");
 
     //TODO: more here
   }
 
   // -- Patch methods
-#foreach( $field in $entity.nonPrimaryKeyFields )
+<#list entity.nonPrimaryKeyFields as field>
   @Override
-  public void set${field.name.upperCamel}(#if ($request.hasContextClass)$request.unqualifiedContextClass context,#end
+  public void set${field.name.upperCamel}(
+    ${request.unqualifiedContextClass} context
     ${entity.javaMethodArgsForPKFields(false)},
     ${field.unqualifiedJavaType} ${field.name.lowerCamel}) {
-    #if($request.hasContextClass)
     Objects.requireNonNull(context, "context is required and null.");
-    #end
     $entity.javaPrimaryKeyPreconditionStatements
-    #if ($field.type.nullable)
+    <#if field.type.nullable>
     //TODO: requireNonNull precondition on ${field.unqualifiedJavaType} (except for primitives)
-    #end
+    </#if>
 
     //TODO: field validation here (since not part of the POJO validation)
 
@@ -218,5 +201,5 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
     });
   }
 
-#end
+</#list>
 }

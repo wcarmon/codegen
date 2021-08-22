@@ -1,13 +1,13 @@
-package $request.packageName.value;
+package ${request.packageName.value};
 
 import org.springframework.jdbc.core.RowMapper;
-#if ($entity.requiresObjectReader)
+<#if entity.requiresObjectReader>
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
-#end
-#foreach ($importable in $request.extraJVMImports)
-import $importable;
-#end
+</#if>
+<#list request.extraJVMImports as importable>
+import ${importable};
+</#list>
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -36,18 +36,18 @@ import java.util.Set;
  * Maps one row of ResultSet data to ${entity.name.upperCamel} instance
  *
  * See https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/jdbc/core/RowMapper.html
- * See: $request.prettyTemplateName
+ * See: ${request.prettyTemplateName}
 */
-#if ($entity.requiresObjectReader)
+<#if entity.requiresObjectReader>
 @SuppressWarnings("unchecked")
-#end
+</#if>
 public final class ${entity.name.upperCamel}RowMapper implements RowMapper<${entity.name.upperCamel}> {
 
-  #if ($entity.requiresObjectReader)
-    #foreach ($field in $entity.collectionFields)
+  <#if entity.requiresObjectReader>
+    <#list entity.collectionFields as field>
     private static final TypeReference<${field.jacksonTypeRef}> ${field.name.upperSnake}_TYPE_REF =
       new TypeReference<>(){};
-    #end
+    </#list>
 
   private final ObjectMapper objectMapper;
 
@@ -56,9 +56,9 @@ public final class ${entity.name.upperCamel}RowMapper implements RowMapper<${ent
 
     this.objectMapper = objectMapper;
   }
-  #else
+  <#else>
   public ${entity.name.upperCamel}RowMapper() {}
-  #end
+  </#if>
 
   /**
    * Maps $entity.fields.size()-fields from ResultSet
@@ -70,21 +70,21 @@ public final class ${entity.name.upperCamel}RowMapper implements RowMapper<${ent
     Objects.requireNonNull(rs, "null result set passed to ${entity.name.upperCamel}RowMapper");
 
     return ${entity.name.upperCamel}.builder()
-        #if (!$entity.primaryKeyFields.isEmpty())
+        <#if !entity.primaryKeyFields?has_content>
         // -- $entity.commentForPKFields
-        #end
-        #foreach ($field in $entity.primaryKeyFields)
+        </#if>
+        <#list entity.primaryKeyFields as field>
         .${field.name.lowerCamel}($field.javaResultSetGetterExpression)
-        #end
+        </#list>
 
         // -- Other Fields
-        #foreach ($field in $entity.nonPrimaryKeyFields)
+        <#list entity.nonPrimaryKeyFields as field>
         .${field.name.lowerCamel}($field.javaResultSetGetterExpression)
-        #end
+        </#list>
     .build();
   }
 
-  #if ($entity.requiresObjectReader)
+  <#if entity.requiresObjectReader>
   /**
    * Deserialize to a java.util.List
    *
@@ -126,5 +126,5 @@ public final class ${entity.name.upperCamel}RowMapper implements RowMapper<${ent
       throw new RuntimeException("Failed to deserialize Set: serialized=" + serialized, ex);
     }
   }
-  #end
+  </#if>
 }

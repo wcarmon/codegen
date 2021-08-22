@@ -1,20 +1,18 @@
-package $request.packageName.value
+package ${request.packageName.value}
 
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.PreparedStatementSetter
 import org.springframework.jdbc.core.RowMapper
-#if ($request.hasContextClass)
 import $request.jvmContextClass
-#end
-#foreach ($importable in $entity.kotlinImportsForFields)
-import $importable
-#end
-#foreach ($importable in $request.extraJVMImports)
-import $importable
-#end
-#if ($entity.requiresObjectWriter)
+<#list entity.kotlinImportsForFields as importable>
+import ${importable}
+</#list>
+<#list request.extraJVMImports as importable>
+import ${importable}
+</#list>
+<#if entity.requiresObjectWriter>
 import com.fasterxml.jackson.databind.ObjectWriter
-#end
+</#if>
 import java.sql.Types
 
 
@@ -30,17 +28,17 @@ import java.sql.Types
 class ${entity.name.upperCamel}DAOImpl(
   private val jdbcTemplate: JdbcTemplate,
 
-  #if ($entity.requiresObjectWriter)
+  <#if entity.requiresObjectWriter>
   /** To serialize collection fields */
   private val objectWriter: ObjectWriter,
-  #end
+  </#if>
 
   private val rowMapper: RowMapper<${entity.name.upperCamel}>,
 
 ): ${entity.name.upperCamel}DAO {
 
-#if ($entity.hasPrimaryKeyFields)
-  override fun delete(#if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end ${entity.kotlinMethodArgsForPKFields(false)}) {
+<#if entity.hasPrimaryKeyFields>
+  override fun delete(context: ${request.unqualifiedContextClass}, ${entity.kotlinMethodArgsForPKFields(false)}) {
     //TODO: kotlin preconditions on PK fields (see FieldValidation)
 
     jdbcTemplate.update(DELETE__${entity.name.upperSnake}) { ps ->
@@ -48,7 +46,7 @@ class ${entity.name.upperCamel}DAOImpl(
     }
   }
 
-  override fun exists(#if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end ${entity.kotlinMethodArgsForPKFields(false)}): Boolean {
+  override fun exists(context: ${request.unqualifiedContextClass}, ${entity.kotlinMethodArgsForPKFields(false)}): Boolean {
     //TODO: kotlin preconditions on PK fields (see FieldValidation)
 
     return 1 == jdbcTemplate.queryForObject(
@@ -57,7 +55,7 @@ class ${entity.name.upperCamel}DAOImpl(
       $entity.jdbcSerializedPKFields)
   }
 
-  override fun findById(#if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end ${entity.kotlinMethodArgsForPKFields(false)}): ${entity.name.upperCamel}? {
+  override fun findById(context: ${request.unqualifiedContextClass}, ${entity.kotlinMethodArgsForPKFields(false)}): ${entity.name.upperCamel}? {
     //TODO: kotlin preconditions on PK fields (see FieldValidation)
 
     val results =
@@ -79,9 +77,9 @@ class ${entity.name.upperCamel}DAOImpl(
 
     return results[0]
   }
-#end
+</#if>
 
-  override fun create(#if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end entity: ${entity.name.upperCamel}) {
+  override fun create(context: ${request.unqualifiedContextClass}, entity: ${entity.name.upperCamel}) {
 
     val affectedRowCount = jdbcTemplate.update(
       INSERT__${entity.name.upperSnake},
@@ -92,14 +90,14 @@ class ${entity.name.upperCamel}DAOImpl(
     check(affectedRowCount == 1){ "1-row should have been inserted for entity=#[[$]]#entity" }
   }
 
-  override fun list(#if ($request.hasContextClass)context: $request.unqualifiedContextClass#end): List<${entity.name.upperCamel}> {
+  override fun list(context: ${request.unqualifiedContextClass}): List<${entity.name.upperCamel}> {
     return jdbcTemplate.query(
       SELECT_ALL__${entity.name.upperSnake},
       rowMapper
     )
   }
 
-  override fun update(#if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end entity: ${entity.name.upperCamel}) {
+  override fun update(context: ${request.unqualifiedContextClass}, entity: ${entity.name.upperCamel}) {
 
     jdbcTemplate.update(
       UPDATE__${entity.name.upperSnake}
@@ -108,14 +106,14 @@ class ${entity.name.upperCamel}DAOImpl(
     }
   }
 
-  override fun upsert(#if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end entity: ${entity.name.upperCamel}) {
+  override fun upsert(context: ${request.unqualifiedContextClass}, entity: ${entity.name.upperCamel}) {
     TODO("finish this method")
   }
 
   // -- Patch methods
-  #foreach( $field in $entity.nonPrimaryKeyFields )
+  <#list entity.nonPrimaryKeyFields as field>
     override fun set${field.name.upperCamel}(
-      #if ($request.hasContextClass)context: $request.unqualifiedContextClass,#end
+      context: ${request.unqualifiedContextClass},
       ${entity.kotlinMethodArgsForPKFields(false)},
       ${field.name.lowerCamel}: ${field.unqualifiedKotlinType}) {
 
@@ -128,5 +126,5 @@ class ${entity.name.upperCamel}DAOImpl(
       }
     }
 
-  #end
+  </#list>
 }

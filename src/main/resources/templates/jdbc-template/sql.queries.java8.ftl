@@ -1,4 +1,4 @@
-package $request.packageName.value;
+package ${request.packageName.value};
 
 /**
  * SQL Queries
@@ -7,19 +7,19 @@ package $request.packageName.value;
  * <p>
  * Useful for {@link java.sql.PreparedStatement} and {@link org.springframework.jdbc.core.JdbcTemplate}
  * <p>
- * See: $request.prettyTemplateName
+ * See: ${request.prettyTemplateName}
  */
 public final class SQLQueries {
-#foreach ($entity in $entities)
+<#list entities as entity>
 
-  #if($entity.hasPrimaryKeyFields)
+  <#if entity.hasPrimaryKeyFields>
   /**
    * Find-by-PK
    * Entity: {@link ${entity.pkg.value}.${entity.name.upperCamel}}
-   * PK column count: ${entity.primaryKeyFields.size()}
-   * Columns count: ${entity.fields.size()}
+   * PK column count: ${entity.primaryKeyFields?size}
+   * Columns count: ${entity.fields?size}
    */
-  public static final String SELECT_BY_PK__${entity.name.UpperSnake} =
+  public static final String SELECT_BY_PK__${entity.name.upperSnake} =
     "SELECT $entity.commaSeparatedColumns"
     + " FROM \"${entity.name.lowerSnake}\""
     + " WHERE $entity.pkWhereClause";
@@ -27,9 +27,9 @@ public final class SQLQueries {
   /**
    * Test for existence of 1-row
    * Entity: {@link ${entity.pkg.value}.${entity.name.upperCamel}}
-   * PK column count: ${entity.primaryKeyFields.size()}
+   * PK column count: ${entity.primaryKeyFields?size}
    */
-  public static final String ROW_EXISTS__${entity.name.UpperSnake} =
+  public static final String ROW_EXISTS__${entity.name.upperSnake} =
     "SELECT COUNT(*)"
     + " FROM \"${entity.name.lowerSnake}\""
     + " WHERE $entity.pkWhereClause";
@@ -37,10 +37,10 @@ public final class SQLQueries {
   /**
    * Update 1-row
    * Entity: {@link ${entity.pkg.value}.${entity.name.upperCamel}}
-   * PK column count: ${entity.primaryKeyFields.size()}
-   * Columns count: ${entity.fields.size()}
+   * PK column count: ${entity.primaryKeyFields?size}
+   * Columns count: ${entity.fields?size}
    */
-  public static final String UPDATE__${entity.name.UpperSnake} =
+  public static final String UPDATE__${entity.name.upperSnake} =
     "UPDATE \"${entity.name.lowerSnake}\""
     + " SET"
     + " $entity.updateSetClause"
@@ -49,41 +49,41 @@ public final class SQLQueries {
   /**
    * Delete 1-row
    * Entity: {@link ${entity.pkg.value}.${entity.name.upperCamel}}
-   * PK column count: ${entity.primaryKeyFields.size()}
+   * PK column count: ${entity.primaryKeyFields?size}
    */
-  public static final String DELETE__${entity.name.UpperSnake} =
+  public static final String DELETE__${entity.name.upperSnake} =
     "DELETE FROM \"${entity.name.lowerSnake}\""
     + " WHERE $entity.pkWhereClause";
-  #end
+  </#if>
 
   /**
    * Select all rows
    * Entity: {@link ${entity.pkg.value}.${entity.name.upperCamel}}
-   * Columns count: ${entity.fields.size()}
+   * Columns count: ${entity.fields?size}
    */
-  public static final String SELECT_ALL__${entity.name.UpperSnake} =
+  public static final String SELECT_ALL__${entity.name.upperSnake} =
     "SELECT $entity.commaSeparatedColumns"
     + " FROM \"${entity.name.lowerSnake}\"";
 
   /**
    * Insert 1-row
    * Entity: {@link ${entity.pkg.value}.${entity.name.upperCamel}}
-   * PK column count: ${entity.primaryKeyFields.size()}
-   * Columns count: ${entity.fields.size()}
+   * PK column count: ${entity.primaryKeyFields?size}
+   * Columns count: ${entity.fields?size}
    */
-  public static final String INSERT__${entity.name.UpperSnake} =
+  public static final String INSERT__${entity.name.upperSnake} =
     "INSERT INTO \"${entity.name.lowerSnake}\""
     + " ($entity.commaSeparatedColumns)"
     + " VALUES ($entity.questionMarkStringForInsert)";
 
-  #if($entity.hasPrimaryKeyFields)
-    #foreach ($field in $entity.nonPrimaryKeyFields)
+  <#if entity.hasPrimaryKeyFields>
+    <#list entity.nonPrimaryKeyFields as field>
       public static final String PATCH__${entity.name.upperSnake}__${field.name.upperSnake} =
         "UPDATE \"${entity.name.lowerSnake}\""
         + " SET $field.name.lowerSnake=?"
         + " WHERE $entity.pkWhereClause";
 
-    #end
-  #end
-#end
+    </#list>
+  </#if>
+</#list>
 }

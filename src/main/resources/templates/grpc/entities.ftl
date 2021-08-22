@@ -4,17 +4,17 @@
 syntax = "proto3";
 
 option java_multiple_files = true;
-option java_package = "$request.packageName.value";
+option java_package = "${request.packageName.value}";
 option optimize_for = SPEED;
 
 package ${request.packageName.value};
 
-#foreach ($entity in $entities)
+<#list entities as entity>
 
 // Entity: ${entity.pkg.value}.${entity.name.upperCamel}
-// Field count: ${entity.fields.size()}
-message ${entity.name.UpperCamel}Proto {
+// Field count: ${entity.fields?size}
+message ${entity.name.upperCamel}Proto {
   $entity.protocolBufferFields
 }
 
-#end
+</#list>

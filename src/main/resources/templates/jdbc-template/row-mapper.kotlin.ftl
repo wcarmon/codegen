@@ -1,18 +1,18 @@
 // see /home/wcarmon/git-repos/modern-jvm/trading-dao-jdbc/src/main/kotlin/com/wcarmon/trading/dao/rowmapper/convert.kt
 
-package $request.packageName.value
+package ${request.packageName.value}
 
-#foreach ($importable in $entity.kotlinImportsForFields)
-import $importable
-#end
+<#list entity.kotlinImportsForFields as importable>
+import ${importable}
+</#list>
 import org.springframework.jdbc.core.RowMapper
-#if ($entity.requiresObjectReader)
+<#if entity.requiresObjectReader>
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.core.type.TypeReference
-#end
-#foreach ($importable in $request.extraJVMImports)
-import $importable
-#end
+</#if>
+<#list request.extraJVMImports as importable>
+import ${importable}
+</#list>
 
 import java.sql.ResultSet
 import java.time.format.DateTimeFormatter
@@ -23,20 +23,20 @@ import java.time.format.DateTimeFormatter
  *
  * See https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/jdbc/core/RowMapper.html
  */
-#if ($entity.requiresObjectReader)
-##@SuppressWarnings("unchecked")
-#end
+<#if entity.requiresObjectReader>
+<#-- @SuppressWarnings("unchecked")-->
+</#if>
 class ${entity.name.upperCamel}RowMapper(
-#if ($entity.requiresObjectReader)
+<#if entity.requiresObjectReader>
   private val objectMapper: ObjectMapper,
-#end
+</#if>
 ) : RowMapper<${entity.name.upperCamel}> {
 
   companion object {
-    #foreach ($field in $entity.collectionFields)
+    <#list entity.collectionFields as field>
     private val ${field.name.upperSnake}_TYPE_REF =
       object : TypeReference<${field.jacksonTypeRef}> () {}
-    #end
+    </#list>
   }
 
   /**
@@ -46,21 +46,21 @@ class ${entity.name.upperCamel}RowMapper(
    */
   override fun mapRow(rs: ResultSet, rowNum: Int): ${entity.name.upperCamel} =
     ${entity.name.upperCamel}(
-      #if (!$entity.primaryKeyFields.isEmpty())
+      <#if !entity.primaryKeyFields?has_content>
       // -- $entity.commentForPKFields
-      #end
-      #foreach ($field in $entity.primaryKeyFields)
+      </#if>
+      <#list entity.primaryKeyFields as field>
       ${field.name.lowerCamel} = $field.kotlinResultSetGetterExpression,
-      #end
+      </#list>
 
       // -- Other Fields
-      #foreach ($field in $entity.nonPrimaryKeyFields)
+      <#list entity.nonPrimaryKeyFields as field>
       ${field.name.lowerCamel} = $field.kotlinResultSetGetterExpression,
-      #end
+      </#list>
     )
 
 
-  #if ($entity.requiresObjectReader)
+  <#if entity.requiresObjectReader>
   /**
    * Deserialize to a java.util.List
    *
@@ -94,5 +94,5 @@ class ${entity.name.upperCamel}RowMapper(
 
     return objectMapper.readValue(serialized, typeRef)
   }
-  #end
+  </#if>
 }
