@@ -3,8 +3,7 @@ package com.wcarmon.codegen.model
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.wcarmon.codegen.model.FieldReadStyle.DIRECT
-import com.wcarmon.codegen.model.TargetLanguage.JAVA_08
-import com.wcarmon.codegen.model.TargetLanguage.KOTLIN_JVM_1_4
+import com.wcarmon.codegen.model.TargetLanguage.*
 import com.wcarmon.codegen.model.ast.RawStringExpression
 import com.wcarmon.codegen.model.util.*
 import org.atteo.evo.inflector.English
@@ -178,6 +177,15 @@ data class Entity(
 
   val jdbcSerializedPKFields by lazy {
     commaSeparatedJavaFields(primaryKeyFields)
+  }
+
+  val protocolBufferFields by lazy {
+    buildProtoBufMessageFields(
+      primaryKeyFields,
+      nonPrimaryKeyFields
+    )
+      .map { "  " + it.serialize(PROTOCOL_BUFFERS_3) }
+      .joinToString("\n")
   }
 
   // For INSERT, PK fields are first

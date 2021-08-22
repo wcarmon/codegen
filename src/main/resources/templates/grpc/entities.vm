@@ -1,22 +1,22 @@
+## Generates proto file
+## Use ./gradlew generateProto to make java classes
+##
 syntax = "proto3";
 
 option java_multiple_files = true;
-option java_package = "io.grpc.examples.helloworld";
+option java_package = "$request.packageName.value";
+
+//TODO: fix this line
 option java_outer_classname = "HelloWorldProto";
 
-package cheese;
+package ${request.packageName.value};
 
-service Foo {
-// Sends a greeting
-  rpc SayHelloz (HelloRequest) returns (HelloReply) {}
+#foreach ($entity in $entities)
+
+// Entity: ${entity.pkg.value}.${entity.name.upperCamel}
+// Field count: ${entity.fields.size()}
+message $entity.name.UpperCamel {
+  $entity.protocolBufferFields
 }
 
-// The request message containing the user's name.
-message CheeseRequest {
-  string name = 1;
-}
-
-// The response message containing the greetings
-message CheeseReply {
-  string message = 1;
-}
+#end

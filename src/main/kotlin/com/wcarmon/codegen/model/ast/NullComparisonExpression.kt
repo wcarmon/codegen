@@ -30,6 +30,7 @@ data class NullComparisonExpression(
       KOTLIN_JVM_1_4,
       -> "null == " + compareTo.serialize(targetLanguage, false)
 
+      PROTOCOL_BUFFERS_3 -> TODO()
       PYTHON_3 -> TODO()  // foo is None
       RUST_1_54 -> TODO()
       SQL -> TODO()

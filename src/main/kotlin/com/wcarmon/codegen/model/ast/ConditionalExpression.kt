@@ -40,7 +40,9 @@ data class ConditionalExpression(
 
     PYTHON_3 -> pythonStyle(targetLanguage)
 
-    SQL -> TODO("Conditionals in SQL are not supported here")
+    PROTOCOL_BUFFERS_3,
+    SQL,
+    -> TODO("Conditionals not supported on $targetLanguage")
   }
 
   private fun cStyle(

@@ -57,6 +57,8 @@ data class Field(
 
   val jvm: JVMField = JVMField(),
 
+  val protobuf: ProtocolBufferFieldConfig? = null,
+
   val validation: FieldValidation? = null,
 ) {
 
@@ -72,6 +74,7 @@ data class Field(
       @JsonProperty("name") name: Name,
       @JsonProperty("nullable") nullable: Boolean = false,
       @JsonProperty("precision") precision: Int? = null,
+      @JsonProperty("protobuf") protobuf: ProtocolBufferFieldConfig? = null,
       @JsonProperty("rdbms") rdbms: RDBMSColumn? = null,
       @JsonProperty("scale") scale: Int = 0,
       @JsonProperty("signed") signed: Boolean = true,
@@ -90,6 +93,7 @@ data class Field(
         documentation = documentation,
         jvm = jvmField ?: JVMField(),
         name = name,
+        protobuf = protobuf,
         rdbms = rdbms,
         type = LogicalFieldType(
           base = BaseFieldType.parse(typeLiteral),

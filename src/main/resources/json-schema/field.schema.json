@@ -32,6 +32,9 @@
       "minimum": 0,
       "type": "integer"
     },
+    "protobuf": {
+      "$ref": "protobuf-field.schema.json"
+    },
     "rdbms": {
       "$ref": "rdbms-column.schema.json"
     },

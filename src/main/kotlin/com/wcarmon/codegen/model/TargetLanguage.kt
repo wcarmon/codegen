@@ -14,6 +14,7 @@ enum class TargetLanguage {
   JAVA_11,
   JAVA_17,
   KOTLIN_JVM_1_4,
+  PROTOCOL_BUFFERS_3,
   PYTHON_3,
   RUST_1_54,
   SQL,
@@ -85,6 +86,7 @@ enum class TargetLanguage {
       JAVA_08,
       JAVA_11,
       JAVA_17,
+      PROTOCOL_BUFFERS_3,
       TYPESCRIPT_4,
       -> true
 

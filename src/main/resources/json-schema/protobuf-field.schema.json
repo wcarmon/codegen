@@ -1,0 +1,33 @@
+{
+  "$id": "https://wcarmon.com/schemas/codegen/protobuf-field.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "configuration for protocol buffer 3 fields",
+  "properties": {
+    "overrideType": {
+      "enum": [
+        "bool",
+        "bytes",
+        "double",
+        "fixed32",
+        "fixed64",
+        "float",
+        "int32",
+        "int64",
+        "sfixed32",
+        "sfixed64",
+        "sint32",
+        "sint64",
+        "string",
+        "uint32",
+        "uint64"
+      ]
+    }
+  },
+  "propertyNames": {
+    "pattern": "^[$]?[A-Za-z_][A-Za-z0-9]*$"
+  },
+  "required": [],
+  "title": "Protocol Buffers 3 field config",
+  "type": "object"
+}
