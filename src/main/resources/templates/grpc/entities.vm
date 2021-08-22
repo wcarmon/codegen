@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.grpc.examples.helloworld";
+option java_outer_classname = "HelloWorldProto";
+
+package cheese;
+
+service Foo {
+// Sends a greeting
+  rpc SayHelloz (HelloRequest) returns (HelloReply) {}
+}
+
+// The request message containing the user's name.
+message CheeseRequest {
+  string name = 1;
+}
+
+// The response message containing the greetings
+message CheeseReply {
+  string message = 1;
+}

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://wcarmon.com/schemas/codegen/request.schema.json",
+  "allowOverride": true,
+  "entityConfigDirs": [
+    "file:///home/wcarmon/git-repos/codegen/samples/entities"
+  ],
+  "outputFileOrDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/proto/request-response.proto",
+  "outputMode": "single",
+  "package": "com.wcarmon.chrono.grpc",
+  "templateURI": "classpath:/templates/grpc/request-response.vm"
+}

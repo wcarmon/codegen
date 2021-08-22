@@ -1,6 +1,5 @@
 package $request.packageName.value
 
-import ${entity.pkg.value}.${entity.name.upperCamel}
 #if ($request.hasContextClass)
 import $request.jvmContextClass
 #end
