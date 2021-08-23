@@ -180,11 +180,11 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
   public void set${field.name.upperCamel}(
     ${request.unqualifiedContextClass} context,
     ${entity.javaMethodArgsForPKFields(false)},
-    ${field.unqualifiedJavaType} ${field.name.lowerCamel}) {
+    ${field.java8View.unqualifiedType} ${field.name.lowerCamel}) {
     Objects.requireNonNull(context, "context is required and null.");
     ${entity.javaPrimaryKeyPreconditionStatements}
     <#if field.type.nullable>
-    //TODO: requireNonNull precondition on ${field.unqualifiedJavaType} (except for primitives)
+    //TODO: requireNonNull precondition on ${field.java8View.unqualifiedType} (except for primitives)
     </#if>
 
     //TODO: field validation here (since not part of the POJO validation)

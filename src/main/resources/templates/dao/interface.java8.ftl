@@ -95,7 +95,7 @@ public interface ${entity.name.upperCamel}DAO {
   void set${field.name.upperCamel}(
     ${request.unqualifiedContextClass} context,
     ${entity.javaMethodArgsForPKFields(false)},
-    ${field.unqualifiedJavaType} ${field.name.lowerCamel});
+    ${field.java8View.unqualifiedType} ${field.name.lowerCamel});
 
     </#list>
 }

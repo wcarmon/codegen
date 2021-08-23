@@ -34,7 +34,7 @@ public final class ${entity.name.upperCamel} {
      * Primary key
     </#if>
   */
-  private final ${field.javaType} ${field.name.lowerCamel};
+  private final ${field.java8View.type} ${field.name.lowerCamel};
   </#list>
 
   private ${entity.name.upperCamel}( ${entity.name.upperCamel}Builder builder ) {
@@ -42,7 +42,7 @@ public final class ${entity.name.upperCamel} {
 
     <#list entity.sortedFields as field>
       <#if field.collection>
-      this.${field.name.lowerCamel} = ${field.unmodifiableJavaCollectionMethod}(builder.${field.name.lowerCamel});
+      this.${field.name.lowerCamel} = ${field.java8View.unmodifiableCollectionMethod}(builder.${field.name.lowerCamel});
       <#else>
       this.${field.name.lowerCamel} = builder.${field.name.lowerCamel};
       </#if>
@@ -57,12 +57,12 @@ public final class ${entity.name.upperCamel} {
     ${entity.name.upperCamel} that = (${entity.name.upperCamel}) o;
     <#list entity.sortedFields as field>
       <#if field?is_first>
-      return ${field.javaEqualityExpression("this", "that")}
+      return ${field.java8View.equalityExpression("this", "that")}
       <#elseif field?is_last>
-        && ${field.javaEqualityExpression("this", "that")};
+        && ${field.java8View.equalityExpression("this", "that")};
 <#--      TODO: handle arrays:  Arrays.equals-->
       <#else>
-        && ${field.javaEqualityExpression("this", "that")}
+        && ${field.java8View.equalityExpression("this", "that")}
       </#if>
     </#list>
   }
@@ -76,7 +76,7 @@ public final class ${entity.name.upperCamel} {
   }
 
   <#list entity.sortedFields as field>
-    public ${field.javaType} get${field.name.upperCamel}() {
+    public ${field.java8View.type} get${field.name.upperCamel}() {
       return this.${field.name.lowerCamel};
     }
 
@@ -103,14 +103,14 @@ public final class ${entity.name.upperCamel} {
   public static class ${entity.name.upperCamel}Builder {
 <#-- TODO: set default values on fields here-->
     <#list entity.sortedFields as field>
-    private ${field.javaType} ${field.name.lowerCamel};
+    private ${field.java8View.type} ${field.name.lowerCamel};
     </#list>
 
     ${entity.name.upperCamel}Builder() {
     }
 
     <#list entity.sortedFields as field>
-    public ${entity.name.upperCamel}Builder ${field.name.lowerCamel}(${field.javaType} value) {
+    public ${entity.name.upperCamel}Builder ${field.name.lowerCamel}(${field.java8View.type} value) {
       this.${field.name.lowerCamel} = value;
       return this;
     }
@@ -119,7 +119,7 @@ public final class ${entity.name.upperCamel} {
 
         public ${entity.name.upperCamel}Builder ${field.name.lowerCamel}(${field.type.typeParameters[0]} value) {
           if (this.${field.name.lowerCamel} == null) {
-            this.${field.name.lowerCamel} = new ${field.newJavaCollectionExpression()};
+            this.${field.name.lowerCamel} = new ${field.java8View.newCollectionExpression()};
           }
 
           this.${field.name.lowerCamel}.add(value);

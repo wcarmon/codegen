@@ -74,12 +74,12 @@ public final class ${entity.name.upperCamel}RowMapper implements RowMapper<${ent
         // -- ${entity.commentForPKFields}
         </#if>
         <#list entity.primaryKeyFields as field>
-        .${field.name.lowerCamel}(${field.javaResultSetGetterExpression})
+        .${field.name.lowerCamel}(${field.java8View.resultSetGetterExpression})
         </#list>
 
         // -- Other Fields
         <#list entity.nonPrimaryKeyFields as field>
-        .${field.name.lowerCamel}(${field.javaResultSetGetterExpression})
+        .${field.name.lowerCamel}(${field.java8View.resultSetGetterExpression})
         </#list>
     .build();
   }

@@ -10,6 +10,7 @@ import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.TargetLanguage.JAVA_08
 import com.wcarmon.codegen.model.TargetLanguage.KOTLIN_JVM_1_4
 import com.wcarmon.codegen.model.util.*
+import com.wcarmon.codegen.model.view.JavaField
 import kotlin.text.RegexOption.IGNORE_CASE
 
 /**
@@ -64,6 +65,7 @@ data class Field(
 
   companion object {
 
+    //TODO: simplify so I can use jackson structure directly
     @JvmStatic
     @JsonCreator
     fun parse(
@@ -122,6 +124,13 @@ data class Field(
     //NOTE: precision and scale are validated on LogicalFieldType
   }
 
+  //TODO: move all the java fields to "JavaField"
+  val java8View by lazy {
+    JavaField(this, JAVA_08)
+  }
+
+  //TODO: move all the kotlin fields to "this.kotlinView"
+
   //TODO: inline many of these after moving the logic out of templates
 
   val hasDefault = defaultValue != null
@@ -154,11 +163,6 @@ data class Field(
     }
   }
 
-  val javaType = javaTypeLiteral(type, true)
-
-  //TODO: test this on types that are already unqualified
-  val unqualifiedJavaType = javaTypeLiteral(type, false)
-
   //TODO: test this on types that are already unqualified
   val unqualifiedKotlinType = getKotlinTypeLiteral(type, false)
 
@@ -190,31 +194,14 @@ data class Field(
     else -> false
   }
 
-
-  //TODO: convert to fun,
-  //    accept template placeholder replacement here
-  //    rename
-  val unmodifiableJavaCollectionMethod by lazy {
-    unmodifiableJavaCollectionMethod(effectiveBaseType)
-  }
-
   val usesNumericValidation = effectiveBaseType.isNumeric
 
   //TODO: move to LogicalFieldType
   val usesStringValidation = effectiveBaseType == STRING
 
   val kotlinResultSetGetterExpression by lazy {
-    buildResultSetGetterExpression(
-      field = this,
-      targetLanguage = KOTLIN_JVM_1_4)
+    buildResultSetGetterExpression(this)
       .serialize(KOTLIN_JVM_1_4)
-  }
-
-  val javaResultSetGetterExpression by lazy {
-    buildResultSetGetterExpression(
-      field = this,
-      targetLanguage = JAVA_08)
-      .serialize(JAVA_08)
   }
 
   val isCreatedTimestamp =
@@ -228,19 +215,4 @@ data class Field(
   val hasCustomJDBCSerde = rdbms?.hasCustomSerde ?: false
 
   val hasCustomJVMSerde = jvm.hasCustomSerde
-
-  //TODO: invoke serialize
-  fun javaEqualityExpression(
-    identifier0: String,
-    identifier1: String,
-  ) = javaEqualityExpression(
-    type,
-    name,
-    identifier0,
-    identifier1
-  ).serialize(JAVA_08)
-
-  // GOTCHA: Only invoke on collection types
-  fun newJavaCollectionExpression() =
-    newJavaCollectionExpression(type)
 }
