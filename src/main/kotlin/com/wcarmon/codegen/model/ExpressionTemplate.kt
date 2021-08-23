@@ -8,7 +8,8 @@ import com.wcarmon.codegen.model.ast.RawStringExpression
  * A template which can be formatted/expanded with [String.format]
  */
 data class ExpressionTemplate(
-  /** Contains %s */
+
+  /** Must contain %s */
   private val value: String,
 ) {
 

@@ -11,6 +11,8 @@ import java.sql.JDBCType
  * eg. ps.setNull(3, Types.INTEGER)
  *
  * <preparedStatementIdentifier>.setNull( columnIndex, <column-type> )
+ *
+ * Setting non-null values is handled by [PreparedStatementNonNullSetterExpression]
  */
 data class PreparedStatementNullSetterExpression(
   val columnIndex: Int,

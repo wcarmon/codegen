@@ -2,8 +2,12 @@
 
 package com.wcarmon.codegen.model.util
 
-import com.wcarmon.codegen.model.*
+import com.wcarmon.codegen.model.BaseFieldType
 import com.wcarmon.codegen.model.BaseFieldType.*
+import com.wcarmon.codegen.model.Field
+import com.wcarmon.codegen.model.PreparedStatementBuilderConfig
+import com.wcarmon.codegen.model.Serde
+import com.wcarmon.codegen.model.SerdeMode.DESERIALIZE
 import com.wcarmon.codegen.model.ast.*
 import java.sql.JDBCType
 
@@ -11,35 +15,29 @@ import java.sql.JDBCType
 /**
  * Statement termination handled by caller
  *
- * This handles correct column indexing on PreparedStatements
- *
- * @param firstIndex TODO
- * @param fields
- * @param preparedStatementIdentifier TODO
+ * Handles correct column indexing on PreparedStatements
  *
  * @return statements for assigning properties on [java.sql.PreparedStatement]
  */
 fun buildPreparedStatementSetters(
   cfg: PreparedStatementBuilderConfig,
   fields: List<Field>,
-
   firstIndex: Int = 1,
-): List<Expression> =
-  fields.mapIndexed { index, field ->
-    buildPreparedStatementSetter(
-      cfg = cfg,
-      columnIndex = firstIndex + index,
-      field = field,
-    )
+): List<Expression> {
+  require(firstIndex > 0) {
+    "firstIndex must be positive: $firstIndex"
   }
 
+  return fields.mapIndexed { columnIndex, currentField ->
+    buildPreparedStatementSetter(
+      cfg = cfg,
+      columnIndex = firstIndex + columnIndex,
+      field = currentField,
+    )
+  }
+}
+
 /**
- * @param columnIndex
- * @param field
- * @param fieldReadPrefix  scope for reading field.  eg. "myEntity."
- * @param fieldReadStyle
- * @param preparedStatementIdentifier prefix for PreparedStatement setter
- *
  * @return statement for assigning field on PreparedStatement
  *   eg. "ps.setString(7, foo.toString())"
  */
@@ -49,39 +47,47 @@ fun buildPreparedStatementSetter(
   field: Field,
 ): Expression {
 
+  require(columnIndex > 0) {
+    "columnIndex must be positive: $columnIndex"
+  }
+
+  val fieldReadExpression = FieldReadExpression(
+    assertNonNull = field.type.nullable && cfg.allowFieldNonNullAssertion,
+    fieldName = field.name,
+    fieldReadPrefix = cfg.fieldReadPrefix,
+    overrideFieldReadStyle = cfg.fieldReadStyle,
+  )
+
   val expressionForNonNull =
     PreparedStatementNonNullSetterExpression(
       columnIndex = columnIndex,
-      newValueExpression = jdbcFieldReadExpression(
-        assertNonNull = field.type.nullable && cfg.allowFieldNonNullAssertion,
-        field = field,
-        fieldReadPrefix = cfg.fieldReadPrefix,
-        fieldReadStyle = cfg.fieldReadStyle,
-        targetLanguage = cfg.targetLanguage,
+      // Wrap the field read in a Serde
+      newValueExpression = SerdeReadExpression(
+        fieldReadExpression = fieldReadExpression,
+        serdeTemplate = effectiveJDBCSerde(field).serializeTemplate,
       ),
       preparedStatementIdentifier = cfg.preparedStatementIdentifier,
-      setter = defaultPreparedStatementSetter(field.effectiveBaseType),
+      setterMethod = defaultPreparedStatementSetterMethod(field.effectiveBaseType),
     )
 
-  if (field.type.nullable) {
-
-    return ConditionalExpression(
-      condition = NullComparisonExpression(
-        FieldReadExpression(
-          fieldName = field.name,
-          fieldReadPrefix = cfg.fieldReadPrefix,
-          overrideFieldReadStyle = cfg.fieldReadStyle,
-        )),
-      expressionForTrue = PreparedStatementNullSetterExpression(
-        columnIndex = columnIndex,
-        columnType = jdbcType(field.effectiveBaseType),
-        preparedStatementIdentifier = cfg.preparedStatementIdentifier,
-      ),
-      expressionForFalse = expressionForNonNull,
-    )
+  if (!field.type.nullable) {
+    return expressionForNonNull
   }
 
-  return expressionForNonNull
+  return ConditionalExpression(
+    condition = NullComparisonExpression(
+      FieldReadExpression(
+        fieldName = field.name,
+        fieldReadPrefix = cfg.fieldReadPrefix,
+        overrideFieldReadStyle = cfg.fieldReadStyle,
+      )),
+    expressionForTrue = PreparedStatementNullSetterExpression(
+      columnIndex = columnIndex,
+      columnType = jdbcType(field.effectiveBaseType),
+      preparedStatementIdentifier = cfg.preparedStatementIdentifier,
+    ),
+    expressionForFalse = expressionForNonNull,
+  )
 }
 
 /**
@@ -98,69 +104,23 @@ fun buildPreparedStatementSetter(
 fun buildResultSetGetterExpression(
   field: Field,
   resultSetIdentifier: String = "rs",
-  targetLanguage: TargetLanguage,
-): Expression {
+) =
+  // Wraps ResultSetGetter in the Serde
+  SerdeReadExpression(
+    fieldReadExpression = ResultSetGetterExpression(
+      fieldName = field.name,
+      getterMethod = defaultResultSetGetterMethod(field.effectiveBaseType),
+      resultSetIdentifier = resultSetIdentifier,
+    ),
 
-  val fieldReadExpression = ResultSetGetterExpression(
-    fieldName = field.name,
-    getter = defaultResultSetGetter(field.effectiveBaseType),
-    resultSetIdentifier = resultSetIdentifier,
-  ).serialize(targetLanguage, false)
-
-  // -- Wrap the field read expression in the serde expression
-  return jdbcSerde(field, targetLanguage)
-    .deserializeTemplate
-    .expand(
-      fieldReadExpression
-    )
-}
-
-/**
- *
- * handles type conversion using Serde
- *
- * @return an expression which converts [Field] to a value JDBC will accept
- * eg. "myEntity.myField.toString()"
- */
-private fun jdbcFieldReadExpression(
-  //TODO: too many args
-  assertNonNull: Boolean = false,
-  field: Field,
-  fieldReadPrefix: String = "",
-  fieldReadStyle: FieldReadStyle,
-  targetLanguage: TargetLanguage,
-  terminate: Boolean = false,
-): Expression {
-
-  //TODO: handle when you might call .toString on a null field (or null output from getter)
-
-  check(fieldReadPrefix.trim() == fieldReadPrefix) {
-    "fieldReadPrefix must be trimmed: $fieldReadPrefix"
-  }
-
-  val fieldReadExpression = FieldReadExpression(
-    assertNonNull = assertNonNull,
-    fieldName = field.name,
-    fieldReadPrefix = fieldReadPrefix,
-    overrideFieldReadStyle = fieldReadStyle,
+    serdeTemplate = effectiveJDBCSerde(field).forMode(DESERIALIZE),
   )
 
-  return jdbcSerde(field, targetLanguage)
-    .serializeTemplate
-    .expand(
-      fieldReadExpression.serialize(
-        targetLanguage,
-        terminate))
-}
-
-//TODO: simplify this (break kotlin and java out to separate methods)
-private fun jdbcSerde(
-  field: Field,
-  targetLanguage: TargetLanguage,
-): Serde =
-  if (field.rdbms != null &&
-    field.rdbms.serde != null
-  ) {
+/**
+ * @return the most appropriate Serde for JDBC
+ */
+private fun effectiveJDBCSerde(field: Field): Serde =
+  if (field.rdbms?.serde != null) {
     // -- User override is highest priority
     field.rdbms.serde
 
@@ -171,6 +131,30 @@ private fun jdbcSerde(
   } else {
     Serde.INLINE
   }
+
+
+/**
+ * @return true when Type is not trivially mapped to JDBC getter/setter
+ */
+private fun requiresJDBCSerde(field: Field): Boolean =
+  field.effectiveBaseType in setOf(PATH, URI, URL)
+      || field.effectiveBaseType.isTemporal
+      || field.isCollection
+      || field.type.enumType
+
+
+/**
+ * See [java.sql.ResultSet] (getter names match setters on [java.sql.PreparedStatement])
+ *
+ * eg. setLong
+ *
+ * @return setter method name declared on [java.sql.PreparedStatement]
+ */
+private fun defaultPreparedStatementSetterMethod(base: BaseFieldType): MethodName =
+  defaultResultSetGetterMethod(base)
+    .value
+    .replaceFirst("get", "set")
+    .let { MethodName(it) }
 
 
 /**
@@ -219,32 +203,10 @@ private fun jdbcType(base: BaseFieldType): JDBCType = when (base) {
 //  TODO: handle Types.CLOB (allow override in *.entity.json)
 }
 
-
-/** Some types use standard parse & toString methods */
-private fun requiresJDBCSerde(field: Field): Boolean =
-  field.effectiveBaseType in setOf(PATH, URI, URL)
-      || field.effectiveBaseType.isTemporal
-      || field.isCollection
-      || field.type.enumType
-
-
-/**
- * See [java.sql.ResultSet] (getter names match setters on [java.sql.PreparedStatement])
- *
- * eg. setLong
- *
- * @return setter method name declared on [java.sql.PreparedStatement]
- */
-private fun defaultPreparedStatementSetter(base: BaseFieldType): MethodName =
-  defaultResultSetGetter(base)
-    .value
-    .replaceFirst("get", "set")
-    .let { MethodName(it) }
-
 /**
  * @return getter method name declared on [java.sql.ResultSet]
  */
-private fun defaultResultSetGetter(base: BaseFieldType): MethodName = when (base) {
+private fun defaultResultSetGetterMethod(base: BaseFieldType): MethodName = when (base) {
   BOOLEAN -> "getBoolean"
   FLOAT_32 -> "getFloat"
   FLOAT_64 -> "getDouble"

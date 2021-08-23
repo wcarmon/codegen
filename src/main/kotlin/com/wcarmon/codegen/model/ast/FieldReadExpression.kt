@@ -8,15 +8,23 @@ import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.model.TargetLanguage.*
 
 /**
- * TODO: document class
+ * Expression to read 1 field
  *
- * @param fieldReadPrefix   //TODO: document me
+ * Uses appropriate name style for the target language
+ * Allows prefix (eg. "entity.getFoo()")
+ * Allows getter or direct access (eg. "entity.foo" or "entity.getFoo()" )
+ *
+ * This is NOT related to Serde, see [SerdeReadExpression]
  */
 data class FieldReadExpression(
   val fieldName: Name,
 
+  /** Kotlin allows non-null assertion (eg. !!) */
   val assertNonNull: Boolean = false,
+
+  /** eg. "entity." */
   val fieldReadPrefix: String = "",
+
   val overrideFieldReadStyle: FieldReadStyle? = null,
 ) : Expression {
 

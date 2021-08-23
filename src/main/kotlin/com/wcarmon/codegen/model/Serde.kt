@@ -1,5 +1,8 @@
 package com.wcarmon.codegen.model
 
+import com.wcarmon.codegen.model.SerdeMode.DESERIALIZE
+import com.wcarmon.codegen.model.SerdeMode.SERIALIZE
+
 /**
  * Corresponding pair of serializer/marshaller & deserializer/unmarshaller
  */
@@ -35,5 +38,10 @@ data class Serde(
     val INLINE: Serde = Serde(
       ExpressionTemplate.INLINE,
       ExpressionTemplate.INLINE)
+  }
+
+  fun forMode(mode: SerdeMode): ExpressionTemplate = when (mode) {
+    SERIALIZE -> serializeTemplate
+    DESERIALIZE -> deserializeTemplate
   }
 }

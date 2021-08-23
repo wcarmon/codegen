@@ -4,7 +4,11 @@
     {
       "name": "uuid",
       "protobuf": {
-        "overrideTypeLiteral": "string"
+        "overrideTypeLiteral": "string",
+        "serde": {
+          "deserializeTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
+          "serializeTemplate": "%s.toString()"
+        }
       },
       "rdbms": {
         "positionInPrimaryKey": 0,

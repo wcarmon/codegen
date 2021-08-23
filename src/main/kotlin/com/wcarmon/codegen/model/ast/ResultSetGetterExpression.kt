@@ -14,7 +14,7 @@ import com.wcarmon.codegen.model.TargetLanguage.*
  */
 data class ResultSetGetterExpression(
   val fieldName: Name,
-  val getter: MethodName,
+  val getterMethod: MethodName,
   val resultSetIdentifier: String = "rs", //TODO: make a type for this
 ) : Expression {
   init {
@@ -41,7 +41,7 @@ data class ResultSetGetterExpression(
   }
 
   private fun handleJava(terminate: Boolean) =
-    """${getResultSetPrefix()}$getter("${fieldName.lowerSnake}")""" +
+    """${getResultSetPrefix()}$getterMethod("${fieldName.lowerSnake}")""" +
         serializeTerminator(terminate)
 
   private fun handleKotlin() = handleJava(false)

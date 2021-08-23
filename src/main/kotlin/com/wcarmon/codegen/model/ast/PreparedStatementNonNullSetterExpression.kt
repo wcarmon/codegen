@@ -11,11 +11,13 @@ import com.wcarmon.codegen.model.TargetLanguage.*
  * eg. ps.setDouble(8, entity.bar)
  *
  * <preparedStatementIdentifier>.<setterName>( columnIndex, newValueExpression )
+ *
+ * setting null values are handled by [PreparedStatementNullSetterExpression]
  */
 data class PreparedStatementNonNullSetterExpression(
   val columnIndex: Int,
   val newValueExpression: Expression,
-  val setter: MethodName,
+  val setterMethod: MethodName,
 
   val preparedStatementIdentifier: String = "ps", //TODO: make a type for this
 ) : Expression {
@@ -51,12 +53,12 @@ data class PreparedStatementNonNullSetterExpression(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
   ) =
-    "${preparedStatementPrefix}$setter($columnIndex, ${
+    "${preparedStatementPrefix}$setterMethod($columnIndex, ${
       newValueExpression.serialize(targetLanguage, false)
     })" + serializeTerminator(terminate)
 
   private fun handleKotlin(targetLanguage: TargetLanguage) =
-    "${preparedStatementPrefix}$setter($columnIndex, ${
+    "${preparedStatementPrefix}$setterMethod($columnIndex, ${
       newValueExpression.serialize(targetLanguage, false)
     })"
 
