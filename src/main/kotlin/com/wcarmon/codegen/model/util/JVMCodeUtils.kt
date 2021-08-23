@@ -110,7 +110,7 @@ private fun defaultJVMDeserializeTemplate(type: LogicalFieldType) =
       ZONED_DATE_TIME,
       -> "${javaTypeLiteral(type)}.parse(%s)"
 
-      // TODO: JSON serialized via Jackson
+      // TODO: JSON serialized via Jackson?
       ARRAY,
       LIST,
       MAP,

@@ -127,6 +127,9 @@ data class Entity(
 
   val sortedFields = fields.sortedBy { it.name.lowerCamel }
 
+  val sortedFieldsWithPKFirst =
+    primaryKeyFields + nonPrimaryKeyFields
+
   val updateSetClause = commaSeparatedColumnAssignment(nonPrimaryKeyFields)
 
   fun javaMethodArgsForPKFields(qualified: Boolean) =
@@ -180,7 +183,7 @@ data class Entity(
   }
 
   val protocolBufferFields by lazy {
-    buildProtoBufMessageFields(
+    buildProtoBufMessageFieldDeclarations(
       primaryKeyFields,
       nonPrimaryKeyFields
     )

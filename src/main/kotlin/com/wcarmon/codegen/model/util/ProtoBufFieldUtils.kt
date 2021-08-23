@@ -2,14 +2,15 @@
 
 package com.wcarmon.codegen.model.util
 
+import com.wcarmon.codegen.model.*
 import com.wcarmon.codegen.model.BaseFieldType.*
-import com.wcarmon.codegen.model.Field
-import com.wcarmon.codegen.model.LogicalFieldType
 import com.wcarmon.codegen.model.ast.Expression
+import com.wcarmon.codegen.model.ast.FieldReadExpression
 import com.wcarmon.codegen.model.ast.RawStringExpression
+import com.wcarmon.codegen.model.ast.SerdeReadExpression
 
 
-fun buildProtoBufMessageFields(
+fun buildProtoBufMessageFieldDeclarations(
   pkFields: Collection<Field>,
   nonPKFields: Collection<Field>,
 ): List<Expression> {
@@ -29,6 +30,23 @@ fun buildProtoBufMessageFields(
   return output
 }
 
+fun buildSerdeReadExpression(
+  field: Field,
+  fieldReadPrefix: String = "",
+  fieldReadStyle: FieldReadStyle,
+  serdeMode: SerdeMode,
+) =
+  SerdeReadExpression.forSerde(
+    fieldReadExpression = FieldReadExpression(
+      fieldName = field.name,
+      fieldReadPrefix = fieldReadPrefix,
+      overrideFieldReadStyle = fieldReadStyle,
+    ),
+    mode = serdeMode,
+    serde = effectiveProtoSerde(field),
+  )
+
+//TODO: make an expression type, and return that
 private fun buildFieldDeclarationExpressions(
   fields: Collection<Field>,
   firstFieldNumber: Int = 1,
@@ -44,6 +62,30 @@ private fun buildFieldDeclarationExpressions(
   }.map {
     RawStringExpression(it)
   }
+
+
+private fun effectiveProtoSerde(field: Field): Serde =
+  if (field.protobuf.serde != null) {
+    // -- User override is highest priority
+    field.protobuf.serde
+
+  } else if (requiresProtoSerde(field)) {
+    // -- Fallback to jvm serializer
+    defaultJVMSerde(field)
+
+  } else {
+    Serde.INLINE
+  }
+
+
+/**
+ * @return true when Type is not trivially mapped to Proto field type
+ */
+private fun requiresProtoSerde(field: Field): Boolean =
+  field.effectiveBaseType in setOf(PATH, URI, URL)
+      || field.effectiveBaseType.isTemporal
+      || field.isCollection
+      || field.type.enumType
 
 
 private fun effectiveType(field: Field): String {
@@ -66,12 +108,14 @@ private fun protobufTypeLiteral(
 //  CHAR -> TODO()
 
   DURATION,
-  PATH,
   MONTH_DAY,
+  PATH,
   PERIOD,
   STRING,
   URI,
   URL,
+  UTC_INSTANT,
+  UTC_TIME,
   UUID,
   YEAR_MONTH,
   ZONE_AGNOSTIC_DATE,
@@ -88,7 +132,6 @@ private fun protobufTypeLiteral(
 
   INT_64,
   YEAR,
-  UTC_INSTANT,
   -> "int64"
 
   USER_DEFINED -> TODO("Add a type override in field.protobuf.overrideTypeLiteral: $type")
@@ -101,7 +144,6 @@ private fun protobufTypeLiteral(
 //  LIST -> TODO()    //TODO: repeated
 //  MAP -> TODO()
 //  SET -> TODO()     //TODO: repeated
-//  UTC_TIME -> TODO()
 //  ZONE_OFFSET -> TODO()
 
 
