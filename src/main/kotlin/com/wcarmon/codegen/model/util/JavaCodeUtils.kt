@@ -5,8 +5,10 @@ package com.wcarmon.codegen.model.util
 
 import com.wcarmon.codegen.model.*
 import com.wcarmon.codegen.model.BaseFieldType.*
+import com.wcarmon.codegen.model.BaseFieldType.UUID
 import com.wcarmon.codegen.model.ast.Expression
 import com.wcarmon.codegen.model.ast.RawStringExpression
+import java.util.*
 
 /**
  * @return semicolon terminated statements to execute preconditions
@@ -78,12 +80,20 @@ fun commaSeparatedJavaMethodArgs(
  *
  * @return distinct, sorted, fully qualified classes, ready for import
  */
-fun javaImportsForFields(entity: Entity) =
-  entity.fields
+fun javaImportsForFields(entity: Entity): SortedSet<String> {
+
+  val typesOnFields = entity.fields
     .filter { it.effectiveBaseType == USER_DEFINED || !it.type.isParameterized }
     .map { javaTypeLiteral(it.type) }
+
+  val typesOnGenerics = entity.fields
+    .filter { it.type.isParameterized }
+    .flatMap { it.type.typeParameters }
+
+  return (typesOnFields + typesOnGenerics)
     .filter { javaTypeRequiresImport(it) }
     .toSortedSet()
+}
 
 /**
  * See https://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html

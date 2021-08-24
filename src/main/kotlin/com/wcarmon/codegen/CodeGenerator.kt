@@ -4,6 +4,7 @@ package com.wcarmon.codegen
 import com.wcarmon.codegen.input.OutputFileNameBuilder
 import com.wcarmon.codegen.model.CodeGenRequest
 import com.wcarmon.codegen.model.Entity
+import com.wcarmon.codegen.model.util.DISTINCT_PROTO_COLLECTION_FIELDS_METHOD
 import org.apache.logging.log4j.LogManager
 import java.io.Writer
 import java.nio.file.Files
@@ -111,7 +112,8 @@ class CodeGenerator(
 
     val dataForTemplate = mapOf(
       "entities" to entities,
-      "request" to request
+      "getDistinctProtoCollectionFields" to DISTINCT_PROTO_COLLECTION_FIELDS_METHOD,
+      "request" to request,
     )
 
     Files.newBufferedWriter(outputFile).use { writer ->

@@ -4,12 +4,13 @@ import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.SerdeMode.DESERIALIZE
 import com.wcarmon.codegen.model.SerdeMode.SERIALIZE
 import com.wcarmon.codegen.model.TargetLanguage
+import com.wcarmon.codegen.model.ast.RawStringExpression
 import com.wcarmon.codegen.model.util.*
 
 /**
  * Java related convenience methods for a [Field]
  */
-data class JavaField(
+data class JavaFieldView(
   private val field: Field,
   private val targetLanguage: TargetLanguage,
 ) {
@@ -37,23 +38,25 @@ data class JavaField(
 
   val type = javaTypeLiteral(field.type, true)
 
-  val readFromProtoExpression by lazy {
+  fun readFromProtoExpression(fieldReadPrefix: String): String =
+  //TODO: for collections, reading proto fields requires "proto.getFooList()"
+    //  Use a "findProtoGetter" method, like I did for jdbc
     buildSerdeReadExpression(
       field = field,
-      fieldReadPrefix = "",
+      fieldReadPrefix = fieldReadPrefix,
       fieldReadStyle = targetLanguage.fieldReadStyle,
       serdeMode = DESERIALIZE
     ).serialize(targetLanguage)
-  }
 
-  val readForProtoExpression by lazy {
+  fun readForProtoExpression(fieldReadPrefix: String): String =
+    //TODO: use protoBuilderGetter
     buildSerdeReadExpression(
       field = field,
-      fieldReadPrefix = "",
+      fieldReadPrefix = fieldReadPrefix,
       fieldReadStyle = targetLanguage.fieldReadStyle,
       serdeMode = SERIALIZE
     ).serialize(targetLanguage)
-  }
+
 
   //TODO: test this on types that are already unqualified
   val unqualifiedType = javaTypeLiteral(field.type, false)
@@ -63,6 +66,26 @@ data class JavaField(
   //    rename
   val unmodifiableCollectionMethod by lazy {
     unmodifiableJavaCollectionMethod(field.effectiveBaseType)
+  }
+
+  val protoSerializeExpressionForTypeParameters by lazy {
+    protoReadExpressionForTypeParameters(
+      field,
+      listOf(RawStringExpression("item")),
+      SERIALIZE)
+      .map {
+        it.serialize(targetLanguage)
+      }
+  }
+
+  val protoDeserializeExpressionForTypeParameters by lazy {
+    protoReadExpressionForTypeParameters(
+      field,
+      listOf(RawStringExpression("item")),
+      DESERIALIZE)
+      .map {
+        it.serialize(targetLanguage)
+      }
   }
 
   // GOTCHA: Only invoke on collection types

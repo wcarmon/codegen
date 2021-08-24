@@ -115,7 +115,7 @@ private fun defaultJVMDeserializeTemplate(type: LogicalFieldType) =
       LIST,
       MAP,
       SET,
-      -> TODO("fix jackson string deserializer for $type")
+      -> TODO("Fix string deserializer for $type")
 
       else -> "%s"
     })

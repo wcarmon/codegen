@@ -141,7 +141,11 @@
       "name": "tags",
       "protobuf": {
         "overrideTypeLiteral": "string",
-        "repeated": true
+        "repeated": true,
+        "repeatedItemSerde": {
+          "deserializeTemplate": "com.wcarmon.chrono.model.ChronoTag.fromString(%s)",
+          "serializeTemplate": "%s.toString()"
+        }
       },
       "rdbms": {
         "overrideDefaultValue": "''",

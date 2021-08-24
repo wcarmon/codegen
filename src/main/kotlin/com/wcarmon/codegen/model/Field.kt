@@ -10,7 +10,7 @@ import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.TargetLanguage.JAVA_08
 import com.wcarmon.codegen.model.TargetLanguage.KOTLIN_JVM_1_4
 import com.wcarmon.codegen.model.util.*
-import com.wcarmon.codegen.model.view.JavaField
+import com.wcarmon.codegen.model.view.JavaFieldView
 import kotlin.text.RegexOption.IGNORE_CASE
 
 /**
@@ -124,9 +124,8 @@ data class Field(
     //NOTE: precision and scale are validated on LogicalFieldType
   }
 
-  //TODO: move all the java fields to "JavaField"
   val java8View by lazy {
-    JavaField(this, JAVA_08)
+    JavaFieldView(this, JAVA_08)
   }
 
   //TODO: move all the kotlin fields to "this.kotlinView"
@@ -185,6 +184,9 @@ data class Field(
     }
   }
 
+  //TODO: move to protobufView
+  val protoBuilderSetter = protoBuilderSetter(this).value
+
   val postgresqlColumnDefinition = postgresColumnDefinition(this)
 
   val sqliteColumnDefinition = sqliteColumnDefinition(this)
@@ -211,8 +213,4 @@ data class Field(
   val isUpdatedTimestamp =
     effectiveBaseType.isTemporal &&
         UPDATED_TS_FIELD_NAMES.any { name.lowerCamel.equals(it, true) }
-
-  val hasCustomJDBCSerde = rdbms?.hasCustomSerde ?: false
-
-  val hasCustomJVMSerde = jvm.hasCustomSerde
 }

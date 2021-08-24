@@ -4,11 +4,22 @@ package com.wcarmon.codegen.model.util
 
 import com.wcarmon.codegen.model.*
 import com.wcarmon.codegen.model.BaseFieldType.*
-import com.wcarmon.codegen.model.ast.Expression
-import com.wcarmon.codegen.model.ast.FieldReadExpression
-import com.wcarmon.codegen.model.ast.RawStringExpression
-import com.wcarmon.codegen.model.ast.SerdeReadExpression
+import com.wcarmon.codegen.model.ast.*
+import freemarker.template.DefaultListAdapter
+import freemarker.template.TemplateMethodModelEx
 
+/**
+ * Freemarker method
+ */
+val DISTINCT_PROTO_COLLECTION_FIELDS_METHOD = object : TemplateMethodModelEx {
+
+  @Suppress("Unchecked_cast")
+  override fun exec(arguments: MutableList<Any?>): Any {
+    val listAdapter = arguments[0] as DefaultListAdapter
+    val entities = listAdapter.wrappedObject as Collection<Entity>
+    return getDistinctProtoCollectionFields(entities)
+  }
+}
 
 fun buildProtoBufMessageFieldDeclarations(
   pkFields: Collection<Field>,
@@ -32,6 +43,8 @@ fun buildProtoBufMessageFieldDeclarations(
 
 fun buildSerdeReadExpression(
   field: Field,
+
+  /** eg. "entity." or "proto." */
   fieldReadPrefix: String = "",
   fieldReadStyle: FieldReadStyle,
   serdeMode: SerdeMode,
@@ -45,6 +58,56 @@ fun buildSerdeReadExpression(
     mode = serdeMode,
     serde = effectiveProtoSerde(field),
   )
+
+//TODO: document me
+fun protoBuilderSetter(field: Field): MethodName {
+  if (field.isCollection) {
+    return MethodName("addAll${field.name.upperCamel}")
+  }
+
+  return MethodName("set${field.name.upperCamel}")
+}
+
+//TODO: document me
+fun protoBuilderGetter(field: Field): MethodName {
+  if (field.isCollection) {
+    return MethodName("getAll${field.name.upperCamel}")
+  }
+
+  return MethodName("get${field.name.upperCamel}")
+}
+
+/**
+ * Useful for Collections & other Generic types
+ *
+ * @param field
+ * @param fieldReadExpressions one identifier (or field reader) for each generic/type-param
+ * @param serdeMode (serialize or deserialize)
+ *
+ * @return one SerdeReadExpression for each generic/type-param
+ */
+fun protoReadExpressionForTypeParameters(
+  field: Field,
+  fieldReadExpressions: List<Expression>,
+  serdeMode: SerdeMode,
+): List<SerdeReadExpression> =
+  effectiveProtoSerdeForTypeParameters(field)
+    .mapIndexed { index, serdeForTypeParam ->
+      SerdeReadExpression(
+        fieldReadExpression = fieldReadExpressions[index],
+        serdeTemplate = serdeForTypeParam.forMode(serdeMode),
+      )
+    }
+
+//TODO: improve documentation
+// Get the collection fields, avoid duplicate serde conversion method signatures
+fun getDistinctProtoCollectionFields(entities: Collection<Entity>): Collection<Field> {
+  return entities
+    .flatMap { it.fields }
+    .filter { it.isCollection }
+    .sortedBy { it.name.lowerCamel }
+  //TODO: distinct here
+}
 
 //TODO: make an expression type, and return that
 private fun buildFieldDeclarationExpressions(
@@ -69,12 +132,55 @@ private fun effectiveProtoSerde(field: Field): Serde =
     // -- User override is highest priority
     field.protobuf.serde
 
+  } else if (field.isCollection) {
+    defaultSerdeForCollection(field)
+
   } else if (requiresProtoSerde(field)) {
     // -- Fallback to jvm serializer
     defaultJVMSerde(field)
 
   } else {
     Serde.INLINE
+  }
+
+private fun effectiveProtoSerdeForTypeParameters(
+  field: Field,
+): List<Serde> = field
+  .type
+  .typeParameters
+  .map {
+    if (field.protobuf.repeatedItemSerde != null) {
+      field.protobuf.repeatedItemSerde
+    } else {
+      Serde.INLINE
+    }
+  }
+
+
+/**
+ * Assumes we generate serde methods in the template
+ */
+private fun defaultSerdeForCollection(field: Field): Serde =
+  when (field.effectiveBaseType) {
+    LIST -> Serde(
+      // List<String> -> List<Entity>
+      deserializeTemplate = ExpressionTemplate("stringsTo${field.name.upperCamel}List(%s)"),
+
+      // Collection<Entity> -> Collection<String>
+      serializeTemplate = ExpressionTemplate("toStrings(%s)"),
+    )
+
+    SET -> Serde(
+      // List<String> -> Set<Entity>
+      deserializeTemplate = ExpressionTemplate("stringsTo${field.name.upperCamel}Set(%s)"),
+
+      // Collection<Entity> -> Collection<String>
+      serializeTemplate = ExpressionTemplate("toStrings(%s)"),
+    )
+
+    ARRAY -> TODO("handle default serde for Array")
+    MAP -> TODO("handle default serde for Map")
+    else -> TODO("This method is only for collections")
   }
 
 

@@ -15,8 +15,13 @@
     "repeated": {
       "type": "boolean"
     },
+    "repeatedItemSerde": {
+      "$ref": "serde.schema.json",
+      "description": "only for collections"
+    },
     "serde": {
-      "$ref": "serde.schema.json"
+      "$ref": "serde.schema.json",
+      "description": "for the field, might be a collection"
     }
   },
   "propertyNames": {

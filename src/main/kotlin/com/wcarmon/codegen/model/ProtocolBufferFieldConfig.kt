@@ -18,7 +18,17 @@ data class ProtocolBufferFieldConfig(
 
   val repeated: Boolean = false,
 
-  //TODO: support oneOf
+  val repeatedItemSerde: Serde? = null,
 
-  //TODO: support Maps: https://developers.google.com/protocol-buffers/docs/proto3#maps
-)
+//TODO: support oneOf
+
+//TODO: support Maps: https://developers.google.com/protocol-buffers/docs/proto3#maps
+) {
+  init {
+    if (repeatedItemSerde != null) {
+      require(repeated) {
+        "repeatedItemSerde is only for repeated fields (collections)"
+      }
+    }
+  }
+}
