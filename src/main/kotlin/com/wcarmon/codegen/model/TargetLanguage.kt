@@ -1,7 +1,7 @@
 package com.wcarmon.codegen.model
 
-import com.wcarmon.codegen.model.FieldReadStyle.DIRECT
-import com.wcarmon.codegen.model.FieldReadStyle.GETTER
+import com.wcarmon.codegen.model.FieldReadMode.DIRECT
+import com.wcarmon.codegen.model.FieldReadMode.GETTER
 
 enum class TargetLanguage {
   C_17,
@@ -100,4 +100,26 @@ enum class TargetLanguage {
       SWIFT_5 -> TODO()
     }
   }
+
+  /**
+   * Statement terminator
+   *
+   * See https://en.wikipedia.org/wiki/Comparison_of_programming_languages_(syntax)
+   */
+  fun statementTerminatorLiteral(shouldTerminate: Boolean): String =
+    if (!shouldTerminate) {
+      ""
+    } else {
+      when (this) {
+        PYTHON_3 -> "\n"
+
+        // -- semicolon inserted by compiler
+        GOLANG_1_7,
+        KOTLIN_JVM_1_4,
+        SWIFT_5,
+        -> ""
+
+        else -> ";"
+      }
+    }
 }

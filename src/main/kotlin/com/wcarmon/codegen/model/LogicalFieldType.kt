@@ -10,6 +10,8 @@ const val MAX_PRECISION = 1_000
  * [BaseFieldType] handles most of the logic for predefined types
  * Generics are handled by [typeParameters] (parametric polymorphism)
  *
+ * Also applies to variables & parameters
+ *
  * See language & framework specific extensions in [com.wcarmon.codegen.model.extensions.*]
  */
 data class LogicalFieldType(

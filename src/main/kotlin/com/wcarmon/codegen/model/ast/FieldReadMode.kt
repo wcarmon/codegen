@@ -1,9 +1,9 @@
-package com.wcarmon.codegen.model
+package com.wcarmon.codegen.model.ast
 
 /**
  * Use getter or read directly
  */
-enum class FieldReadStyle {
+enum class FieldReadMode {
   /** myEntity.theField */
   DIRECT,
 

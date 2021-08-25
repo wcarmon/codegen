@@ -1,0 +1,55 @@
+package com.wcarmon.codegen.model.ast
+
+import com.wcarmon.codegen.model.LogicalFieldType
+import com.wcarmon.codegen.model.TargetLanguage
+import com.wcarmon.codegen.model.TargetLanguage.*
+
+data class VariableDeclarationExpression(
+  val defaultValue: Expression? = null,
+  val finalityModifier: FinalityModifier,
+  val name: Name,
+  val type: LogicalFieldType,
+) : Expression {
+
+  override fun serialize(
+    targetLanguage: TargetLanguage,
+    terminate: Boolean,
+  ): String {
+
+    return when (targetLanguage) {
+      C_17,
+      -> TODO()
+
+      CPP_14,
+      CPP_17,
+      CPP_20,
+      -> TODO()
+
+      DART_2 -> TODO()
+      GOLANG_1_7 -> TODO()
+
+      JAVA_08,
+      JAVA_11,
+      JAVA_17,
+      -> handleJava(terminate)
+
+      KOTLIN_JVM_1_4,
+      -> handleKotlin(terminate)
+
+      PROTOCOL_BUFFERS_3 -> TODO()
+      PYTHON_3 -> TODO()
+      RUST_1_54 -> TODO()
+      SQL -> TODO()
+      SWIFT_5 -> TODO()
+      TYPESCRIPT_4 -> TODO()
+    }
+  }
+
+  private fun handleJava(terminate: Boolean): String {
+    TODO("Not yet implemented")
+  }
+
+  private fun handleKotlin(terminate: Boolean): String {
+    TODO("Not yet implemented")
+  }
+}

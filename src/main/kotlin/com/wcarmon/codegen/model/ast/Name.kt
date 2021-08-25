@@ -1,4 +1,4 @@
-package com.wcarmon.codegen.model
+package com.wcarmon.codegen.model.ast
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonValue
@@ -6,7 +6,7 @@ import com.google.common.base.CaseFormat
 import com.google.common.base.CaseFormat.*
 import com.wcarmon.codegen.MAX_NAME_LENGTH
 
-/** Identifier for [Entity] or [Field] */
+/** Identifier for [Entity] or [Field] or Variable or Method Parameter */
 data class Name(
   // Either UpperCamel or lowerCamel
   private val camelCase: String,
@@ -30,6 +30,8 @@ data class Name(
     require(camelCase.length <= MAX_NAME_LENGTH) { "name too long: $camelCase" }
     require(!camelCase.contains("_")) { "camel case strings cannot contain _: $camelCase" }
     require(!camelCase.contains("-")) { "camel case strings cannot contain -: $camelCase" }
+
+    //TODO: acceptable chars (regex):  maybe [a-zA-Z_][a-zA-Z0-9_]+{40}
 
     val inputCase: CaseFormat
     if (camelCase.first().isLowerCase()) {

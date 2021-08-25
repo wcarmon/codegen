@@ -1,11 +1,8 @@
 package com.wcarmon.codegen.model.ast
 
-import com.wcarmon.codegen.model.FieldReadStyle
-import com.wcarmon.codegen.model.FieldReadStyle.DIRECT
-import com.wcarmon.codegen.model.FieldReadStyle.GETTER
-import com.wcarmon.codegen.model.Name
 import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.model.TargetLanguage.*
+import com.wcarmon.codegen.model.ast.FieldReadMode.*
 
 /**
  * Expression to read 1 field
@@ -22,22 +19,34 @@ data class FieldReadExpression(
   /** Kotlin allows non-null assertion (eg. !!) */
   val assertNonNull: Boolean = false,
 
-  /** eg. "entity." */
-  val fieldReadPrefix: String = "",
+  /**
+   * eg. "entity."
+   * null implies fieldOwner==this
+   * */
+  val fieldOwner: Expression? = null,
 
-  val overrideFieldReadStyle: FieldReadStyle? = null,
+  val overrideFieldReadStyle: FieldReadMode? = null,
 ) : Expression {
 
   override fun serialize(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
   ) =
-    fieldReadPrefix +
-        when (getFieldReadStyle(targetLanguage)) {
+    getFieldReadPrefix(targetLanguage) +
+        when (getFieldReadMode(targetLanguage)) {
           DIRECT -> getDirectFieldName(targetLanguage) + nonNullSnippet
           GETTER -> "get${fieldName.upperCamel}()"
         } +
-        serializeTerminator(terminate)
+        targetLanguage.statementTerminatorLiteral(terminate)
+
+  private fun getFieldReadPrefix(
+    targetLanguage: TargetLanguage,
+  ) =
+    if (fieldOwner == null) {
+      ""
+    } else {
+      fieldOwner.serialize(targetLanguage, false) + "."
+    }
 
   // Kotlin non-null assertion
   private val nonNullSnippet by lazy {
@@ -69,10 +78,10 @@ data class FieldReadExpression(
       -> TODO("what is the field read naming idiom for $targetLanguage")
     }
 
-  private fun getFieldReadStyle(targetLanguage: TargetLanguage) =
-    overrideFieldReadStyle ?: defaultFieldReadStyle(targetLanguage)
+  private fun getFieldReadMode(targetLanguage: TargetLanguage) =
+    overrideFieldReadStyle ?: defaultFieldReadMode(targetLanguage)
 
-  private fun defaultFieldReadStyle(targetLanguage: TargetLanguage) =
+  private fun defaultFieldReadMode(targetLanguage: TargetLanguage) =
     when (targetLanguage) {
       C_17,
       CPP_14,
