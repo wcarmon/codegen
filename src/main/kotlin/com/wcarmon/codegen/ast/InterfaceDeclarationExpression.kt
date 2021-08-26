@@ -1,24 +1,38 @@
-package com.wcarmon.codegen.model.ast
+package com.wcarmon.codegen.ast
 
-import com.wcarmon.codegen.model.LogicalFieldType
+import com.wcarmon.codegen.model.Documentation
+import com.wcarmon.codegen.model.Documentation.Companion.EMPTY
+import com.wcarmon.codegen.model.PackageName
 import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.model.TargetLanguage.*
 
-/**
- * Parameters are declared
- * Arguments are passed & read at runtime
- */
-data class MethodParameterExpression(
-  val finalityModifier: FinalityModifier = FinalityModifier.FINAL,
+data class InterfaceDeclarationExpression(
+
+  val documentation: Documentation = EMPTY,
+
+  val fullyQualifiedInterfaces: List<String>,
+
+  val instanceMethods: List<MethodHeaderExpression> = listOf(),
+
+  val defaultMethods: List<MethodDeclarationExpression> = listOf(),
+
   val name: Name,
-  val type: LogicalFieldType,
+
+  val packageName: PackageName,
+
+  //TODO: List: generic parameters
 ) : Expression {
+
+  val isFunctional by lazy {
+    instanceMethods.size == 1
+  }
 
   override fun serialize(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
-  ) =
-    when (targetLanguage) {
+  ): String {
+
+    return when (targetLanguage) {
       C_17 -> TODO()
       CPP_14,
       CPP_17,
@@ -34,7 +48,8 @@ data class MethodParameterExpression(
       JAVA_17,
       -> handleJava()
 
-      KOTLIN_JVM_1_4 -> handleKotlin()
+      KOTLIN_JVM_1_4,
+      -> handleKotlin()
 
       PROTOCOL_BUFFERS_3 -> TODO()
 
@@ -48,7 +63,7 @@ data class MethodParameterExpression(
 
       TYPESCRIPT_4 -> TODO()
     }
-
+  }
 
   private fun handleJava(): String {
     TODO("Not yet implemented")
@@ -57,4 +72,5 @@ data class MethodParameterExpression(
   private fun handleKotlin(): String {
     TODO("Not yet implemented")
   }
+
 }

@@ -1,4 +1,4 @@
-package com.wcarmon.codegen.model.ast
+package com.wcarmon.codegen.ast
 
 import com.wcarmon.codegen.model.LogicalFieldType
 import com.wcarmon.codegen.model.TargetLanguage

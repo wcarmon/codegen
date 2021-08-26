@@ -1,9 +1,13 @@
-package com.wcarmon.codegen.model.ast
+package com.wcarmon.codegen.ast
 
 import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.model.TargetLanguage.*
 
-//TODO: document me
+/**
+ * Examples:
+ *  null == x
+ *  nil == x
+ */
 data class NullComparisonExpression(
   val compareTo: Expression,
 ) : Expression {
@@ -17,13 +21,15 @@ data class NullComparisonExpression(
       CPP_14,
       CPP_17,
       CPP_20,
-      -> TODO()
+      -> "nullptr == " + compareTo.serialize(targetLanguage, false)
 
-      DART_2 -> TODO()
+      C_17,
+      -> "NULL == " + compareTo.serialize(targetLanguage, false)
 
-      C_17 -> "NULL == " + compareTo.serialize(targetLanguage, false)
-      GOLANG_1_7 -> "nil == " + compareTo.serialize(targetLanguage, false)
+      GOLANG_1_7,
+      -> "nil == " + compareTo.serialize(targetLanguage, false)
 
+      DART_2,
       JAVA_08,
       JAVA_11,
       JAVA_17,
@@ -35,6 +41,7 @@ data class NullComparisonExpression(
       RUST_1_54 -> TODO()
       SQL -> TODO()
       SWIFT_5 -> TODO()
+
       TYPESCRIPT_4 -> TODO()  // == null || undefined
     }
 }

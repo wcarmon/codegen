@@ -1,38 +1,24 @@
-package com.wcarmon.codegen.model.ast
+package com.wcarmon.codegen.ast
 
-import com.wcarmon.codegen.model.Documentation
-import com.wcarmon.codegen.model.Documentation.Companion.EMPTY
-import com.wcarmon.codegen.model.PackageName
+import com.wcarmon.codegen.model.LogicalFieldType
 import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.model.TargetLanguage.*
 
-data class InterfaceDeclarationExpression(
-
-  val documentation: Documentation = EMPTY,
-
-  val fullyQualifiedInterfaces: List<String>,
-
-  val instanceMethods: List<MethodHeaderExpression> = listOf(),
-
-  val defaultMethods: List<MethodDeclarationExpression> = listOf(),
-
+/**
+ * Parameters are declared
+ * Arguments are passed & read at runtime
+ */
+data class MethodParameterExpression(
+  val finalityModifier: FinalityModifier = FinalityModifier.FINAL,
   val name: Name,
-
-  val packageName: PackageName,
-
-  //TODO: List: generic parameters
+  val type: LogicalFieldType,
 ) : Expression {
-
-  val isFunctional by lazy {
-    instanceMethods.size == 1
-  }
 
   override fun serialize(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
-  ): String {
-
-    return when (targetLanguage) {
+  ) =
+    when (targetLanguage) {
       C_17 -> TODO()
       CPP_14,
       CPP_17,
@@ -48,8 +34,7 @@ data class InterfaceDeclarationExpression(
       JAVA_17,
       -> handleJava()
 
-      KOTLIN_JVM_1_4,
-      -> handleKotlin()
+      KOTLIN_JVM_1_4 -> handleKotlin()
 
       PROTOCOL_BUFFERS_3 -> TODO()
 
@@ -63,7 +48,7 @@ data class InterfaceDeclarationExpression(
 
       TYPESCRIPT_4 -> TODO()
     }
-  }
+
 
   private fun handleJava(): String {
     TODO("Not yet implemented")
@@ -72,5 +57,4 @@ data class InterfaceDeclarationExpression(
   private fun handleKotlin(): String {
     TODO("Not yet implemented")
   }
-
 }

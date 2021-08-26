@@ -1,31 +1,36 @@
-package com.wcarmon.codegen.model.ast
+package com.wcarmon.codegen.ast
 
+import com.wcarmon.codegen.ast.FieldReadMode.*
+import com.wcarmon.codegen.model.Name
 import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.model.TargetLanguage.*
-import com.wcarmon.codegen.model.ast.FieldReadMode.*
 
 /**
  * Expression to read 1 field
  *
- * Uses appropriate name style for the target language
+ * May or may not invoke a method (depends on the language)
+ *
+ * Uses appropriate name style for target language
  * Allows prefix (eg. "entity.getFoo()")
- * Allows getter or direct access (eg. "entity.foo" or "entity.getFoo()" )
+ * Allows (zero arg) getter or direct access (eg. "entity.foo" or "entity.getFoo()" )
+ *
+ * See also [MethodInvokeExpression]
  *
  * This is NOT related to Serde, see [SerdeReadExpression]
  */
 data class FieldReadExpression(
-  val fieldName: Name,
+  private val fieldName: Name,
 
   /** Kotlin allows non-null assertion (eg. !!) */
-  val assertNonNull: Boolean = false,
+  private val assertNonNull: Boolean = false,
 
   /**
    * eg. "entity."
    * null implies fieldOwner==this
    * */
-  val fieldOwner: Expression? = null,
+  private val fieldOwner: Expression? = null,
 
-  val overrideFieldReadStyle: FieldReadMode? = null,
+  private val overrideFieldReadStyle: FieldReadMode? = null,
 ) : Expression {
 
   override fun serialize(

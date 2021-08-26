@@ -1,6 +1,7 @@
-package com.wcarmon.codegen.model.ast
+package com.wcarmon.codegen.ast
 
 import com.wcarmon.codegen.model.Documentation
+import com.wcarmon.codegen.model.Name
 import com.wcarmon.codegen.model.PackageName
 import com.wcarmon.codegen.model.TargetLanguage
 
@@ -30,7 +31,7 @@ data class ClassDeclarationExpression(
    */
   val pojo: Boolean = false,
 
-  val validationExpressions: List<ValidationExpression>,
+  val validationExpressions: List<PreconditionExpression> = listOf(),
 
   val visibilityModifier: VisibilityModifier = VisibilityModifier.PUBLIC,
 

@@ -1,7 +1,7 @@
-package com.wcarmon.codegen.model.ast
+package com.wcarmon.codegen.ast
 
+import com.wcarmon.codegen.ast.NumericLiteralBase.*
 import com.wcarmon.codegen.model.TargetLanguage
-import com.wcarmon.codegen.model.ast.NumericLiteralBase.*
 
 data class NumericLiteralExpression(
   val base: NumericLiteralBase = NumericLiteralBase.DECIMAL,
