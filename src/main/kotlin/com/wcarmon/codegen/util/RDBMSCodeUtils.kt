@@ -1,7 +1,7 @@
 @file:JvmName("RDBMSColumnUtils")
 
 /** Utilities common to all RDBMS */
-package com.wcarmon.codegen.model.util
+package com.wcarmon.codegen.util
 
 import com.wcarmon.codegen.model.BaseFieldType
 import com.wcarmon.codegen.model.BaseFieldType.*
@@ -20,7 +20,7 @@ fun commaSeparatedColumns(entity: Entity): String {
     .map { it.name.lowerSnake }
 
   val nonPK = entity.fields
-    .filter { it.rdbms?.positionInPrimaryKey == null }
+    .filter { it.rdbms.positionInPrimaryKey == null }
     .map { it.name.lowerSnake }
     .sorted()
 

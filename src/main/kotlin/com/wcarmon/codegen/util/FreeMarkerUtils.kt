@@ -1,6 +1,6 @@
 @file:JvmName("FreeMarkerUtils")
 
-package com.wcarmon.codegen.model.util
+package com.wcarmon.codegen.util
 
 import com.wcarmon.codegen.model.Entity
 import freemarker.template.DefaultListAdapter

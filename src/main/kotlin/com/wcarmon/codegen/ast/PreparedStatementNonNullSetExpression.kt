@@ -18,7 +18,7 @@ import com.wcarmon.codegen.model.TargetLanguage
  */
 class PreparedStatementNonNullSetExpression(
   columnIndex: JDBCColumnIndex,
-  fieldReadExpression: FieldReadExpression,
+  fieldReadExpression: Expression,
   setterMethod: Name,
   preparedStatementIdentifierExpression: Expression? = RawExpression("ps"),
 ) : Expression {

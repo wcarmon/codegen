@@ -4,6 +4,7 @@ import com.wcarmon.codegen.model.Serde
 import com.wcarmon.codegen.model.SerdeMode
 import com.wcarmon.codegen.model.TargetLanguage
 
+//TODO: document me
 data class WrapWithSerdeExpression(
   private val serde: Serde,
   private val serdeMode: SerdeMode,

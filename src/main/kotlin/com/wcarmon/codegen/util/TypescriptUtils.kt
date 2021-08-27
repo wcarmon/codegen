@@ -1,6 +1,6 @@
 @file:JvmName("TypescriptFieldUtils")
 
-package com.wcarmon.codegen.model.util
+package com.wcarmon.codegen.util
 
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.LogicalFieldType

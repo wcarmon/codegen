@@ -1,7 +1,7 @@
 @file:JvmName("PostgresCodeUtils")
 
 /** Utilities only useful for generating PostgreSQL code */
-package com.wcarmon.codegen.model.util
+package com.wcarmon.codegen.util
 
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.Field
@@ -125,7 +125,7 @@ fun postgresColumnDefinition(field: Field): String {
 
   // -- default clause
   val defaultClause =
-    if (field.rdbms?.overrideDefaultValue != null) {
+    if (field.rdbms.overrideDefaultValue != null) {
       "DEFAULT ${field.rdbms.overrideDefaultValue}"
 
     } else if (field.hasDefault) {

@@ -1,13 +1,11 @@
 @file:JvmName("JavaCodeUtils")
 
 /** Utilities only useful for generating Java */
-package com.wcarmon.codegen.model.util
+package com.wcarmon.codegen.util
 
 import com.wcarmon.codegen.model.*
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.BaseFieldType.UUID
-import com.wcarmon.codegen.model.ast.Expression
-import com.wcarmon.codegen.model.ast.RawStringExpression
 import java.util.*
 
 /**
@@ -142,43 +140,6 @@ fun newJavaCollectionExpression(type: LogicalFieldType): String {
 
 //TODO: handle enums
 
-/**
- * Builds java.lang.Object.equals based comparison expression
- * Useful in POJOs
- *
- * @return expression for java equality test (for 1 field)
- */
-fun javaEqualityExpression(
-  type: LogicalFieldType,
-  fieldName: Name,
-  identifier0: String,
-  identifier1: String,
-): Expression {
-  require(identifier0.isNotBlank())
-  require(identifier1.isNotBlank())
-
-  if (type.enumType || type.base == BOOLEAN || type.base == CHAR) {
-    return RawStringExpression("$identifier0.${fieldName.lowerCamel} == $identifier1.${fieldName.lowerCamel}")
-  }
-
-  if (type.base == FLOAT_64) {
-    return RawStringExpression(
-      "Double.compare($identifier0.${fieldName.lowerCamel}, $identifier1.${fieldName.lowerCamel}) == 0")
-  }
-
-  if (type.base == FLOAT_32) {
-    return RawStringExpression(
-      "Float.compare($identifier0.${fieldName.lowerCamel}, $identifier1.${fieldName.lowerCamel}) == 0")
-  }
-
-  if (type.base == ARRAY) {
-    return RawStringExpression(
-      "Arrays.deepEquals($identifier0.${fieldName.lowerCamel}, $identifier1.${fieldName.lowerCamel})")
-  }
-
-  return RawStringExpression(
-    "Objects.equals($identifier0.${fieldName.lowerCamel}, $identifier1.${fieldName.lowerCamel})")
-}
 
 /**
  * @return template which invokes creates an unmodifiable version of the collection

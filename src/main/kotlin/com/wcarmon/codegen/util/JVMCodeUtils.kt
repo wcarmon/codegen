@@ -1,7 +1,7 @@
 @file:JvmName("JVMCodeUtils")
 
 /** Utilities common to all JVM languages */
-package com.wcarmon.codegen.model.util
+package com.wcarmon.codegen.util
 
 import com.wcarmon.codegen.model.*
 import com.wcarmon.codegen.model.BaseFieldType.*
@@ -40,6 +40,7 @@ fun quoteTypeForJVMLiterals(base: BaseFieldType) = when (base) {
  *
  * @return the default value literal
  */
+@Suppress("ReturnCount")
 fun defaultValueLiteralForJVM(field: Field): String? {
   if (field.defaultValue == null) {
     return null
@@ -72,7 +73,7 @@ private fun defaultJVMSerializeTemplate(type: LogicalFieldType) = when (type.bas
   -> TODO("fix jackson serializer for $type")
 
   //TODO: more branches here
-  else -> ExpressionTemplate("%s.toString()")
+  else -> StringFormatTemplate("%s.toString()")
 }
 
 
@@ -84,7 +85,7 @@ private fun defaultJVMSerializeTemplate(type: LogicalFieldType) = when (type.bas
  * @returns jvm expression, uses %s as placeholder for field value
  */
 private fun defaultJVMDeserializeTemplate(type: LogicalFieldType) =
-  ExpressionTemplate(
+  StringFormatTemplate(
     when (type.base) {
 
       INT_16 -> "Short.parseShort(%s)"

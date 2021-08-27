@@ -1,7 +1,7 @@
 @file:JvmName("KotlinCodeUtils")
 
 /** Utilities only useful for generating Kotlin */
-package com.wcarmon.codegen.model.util
+package com.wcarmon.codegen.util
 
 import com.wcarmon.codegen.model.BaseFieldType
 import com.wcarmon.codegen.model.BaseFieldType.*
@@ -11,6 +11,7 @@ import com.wcarmon.codegen.model.LogicalFieldType
 
 //TODO: make most of these private
 
+@Suppress("ReturnCount")
 fun getKotlinTypeLiteral(
   type: LogicalFieldType,
   qualified: Boolean = true,
@@ -31,7 +32,9 @@ fun getKotlinTypeLiteral(
 
 
 //TODO: handle unsigned types
-fun getFullyQualifiedKotlinTypeLiteral(type: LogicalFieldType) = when (type.base) {
+fun getFullyQualifiedKotlinTypeLiteral(
+  type: LogicalFieldType,
+) = when (type.base) {
   ARRAY -> getKotlinArrayType(type.base, type.typeParameters)
   BOOLEAN -> "Boolean"
   CHAR -> "Char"
@@ -81,6 +84,7 @@ fun getKotlinImportsForFields(entity: Entity) =
 /**
  * @return true when JVM compiler cannot automatically resolve the type
  */
+@Suppress("ReturnCount")
 fun kotlinTypeRequiresImport(fullyQualifiedJavaType: String): Boolean {
   if (fullyQualifiedJavaType.startsWith("java.lang.")) {
     return false
@@ -134,6 +138,7 @@ private fun unqualifyKotlinType(fullyQualifiedKotlinType: String): String {
  *
  * @return kotlin array type literal
  */
+@Suppress("ReturnCount")
 private fun getKotlinArrayType(
   base: BaseFieldType,
   typeParameters: List<String>,

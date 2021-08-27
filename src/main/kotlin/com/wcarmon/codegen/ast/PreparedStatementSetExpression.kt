@@ -18,7 +18,7 @@ data class PreparedStatementSetExpression(
   private val columnIndex: JDBCColumnIndex,
   private val columnType: JDBCType,
   private val field: Field,
-  private val fieldReadExpression: FieldReadExpression,
+  private val fieldReadExpression: Expression,
   private val preparedStatementIdentifierExpression: Expression? = RawExpression("ps"),
   private val setterMethod: Name,
 ) : Expression {
