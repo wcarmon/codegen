@@ -38,7 +38,7 @@ data class ClassDeclarationExpression(
   //TODO: generic parameters
 ) : Expression {
 
-  override fun serialize(targetLanguage: TargetLanguage, terminate: Boolean): String {
+  override fun render(targetLanguage: TargetLanguage, terminate: Boolean): String {
     TODO("Not yet implemented")
   }
 }

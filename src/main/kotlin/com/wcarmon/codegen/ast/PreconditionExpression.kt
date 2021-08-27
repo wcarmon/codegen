@@ -8,7 +8,7 @@ import com.wcarmon.codegen.model.TargetLanguage.*
  */
 class PreconditionExpression : Expression {
 
-  override fun serialize(
+  override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
   ) =

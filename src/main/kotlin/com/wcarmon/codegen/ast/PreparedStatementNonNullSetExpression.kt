@@ -37,9 +37,9 @@ class PreparedStatementNonNullSetExpression(
     )
   }
 
-  override fun serialize(
+  override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
   ) =
-    underlying.serialize(targetLanguage, terminate)
+    underlying.render(targetLanguage, terminate)
 }

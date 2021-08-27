@@ -6,7 +6,7 @@ import com.wcarmon.codegen.model.TargetLanguage.PYTHON_3
 
 object NullLiteralExpression : Expression {
 
-  override fun serialize(
+  override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
   ): String {

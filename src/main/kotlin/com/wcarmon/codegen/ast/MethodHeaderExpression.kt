@@ -31,7 +31,7 @@ data class MethodHeaderExpression(
   //TODO: List: Generic parameter(s)  eg. "<T: Bacon, S>"
 ) : Expression {
 
-  override fun serialize(targetLanguage: TargetLanguage, terminate: Boolean) =
+  override fun render(targetLanguage: TargetLanguage, terminate: Boolean) =
     when (targetLanguage) {
       C_17 -> TODO()
       CPP_14,

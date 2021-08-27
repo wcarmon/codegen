@@ -15,7 +15,7 @@ data class MethodParameterExpression(
   val type: LogicalFieldType,
 ) : Expression {
 
-  override fun serialize(
+  override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
   ) =

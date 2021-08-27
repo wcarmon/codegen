@@ -12,7 +12,7 @@ data class VariableDeclarationExpression(
   val type: LogicalFieldType,
 ) : Expression {
 
-  override fun serialize(
+  override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
   ): String {

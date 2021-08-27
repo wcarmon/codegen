@@ -13,7 +13,7 @@ data class JDBCColumnIndex(
 
   init {
     require(value >= 1) {
-      "columnIndex starts at 1: columnIndex=$value"
+      "JDBC column indexes start at 1: columnIndex=$value"
     }
   }
 }

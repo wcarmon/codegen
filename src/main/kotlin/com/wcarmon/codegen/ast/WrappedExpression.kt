@@ -21,10 +21,10 @@ data class WrappedExpression(
   val wrapperTemplate: StringFormatTemplate = StringFormatTemplate.INLINE,
 ) : Expression {
 
-  override fun serialize(
+  override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
   ) = wrapperTemplate.expand(
-    wrapped.serialize(targetLanguage, false))
+    wrapped.render(targetLanguage, false))
 }
 

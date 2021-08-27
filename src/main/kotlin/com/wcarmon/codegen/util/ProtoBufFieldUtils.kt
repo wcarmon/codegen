@@ -7,26 +7,7 @@ import com.wcarmon.codegen.model.*
 import com.wcarmon.codegen.model.BaseFieldType.*
 
 
-fun buildProtoBufMessageFieldDeclarations(
-  pkFields: Collection<Field>,
-  nonPKFields: Collection<Field>,
-): List<Expression> {
-
-  val output = mutableListOf<Expression>()
-
-  output += RawExpression("// -- PK field(s)")
-
-  output += buildFieldDeclarationExpressions(pkFields, 1)
-
-  output += EmptyExpression
-  output += RawExpression("// -- Other fields")
-
-  output += buildFieldDeclarationExpressions(
-    nonPKFields, 1 + pkFields.size)
-
-  return output
-}
-
+//TODO: replace with expression
 fun buildSerdeReadExpression(
   field: Field,
 
@@ -101,28 +82,20 @@ fun getDistinctProtoCollectionFields(entities: Collection<Entity>): Collection<F
   //TODO: distinct here
 }
 
-//TODO: make an expression type, and return that
-private fun buildFieldDeclarationExpressions(
-  fields: Collection<Field>,
-  firstFieldNumber: Int = 1,
-): List<Expression> =
-  fields.mapIndexed { index, field ->
+fun effectiveProtobufType(field: Field): String {
 
-    val repeatedPrefix =
-      if (field.protobufConfig.repeated) "repeated "
-      else ""
-
-    "${repeatedPrefix}${effectiveType(field)} ${field.name.lowerSnake} = ${index + firstFieldNumber};"
-
-  }.map {
-    RawExpression(it)
+  if (field.protobufConfig.overrideTypeLiteral.isNotBlank()) {
+    return field.protobufConfig.overrideTypeLiteral
   }
+
+  return protobufTypeLiteral(field.type)
+}
 
 
 private fun effectiveProtoSerde(field: Field): Serde =
-  if (field.protobufConfig.serde != null) {
+  if (field.protobufConfig.overrideSerde != null) {
     // -- User override is highest priority
-    field.protobufConfig.serde
+    field.protobufConfig.overrideSerde
 
   } else if (field.isCollection) {
     defaultSerdeForCollection(field)
@@ -135,6 +108,7 @@ private fun effectiveProtoSerde(field: Field): Serde =
     Serde.INLINE
   }
 
+
 private fun effectiveProtoSerdeForTypeParameters(
   field: Field,
 ): List<Serde> =
@@ -142,8 +116,9 @@ private fun effectiveProtoSerdeForTypeParameters(
     .type
     .typeParameters
     .map {
-      if (field.protobufConfig.repeatedItemSerde != null) {
-        field.protobufConfig.repeatedItemSerde
+      if (field.protobufConfig.overrideRepeatedItemSerde != null) {
+        field.protobufConfig.overrideRepeatedItemSerde
+
       } else {
         Serde.INLINE
       }
@@ -185,16 +160,6 @@ private fun requiresProtoSerde(field: Field): Boolean =
       || field.effectiveBaseType.isTemporal
       || field.isCollection
       || field.type.enumType
-
-
-private fun effectiveType(field: Field): String {
-
-  if (field.protobufConfig.overrideTypeLiteral.isNotBlank()) {
-    return field.protobufConfig.overrideTypeLiteral
-  }
-
-  return protobufTypeLiteral(field.type)
-}
 
 /**
  * See https://developers.google.com/protocol-buffers/docs/proto3#scalar

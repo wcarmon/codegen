@@ -33,7 +33,7 @@ data class FieldReadExpression(
   private val overrideFieldReadStyle: FieldReadMode? = null,
 ) : Expression {
 
-  override fun serialize(
+  override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
   ) =
@@ -50,7 +50,7 @@ data class FieldReadExpression(
     if (fieldOwner == null) {
       ""
     } else {
-      fieldOwner.serialize(targetLanguage, false) + "."
+      fieldOwner.render(targetLanguage, false) + "."
     }
 
   // Kotlin non-null assertion

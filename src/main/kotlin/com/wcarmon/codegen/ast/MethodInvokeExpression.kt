@@ -21,7 +21,7 @@ data class MethodInvokeExpression(
   val fieldOwner: Expression? = null,
 ) : Expression {
 
-  override fun serialize(
+  override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
   ) =
@@ -70,11 +70,11 @@ data class MethodInvokeExpression(
     val prefix = buildFieldOwnerPrefix(targetLanguage)
     val suffix = targetLanguage.statementTerminatorLiteral(terminate)
 
-    val method = methodName.serialize(targetLanguage)
+    val method = methodName.render(targetLanguage)
 
     val csvArgs = arguments
       .joinToString(",") {
-        it.serialize(targetLanguage, false)
+        it.render(targetLanguage, false)
       }
 
     return "$prefix${method}($csvArgs)$suffix"
@@ -84,7 +84,7 @@ data class MethodInvokeExpression(
     handleJava(targetLanguage, false)
 
   private fun buildFieldOwnerPrefix(targetLanguage: TargetLanguage): String {
-    val ownerPrefix = fieldOwner?.serialize(targetLanguage, false) ?: ""
+    val ownerPrefix = fieldOwner?.render(targetLanguage, false) ?: ""
     if (ownerPrefix.isBlank()) {
       return ""
     }

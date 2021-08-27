@@ -8,7 +8,7 @@ data class MethodNameExpression(
   val name: Name,
 ) : Expression {
 
-  override fun serialize(
+  override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
   ) = when (targetLanguage) {

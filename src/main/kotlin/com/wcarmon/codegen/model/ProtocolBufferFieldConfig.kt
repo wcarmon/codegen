@@ -14,14 +14,14 @@ data class ProtocolBufferFieldConfig(
    */
   val overrideTypeLiteral: String = "",
 
-  val serde: Serde = Serde.INLINE,
+  val overrideSerde: Serde? = null,
 
   val repeated: Boolean = false,
 
   /**
    * Only used for repeated fields
    */
-  val repeatedItemSerde: Serde = Serde.INLINE,
+  val overrideRepeatedItemSerde: Serde? = null,
 
 //TODO: support oneOf
 

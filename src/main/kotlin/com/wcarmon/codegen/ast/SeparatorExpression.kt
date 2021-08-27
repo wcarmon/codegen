@@ -4,7 +4,7 @@ import com.wcarmon.codegen.model.TargetLanguage
 
 object SeparatorExpression : Expression {
 
-  override fun serialize(
+  override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
   ) = "\n"

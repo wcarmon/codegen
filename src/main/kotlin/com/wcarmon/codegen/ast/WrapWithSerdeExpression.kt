@@ -17,8 +17,8 @@ data class WrapWithSerdeExpression(
       wrapperTemplate = serde.forMode(serdeMode)
     )
 
-  override fun serialize(
+  override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
-  ) = wrappedExpression.serialize(targetLanguage, terminate)
+  ) = wrappedExpression.render(targetLanguage, terminate)
 }

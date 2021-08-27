@@ -11,7 +11,7 @@ data class EqualityTestExpression(
   private val expressionType: LogicalFieldType,
 ) : Expression {
 
-  override fun serialize(
+  override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
   ) = when (targetLanguage) {
@@ -53,8 +53,8 @@ data class EqualityTestExpression(
     targetLanguage: TargetLanguage,
   ): String {
 
-    val e0 = expression0.serialize(targetLanguage, false)
-    val e1 = expression1.serialize(targetLanguage, false)
+    val e0 = expression0.render(targetLanguage, false)
+    val e1 = expression1.render(targetLanguage, false)
 
     if (expressionType.base == FLOAT_64) {
       //TODO: use contentEquals
@@ -85,8 +85,8 @@ data class EqualityTestExpression(
     terminate: Boolean,
   ): String {
     val suffix = targetLanguage.statementTerminatorLiteral(terminate)
-    val e0 = expression0.serialize(targetLanguage, false)
-    val e1 = expression1.serialize(targetLanguage, false)
+    val e0 = expression0.render(targetLanguage, false)
+    val e1 = expression1.render(targetLanguage, false)
 
     if (expressionType.enumType ||
       expressionType.base == BOOLEAN ||
@@ -114,8 +114,8 @@ data class EqualityTestExpression(
   private fun handleGolang(
     targetLanguage: TargetLanguage,
   ): String {
-    val e0 = expression0.serialize(targetLanguage, false)
-    val e1 = expression1.serialize(targetLanguage, false)
+    val e0 = expression0.render(targetLanguage, false)
+    val e1 = expression1.render(targetLanguage, false)
 
     return "$e0 == $e1"
   }

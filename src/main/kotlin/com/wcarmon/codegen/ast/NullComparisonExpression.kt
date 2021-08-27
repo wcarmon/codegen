@@ -13,7 +13,7 @@ data class NullComparisonExpression(
 ) : Expression {
 
   //NOTE: termination not supported
-  override fun serialize(
+  override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
   ) =
@@ -21,20 +21,20 @@ data class NullComparisonExpression(
       CPP_14,
       CPP_17,
       CPP_20,
-      -> "nullptr == " + compareTo.serialize(targetLanguage, false)
+      -> "nullptr == " + compareTo.render(targetLanguage, false)
 
       C_17,
-      -> "NULL == " + compareTo.serialize(targetLanguage, false)
+      -> "NULL == " + compareTo.render(targetLanguage, false)
 
       GOLANG_1_7,
-      -> "nil == " + compareTo.serialize(targetLanguage, false)
+      -> "nil == " + compareTo.render(targetLanguage, false)
 
       DART_2,
       JAVA_08,
       JAVA_11,
       JAVA_17,
       KOTLIN_JVM_1_4,
-      -> "null == " + compareTo.serialize(targetLanguage, false)
+      -> "null == " + compareTo.render(targetLanguage, false)
 
       PROTOCOL_BUFFERS_3 -> TODO()
       PYTHON_3 -> TODO()  // foo is None

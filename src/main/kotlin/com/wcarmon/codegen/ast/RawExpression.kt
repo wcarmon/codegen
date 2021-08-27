@@ -18,7 +18,7 @@ data class RawExpression(
   }
 
   /** Assume text is already appropriate for target language */
-  override fun serialize(
+  override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
   ) = value

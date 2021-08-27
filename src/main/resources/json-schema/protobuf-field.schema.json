@@ -15,11 +15,11 @@
     "repeated": {
       "type": "boolean"
     },
-    "repeatedItemSerde": {
+    "overrideRepeatedItemSerde": {
       "$ref": "serde.schema.json",
       "description": "only for collections"
     },
-    "serde": {
+    "overrideSerde": {
       "$ref": "serde.schema.json",
       "description": "for the field, might be a collection"
     }

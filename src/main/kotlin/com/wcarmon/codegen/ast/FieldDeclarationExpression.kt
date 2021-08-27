@@ -18,7 +18,7 @@ data class FieldDeclarationExpression(
   val type: LogicalFieldType,
 ) : Expression {
 
-  override fun serialize(targetLanguage: TargetLanguage, terminate: Boolean): String {
+  override fun render(targetLanguage: TargetLanguage, terminate: Boolean): String {
     TODO("Not yet implemented")
   }
 }

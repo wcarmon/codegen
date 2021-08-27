@@ -24,7 +24,7 @@
       "minimum": 0,
       "type": "integer"
     },
-    "serde": {
+    "overrideSerde": {
       "$ref": "serde.schema.json"
     },
     "varcharLength": {

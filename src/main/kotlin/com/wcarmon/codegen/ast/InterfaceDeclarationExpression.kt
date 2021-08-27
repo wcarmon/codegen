@@ -28,7 +28,7 @@ data class InterfaceDeclarationExpression(
     instanceMethods.size == 1
   }
 
-  override fun serialize(
+  override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
   ): String {

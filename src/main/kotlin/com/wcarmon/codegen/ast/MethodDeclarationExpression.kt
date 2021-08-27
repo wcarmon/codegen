@@ -9,7 +9,7 @@ data class MethodDeclarationExpression(
   val body: List<Expression>,
 ) : Expression {
 
-  override fun serialize(targetLanguage: TargetLanguage, terminate: Boolean): String {
+  override fun render(targetLanguage: TargetLanguage, terminate: Boolean): String {
     return when (targetLanguage) {
       C_17 -> TODO()
       CPP_14,

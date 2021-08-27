@@ -23,7 +23,7 @@ data class RDBMSColumnConfig(
 
   val varcharLength: Int? = null,
 
-  val serde: Serde = Serde.INLINE,
+  val overrideSerde: Serde = Serde.INLINE,
 
   /**
    * Replace the auto-derived type with this literal

@@ -48,12 +48,12 @@ data class PreparedStatementSetExpression(
     )
 
 
-  override fun serialize(targetLanguage: TargetLanguage, terminate: Boolean) =
+  override fun render(targetLanguage: TargetLanguage, terminate: Boolean) =
     if (field.type.nullable) {
       conditionalExpression
 
     } else {
       nonNullExpression
     }
-      .serialize(targetLanguage, false)
+      .render(targetLanguage, false)
 }

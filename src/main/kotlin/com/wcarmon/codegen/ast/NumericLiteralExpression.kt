@@ -8,7 +8,7 @@ data class NumericLiteralExpression(
   val value: Number,
 ) : Expression {
 
-  override fun serialize(
+  override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
   ): String {

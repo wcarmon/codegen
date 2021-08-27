@@ -15,7 +15,7 @@ data class ConditionalExpression(
   val expressionForFalse: Expression? = null,
 ) : Expression {
 
-  override fun serialize(
+  override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
   ) = when (targetLanguage) {
@@ -52,18 +52,18 @@ data class ConditionalExpression(
   ) =
     if (expressionForFalse == null) {
       """
-      |if (${condition.serialize(targetLanguage, false)}) {
-      |  ${expressionForTrue.serialize(targetLanguage, terminate)}   
+      |if (${condition.render(targetLanguage, false)}) {
+      |  ${expressionForTrue.render(targetLanguage, terminate)}   
       |}
       |
       """
 
     } else {
       """
-      |if (${condition.serialize(targetLanguage, false)}) {
-      |  ${expressionForTrue.serialize(targetLanguage, terminate)}   
+      |if (${condition.render(targetLanguage, false)}) {
+      |  ${expressionForTrue.render(targetLanguage, terminate)}   
       |} else {
-      |  ${expressionForFalse.serialize(targetLanguage, terminate)}
+      |  ${expressionForFalse.render(targetLanguage, terminate)}
       |}
       |
       """
@@ -75,17 +75,17 @@ data class ConditionalExpression(
   ) =
     if (expressionForFalse == null) {
       """
-      |if ${condition.serialize(targetLanguage, false)} {
-      |  ${expressionForTrue.serialize(targetLanguage, terminate)}
+      |if ${condition.render(targetLanguage, false)} {
+      |  ${expressionForTrue.render(targetLanguage, terminate)}
       |}
       |
       """
     } else {
       """
-      |if ${condition.serialize(targetLanguage, false)} {
-      |  ${expressionForTrue.serialize(targetLanguage, terminate)}
+      |if ${condition.render(targetLanguage, false)} {
+      |  ${expressionForTrue.render(targetLanguage, terminate)}
       |} else {
-      |  ${expressionForFalse.serialize(targetLanguage, terminate)}
+      |  ${expressionForFalse.render(targetLanguage, terminate)}
       |}
       |
       """
@@ -94,16 +94,16 @@ data class ConditionalExpression(
   private fun pythonStyle(targetLanguage: TargetLanguage) =
     if (expressionForFalse == null) {
       """
-      |if ${condition.serialize(targetLanguage, false)}:
-      |  ${expressionForTrue.serialize(targetLanguage, false)}
+      |if ${condition.render(targetLanguage, false)}:
+      |  ${expressionForTrue.render(targetLanguage, false)}
       |
       """
     } else {
       """
-      |if ${condition.serialize(targetLanguage, false)}:
-      |  ${expressionForTrue.serialize(targetLanguage, false)}
+      |if ${condition.render(targetLanguage, false)}:
+      |  ${expressionForTrue.render(targetLanguage, false)}
       |else:          
-      |  ${expressionForFalse.serialize(targetLanguage, false)}
+      |  ${expressionForFalse.render(targetLanguage, false)}
       |
       """
     }.trimMargin()
