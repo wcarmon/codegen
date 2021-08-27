@@ -1,6 +1,8 @@
 package com.wcarmon.codegen.ast
 
 import com.wcarmon.codegen.ast.NumericLiteralBase.DECIMAL
+import com.wcarmon.codegen.model.JDBCColumnIndex
+import com.wcarmon.codegen.model.Name
 import com.wcarmon.codegen.model.TargetLanguage
 import java.sql.JDBCType
 

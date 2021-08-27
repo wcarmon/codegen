@@ -69,7 +69,14 @@ data class FieldReadExpression(
       TYPESCRIPT_4,
       -> fieldName.lowerCamel
 
-      SQL -> fieldName.lowerSnake
+      SQL_DB2,
+      SQL_H2,
+      SQL_MARIA,
+      SQL_MYSQL,
+      SQL_ORACLE,
+      SQL_POSTGRESQL,
+      SQL_SQLITE,
+      -> fieldName.lowerSnake
 
       C_17,
       CPP_14,
@@ -97,7 +104,13 @@ data class FieldReadExpression(
       PROTOCOL_BUFFERS_3,
       PYTHON_3,
       RUST_1_54,
-      SQL,
+      SQL_DB2,
+      SQL_H2,
+      SQL_MARIA,
+      SQL_MYSQL,
+      SQL_ORACLE,
+      SQL_POSTGRESQL,
+      SQL_SQLITE,
       TYPESCRIPT_4,
       -> DIRECT
 

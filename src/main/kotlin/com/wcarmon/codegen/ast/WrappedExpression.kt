@@ -1,6 +1,6 @@
 package com.wcarmon.codegen.ast
 
-import com.wcarmon.codegen.ast.StringFormatTemplate.Companion.INLINE
+import com.wcarmon.codegen.model.StringFormatTemplate
 import com.wcarmon.codegen.model.TargetLanguage
 
 /**
@@ -18,7 +18,7 @@ data class WrappedExpression(
   /**
    * When %s is missing, [wrapped] is ignored
    */
-  val wrapperTemplate: StringFormatTemplate = INLINE,
+  val wrapperTemplate: StringFormatTemplate = StringFormatTemplate.INLINE,
 ) : Expression {
 
   override fun serialize(

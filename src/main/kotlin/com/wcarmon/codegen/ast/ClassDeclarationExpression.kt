@@ -35,8 +35,6 @@ data class ClassDeclarationExpression(
 
   val visibilityModifier: VisibilityModifier = VisibilityModifier.PUBLIC,
 
-  //TODO: constructor
-
   //TODO: generic parameters
 ) : Expression {
 

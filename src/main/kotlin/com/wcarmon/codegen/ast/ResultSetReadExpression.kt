@@ -1,5 +1,6 @@
 package com.wcarmon.codegen.ast
 
+import com.wcarmon.codegen.model.Name
 import com.wcarmon.codegen.model.QuoteType.DOUBLE
 import com.wcarmon.codegen.model.TargetLanguage
 
@@ -14,7 +15,7 @@ import com.wcarmon.codegen.model.TargetLanguage
  */
 class ResultSetReadExpression(
   fieldName: Name,
-  getterMethod: Name,
+  getterMethod: Name,   //TODO: use defaultResultSetGetterMethod(field.effectiveBaseType)
   resultSetIdentifierExpression: Expression? = RawExpression("rs"),
 ) : Expression {
 

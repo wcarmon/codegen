@@ -1,5 +1,6 @@
 package com.wcarmon.codegen.ast
 
+import com.wcarmon.codegen.model.Name
 import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.model.TargetLanguage.*
 
@@ -30,8 +31,15 @@ data class MethodNameExpression(
     PROTOCOL_BUFFERS_3 -> TODO()
     PYTHON_3 -> TODO()
     RUST_1_54 -> TODO()
-    SQL -> TODO()
     SWIFT_5 -> TODO()
     TYPESCRIPT_4 -> TODO()
+
+    SQL_DB2 -> TODO()
+    SQL_H2 -> TODO()
+    SQL_MARIA -> TODO()
+    SQL_MYSQL -> TODO()
+    SQL_ORACLE -> TODO()
+    SQL_POSTGRESQL -> TODO()
+    SQL_SQLITE -> TODO()
   } + targetLanguage.statementTerminatorLiteral(terminate)
 }
