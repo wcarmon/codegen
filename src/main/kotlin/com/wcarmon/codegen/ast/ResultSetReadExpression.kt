@@ -15,8 +15,8 @@ import com.wcarmon.codegen.model.TargetLanguage
  */
 class ResultSetReadExpression(
   fieldName: Name,
-  getterMethod: Name,   //TODO: use defaultResultSetGetterMethod(field.effectiveBaseType)
-  resultSetIdentifierExpression: Expression? = RawExpression("rs"),
+  getterMethod: Name,
+  resultSetIdentifierExpression: Expression = RawExpression("rs"),
 ) : Expression {
 
   private val underlying: MethodInvokeExpression

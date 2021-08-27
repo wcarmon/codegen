@@ -14,7 +14,7 @@ data class ProtocolBufferFieldConfig(
    */
   val overrideTypeLiteral: String = "",
 
-  val overrideSerde: Serde? = null,
+  val overrideSerde: Serde = Serde.INLINE,
 
   val repeated: Boolean = false,
 

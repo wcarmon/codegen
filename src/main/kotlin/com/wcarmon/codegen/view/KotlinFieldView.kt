@@ -3,13 +3,14 @@ package com.wcarmon.codegen.view
 import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.model.util.buildResultSetGetterExpression
-import com.wcarmon.codegen.model.util.getKotlinTypeLiteral
+import com.wcarmon.codegen.util.getKotlinTypeLiteral
 
 /**
  * Kotlin related convenience methods for a [Field]
  */
-data class KotlinFieldView(
+class KotlinFieldView(
   private val field: Field,
+  private val jvmView: JVMFieldView,
   private val targetLanguage: TargetLanguage,
 ) {
 
@@ -19,7 +20,7 @@ data class KotlinFieldView(
     }
   }
 
-  val type = getKotlinTypeLiteral(field.type)
+  val typeLiteral: String = getKotlinTypeLiteral(field.type)
 
   //TODO: test this on types that are already unqualified
   val unqualifiedType = getKotlinTypeLiteral(field.type, false)

@@ -2,29 +2,9 @@
 
 package com.wcarmon.codegen.util
 
-import com.wcarmon.codegen.ast.*
 import com.wcarmon.codegen.model.*
 import com.wcarmon.codegen.model.BaseFieldType.*
 
-
-//TODO: replace with expression
-fun buildSerdeReadExpression(
-  field: Field,
-
-  /** eg. "entity." or "proto." */
-  fieldReadPrefix: String = "",
-  fieldReadStyle: FieldReadMode,
-  serdeMode: SerdeMode,
-) =
-  SerdeWrapExpression.forSerde(
-    fieldReadExpression = FieldReadExpression(
-      fieldName = field.name,
-      fieldReadPrefix = fieldReadPrefix,
-      overrideFieldReadStyle = fieldReadStyle,
-    ),
-    mode = serdeMode,
-    serde = effectiveProtoSerde(field),
-  )
 
 //TODO: document me
 fun protoBuilderSetter(field: Field): Name =
@@ -49,28 +29,6 @@ fun protoBuilderGetter(field: Field): Name =
       Name("$prefix${field.name.upperCamel}")
     }
 
-/**
- * Useful for Collections & other Generic types
- *
- * @param field
- * @param fieldReadExpressions one identifier (or field reader) for each generic/type-param
- * @param serdeMode (serialize or deserialize)
- *
- * @return one SerdeReadExpression for each generic/type-param
- */
-//TODO: make (or reuse) an expression type
-fun protoReadExpressionForTypeParameters(
-  field: Field,
-  fieldReadExpressions: List<Expression>,
-  serdeMode: SerdeMode,
-): List<Expression> =
-  effectiveProtoSerdeForTypeParameters(field)
-    .mapIndexed { index, serdeForTypeParam ->
-      SerdeWrapExpression(
-        fieldReadExpression = fieldReadExpressions[index],
-        serdeTemplate = serdeForTypeParam.forMode(serdeMode),
-      )
-    }
 
 //TODO: improve documentation
 // Get the collection fields, avoid duplicate serde conversion method signatures
@@ -92,8 +50,8 @@ fun effectiveProtobufType(field: Field): String {
 }
 
 
-private fun effectiveProtoSerde(field: Field): Serde =
-  if (field.protobufConfig.overrideSerde != null) {
+fun effectiveProtoSerde(field: Field): Serde =
+  if (field.protobufConfig.overrideSerde != Serde.INLINE) {
     // -- User override is highest priority
     field.protobufConfig.overrideSerde
 

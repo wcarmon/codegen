@@ -1,6 +1,7 @@
 package com.wcarmon.codegen.ast
 
-import com.wcarmon.codegen.ast.FieldReadMode.*
+import com.wcarmon.codegen.ast.FieldReadMode.DIRECT
+import com.wcarmon.codegen.ast.FieldReadMode.GETTER
 import com.wcarmon.codegen.model.Name
 import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.model.TargetLanguage.*
@@ -16,7 +17,7 @@ import com.wcarmon.codegen.model.TargetLanguage.*
  *
  * See also [MethodInvokeExpression]
  *
- * This is NOT related to Serde, see [SerdeReadExpression]
+ * This is NOT related to Serde, see [WrappedExpression]
  */
 data class FieldReadExpression(
   private val fieldName: Name,
@@ -28,7 +29,7 @@ data class FieldReadExpression(
    * eg. "entity."
    * null implies fieldOwner==this
    * */
-  private val fieldOwner: Expression? = null,
+  private val fieldOwner: Expression = EmptyExpression,
 
   private val overrideFieldReadStyle: FieldReadMode? = null,
 ) : Expression {
@@ -46,12 +47,16 @@ data class FieldReadExpression(
 
   private fun getFieldReadPrefix(
     targetLanguage: TargetLanguage,
-  ) =
-    if (fieldOwner == null) {
+  ): String {
+
+    val output = fieldOwner.render(targetLanguage, false)
+
+    return if (output.isBlank()) {
       ""
     } else {
-      fieldOwner.render(targetLanguage, false) + "."
+      "${output}."
     }
+  }
 
   // Kotlin non-null assertion
   private val nonNullSnippet by lazy {

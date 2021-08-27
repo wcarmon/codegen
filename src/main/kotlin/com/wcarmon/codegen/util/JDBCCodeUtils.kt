@@ -48,9 +48,9 @@ fun buildPreparedStatementSetters(
  * @return the most appropriate Serde for JDBC
  */
 private fun effectiveJDBCSerde(field: Field): Serde =
-  if (field.rdbmsConfig.serde != null) {
+  if (field.rdbmsConfig.overrideSerde != Serde.INLINE) {
     // -- User override is highest priority
-    field.rdbmsConfig.serde
+    field.rdbmsConfig.overrideSerde
 
   } else if (requiresJDBCSerde(field)) {
     // -- Fallback to jvm serializer
@@ -134,7 +134,7 @@ private fun jdbcType(base: BaseFieldType): JDBCType = when (base) {
 /**
  * @return getter method name declared on [java.sql.ResultSet]
  */
-private fun defaultResultSetGetterMethod(base: BaseFieldType): Name = when (base) {
+fun defaultResultSetGetterMethod(base: BaseFieldType): Name = when (base) {
   BOOLEAN -> "getBoolean"
   FLOAT_32 -> "getFloat"
   FLOAT_64 -> "getDouble"

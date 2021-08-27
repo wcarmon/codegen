@@ -12,7 +12,7 @@ import com.wcarmon.codegen.model.TargetLanguage.*
 data class ConditionalExpression(
   val condition: Expression,
   val expressionForTrue: Expression,
-  val expressionForFalse: Expression? = null,
+  val expressionForFalse: Expression = EmptyExpression,
 ) : Expression {
 
   override fun render(
@@ -49,17 +49,16 @@ data class ConditionalExpression(
   private fun cStyle(
     targetLanguage: TargetLanguage,
     terminate: Boolean = false,
-  ) =
-    if (expressionForFalse == null) {
-      """
+  ): String = if (expressionForFalse.isBlank(targetLanguage)) {
+    """
       |if (${condition.render(targetLanguage, false)}) {
       |  ${expressionForTrue.render(targetLanguage, terminate)}   
       |}
       |
       """
 
-    } else {
-      """
+  } else {
+    """
       |if (${condition.render(targetLanguage, false)}) {
       |  ${expressionForTrue.render(targetLanguage, terminate)}   
       |} else {
@@ -67,21 +66,20 @@ data class ConditionalExpression(
       |}
       |
       """
-    }.trimMargin()
+  }.trimMargin()
 
   private fun noParens(
     targetLanguage: TargetLanguage,
     terminate: Boolean = false,
-  ) =
-    if (expressionForFalse == null) {
-      """
+  ): String = if (expressionForFalse.isBlank(targetLanguage)) {
+    """
       |if ${condition.render(targetLanguage, false)} {
       |  ${expressionForTrue.render(targetLanguage, terminate)}
       |}
       |
       """
-    } else {
-      """
+  } else {
+    """
       |if ${condition.render(targetLanguage, false)} {
       |  ${expressionForTrue.render(targetLanguage, terminate)}
       |} else {
@@ -89,10 +87,10 @@ data class ConditionalExpression(
       |}
       |
       """
-    }.trimMargin()
+  }.trimMargin()
 
   private fun pythonStyle(targetLanguage: TargetLanguage) =
-    if (expressionForFalse == null) {
+    if (expressionForFalse.isBlank(targetLanguage)) {
       """
       |if ${condition.render(targetLanguage, false)}:
       |  ${expressionForTrue.render(targetLanguage, false)}

@@ -6,9 +6,10 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.wcarmon.codegen.CREATED_TS_FIELD_NAMES
 import com.wcarmon.codegen.UPDATED_TS_FIELD_NAMES
-import com.wcarmon.codegen.model.BaseFieldType.*
+import com.wcarmon.codegen.model.BaseFieldType.STRING
 import com.wcarmon.codegen.model.TargetLanguage.JAVA_08
 import com.wcarmon.codegen.model.TargetLanguage.KOTLIN_JVM_1_4
+import com.wcarmon.codegen.view.JVMFieldView
 import com.wcarmon.codegen.view.JavaFieldView
 import com.wcarmon.codegen.view.KotlinFieldView
 import com.wcarmon.codegen.view.RDBMSColumnView
@@ -55,6 +56,14 @@ data class Field(
 
   val documentation: Documentation = Documentation.EMPTY,
 
+  /**
+   * null:  not a Id/PK field
+   * 0:     1st part of Id/PK field
+   * 1:     2nd part of Id/PK field
+   * ...
+   */
+  val positionInId: Int? = null,
+
   // -- Technology specific config
   val jvmConfig: JVMFieldConfig = JVMFieldConfig(),
   val protobufConfig: ProtocolBufferFieldConfig = ProtocolBufferFieldConfig(),
@@ -73,6 +82,7 @@ data class Field(
       @JsonProperty("jvm") jvmFieldConfig: JVMFieldConfig = JVMFieldConfig(),
       @JsonProperty("name") name: Name,
       @JsonProperty("nullable") nullable: Boolean = false,
+      @JsonProperty("positionInId") positionInId: Int? = null,
       @JsonProperty("precision") precision: Int? = null,
       @JsonProperty("protobuf") protobufConfig: ProtocolBufferFieldConfig = ProtocolBufferFieldConfig(),
       @JsonProperty("rdbms") rdbmsConfig: RDBMSColumnConfig = RDBMSColumnConfig(),
@@ -93,6 +103,7 @@ data class Field(
         documentation = documentation,
         jvmConfig = jvmFieldConfig,
         name = name,
+        positionInId = positionInId,
         protobufConfig = protobufConfig,
         rdbmsConfig = rdbmsConfig,
         type = LogicalFieldType(
@@ -112,30 +123,38 @@ data class Field(
 
   init {
 
-    val isPrimaryKeyField = (rdbmsConfig.positionInPrimaryKey ?: -1) >= 0
-    if (isPrimaryKeyField) {
+    val isIdField = (positionInId ?: -1) >= 0
+    if (isIdField) {
       require(!type.nullable) {
-        "Primary key fields cannot be nullable: $this"
+        "Id/PrimaryKey fields cannot be nullable: $this"
       }
     }
 
     //NOTE: precision and scale are validated on LogicalFieldType
+
+    if (positionInId != null) {
+      require(positionInId >= 0) {
+        "positionInId must be non-negative: $positionInId, this=$this"
+      }
+    }
   }
 
   val java8View by lazy {
-    JavaFieldView(this, JAVA_08)
+    JavaFieldView(this, jvmView, JAVA_08)
   }
 
   val kotlinView by lazy {
-    KotlinFieldView(this, KOTLIN_JVM_1_4)
+    KotlinFieldView(this, jvmView, KOTLIN_JVM_1_4)
   }
 
   val sqlView by lazy {
     RDBMSColumnView(this)
   }
 
+  //TODO: improve me
   val hasDefault = defaultValue != null
 
+  //TODO: improve me
   val shouldDefaultToNull: Boolean by lazy {
     //TODO: is this reusable & threadsafe?
     val regex =
@@ -144,13 +163,17 @@ data class Field(
     defaultValue != null && regex.matches(defaultValue)
   }
 
+  private val jvmView by lazy {
+    JVMFieldView(this)
+  }
+
   // -- Language & Framework specific convenience methods
 
   /**
    * Defaults to a reasonable RDBMS equivalent
    * Allows override via [RDBMSColumnConfig.overrideTypeLiteral]
    */
-  //TODO: is this appropriate for JVM too?
+  //TODO: is this appropriate for JVM or only RDBMS?
   val effectiveBaseType by lazy {
     if (rdbmsConfig.overrideTypeLiteral.isNotBlank()) {
       BaseFieldType.parse(rdbmsConfig.overrideTypeLiteral)
@@ -161,19 +184,6 @@ data class Field(
   }
 
   val isCollection: Boolean = effectiveBaseType.isCollection
-
-  //TODO: move to jackson or jvm extensions file
-  val jacksonTypeRef by lazy {
-    require(type.isParameterized) {
-      "type references are only required for parameterized types"
-    }
-
-    when (effectiveBaseType) {
-      LIST -> "List<${type.typeParameters[0]}>"
-      SET -> "Set<${type.typeParameters[0]}>"
-      else -> TODO("Build TypeReference for $this")
-    }
-  }
 
   val shouldQuoteInString = when (effectiveBaseType) {
     STRING -> true

@@ -9,8 +9,9 @@ import com.wcarmon.codegen.model.util.kotlinMethodArgsForFields
 /**
  * Kotlin related convenience methods for a [Entity]
  */
-data class KotlinEntityView(
+class KotlinEntityView(
   private val entity: Entity,
+  private val jvmView: JVMEntityView,
   private val targetLanguage: TargetLanguage,
 ) {
 

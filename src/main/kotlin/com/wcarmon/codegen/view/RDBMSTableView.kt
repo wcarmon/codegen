@@ -16,18 +16,10 @@ data class RDBMSTableView(
   private val entity: Entity,
 ) {
 
-  val primaryKeyFields = entity.fields
-    .filter { it.rdbmsConfig.positionInPrimaryKey != null }
-    .sortedBy { it.rdbmsConfig.positionInPrimaryKey!! }
-
-  val nonPrimaryKeyFields = entity.fields
-    .filter { it.rdbmsConfig.positionInPrimaryKey == null }
-    .sortedBy { it.name.lowerCamel }
-
   val commaSeparatedColumns: String = commaSeparatedColumns(entity)
 
   //TODO: return Documentation
-  val commentForPKFields: String =
+  val commentForPrimaryKeyFields: String =
     if (primaryKeyFields.isEmpty()) ""
     else "PrimaryKey " + English.plural("field", primaryKeyFields.size)
 
@@ -35,9 +27,6 @@ data class RDBMSTableView(
     if (entity.rdbmsConfig.schema.isBlank() != false) ""
     else "${entity.rdbmsConfig.schema}."
 
-  val hasNonPrimaryKeyFields: Boolean = nonPrimaryKeyFields.isNotEmpty()
-
-  val hasPrimaryKeyFields: Boolean = primaryKeyFields.isNotEmpty()
 
   val primaryKeyWhereClause: String = commaSeparatedColumnAssignment(primaryKeyFields)
 
@@ -54,11 +43,11 @@ data class RDBMSTableView(
     primaryKeyFields.joinToString(", ") { it.name.lowerCamel }
   }
 
-  val jdbcSerializedPKFields by lazy {
+  val jdbcSerializedPrimaryKeyFields by lazy {
     commaSeparatedJavaFields(primaryKeyFields)
   }
 
-  // For INSERT, PK fields are first
+  // For INSERT, PrimaryKey fields are first
   private fun buildInsertPreparedStatementSetterStatements(
     targetLanguage: TargetLanguage,
   ): String {
@@ -83,11 +72,11 @@ data class RDBMSTableView(
     )
 
     return (pk + nonPk)
-      .map { it.serialize(targetLanguage) }
+      .map { it.render(targetLanguage) }
       .joinToString(separator = "\n")
   }
 
-  // NOTE: For UPDATE, PK fields are last
+  // NOTE: For UPDATE, PrimaryKey fields are last
   private fun buildUpdatePreparedStatementSetterStatements(
     targetLanguage: TargetLanguage,
   ): String {
@@ -114,7 +103,7 @@ data class RDBMSTableView(
     val separator = RawExpression("\n\t\t// Primary key field(s)")
 
     return (nonPk + separator + pk)
-      .map { it.serialize(targetLanguage) }
+      .map { it.render(targetLanguage) }
       .joinToString(separator = "\n")
   }
 
@@ -132,7 +121,7 @@ data class RDBMSTableView(
     val columnSetterStatement = PreparedStatementSetExpression(
       columnIndex = JDBCColumnIndex.FIRST,
       field = field,
-      )
+    )
 
     val pk = buildPreparedStatementSetters(
       cfg = cfg,
@@ -141,11 +130,11 @@ data class RDBMSTableView(
     )
 
     return (listOf(columnSetterStatement) + pk)
-      .map { it.serialize(targetLanguage) }
+      .map { it.render(targetLanguage) }
       .joinToString(separator = "\n")
   }
 
-  private fun buildPreparedStatementSetterStatementsForPK(
+  private fun buildPreparedStatementSetterStatementsForPrimaryKey(
     targetLanguage: TargetLanguage,
     fieldReadStyle: FieldReadMode = targetLanguage.fieldReadMode,
   ) =
@@ -157,6 +146,6 @@ data class RDBMSTableView(
       fields = primaryKeyFields,
       firstIndex = 1,
     )
-      .map { it.serialize(targetLanguage) }
+      .map { it.render(targetLanguage) }
       .joinToString(separator = "\n")
 }

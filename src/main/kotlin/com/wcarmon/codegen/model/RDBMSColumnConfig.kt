@@ -13,14 +13,6 @@ private const val MAX_TYPE_LITERAL_LENGTH = 64
 data class RDBMSColumnConfig(
   val autoIncrement: Boolean = false,
 
-  /**
-   * null:  not a PK field
-   * 0:     1st part of PK field
-   * 1:     2nd part of PK field
-   * ...
-   */
-  val positionInPrimaryKey: Int? = null,
-
   val varcharLength: Int? = null,
 
   val overrideSerde: Serde = Serde.INLINE,
@@ -41,12 +33,6 @@ data class RDBMSColumnConfig(
   init {
     if (varcharLength != null) {
       require(varcharLength > 0) { "varcharLength must be positive: this=$this" }
-    }
-
-    if (positionInPrimaryKey != null) {
-      require(positionInPrimaryKey >= 0) {
-        "positionInPrimaryKey must be non-negative: $positionInPrimaryKey, this=$this"
-      }
     }
 
     require(overrideTypeLiteral.length < MAX_TYPE_LITERAL_LENGTH) {

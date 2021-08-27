@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.wcarmon.codegen.model.TargetLanguage.JAVA_08
 import com.wcarmon.codegen.model.TargetLanguage.KOTLIN_JVM_1_4
+import com.wcarmon.codegen.view.JVMEntityView
 import com.wcarmon.codegen.view.JavaEntityView
 import com.wcarmon.codegen.view.KotlinEntityView
 import com.wcarmon.codegen.view.RDBMSTableView
@@ -36,7 +37,7 @@ data class Entity(
   val canCreate: Boolean = true,
   val canDelete: Boolean = true,
   val canExtend: Boolean = false,
-  val canFindByPK: Boolean = true,
+  val canFindById: Boolean = true,
   val canList: Boolean = true,
   val canUpdate: Boolean = true,
 
@@ -61,13 +62,13 @@ data class Entity(
       "field names must be unique: entity=${name.lowerCamel}, fieldNames=$fieldNames"
     }
 
-    // -- Validate PK fields
-    val pkPositions = fields
-      .filter { it.rdbmsConfig.positionInPrimaryKey != null }
-      .map { it.rdbmsConfig.positionInPrimaryKey!! }
+    // -- Validate Id/PrimaryKey fields
+    val idPositions = fields
+      .filter { it.positionInId != null }
+      .map { it.positionInId!! }
 
-    require(pkPositions.size == pkPositions.toSet().size) {
-      "All PK field positions must be distinct"
+    require(idPositions.size == idPositions.toSet().size) {
+      "All Id/PrimaryKey field positions must be unique"
     }
 
     // -- Validate extraImplements
@@ -77,29 +78,39 @@ data class Entity(
   }
 
   val java8View by lazy {
-    JavaEntityView(this, JAVA_08)
+    JavaEntityView(this, jvmView, JAVA_08)
   }
 
   val kotlinView by lazy {
-    KotlinEntityView(this, KOTLIN_JVM_1_4)
+    KotlinEntityView(this, jvmView, KOTLIN_JVM_1_4)
+  }
+
+  val jvmView by lazy {
+    JVMEntityView(this)
   }
 
   val sqlView by lazy {
     RDBMSTableView(this)
   }
 
+  val idFields = fields
+    .filter { it.positionInId != null }
+    .sortedBy { it.positionInId!! }
+
+  val nonIdFields = fields
+    .filter { it.positionInId == null }
+    .sortedBy { it.name.lowerCamel }
+
+  val hasIdFields: Boolean = idFields.isNotEmpty()
+
+  val hasNonIdFields: Boolean = nonIdFields.isNotEmpty()
+
   val collectionFields = fields
     .filter { it.effectiveBaseType.isCollection }
     .sortedBy { it.name.lowerCamel }
 
-  val fieldsWithValidation = fields
-    .sortedBy { it.name.lowerCamel }
-
-  val requiresObjectWriter =
-    fields.any { it.effectiveBaseType.isCollection }
-
-  val requiresObjectReader =
-    fields.any { it.effectiveBaseType.isCollection }
-
   val sortedFields = fields.sortedBy { it.name.lowerCamel }
+
+  val validatedFields = fields
+    .sortedBy { it.name.lowerCamel }
 }

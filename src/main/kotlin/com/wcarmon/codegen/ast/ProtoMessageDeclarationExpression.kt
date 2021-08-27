@@ -6,17 +6,26 @@ import com.wcarmon.codegen.model.TargetLanguage
 /**
  * See https://developers.google.com/protocol-buffers/docs/proto3#simple
  */
-//TODO: enforce distinct field order
 data class ProtoMessageDeclarationExpression(
-  val name: Name,
+  private val name: Name,
 
-  val enums: List<ProtoEnumDeclarationExpression> = listOf(),
-  val fields: List<ProtoFieldDeclarationExpression> = listOf(),
+  private val enums: List<ProtoEnumDeclarationExpression> = listOf(),
+  private val fields: Collection<ProtoFieldDeclarationExpression> = listOf(),
 
   //TODO: support reserved fields
   // https://developers.google.com/protocol-buffers/docs/proto3#reserved
 ) : Expression {
 
+  init {
+
+    val fieldNumbers = fields.map { it.number }
+    require(fieldNumbers.toSet().size == fieldNumbers.size) {
+      "fieldNumbers must be unique: $fields"
+    }
+  }
+
+  private val sortedFieldExpressions: List<ProtoFieldDeclarationExpression> =
+    fields.sortedBy { it.number.value }
 
   override fun render(
     targetLanguage: TargetLanguage,
@@ -35,14 +44,12 @@ data class ProtoMessageDeclarationExpression(
   }
 
   private fun renderFields(targetLanguage: TargetLanguage): String =
-    fields.map {
+    sortedFieldExpressions.joinToString("\n") {
       "|  ${it.render(targetLanguage, true)}"
     }
-      .joinToString("\n")
 
   private fun renderEnums(targetLanguage: TargetLanguage): String =
-    enums.map {
+    enums.joinToString("\n") {
       "|  ${it.render(targetLanguage)}"
     }
-      .joinToString("\n")
 }

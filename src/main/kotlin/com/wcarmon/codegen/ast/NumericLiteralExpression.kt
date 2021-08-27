@@ -4,7 +4,7 @@ import com.wcarmon.codegen.ast.NumericLiteralBase.*
 import com.wcarmon.codegen.model.TargetLanguage
 
 data class NumericLiteralExpression(
-  val base: NumericLiteralBase = NumericLiteralBase.DECIMAL,
+  val base: NumericLiteralBase = DECIMAL,
   val value: Number,
 ) : Expression {
 

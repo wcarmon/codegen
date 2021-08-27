@@ -5,7 +5,7 @@ package com.wcarmon.codegen.model
  */
 data class ProtoFieldNumber(
   val value: Int,
-) {
+) : Comparable<ProtoFieldNumber> {
 
   companion object {
     val FIRST: ProtoFieldNumber = ProtoFieldNumber(1)
@@ -16,4 +16,6 @@ data class ProtoFieldNumber(
       "Proto field numbers start at 1: fieldNumber=$value"
     }
   }
+
+  override fun compareTo(other: ProtoFieldNumber) = this.value.compareTo(other.value)
 }

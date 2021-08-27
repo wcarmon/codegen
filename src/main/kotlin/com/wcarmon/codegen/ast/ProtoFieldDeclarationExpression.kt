@@ -7,11 +7,12 @@ import com.wcarmon.codegen.util.effectiveProtobufType
 
 //TODO: document me
 data class ProtoFieldDeclarationExpression(
-  val field: Field,
+  private val field: Field,
   val number: ProtoFieldNumber,
 
-  val deprecated: Boolean = false,
-  val repeated: Boolean = false,
+  private val deprecated: Boolean = false,
+  private val repeated: Boolean = false,
+
   //TODO: DocumentationExpression
 ) : Expression {
 
@@ -26,6 +27,11 @@ data class ProtoFieldDeclarationExpression(
       if (repeated) "repeated "
       else ""
 
-    return "${repeatedPrefix}${effectiveProtobufType(field)} ${field.name.lowerSnake} = ${number.value};"
+    val deprecatedSegment =
+      if (deprecated) " [deprecated = true]"
+      else ""
+
+    return "${repeatedPrefix}${effectiveProtobufType(field)} ${field.name.lowerSnake} " +
+        "= ${number.value}${deprecatedSegment};"
   }
 }

@@ -19,7 +19,7 @@ import java.sql.JDBCType
 class PreparedStatementNullSetExpression(
   columnIndex: JDBCColumnIndex,
   columnType: JDBCType,
-  preparedStatementIdentifierExpression: Expression? = RawExpression("ps"),
+  preparedStatementIdentifierExpression: Expression = RawExpression("ps"),
 ) : Expression {
 
   private val underlying: MethodInvokeExpression

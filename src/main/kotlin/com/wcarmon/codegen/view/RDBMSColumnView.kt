@@ -8,7 +8,7 @@ import com.wcarmon.codegen.model.util.sqliteColumnDefinition
  * RDBMS related convenience methods for a [Field]
  * See [com.wcarmon.codegen.model.RDBMSColumnConfig]
  */
-data class RDBMSColumnView(
+class RDBMSColumnView(
   private val field: Field,
 ) {
 

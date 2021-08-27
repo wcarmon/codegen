@@ -16,11 +16,11 @@ import com.wcarmon.codegen.model.QuoteType.*
 //TODO: decide when to quote
 fun commaSeparatedColumns(entity: Entity): String {
 
-  val pk = entity.primaryKeyFields
+  val pk = entity.idFields
     .map { it.name.lowerSnake }
 
   val nonPK = entity.fields
-    .filter { it.rdbmsConfig.positionInPrimaryKey == null }
+    .filter { it.positionInId == null }
     .map { it.name.lowerSnake }
     .sorted()
 
@@ -52,11 +52,11 @@ fun commaSeparatedColumnAssignment(fields: List<Field>) =
  * (not a column constraint)
  */
 fun primaryKeyTableConstraint(entity: Entity): String {
-  if (!entity.r.hasPrimaryKeyFields) {
+  if (!entity.hasIdFields) {
     return ""
   }
 
-  val csv = entity.primaryKeyFields.joinToString(",") { "\"${it.name.lowerSnake}\"" }
+  val csv = entity.idFields.joinToString(",") { "\"${it.name.lowerSnake}\"" }
 
   return "PRIMARY KEY ($csv)"
 }

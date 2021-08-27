@@ -65,7 +65,7 @@ data class CodeGenRequest(
   val outputMode: OutputMode,
 
   @JsonProperty("package")
-  val packageName: PackageName? = null,
+  val packageName: PackageName = PackageName.DEFAULT,
 
   /** Only used for OutputMode.MULTIPLE */
   val caseFormatForOutputFile: CaseFormat = CaseFormat.UPPER_CAMEL,
@@ -161,7 +161,9 @@ data class CodeGenRequest(
 
   val hasContextClass = jvmContextClass.isNotBlank()
 
-  val unqualifiedContextClass = jvmContextClass.substringAfterLast(".")
+  val inDefaultPackage: Boolean = packageName == PackageName.DEFAULT
 
   val sortedExtraJVMImports = extraJVMImports.sorted()
+
+  val unqualifiedContextClass = jvmContextClass.substringAfterLast(".")
 }

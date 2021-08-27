@@ -7,18 +7,18 @@ import com.wcarmon.codegen.model.TargetLanguage.*
  * See also [FieldReadExpression]
  */
 data class MethodInvokeExpression(
-  val arguments: List<Expression> = listOf(),
+  private val arguments: List<Expression> = listOf(),
 
   /** Kotlin allows non-null assertion (eg. !!) */
-  val assertNonNull: Boolean = false,
+  private val assertNonNull: Boolean = false,
 
-  val methodName: MethodNameExpression,
+  private val methodName: MethodNameExpression,
 
   /**
    * eg. "entity."
    * null implies fieldOwner==this
    * */
-  val fieldOwner: Expression? = null,
+  private val fieldOwner: Expression = EmptyExpression,
 ) : Expression {
 
   override fun render(
@@ -84,11 +84,11 @@ data class MethodInvokeExpression(
     handleJava(targetLanguage, false)
 
   private fun buildFieldOwnerPrefix(targetLanguage: TargetLanguage): String {
-    val ownerPrefix = fieldOwner?.render(targetLanguage, false) ?: ""
+    val ownerPrefix = fieldOwner.render(targetLanguage, false)
     if (ownerPrefix.isBlank()) {
       return ""
     }
 
-    return "$ownerPrefix."
+    return "${ownerPrefix}."
   }
 }

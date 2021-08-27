@@ -13,19 +13,14 @@
       "minLength": 1,
       "type": "string"
     },
+    "overrideSerde": {
+      "$ref": "serde.schema.json"
+    },
     "overrideTypeLiteral": {
       "description": "Allows custom DB type, replaces auto-derived DB type",
       "maxLength": 64,
       "minLength": 1,
       "type": "string"
-    },
-    "positionInPrimaryKey": {
-      "exclusiveMaximum": 8,
-      "minimum": 0,
-      "type": "integer"
-    },
-    "overrideSerde": {
-      "$ref": "serde.schema.json"
     },
     "varcharLength": {
       "exclusiveMinimum": 0,

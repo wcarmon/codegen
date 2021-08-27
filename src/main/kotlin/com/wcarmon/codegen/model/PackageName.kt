@@ -27,6 +27,8 @@ data class PackageName(
     @JvmStatic
     @JsonCreator
     fun fromString(value: String) = PackageName(value)
+
+    val DEFAULT = PackageName("")
   }
 
   init {

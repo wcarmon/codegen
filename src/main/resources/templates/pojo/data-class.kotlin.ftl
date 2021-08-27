@@ -35,7 +35,7 @@ data class ${entity.name.upperCamel}(
 ) {
 
   init {
-    <#list entity.fieldsWithValidation as field>
+    <#list entity.validatedFields as field>
         <#if field.validationConfig.maxSize??>
 
 <#--            TODO: allow collections to use .size-->

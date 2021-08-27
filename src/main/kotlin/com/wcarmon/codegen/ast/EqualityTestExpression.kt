@@ -5,12 +5,25 @@ import com.wcarmon.codegen.model.LogicalFieldType
 import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.model.TargetLanguage.*
 
+/**
+ * Compares two [Expression]s for equality
+ *
+ * Useful inside a [ConditionalExpression]
+ */
 data class EqualityTestExpression(
   private val expression0: Expression,
   private val expression1: Expression,
   private val expressionType: LogicalFieldType,
 ) : Expression {
 
+  /**
+   * eg. "Arrays.deepEquals(xArr, yArr)"
+   * eg. "Arrays.deepEquals(xArr, yArr);"
+   * eg. "Double.compare(x, y)"
+   * eg. "Double.compare(x, y);"
+   * eg. "Objects.equals(x, y)"
+   * eg. "x == y"
+   */
   override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
@@ -49,6 +62,7 @@ data class EqualityTestExpression(
     TYPESCRIPT_4 -> TODO()
   }
 
+  @Suppress("ReturnCount")
   private fun handleKotlin(
     targetLanguage: TargetLanguage,
   ): String {

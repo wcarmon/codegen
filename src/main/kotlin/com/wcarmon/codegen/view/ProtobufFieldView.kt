@@ -9,7 +9,7 @@ import com.wcarmon.codegen.util.buildProtoBufMessageFieldDeclarations
  * RDBMS related convenience methods for a [Field]
  * See [com.wcarmon.codegen.model.RDBMSColumnConfig]
  */
-data class ProtobufFieldView(
+class ProtobufFieldView(
   private val field: Field,
   private val targetLanguage: TargetLanguage,
 ) {
@@ -24,11 +24,11 @@ data class ProtobufFieldView(
   val builderSetter: String = protoBuilderSetter(field).value
 
   val protocolBufferFields: String by lazy {
+    //TODO: use [ProtoMessageDeclarationExpression] instead
     buildProtoBufMessageFieldDeclarations(
-      primaryKeyFields,
-      nonPrimaryKeyFields
+      primaryKeyFields + nonPrimaryKeyFields
     )
-      .map { "  " + it.serialize(TargetLanguage.PROTOCOL_BUFFERS_3) }
+      .map { "  " + it.render(TargetLanguage.PROTOCOL_BUFFERS_3) }
       .joinToString("\n")
   }
 

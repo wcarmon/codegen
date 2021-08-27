@@ -20,7 +20,7 @@
     "canExtend": {
       "type": "boolean"
     },
-    "canFindByPK": {
+    "canFindById": {
       "type": "boolean"
     },
     "canList": {

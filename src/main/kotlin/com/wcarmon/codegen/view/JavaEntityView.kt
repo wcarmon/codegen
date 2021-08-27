@@ -11,8 +11,9 @@ import com.wcarmon.codegen.model.util.javaImportsForFields
 /**
  * Java related convenience methods for a [Entity]
  */
-data class JavaEntityView(
+class JavaEntityView(
   private val entity: Entity,
+  private val jvmView: JVMEntityView,
   private val targetLanguage: TargetLanguage = TargetLanguage.JAVA_08,
 ) {
 

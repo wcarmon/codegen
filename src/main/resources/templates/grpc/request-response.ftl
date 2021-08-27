@@ -36,7 +36,7 @@ message Delete${entity.name.upperCamel}Response {
 }
 </#if>
 
-<#if entity.canFindByPK>
+<#if entity.canFindById>
 message FindById${entity.name.upperCamel}Request {
   //TODO: pk fields here
 }

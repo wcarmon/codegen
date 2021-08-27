@@ -42,4 +42,12 @@ fun interface Expression {
   ) = render(
     targetLanguage,
     targetLanguage.requiresStatementTerminator)
+
+  fun isEmpty(targetLanguage: TargetLanguage) =
+    this.render(targetLanguage, false)
+      .isEmpty()
+
+  fun isBlank(targetLanguage: TargetLanguage) =
+    this.render(targetLanguage, false)
+      .isBlank()
 }

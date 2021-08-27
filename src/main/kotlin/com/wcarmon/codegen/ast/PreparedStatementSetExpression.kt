@@ -19,7 +19,7 @@ data class PreparedStatementSetExpression(
   private val columnType: JDBCType,
   private val field: Field,
   private val fieldReadExpression: Expression,
-  private val preparedStatementIdentifierExpression: Expression? = RawExpression("ps"),
+  private val preparedStatementIdentifierExpression: Expression = RawExpression("ps"),
   private val setterMethod: Name,
 ) : Expression {
 

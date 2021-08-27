@@ -3,16 +3,16 @@
   "fields": [
     {
       "name": "uuid",
+      "positionInId": 0,
       "protobuf": {
-        "overrideTypeLiteral": "string",
-        "serde": {
+        "overrideSerde": {
           "deserializeTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
           "serializeTemplate": "%s.toString()"
-        }
+        },
+        "overrideTypeLiteral": "string"
       },
       "rdbms": {
-        "positionInPrimaryKey": 0,
-        "serde": {
+        "overrideSerde": {
           "deserializeTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
           "serializeTemplate": "%s.toString()"
         },
@@ -69,25 +69,25 @@
     {
       "enumType": true,
       "jvm": {
-        "serde": {
+        "overrideSerde": {
           "deserializeTemplate": "com.wcarmon.chrono.model.ChronoHorizon.parse(%s)",
           "serializeTemplate": "%s.valueAsString()"
         }
       },
       "name": "horizon",
       "protobuf": {
-        "overrideTypeLiteral": "int32",
-        "serde": {
+        "overrideSerde": {
           "deserializeTemplate": "com.wcarmon.chrono.model.ChronoHorizon.fromValue(%s)",
           "serializeTemplate": "%s.value"
-        }
+        },
+        "overrideTypeLiteral": "int32"
       },
       "rdbms": {
-        "overrideTypeLiteral": "INTEGER",
-        "serde": {
+        "overrideSerde": {
           "deserializeTemplate": "com.wcarmon.chrono.model.ChronoHorizon.fromDBValue(%s)",
           "serializeTemplate": "%s.toDBValue()"
-        }
+        },
+        "overrideTypeLiteral": "INTEGER"
       },
       "type": "com.wcarmon.chrono.model.ChronoHorizon"
     },
@@ -103,18 +103,18 @@
       "enumType": true,
       "name": "importance",
       "protobuf": {
-        "overrideTypeLiteral": "int32",
-        "serde": {
+        "overrideSerde": {
           "deserializeTemplate": "com.wcarmon.chrono.model.ChronoLevel.fromValue(%s)",
           "serializeTemplate": "%s.value"
-        }
+        },
+        "overrideTypeLiteral": "int32"
       },
       "rdbms": {
-        "overrideTypeLiteral": "INTEGER",
-        "serde": {
+        "overrideSerde": {
           "deserializeTemplate": "com.wcarmon.chrono.model.ChronoLevel.fromDBValue(%s)",
           "serializeTemplate": "%s.toDBValue()"
-        }
+        },
+        "overrideTypeLiteral": "INTEGER"
       },
       "type": "com.wcarmon.chrono.model.ChronoLevel"
     },
@@ -140,16 +140,16 @@
     {
       "name": "tags",
       "protobuf": {
-        "overrideTypeLiteral": "string",
-        "repeated": true,
-        "repeatedItemSerde": {
+        "overrideRepeatedItemSerde": {
           "deserializeTemplate": "com.wcarmon.chrono.model.ChronoTag.fromString(%s)",
           "serializeTemplate": "%s.toString()"
-        }
+        },
+        "overrideTypeLiteral": "string",
+        "repeated": true
       },
       "rdbms": {
         "overrideDefaultValue": "''",
-        "serde": {
+        "overrideSerde": {
           "deserializeTemplate": "toSet(%s, TAGS_TYPE_REF)",
           "serializeTemplate": "objectWriter.writeValueAsString(%s)"
         },
@@ -163,7 +163,7 @@
     {
       "defaultValue": "null",
       "jvm": {
-        "serde": {
+        "overrideSerde": {
           "deserializeTemplate": "com.wcarmon.chrono.model.ChronoColor.parse(%s)",
           "serializeTemplate": "%s.toString()"
         }
@@ -171,14 +171,14 @@
       "name": "themeColor",
       "nullable": true,
       "protobuf": {
-        "overrideTypeLiteral": "string",
-        "serde": {
+        "overrideSerde": {
           "deserializeTemplate": "com.wcarmon.chrono.model.ChronoColor.parse(%s)",
           "serializeTemplate": "%s.toString()"
-        }
+        },
+        "overrideTypeLiteral": "string"
       },
       "rdbms": {
-        "serde": {
+        "overrideSerde": {
           "deserializeTemplate": "com.wcarmon.chrono.model.ChronoColor.parse(%s)",
           "serializeTemplate": "%s.toString()"
         },

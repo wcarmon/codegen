@@ -46,7 +46,7 @@ data class ProtoEnumDeclarationExpression(
 
     return """
     |enum ${name.upperCamel} {
-    ${renderedItems}  
+    $renderedItems  
     |}  
     """.trimMargin()
   }

@@ -5,7 +5,7 @@ package com.wcarmon.codegen.model
  */
 data class JDBCColumnIndex(
   val value: Int,
-) {
+) : Comparable<JDBCColumnIndex> {
 
   companion object {
     val FIRST: JDBCColumnIndex = JDBCColumnIndex(1)
@@ -16,4 +16,6 @@ data class JDBCColumnIndex(
       "JDBC column indexes start at 1: columnIndex=$value"
     }
   }
+
+  override fun compareTo(other: JDBCColumnIndex) = this.value.compareTo(other.value)
 }

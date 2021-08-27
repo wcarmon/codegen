@@ -20,7 +20,7 @@ class PreparedStatementNonNullSetExpression(
   columnIndex: JDBCColumnIndex,
   fieldReadExpression: Expression,
   setterMethod: Name,
-  preparedStatementIdentifierExpression: Expression? = RawExpression("ps"),
+  preparedStatementIdentifierExpression: Expression = RawExpression("ps"),
 ) : Expression {
 
   private val underlying: MethodInvokeExpression

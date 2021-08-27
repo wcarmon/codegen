@@ -46,6 +46,7 @@ public final class ProtoPojoConversionUtils {
             .addAllTags(entity.getTags().stream().map(serde).collect(Collectors.toSet()))
             or use jackson to serialize to json
          -->
+<#--    TODO: use [ProtoFieldWriteExpression]    -->
         .${field.protoBuilderSetter}(${field.java8View.readForProtoExpression("entity.")})
       </#list>
         .build();
@@ -63,6 +64,7 @@ public final class ProtoPojoConversionUtils {
 
     return ChronoBoard.builder()
     <#list entity.sortedFieldsWithPKFirst as field>
+<#--      TODO: use [ProtoFieldReadExpression] -->
         .${field.name.lowerCamel}(${field.java8View.readFromProtoExpression("proto.")})
     </#list>
         .build();

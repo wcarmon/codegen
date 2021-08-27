@@ -26,6 +26,11 @@
     "nullable": {
       "type": "boolean"
     },
+    "positionInId": {
+      "exclusiveMaximum": 8,
+      "minimum": 0,
+      "type": "integer"
+    },
     "precision": {
       "description": "total # significant digits (both sides of decimal point)",
       "exclusiveMaximum": 1000,
