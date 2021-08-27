@@ -109,7 +109,7 @@ private fun buildFieldDeclarationExpressions(
   fields.mapIndexed { index, field ->
 
     val repeatedPrefix =
-      if (field.protobuf.repeated) "repeated "
+      if (field.protobufConfig.repeated) "repeated "
       else ""
 
     "${repeatedPrefix}${effectiveType(field)} ${field.name.lowerSnake} = ${index + firstFieldNumber};"
@@ -120,9 +120,9 @@ private fun buildFieldDeclarationExpressions(
 
 
 private fun effectiveProtoSerde(field: Field): Serde =
-  if (field.protobuf.serde != null) {
+  if (field.protobufConfig.serde != null) {
     // -- User override is highest priority
-    field.protobuf.serde
+    field.protobufConfig.serde
 
   } else if (field.isCollection) {
     defaultSerdeForCollection(field)
@@ -142,8 +142,8 @@ private fun effectiveProtoSerdeForTypeParameters(
     .type
     .typeParameters
     .map {
-      if (field.protobuf.repeatedItemSerde != null) {
-        field.protobuf.repeatedItemSerde
+      if (field.protobufConfig.repeatedItemSerde != null) {
+        field.protobufConfig.repeatedItemSerde
       } else {
         Serde.INLINE
       }
@@ -189,8 +189,8 @@ private fun requiresProtoSerde(field: Field): Boolean =
 
 private fun effectiveType(field: Field): String {
 
-  if (field.protobuf.overrideTypeLiteral.isNotBlank()) {
-    return field.protobuf.overrideTypeLiteral
+  if (field.protobufConfig.overrideTypeLiteral.isNotBlank()) {
+    return field.protobufConfig.overrideTypeLiteral
   }
 
   return protobufTypeLiteral(field.type)

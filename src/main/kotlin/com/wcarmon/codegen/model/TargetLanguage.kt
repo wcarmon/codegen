@@ -28,7 +28,7 @@ enum class TargetLanguage {
   TYPESCRIPT_4,
   ;
 
-  val fieldReadStyle by lazy {
+  val fieldReadMode by lazy {
     if (usesGetters) GETTER
     else DIRECT
   }

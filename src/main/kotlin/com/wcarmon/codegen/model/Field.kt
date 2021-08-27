@@ -9,7 +9,6 @@ import com.wcarmon.codegen.UPDATED_TS_FIELD_NAMES
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.TargetLanguage.JAVA_08
 import com.wcarmon.codegen.model.TargetLanguage.KOTLIN_JVM_1_4
-import com.wcarmon.codegen.model.util.defaultValueLiteralForJVM
 import com.wcarmon.codegen.view.JavaFieldView
 import com.wcarmon.codegen.view.KotlinFieldView
 import com.wcarmon.codegen.view.RDBMSColumnView
@@ -56,13 +55,14 @@ data class Field(
 
   val documentation: Documentation = Documentation.EMPTY,
 
-  val rdbms: RDBMSColumnConfig = RDBMSColumnConfig(),
+  val rdbmsConfig: RDBMSColumnConfig = RDBMSColumnConfig(),
 
-  val jvm: JVMFieldConfig = JVMFieldConfig(),
+  val jvmConfig: JVMFieldConfig = JVMFieldConfig(),
 
-  val protobuf: ProtocolBufferFieldConfig = ProtocolBufferFieldConfig(),
+  val protobufConfig: ProtocolBufferFieldConfig = ProtocolBufferFieldConfig(),
 
-  val validation: FieldValidation? = null,
+  //TODO: replace null with noop validation
+  val validationConfig: FieldValidation? = null,
 ) {
 
   companion object {
@@ -78,13 +78,13 @@ data class Field(
       @JsonProperty("name") name: Name,
       @JsonProperty("nullable") nullable: Boolean = false,
       @JsonProperty("precision") precision: Int? = null,
-      @JsonProperty("protobuf") protobuf: ProtocolBufferFieldConfig? = null,
-      @JsonProperty("rdbms") rdbms: RDBMSColumnConfig? = null,
+      @JsonProperty("protobuf") protobufConfig: ProtocolBufferFieldConfig? = null,
+      @JsonProperty("rdbms") rdbmsConfig: RDBMSColumnConfig? = null,
       @JsonProperty("scale") scale: Int = 0,
       @JsonProperty("signed") signed: Boolean = true,
       @JsonProperty("type") typeLiteral: String = "",
       @JsonProperty("typeParameters") typeParameters: List<String> = listOf(),
-      @JsonProperty("validation") validation: FieldValidation? = null,
+      @JsonProperty("validation") validationConfig: FieldValidation? = null,
     ): Field {
 
       //TODO: missing context
@@ -95,10 +95,10 @@ data class Field(
       return Field(
         defaultValue = defaultValue,
         documentation = documentation,
-        jvm = jvmFieldConfig ?: JVMFieldConfig(),
+        jvmConfig = jvmFieldConfig ?: JVMFieldConfig(),
         name = name,
-        protobuf = protobuf ?: ProtocolBufferFieldConfig(),
-        rdbms = rdbms ?: RDBMSColumnConfig(),
+        protobufConfig = protobufConfig ?: ProtocolBufferFieldConfig(),
+        rdbmsConfig = rdbmsConfig ?: RDBMSColumnConfig(),
         type = LogicalFieldType(
           base = BaseFieldType.parse(typeLiteral),
           enumType = enumType,
@@ -109,14 +109,14 @@ data class Field(
           signed = signed,
           typeParameters = typeParameters,
         ),
-        validation = validation,
+        validationConfig = validationConfig,
       )
     }
   }
 
   init {
 
-    val isPrimaryKeyField = (rdbms.positionInPrimaryKey ?: -1) >= 0
+    val isPrimaryKeyField = (rdbmsConfig.positionInPrimaryKey ?: -1) >= 0
     if (isPrimaryKeyField) {
       require(!type.nullable) {
         "Primary key fields cannot be nullable: $this"
@@ -149,9 +149,6 @@ data class Field(
   }
 
   // -- Language & Framework specific convenience methods
-  val defaultValueLiteralForJVM by lazy {
-    defaultValueLiteralForJVM(this)
-  }
 
   /**
    * Defaults to a reasonable RDBMS equivalent
@@ -159,8 +156,8 @@ data class Field(
    */
   //TODO: is this appropriate for JVM too?
   val effectiveBaseType by lazy {
-    if (rdbms.overrideTypeLiteral.isNotBlank()) {
-      BaseFieldType.parse(rdbms.overrideTypeLiteral)
+    if (rdbmsConfig.overrideTypeLiteral.isNotBlank()) {
+      BaseFieldType.parse(rdbmsConfig.overrideTypeLiteral)
 
     } else {
       type.base

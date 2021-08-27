@@ -1,12 +1,13 @@
 package com.wcarmon.codegen.view
 
 import com.wcarmon.codegen.ast.RawExpression
-import com.wcarmon.codegen.ast.RawStringExpression
 import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.SerdeMode.DESERIALIZE
 import com.wcarmon.codegen.model.SerdeMode.SERIALIZE
 import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.model.util.*
+import com.wcarmon.codegen.util.defaultValueLiteralForJVM
+import com.wcarmon.codegen.util.javaTypeLiteral
 
 /**
  * Java related convenience methods for a [Field]
@@ -22,10 +23,16 @@ data class JavaFieldView(
     }
   }
 
+  val type = javaTypeLiteral(field.type, true)
+
+  val defaultValueLiteralForJVM: String? by lazy {
+    defaultValueLiteralForJVM(field)
+  }
+
   fun equalityExpression(
     identifier0: String = "this",
     identifier1: String = "that",
-  ) = com.wcarmon.codegen.model.util.javaEqualityExpression(
+  ) = com.wcarmon.codegen.util.javaEqualityExpression(
     field.type,
     field.name,
     identifier0,
@@ -37,7 +44,6 @@ data class JavaFieldView(
       .serialize(targetLanguage)
   }
 
-  val type = javaTypeLiteral(field.type, true)
 
   fun readFromProtoExpression(fieldReadPrefix: String): String =
   //TODO: for collections, reading proto fields requires "proto.getFooList()"
@@ -45,7 +51,7 @@ data class JavaFieldView(
     buildSerdeReadExpression(
       field = field,
       fieldReadPrefix = fieldReadPrefix,
-      fieldReadStyle = targetLanguage.fieldReadStyle,
+      fieldReadStyle = targetLanguage.fieldReadMode,
       serdeMode = DESERIALIZE
     ).serialize(targetLanguage)
 
@@ -54,7 +60,7 @@ data class JavaFieldView(
     buildSerdeReadExpression(
       field = field,
       fieldReadPrefix = fieldReadPrefix,
-      fieldReadStyle = targetLanguage.fieldReadStyle,
+      fieldReadStyle = targetLanguage.fieldReadMode,
       serdeMode = SERIALIZE
     ).serialize(targetLanguage)
 

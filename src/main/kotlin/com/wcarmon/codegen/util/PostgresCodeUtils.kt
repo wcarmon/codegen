@@ -20,8 +20,8 @@ private const val CHARS_FOR_NULLABLE_CLAUSE = 9
  */
 fun getPostgresTypeLiteral(field: Field): String {
 
-  if (field.rdbms != null && field.rdbms.overridesType) {
-    return field.rdbms.overrideTypeLiteral
+  if (field.rdbmsConfig != null && field.rdbmsConfig.overridesType) {
+    return field.rdbmsConfig.overrideTypeLiteral
   }
 
   // -- Derive the correct type
@@ -52,7 +52,7 @@ fun getPostgresTypeLiteral(field: Field): String {
     -> "INTEGER"                        // INT4 == NUMERIC(5,0)
 
     INT_BIG -> {
-      requireNotNull(field.rdbms) {
+      requireNotNull(field.rdbmsConfig) {
         "field.rdbms is required: field=$field"
       }
 
@@ -64,7 +64,7 @@ fun getPostgresTypeLiteral(field: Field): String {
     }
 
     FLOAT_BIG -> {
-      requireNotNull(field.rdbms) {
+      requireNotNull(field.rdbmsConfig) {
         "field.rdbms is required: field=$field"
       }
 
@@ -83,15 +83,15 @@ fun getPostgresTypeLiteral(field: Field): String {
     URI,
     USER_DEFINED,
     -> {
-      requireNotNull(field.rdbms) {
+      requireNotNull(field.rdbmsConfig) {
         "field.rdbms is required: field=${field}"
       }
 
-      requireNotNull(field.rdbms.varcharLength) {
+      requireNotNull(field.rdbmsConfig.varcharLength) {
         "field.rdbms.varcharLength (or field.rdbms.overrideTypeLiteral) is required: field=${field}"
       }
 
-      "VARCHAR(${field.rdbms.varcharLength})"
+      "VARCHAR(${field.rdbmsConfig.varcharLength})"
     }
   }
 }
@@ -125,8 +125,8 @@ fun postgresColumnDefinition(field: Field): String {
 
   // -- default clause
   val defaultClause =
-    if (field.rdbms.overrideDefaultValue != null) {
-      "DEFAULT ${field.rdbms.overrideDefaultValue}"
+    if (field.rdbmsConfig.overrideDefaultValue != null) {
+      "DEFAULT ${field.rdbmsConfig.overrideDefaultValue}"
 
     } else if (field.hasDefault) {
       "DEFAULT ${rdbmsDefaultValueLiteral(field)}"

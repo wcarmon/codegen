@@ -48,9 +48,9 @@ fun buildPreparedStatementSetters(
  * @return the most appropriate Serde for JDBC
  */
 private fun effectiveJDBCSerde(field: Field): Serde =
-  if (field.rdbms.serde != null) {
+  if (field.rdbmsConfig.serde != null) {
     // -- User override is highest priority
-    field.rdbms.serde
+    field.rdbmsConfig.serde
 
   } else if (requiresJDBCSerde(field)) {
     // -- Fallback to jvm serializer

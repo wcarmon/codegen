@@ -1,7 +1,6 @@
 package com.wcarmon.codegen.view
 
 import com.wcarmon.codegen.model.Field
-import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.model.util.postgresColumnDefinition
 import com.wcarmon.codegen.model.util.sqliteColumnDefinition
 
@@ -13,7 +12,7 @@ data class RDBMSColumnView(
   private val field: Field,
 ) {
 
-  val isPrimaryKeyField = (field.rdbms.positionInPrimaryKey ?: -1) >= 0
+  val isPrimaryKeyField = (field.rdbmsConfig.positionInPrimaryKey ?: -1) >= 0
 
   /**
    * Works on PostgreSQL, H2, Maria, MySQL, DB2

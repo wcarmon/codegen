@@ -20,7 +20,7 @@ fun commaSeparatedColumns(entity: Entity): String {
     .map { it.name.lowerSnake }
 
   val nonPK = entity.fields
-    .filter { it.rdbms.positionInPrimaryKey == null }
+    .filter { it.rdbmsConfig.positionInPrimaryKey == null }
     .map { it.name.lowerSnake }
     .sorted()
 
@@ -52,7 +52,7 @@ fun commaSeparatedColumnAssignment(fields: List<Field>) =
  * (not a column constraint)
  */
 fun primaryKeyTableConstraint(entity: Entity): String {
-  if (!entity.hasPrimaryKeyFields) {
+  if (!entity.r.hasPrimaryKeyFields) {
     return ""
   }
 
