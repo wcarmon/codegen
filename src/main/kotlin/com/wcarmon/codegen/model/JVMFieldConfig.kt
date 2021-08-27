@@ -9,9 +9,5 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
  */
 @JsonPropertyOrder(alphabetic = true)
 data class JVMFieldConfig(
-  val serde: Serde? = null,
-
-  ) {
-
-  val hasCustomSerde = serde != null
-}
+  val serde: Serde = Serde.INLINE,
+)

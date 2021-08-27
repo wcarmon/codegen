@@ -33,30 +33,7 @@ enum class TargetLanguage {
     else DIRECT
   }
 
-  val usesGetters by lazy {
-    when (this) {
-      C_17,
-      GOLANG_1_7,
-      KOTLIN_JVM_1_4,
-      SQL_DB2,
-      SQL_H2,
-      SQL_MARIA,
-      SQL_MYSQL,
-      SQL_ORACLE,
-      SQL_POSTGRESQL,
-      SQL_SQLITE,
-      TYPESCRIPT_4,
-      -> false
-
-      JAVA_08,
-      JAVA_11,
-      JAVA_17,
-      -> true
-      else -> TODO("does this language use getters?: $this")
-    }
-  }
-
-  val onJVM by lazy {
+  val isJVM by lazy {
     when (this) {
       JAVA_08,
       JAVA_11,
@@ -77,11 +54,33 @@ enum class TargetLanguage {
     }
   }
 
+  val isProtobuf by lazy {
+    when (this) {
+      PROTOCOL_BUFFERS_3 -> true
+      else -> false
+    }
+  }
+
   val isJava by lazy {
     when (this) {
       JAVA_08,
       JAVA_11,
       JAVA_17,
+      -> true
+
+      else -> false
+    }
+  }
+
+  val isSQL by lazy {
+    when (this) {
+      SQL_DB2,
+      SQL_H2,
+      SQL_MARIA,
+      SQL_MYSQL,
+      SQL_ORACLE,
+      SQL_POSTGRESQL,
+      SQL_SQLITE,
       -> true
 
       else -> false
@@ -144,8 +143,11 @@ enum class TargetLanguage {
       }
     }
 
-  val isSQL by lazy {
+  val usesGetters by lazy {
     when (this) {
+      C_17,
+      GOLANG_1_7,
+      KOTLIN_JVM_1_4,
       SQL_DB2,
       SQL_H2,
       SQL_MARIA,
@@ -153,16 +155,14 @@ enum class TargetLanguage {
       SQL_ORACLE,
       SQL_POSTGRESQL,
       SQL_SQLITE,
+      TYPESCRIPT_4,
+      -> false
+
+      JAVA_08,
+      JAVA_11,
+      JAVA_17,
       -> true
-
-      else -> false
-    }
-  }
-
-  val isProtobuf by lazy {
-    when (this) {
-      PROTOCOL_BUFFERS_3 -> true
-      else -> false
+      else -> TODO("does this language use getters?: $this")
     }
   }
 }

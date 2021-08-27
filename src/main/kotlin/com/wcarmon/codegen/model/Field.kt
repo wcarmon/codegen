@@ -55,36 +55,32 @@ data class Field(
 
   val documentation: Documentation = Documentation.EMPTY,
 
-  val rdbmsConfig: RDBMSColumnConfig = RDBMSColumnConfig(),
-
+  // -- Technology specific config
   val jvmConfig: JVMFieldConfig = JVMFieldConfig(),
-
   val protobufConfig: ProtocolBufferFieldConfig = ProtocolBufferFieldConfig(),
-
-  //TODO: replace null with noop validation
-  val validationConfig: FieldValidation? = null,
+  val rdbmsConfig: RDBMSColumnConfig = RDBMSColumnConfig(),
+  val validationConfig: FieldValidation = FieldValidation(),
 ) {
 
   companion object {
 
-    //TODO: simplify so I can use jackson structure directly
     @JvmStatic
     @JsonCreator
     fun parse(
       @JsonProperty("defaultValue") defaultValue: String? = null,
       @JsonProperty("documentation") documentation: Documentation = Documentation.EMPTY,
       @JsonProperty("enumType") enumType: Boolean = false,
-      @JsonProperty("jvm") jvmFieldConfig: JVMFieldConfig? = null,
+      @JsonProperty("jvm") jvmFieldConfig: JVMFieldConfig = JVMFieldConfig(),
       @JsonProperty("name") name: Name,
       @JsonProperty("nullable") nullable: Boolean = false,
       @JsonProperty("precision") precision: Int? = null,
-      @JsonProperty("protobuf") protobufConfig: ProtocolBufferFieldConfig? = null,
-      @JsonProperty("rdbms") rdbmsConfig: RDBMSColumnConfig? = null,
+      @JsonProperty("protobuf") protobufConfig: ProtocolBufferFieldConfig = ProtocolBufferFieldConfig(),
+      @JsonProperty("rdbms") rdbmsConfig: RDBMSColumnConfig = RDBMSColumnConfig(),
       @JsonProperty("scale") scale: Int = 0,
       @JsonProperty("signed") signed: Boolean = true,
       @JsonProperty("type") typeLiteral: String = "",
       @JsonProperty("typeParameters") typeParameters: List<String> = listOf(),
-      @JsonProperty("validation") validationConfig: FieldValidation? = null,
+      @JsonProperty("validation") validationConfig: FieldValidation = FieldValidation(),
     ): Field {
 
       //TODO: missing context
@@ -95,10 +91,10 @@ data class Field(
       return Field(
         defaultValue = defaultValue,
         documentation = documentation,
-        jvmConfig = jvmFieldConfig ?: JVMFieldConfig(),
+        jvmConfig = jvmFieldConfig,
         name = name,
-        protobufConfig = protobufConfig ?: ProtocolBufferFieldConfig(),
-        rdbmsConfig = rdbmsConfig ?: RDBMSColumnConfig(),
+        protobufConfig = protobufConfig,
+        rdbmsConfig = rdbmsConfig,
         type = LogicalFieldType(
           base = BaseFieldType.parse(typeLiteral),
           enumType = enumType,
@@ -166,7 +162,7 @@ data class Field(
 
   val isCollection: Boolean = effectiveBaseType.isCollection
 
-  //TODO: move to jackson extensions file
+  //TODO: move to jackson or jvm extensions file
   val jacksonTypeRef by lazy {
     require(type.isParameterized) {
       "type references are only required for parameterized types"

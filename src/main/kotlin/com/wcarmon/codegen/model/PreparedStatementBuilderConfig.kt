@@ -28,5 +28,5 @@ data class PreparedStatementBuilderConfig(
    */
   val allowFieldNonNullAssertion: Boolean = true,
 
-  val preparedStatementIdentifierExpression: Expression? = RawExpression("ps"),
+  val preparedStatementIdentifierExpression: Expression = RawExpression("ps"),
 )

@@ -93,7 +93,6 @@ data class Entity(
     .sortedBy { it.name.lowerCamel }
 
   val fieldsWithValidation = fields
-    .filter { it.validationConfig != null }
     .sortedBy { it.name.lowerCamel }
 
   val requiresObjectWriter =

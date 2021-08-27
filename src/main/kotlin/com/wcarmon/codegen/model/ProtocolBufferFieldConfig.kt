@@ -14,21 +14,16 @@ data class ProtocolBufferFieldConfig(
    */
   val overrideTypeLiteral: String = "",
 
-  val serde: Serde? = null,
+  val serde: Serde = Serde.INLINE,
 
   val repeated: Boolean = false,
 
-  val repeatedItemSerde: Serde? = null,
+  /**
+   * Only used for repeated fields
+   */
+  val repeatedItemSerde: Serde = Serde.INLINE,
 
 //TODO: support oneOf
 
 //TODO: support Maps: https://developers.google.com/protocol-buffers/docs/proto3#maps
-) {
-  init {
-    if (repeatedItemSerde != null) {
-      require(repeated) {
-        "repeatedItemSerde is only for repeated fields (collections)"
-      }
-    }
-  }
-}
+)

@@ -23,8 +23,7 @@ data class RDBMSColumnConfig(
 
   val varcharLength: Int? = null,
 
-  //TODO: should I default to INLINE?
-  val serde: Serde? = null,
+  val serde: Serde = Serde.INLINE,
 
   /**
    * Replace the auto-derived type with this literal
@@ -63,8 +62,6 @@ data class RDBMSColumnConfig(
 
     //TODO: warn in situations where varcharLength will be ignored
   }
-
-  val hasCustomSerde = serde != null
 
   val overridesType = overrideTypeLiteral.isNotBlank()
 }

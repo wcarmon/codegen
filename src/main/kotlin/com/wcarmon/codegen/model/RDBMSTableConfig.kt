@@ -14,5 +14,7 @@ data class RDBMSTableConfig(
     require(schema == schema.trim()) {
       "schema must be trimmed: $schema"
     }
+
+    //TODO: enforce any sensible schema restrictions (eg. charset)
   }
 }
