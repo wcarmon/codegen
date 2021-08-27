@@ -2,11 +2,14 @@ package com.wcarmon.codegen.model
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import com.wcarmon.codegen.model.FieldReadStyle.DIRECT
+import com.wcarmon.codegen.ast.FieldReadMode
+import com.wcarmon.codegen.ast.FieldReadMode.DIRECT
+import com.wcarmon.codegen.ast.RawExpression
 import com.wcarmon.codegen.model.TargetLanguage.*
-import com.wcarmon.codegen.model.ast.RawStringExpression
 import com.wcarmon.codegen.model.util.*
-import org.atteo.evo.inflector.English
+import com.wcarmon.codegen.view.JavaEntityView
+import com.wcarmon.codegen.view.KotlinEntityView
+import com.wcarmon.codegen.view.RDBMSTableView
 
 
 /**
@@ -46,7 +49,7 @@ data class Entity(
 
   val fields: List<Field>,
 
-  val rdbms: RDBMSTable? = null,
+  val rdbms: RDBMSTableConfig = RDBMSTableConfig(),
 
   // TODO: list: pagination
   // TODO: list: order by fieldX, asc|desc
@@ -63,9 +66,8 @@ data class Entity(
 
     // -- Validate PK fields
     val pkPositions = fields
-      .filter { it.rdbms != null }
-      .filter { it.rdbms!!.positionInPrimaryKey != null }
-      .map { it.rdbms!!.positionInPrimaryKey!! }
+      .filter { it.rdbms.positionInPrimaryKey != null }
+      .map { it.rdbms.positionInPrimaryKey!! }
 
     require(pkPositions.size == pkPositions.toSet().size) {
       "All PK field positions must be distinct"
@@ -77,29 +79,21 @@ data class Entity(
     }
   }
 
-  val primaryKeyFields = fields
-    .filter { it.rdbms != null }
-    .filter { it.rdbms!!.positionInPrimaryKey != null }
-    .sortedBy { it.rdbms!!.positionInPrimaryKey!! }
+  val java8View by lazy {
+    JavaEntityView(this, JAVA_08)
+  }
 
-  val nonPrimaryKeyFields = fields
-    .filter { it.rdbms?.positionInPrimaryKey == null }
-    .sortedBy { it.name.lowerCamel }
+  val kotlinView by lazy {
+    KotlinEntityView(this, KOTLIN_JVM_1_4)
+  }
 
+  val sqlView by lazy {
+    RDBMSTableView(this)
+  }
 
   val collectionFields = fields
     .filter { it.effectiveBaseType.isCollection }
     .sortedBy { it.name.lowerCamel }
-
-  val commaSeparatedColumns = commaSeparatedColumns(this)
-
-  val commentForPKFields =
-    if (primaryKeyFields.isEmpty()) ""
-    else "PK " + English.plural("field", primaryKeyFields.size)
-
-  val dbSchemaPrefix =
-    if (rdbms?.schema?.isBlank() != false) ""
-    else "${rdbms.schema}."
 
   val fieldsWithValidation = fields
     .filter { it.validation != null }
@@ -111,71 +105,17 @@ data class Entity(
   val requiresObjectReader =
     fields.any { it.effectiveBaseType.isCollection }
 
-  val hasNonPrimaryKeyFields = nonPrimaryKeyFields.isNotEmpty()
-
-  val hasPrimaryKeyFields = primaryKeyFields.isNotEmpty()
-
-  val javaImportsForFields: Set<String> = javaImportsForFields(this)
-
-  val kotlinImportsForFields: Set<String> = getKotlinImportsForFields(this)
-
-  val pkWhereClause = commaSeparatedColumnAssignment(primaryKeyFields)
-
-  val primaryKeyTableConstraint = primaryKeyTableConstraint(this)
-
-  val questionMarkStringForInsert = (1..fields.size).joinToString { "?" }
-
   val sortedFields = fields.sortedBy { it.name.lowerCamel }
 
   val sortedFieldsWithPKFirst =
     primaryKeyFields + nonPrimaryKeyFields
 
+  //TODO: make an SQLExpression?
   val updateSetClause = commaSeparatedColumnAssignment(nonPrimaryKeyFields)
 
-  fun javaMethodArgsForPKFields(qualified: Boolean) =
-    commaSeparatedJavaMethodArgs(primaryKeyFields, qualified)
 
-  fun kotlinMethodArgsForPKFields(qualified: Boolean) =
-    kotlinMethodArgsForFields(primaryKeyFields, qualified)
-
-  val javaPrimaryKeyPreconditionStatements =
-    buildJavaPreconditionStatements(primaryKeyFields)
-      .joinToString("\n\t")
-
-  val commaSeparatedPKIdentifiers by lazy {
+  val commaSeparatedPrimaryKeyIdentifiers by lazy {
     primaryKeyFields.joinToString(", ") { it.name.lowerCamel }
-  }
-
-  val kotlinInsertPreparedStatementSetterStatements by lazy {
-    buildInsertPreparedStatementSetterStatements(KOTLIN_JVM_1_4)
-  }
-
-  val javaInsertPreparedStatementSetterStatements by lazy {
-    buildInsertPreparedStatementSetterStatements(JAVA_08)
-  }
-
-  val kotlinUpdatePreparedStatementSetterStatements by lazy {
-    buildUpdatePreparedStatementSetterStatements(KOTLIN_JVM_1_4)
-  }
-
-  val javaUpdatePreparedStatementSetterStatements by lazy {
-    buildUpdatePreparedStatementSetterStatements(JAVA_08)
-  }
-
-  fun javaUpdateFieldPreparedStatementSetterStatements(field: Field) =
-    buildUpdateFieldPreparedStatementSetterStatements(field, JAVA_08)
-
-  fun kotlinUpdateFieldPreparedStatementSetterStatements(field: Field) =
-    buildUpdateFieldPreparedStatementSetterStatements(field, KOTLIN_JVM_1_4)
-
-  val kotlinPreparedStatementSetterStatementsForPK by lazy {
-    buildPreparedStatementSetterStatementsForPK(KOTLIN_JVM_1_4)
-  }
-
-  val javaPreparedStatementSetterStatementsForPK by lazy {
-    buildPreparedStatementSetterStatementsForPK(
-      JAVA_08,
-      DIRECT)
   }
 
   val jdbcSerializedPKFields by lazy {
@@ -241,7 +181,7 @@ data class Entity(
       firstIndex = nonPrimaryKeyFields.size + 1,
     )
 
-    val separator = RawStringExpression("\n\t\t// Primary key field(s)")
+    val separator = RawExpression("\n\t\t// Primary key field(s)")
 
     return (nonPk + separator + pk)
       .map { it.serialize(targetLanguage) }
@@ -277,7 +217,7 @@ data class Entity(
 
   private fun buildPreparedStatementSetterStatementsForPK(
     targetLanguage: TargetLanguage,
-    fieldReadStyle: FieldReadStyle = targetLanguage.fieldReadStyle,
+    fieldReadStyle: FieldReadMode = targetLanguage.fieldReadStyle,
   ) =
     buildPreparedStatementSetters(
       cfg = PreparedStatementBuilderConfig(

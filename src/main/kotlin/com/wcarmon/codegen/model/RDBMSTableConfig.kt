@@ -5,7 +5,7 @@ package com.wcarmon.codegen.model
  *
  * See src/main/resources/json-schema/rdbms-table.schema.json
  */
-data class RDBMSTable(
+data class RDBMSTableConfig(
   val schema: String = "",
   // TODO: unique index & order
 ) {

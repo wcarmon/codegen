@@ -1,7 +1,7 @@
 package com.wcarmon.codegen.model
 
-import com.wcarmon.codegen.model.FieldReadMode.DIRECT
-import com.wcarmon.codegen.model.FieldReadMode.GETTER
+import com.wcarmon.codegen.ast.FieldReadMode.DIRECT
+import com.wcarmon.codegen.ast.FieldReadMode.GETTER
 
 enum class TargetLanguage {
   C_17,
@@ -17,7 +17,13 @@ enum class TargetLanguage {
   PROTOCOL_BUFFERS_3,
   PYTHON_3,
   RUST_1_54,
-  SQL,
+  SQL_DB2,
+  SQL_H2,
+  SQL_MARIA,
+  SQL_MYSQL,
+  SQL_ORACLE,
+  SQL_POSTGRESQL,
+  SQL_SQLITE,
   SWIFT_5,
   TYPESCRIPT_4,
   ;
@@ -32,7 +38,13 @@ enum class TargetLanguage {
       C_17,
       GOLANG_1_7,
       KOTLIN_JVM_1_4,
-      SQL,
+      SQL_DB2,
+      SQL_H2,
+      SQL_MARIA,
+      SQL_MYSQL,
+      SQL_ORACLE,
+      SQL_POSTGRESQL,
+      SQL_SQLITE,
       TYPESCRIPT_4,
       -> false
 
@@ -96,7 +108,16 @@ enum class TargetLanguage {
       -> false
 
       RUST_1_54 -> TODO()
-      SQL -> TODO()
+
+      SQL_DB2,
+      SQL_H2,
+      SQL_MARIA,
+      SQL_MYSQL,
+      SQL_ORACLE,
+      SQL_POSTGRESQL,
+      SQL_SQLITE,
+      -> TODO()
+
       SWIFT_5 -> TODO()
     }
   }
@@ -122,4 +143,26 @@ enum class TargetLanguage {
         else -> ";"
       }
     }
+
+  val isSQL by lazy {
+    when (this) {
+      SQL_DB2,
+      SQL_H2,
+      SQL_MARIA,
+      SQL_MYSQL,
+      SQL_ORACLE,
+      SQL_POSTGRESQL,
+      SQL_SQLITE,
+      -> true
+
+      else -> false
+    }
+  }
+
+  val isProtobuf by lazy {
+    when (this) {
+      PROTOCOL_BUFFERS_3 -> true
+      else -> false
+    }
+  }
 }

@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
  * See src/main/resources/json-schema/jvm-field.schema.json
  */
 @JsonPropertyOrder(alphabetic = true)
-data class JVMField(
+data class JVMFieldConfig(
   val serde: Serde? = null,
 
   ) {

@@ -17,7 +17,7 @@ data class Serde(
    *
    * No statement terminator required (no trailing semicolon)
    */
-  val deserializeTemplate: ExpressionTemplate,
+  val deserializeTemplate: StringFormatTemplate,
 
   /**
    * instance method or static method/function
@@ -28,7 +28,7 @@ data class Serde(
    *
    * No statement terminator required (no trailing semicolon)
    */
-  val serializeTemplate: ExpressionTemplate,
+  val serializeTemplate: StringFormatTemplate,
 ) {
 
   companion object {
@@ -36,11 +36,11 @@ data class Serde(
     /** Direct serialization & deserialization (no wrapper/parser methods)*/
     @JvmStatic
     val INLINE: Serde = Serde(
-      ExpressionTemplate.INLINE,
-      ExpressionTemplate.INLINE)
+      StringFormatTemplate.INLINE,
+      StringFormatTemplate.INLINE)
   }
 
-  fun forMode(mode: SerdeMode): ExpressionTemplate = when (mode) {
+  fun forMode(mode: SerdeMode) = when (mode) {
     SERIALIZE -> serializeTemplate
     DESERIALIZE -> deserializeTemplate
   }

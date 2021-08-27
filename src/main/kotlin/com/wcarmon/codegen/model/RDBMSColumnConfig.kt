@@ -10,7 +10,7 @@ private const val MAX_TYPE_LITERAL_LENGTH = 64
  * See src/main/resources/json-schema/rdbms-column.schema.json
  */
 @JsonPropertyOrder(alphabetic = true)
-data class RDBMSColumn(
+data class RDBMSColumnConfig(
   val autoIncrement: Boolean = false,
 
   /**

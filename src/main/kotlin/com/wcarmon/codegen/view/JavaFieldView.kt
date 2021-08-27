@@ -1,10 +1,11 @@
-package com.wcarmon.codegen.model.view
+package com.wcarmon.codegen.view
 
+import com.wcarmon.codegen.ast.RawExpression
+import com.wcarmon.codegen.ast.RawStringExpression
 import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.SerdeMode.DESERIALIZE
 import com.wcarmon.codegen.model.SerdeMode.SERIALIZE
 import com.wcarmon.codegen.model.TargetLanguage
-import com.wcarmon.codegen.model.ast.RawStringExpression
 import com.wcarmon.codegen.model.util.*
 
 /**
@@ -71,7 +72,7 @@ data class JavaFieldView(
   val protoSerializeExpressionForTypeParameters by lazy {
     protoReadExpressionForTypeParameters(
       field,
-      listOf(RawStringExpression("item")),
+      listOf(RawExpression("item")),
       SERIALIZE)
       .map {
         it.serialize(targetLanguage)
@@ -81,7 +82,7 @@ data class JavaFieldView(
   val protoDeserializeExpressionForTypeParameters by lazy {
     protoReadExpressionForTypeParameters(
       field,
-      listOf(RawStringExpression("item")),
+      listOf(RawExpression("item")),
       DESERIALIZE)
       .map {
         it.serialize(targetLanguage)
@@ -91,3 +92,5 @@ data class JavaFieldView(
   // GOTCHA: Only invoke on collection types
   fun newCollectionExpression() = newJavaCollectionExpression(field.type)
 }
+
+

@@ -1,25 +1,11 @@
 @file:JvmName("ProtoBufFieldUtils")
 
-package com.wcarmon.codegen.model.util
+package com.wcarmon.codegen.util
 
+import com.wcarmon.codegen.ast.*
 import com.wcarmon.codegen.model.*
 import com.wcarmon.codegen.model.BaseFieldType.*
-import com.wcarmon.codegen.model.ast.*
-import freemarker.template.DefaultListAdapter
-import freemarker.template.TemplateMethodModelEx
 
-/**
- * Freemarker method
- */
-val DISTINCT_PROTO_COLLECTION_FIELDS_METHOD = object : TemplateMethodModelEx {
-
-  @Suppress("Unchecked_cast")
-  override fun exec(arguments: MutableList<Any?>): Any {
-    val listAdapter = arguments[0] as DefaultListAdapter
-    val entities = listAdapter.wrappedObject as Collection<Entity>
-    return getDistinctProtoCollectionFields(entities)
-  }
-}
 
 fun buildProtoBufMessageFieldDeclarations(
   pkFields: Collection<Field>,
@@ -28,12 +14,12 @@ fun buildProtoBufMessageFieldDeclarations(
 
   val output = mutableListOf<Expression>()
 
-  output += RawStringExpression("// -- PK field(s)")
+  output += RawExpression("// -- PK field(s)")
 
   output += buildFieldDeclarationExpressions(pkFields, 1)
 
-  output += RawStringExpression("")
-  output += RawStringExpression("// -- Other fields")
+  output += EmptyExpression
+  output += RawExpression("// -- Other fields")
 
   output += buildFieldDeclarationExpressions(
     nonPKFields, 1 + pkFields.size)
@@ -46,10 +32,10 @@ fun buildSerdeReadExpression(
 
   /** eg. "entity." or "proto." */
   fieldReadPrefix: String = "",
-  fieldReadStyle: FieldReadStyle,
+  fieldReadStyle: FieldReadMode,
   serdeMode: SerdeMode,
 ) =
-  SerdeReadExpression.forSerde(
+  SerdeWrapExpression.forSerde(
     fieldReadExpression = FieldReadExpression(
       fieldName = field.name,
       fieldReadPrefix = fieldReadPrefix,
@@ -60,22 +46,27 @@ fun buildSerdeReadExpression(
   )
 
 //TODO: document me
-fun protoBuilderSetter(field: Field): MethodName {
+fun protoBuilderSetter(field: Field): Name =
   if (field.isCollection) {
-    return MethodName("addAll${field.name.upperCamel}")
+    "addAll"
+  } else {
+    "set"
   }
+    .let { prefix ->
+      Name("$prefix${field.name.upperCamel}")
+    }
 
-  return MethodName("set${field.name.upperCamel}")
-}
 
 //TODO: document me
-fun protoBuilderGetter(field: Field): MethodName {
+fun protoBuilderGetter(field: Field): Name =
   if (field.isCollection) {
-    return MethodName("getAll${field.name.upperCamel}")
+    "getAll"
+  } else {
+    "get"
   }
-
-  return MethodName("get${field.name.upperCamel}")
-}
+    .let { prefix ->
+      Name("$prefix${field.name.upperCamel}")
+    }
 
 /**
  * Useful for Collections & other Generic types
@@ -86,14 +77,15 @@ fun protoBuilderGetter(field: Field): MethodName {
  *
  * @return one SerdeReadExpression for each generic/type-param
  */
+//TODO: make (or reuse) an expression type
 fun protoReadExpressionForTypeParameters(
   field: Field,
   fieldReadExpressions: List<Expression>,
   serdeMode: SerdeMode,
-): List<SerdeReadExpression> =
+): List<Expression> =
   effectiveProtoSerdeForTypeParameters(field)
     .mapIndexed { index, serdeForTypeParam ->
-      SerdeReadExpression(
+      SerdeWrapExpression(
         fieldReadExpression = fieldReadExpressions[index],
         serdeTemplate = serdeForTypeParam.forMode(serdeMode),
       )
@@ -123,7 +115,7 @@ private fun buildFieldDeclarationExpressions(
     "${repeatedPrefix}${effectiveType(field)} ${field.name.lowerSnake} = ${index + firstFieldNumber};"
 
   }.map {
-    RawStringExpression(it)
+    RawExpression(it)
   }
 
 
@@ -145,16 +137,17 @@ private fun effectiveProtoSerde(field: Field): Serde =
 
 private fun effectiveProtoSerdeForTypeParameters(
   field: Field,
-): List<Serde> = field
-  .type
-  .typeParameters
-  .map {
-    if (field.protobuf.repeatedItemSerde != null) {
-      field.protobuf.repeatedItemSerde
-    } else {
-      Serde.INLINE
+): List<Serde> =
+  field
+    .type
+    .typeParameters
+    .map {
+      if (field.protobuf.repeatedItemSerde != null) {
+        field.protobuf.repeatedItemSerde
+      } else {
+        Serde.INLINE
+      }
     }
-  }
 
 
 /**
@@ -164,18 +157,18 @@ private fun defaultSerdeForCollection(field: Field): Serde =
   when (field.effectiveBaseType) {
     LIST -> Serde(
       // List<String> -> List<Entity>
-      deserializeTemplate = ExpressionTemplate("stringsTo${field.name.upperCamel}List(%s)"),
+      deserializeTemplate = StringFormatTemplate("stringsTo${field.name.upperCamel}List(%s)"),
 
       // Collection<Entity> -> Collection<String>
-      serializeTemplate = ExpressionTemplate("toStrings(%s)"),
+      serializeTemplate = StringFormatTemplate("toStrings(%s)"),
     )
 
     SET -> Serde(
       // List<String> -> Set<Entity>
-      deserializeTemplate = ExpressionTemplate("stringsTo${field.name.upperCamel}Set(%s)"),
+      deserializeTemplate = StringFormatTemplate("stringsTo${field.name.upperCamel}Set(%s)"),
 
       // Collection<Entity> -> Collection<String>
-      serializeTemplate = ExpressionTemplate("toStrings(%s)"),
+      serializeTemplate = StringFormatTemplate("toStrings(%s)"),
     )
 
     ARRAY -> TODO("handle default serde for Array")
@@ -211,7 +204,7 @@ private fun protobufTypeLiteral(
 ): String = when (type.base) {
 
   BOOLEAN -> "bool"
-//  CHAR -> TODO()
+//  CHAR -> TODO()  // probably int32
 
   DURATION,
   MONTH_DAY,

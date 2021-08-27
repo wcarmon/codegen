@@ -1,4 +1,4 @@
-package com.wcarmon.codegen.model.ast
+package com.wcarmon.codegen.model
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonValue

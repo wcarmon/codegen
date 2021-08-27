@@ -9,8 +9,10 @@ import com.wcarmon.codegen.UPDATED_TS_FIELD_NAMES
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.TargetLanguage.JAVA_08
 import com.wcarmon.codegen.model.TargetLanguage.KOTLIN_JVM_1_4
-import com.wcarmon.codegen.model.util.*
-import com.wcarmon.codegen.model.view.JavaFieldView
+import com.wcarmon.codegen.model.util.defaultValueLiteralForJVM
+import com.wcarmon.codegen.view.JavaFieldView
+import com.wcarmon.codegen.view.KotlinFieldView
+import com.wcarmon.codegen.view.RDBMSColumnView
 import kotlin.text.RegexOption.IGNORE_CASE
 
 /**
@@ -54,9 +56,9 @@ data class Field(
 
   val documentation: Documentation = Documentation.EMPTY,
 
-  val rdbms: RDBMSColumn? = null,
+  val rdbms: RDBMSColumnConfig = RDBMSColumnConfig(),
 
-  val jvm: JVMField = JVMField(),
+  val jvm: JVMFieldConfig = JVMFieldConfig(),
 
   val protobuf: ProtocolBufferFieldConfig = ProtocolBufferFieldConfig(),
 
@@ -72,12 +74,12 @@ data class Field(
       @JsonProperty("defaultValue") defaultValue: String? = null,
       @JsonProperty("documentation") documentation: Documentation = Documentation.EMPTY,
       @JsonProperty("enumType") enumType: Boolean = false,
-      @JsonProperty("jvm") jvmField: JVMField? = null,
+      @JsonProperty("jvm") jvmFieldConfig: JVMFieldConfig? = null,
       @JsonProperty("name") name: Name,
       @JsonProperty("nullable") nullable: Boolean = false,
       @JsonProperty("precision") precision: Int? = null,
       @JsonProperty("protobuf") protobuf: ProtocolBufferFieldConfig? = null,
-      @JsonProperty("rdbms") rdbms: RDBMSColumn? = null,
+      @JsonProperty("rdbms") rdbms: RDBMSColumnConfig? = null,
       @JsonProperty("scale") scale: Int = 0,
       @JsonProperty("signed") signed: Boolean = true,
       @JsonProperty("type") typeLiteral: String = "",
@@ -93,10 +95,10 @@ data class Field(
       return Field(
         defaultValue = defaultValue,
         documentation = documentation,
-        jvm = jvmField ?: JVMField(),
+        jvm = jvmFieldConfig ?: JVMFieldConfig(),
         name = name,
         protobuf = protobuf ?: ProtocolBufferFieldConfig(),
-        rdbms = rdbms,
+        rdbms = rdbms ?: RDBMSColumnConfig(),
         type = LogicalFieldType(
           base = BaseFieldType.parse(typeLiteral),
           enumType = enumType,
@@ -114,7 +116,7 @@ data class Field(
 
   init {
 
-    val isPrimaryKeyField = (rdbms?.positionInPrimaryKey ?: -1) >= 0
+    val isPrimaryKeyField = (rdbms.positionInPrimaryKey ?: -1) >= 0
     if (isPrimaryKeyField) {
       require(!type.nullable) {
         "Primary key fields cannot be nullable: $this"
@@ -128,9 +130,13 @@ data class Field(
     JavaFieldView(this, JAVA_08)
   }
 
-  //TODO: move all the kotlin fields to "this.kotlinView"
+  val kotlinView by lazy {
+    KotlinFieldView(this, KOTLIN_JVM_1_4)
+  }
 
-  //TODO: inline many of these after moving the logic out of templates
+  val sqlView by lazy {
+    RDBMSColumnView(this)
+  }
 
   val hasDefault = defaultValue != null
 
@@ -142,19 +148,18 @@ data class Field(
     defaultValue != null && regex.matches(defaultValue)
   }
 
-  // -- Language & Framework specific convenience methods (for velocity)
+  // -- Language & Framework specific convenience methods
   val defaultValueLiteralForJVM by lazy {
     defaultValueLiteralForJVM(this)
   }
 
   /**
    * Defaults to a reasonable RDBMS equivalent
-   * Allows override via [RDBMSColumn.overrideTypeLiteral]
+   * Allows override via [RDBMSColumnConfig.overrideTypeLiteral]
    */
+  //TODO: is this appropriate for JVM too?
   val effectiveBaseType by lazy {
-    if (rdbms != null
-      && rdbms.overrideTypeLiteral.isNotBlank()
-    ) {
+    if (rdbms.overrideTypeLiteral.isNotBlank()) {
       BaseFieldType.parse(rdbms.overrideTypeLiteral)
 
     } else {
@@ -162,14 +167,7 @@ data class Field(
     }
   }
 
-  //TODO: test this on types that are already unqualified
-  val unqualifiedKotlinType = getKotlinTypeLiteral(type, false)
-
-  val kotlinType = getKotlinTypeLiteral(type)
-
   val isCollection: Boolean = effectiveBaseType.isCollection
-
-  val isPrimaryKeyField = (rdbms?.positionInPrimaryKey ?: -1) >= 0
 
   //TODO: move to jackson extensions file
   val jacksonTypeRef by lazy {
@@ -184,13 +182,6 @@ data class Field(
     }
   }
 
-  //TODO: move to protobufView
-  val protoBuilderSetter = protoBuilderSetter(this).value
-
-  val postgresqlColumnDefinition = postgresColumnDefinition(this)
-
-  val sqliteColumnDefinition = sqliteColumnDefinition(this)
-
   val shouldQuoteInString = when (effectiveBaseType) {
     STRING -> true
     else -> false
@@ -198,13 +189,8 @@ data class Field(
 
   val usesNumericValidation = effectiveBaseType.isNumeric
 
-  //TODO: move to LogicalFieldType
   val usesStringValidation = effectiveBaseType == STRING
 
-  val kotlinResultSetGetterExpression by lazy {
-    buildResultSetGetterExpression(this)
-      .serialize(KOTLIN_JVM_1_4)
-  }
 
   val isCreatedTimestamp =
     effectiveBaseType.isTemporal &&
