@@ -15,7 +15,7 @@ ${request.java8View.serializeImports(
 @JsonDeserialize(builder = ${entity.name.upperCamel}.${entity.name.upperCamel}Builder.class)
 public final class ${entity.name.upperCamel} {
 
-  ${entity.java8View.fieldDeclarations}
+${entity.java8View.fieldDeclarations}
 
   private ${entity.name.upperCamel}( ${entity.name.upperCamel}Builder builder ) {
     //TODO: Validation here
@@ -35,15 +35,16 @@ public final class ${entity.name.upperCamel} {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
+<#--  TODO: replace with [EqualityTestExpression]  -->
     ${entity.name.upperCamel} that = (${entity.name.upperCamel}) o;
     <#list entity.sortedFields as field>
       <#if field?is_first>
-      return ${field.java8View.equalityExpression("this", "that")}
+      return ${field.java8View.equalityExpression("this.${field.name.lowerCamel}", "that.${field.name.lowerCamel}")}
       <#elseif field?is_last>
-        && ${field.java8View.equalityExpression("this", "that")};
+        && ${field.java8View.equalityExpression("this.${field.name.lowerCamel}", "that.${field.name.lowerCamel}")};
 <#--      TODO: handle arrays:  Arrays.equals-->
       <#else>
-        && ${field.java8View.equalityExpression("this", "that")}
+        && ${field.java8View.equalityExpression("this.${field.name.lowerCamel}", "that.${field.name.lowerCamel}")}
       </#if>
     </#list>
   }

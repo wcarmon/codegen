@@ -57,7 +57,7 @@ class Java8EntityView(
           type = field.type,
           visibilityModifier = VisibilityModifier.PRIVATE,
 //      defaultValue = TODO()  TODO: fix this
-        ).render(targetLanguage, true)
+        ).render(targetLanguage, true, "  ")
       }
       .joinToString("\n")
   }

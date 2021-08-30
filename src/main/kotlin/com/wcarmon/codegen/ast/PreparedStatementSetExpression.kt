@@ -41,7 +41,7 @@ data class PreparedStatementSetExpression(
   private val conditionalExpression: ConditionalExpression =
     ConditionalExpression(
       condition = NullComparisonExpression(
-        compareTo = fieldReadExpression,
+        compareToMe = fieldReadExpression,
       ),
       expressionForFalse = nonNullExpression,
       expressionForTrue = nullExpression,
