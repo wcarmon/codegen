@@ -37,6 +37,7 @@ data class FieldReadExpression(
   override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
+    lineIndentation: String,
   ) =
     getFieldReadPrefix(targetLanguage) +
         when (getFieldReadMode(targetLanguage)) {

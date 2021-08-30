@@ -9,32 +9,45 @@ import com.wcarmon.codegen.model.TargetLanguage.*
  *  nil == x
  */
 data class NullComparisonExpression(
-  private val compareTo: Expression,
+  private val compareToMe: Expression,
 ) : Expression {
 
   //NOTE: termination not supported
   override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
+    lineIndentation: String,
   ) =
     when (targetLanguage) {
       CPP_14,
       CPP_17,
       CPP_20,
-      -> "nullptr == " + compareTo.render(targetLanguage, false)
+      -> "nullptr == " + compareToMe.render(
+        targetLanguage,
+        false,
+        lineIndentation)
 
       C_17,
-      -> "NULL == " + compareTo.render(targetLanguage, false)
+      -> "NULL == " + compareToMe.render(
+        targetLanguage,
+        false,
+        lineIndentation)
 
       GOLANG_1_7,
-      -> "nil == " + compareTo.render(targetLanguage, false)
+      -> "nil == " + compareToMe.render(
+        targetLanguage,
+        false,
+        lineIndentation)
 
       DART_2,
       JAVA_08,
       JAVA_11,
       JAVA_17,
       KOTLIN_JVM_1_4,
-      -> "null == " + compareTo.render(targetLanguage, false)
+      -> "null == " + compareToMe.render(
+        targetLanguage,
+        false,
+        lineIndentation)
 
       PROTOCOL_BUFFERS_3 -> TODO()
       PYTHON_3 -> TODO()  // foo is None

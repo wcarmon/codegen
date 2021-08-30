@@ -23,5 +23,6 @@ data class RawExpression(
   override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
+    lineIndentation: String,
   ) = value
 }

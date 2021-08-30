@@ -9,12 +9,12 @@ object NullLiteralExpression : Expression {
   override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
-  ): String {
-
-    return when (targetLanguage) {
-      GOLANG_1_7 -> "nil"
-      PYTHON_3 -> "None"
-      else -> "null"
-    } + targetLanguage.statementTerminatorLiteral(terminate)
-  }
+    lineIndentation: String,
+  ) = lineIndentation +
+      when (targetLanguage) {
+        GOLANG_1_7 -> "nil"
+        PYTHON_3 -> "None"
+        else -> "null"
+      } +
+      targetLanguage.statementTerminatorLiteral(terminate)
 }

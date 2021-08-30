@@ -17,8 +17,10 @@ data class WrapWithSerdeExpression(
       wrapperTemplate = serde.forMode(serdeMode)
     )
 
+  //TODO: should I use lineIndentation?
   override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
+    lineIndentation: String,
   ) = wrappedExpression.render(targetLanguage, terminate)
 }

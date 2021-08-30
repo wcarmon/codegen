@@ -27,9 +27,12 @@ data class ProtoFieldWriteExpression(
   override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
-  ): String {
-    val setterName = protoBuilderSetter(field)
-    val suffix = targetLanguage.statementTerminatorLiteral(terminate)
-    return "${setterName}(${sourceReadExpression.render(targetLanguage, false)})${suffix}"
-  }
+    lineIndentation: String,
+  ) =
+    lineIndentation +
+        protoBuilderSetter(field) +
+        "(" +
+        sourceReadExpression.render(targetLanguage, false, "") +
+        ")" +
+        targetLanguage.statementTerminatorLiteral(terminate)
 }

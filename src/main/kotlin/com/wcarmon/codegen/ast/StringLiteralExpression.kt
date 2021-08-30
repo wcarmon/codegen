@@ -12,6 +12,7 @@ data class StringLiteralExpression(
   override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
+    lineIndentation: String,
   ) =
     quoteType.wrap(value) +
         targetLanguage.statementTerminatorLiteral(terminate)

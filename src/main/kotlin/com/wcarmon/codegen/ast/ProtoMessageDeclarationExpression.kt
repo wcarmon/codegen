@@ -31,6 +31,7 @@ data class ProtoMessageDeclarationExpression(
   override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
+    lineIndentation: String,
   ): String {
     check(targetLanguage.isProtobuf)
 
@@ -42,6 +43,8 @@ data class ProtoMessageDeclarationExpression(
     ${renderEnums(targetLanguage)}  
     |}
     """.trimMargin()
+
+    //TODO: prefix every lines with lineIndentation
   }
 
   private fun renderFields(targetLanguage: TargetLanguage): String =

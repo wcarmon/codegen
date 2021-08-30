@@ -1,7 +1,5 @@
 package com.wcarmon.codegen.ast
 
-import com.wcarmon.codegen.model.Documentation
-import com.wcarmon.codegen.model.Documentation.Companion.EMPTY
 import com.wcarmon.codegen.model.LogicalFieldType
 import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.model.TargetLanguage.*
@@ -10,7 +8,7 @@ import com.wcarmon.codegen.model.TargetLanguage.*
  * Signature for a method/function
  */
 data class MethodHeaderExpression(
-  private val documentation: Documentation = EMPTY,
+  private val documentation: DocumentationExpression = DocumentationExpression.EMPTY,
 
   private val finalityModifier: FinalityModifier = FinalityModifier.NON_FINAL,
 
@@ -31,7 +29,11 @@ data class MethodHeaderExpression(
   //TODO: List: Generic parameter(s)  eg. "<T: Bacon, S>"
 ) : Expression {
 
-  override fun render(targetLanguage: TargetLanguage, terminate: Boolean) =
+  override fun render(
+    targetLanguage: TargetLanguage,
+    terminate: Boolean,
+    lineIndentation: String,
+  ) =
     when (targetLanguage) {
       C_17 -> TODO()
       CPP_14,

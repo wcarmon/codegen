@@ -1,6 +1,5 @@
 package com.wcarmon.codegen.ast
 
-import com.wcarmon.codegen.model.Documentation
 import com.wcarmon.codegen.model.Name
 import com.wcarmon.codegen.model.PackageName
 import com.wcarmon.codegen.model.TargetLanguage
@@ -10,7 +9,7 @@ data class ClassDeclarationExpression(
   /** static or companion object */
   private val classMethods: List<MethodDeclarationExpression> = listOf(),
 
-  private val documentation: Documentation = Documentation.EMPTY,
+  private val documentation: DocumentationExpression = DocumentationExpression.EMPTY,
 
   private val fields: List<FieldDeclarationExpression> = listOf(),
 
@@ -38,7 +37,11 @@ data class ClassDeclarationExpression(
   //TODO: generic parameters
 ) : Expression {
 
-  override fun render(targetLanguage: TargetLanguage, terminate: Boolean): String {
+  override fun render(
+    targetLanguage: TargetLanguage,
+    terminate: Boolean,
+    lineIndentation: String,
+  ): String {
     TODO("Not yet implemented")
   }
 }

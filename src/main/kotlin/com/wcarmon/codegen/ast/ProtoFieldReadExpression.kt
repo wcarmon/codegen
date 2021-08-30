@@ -53,6 +53,7 @@ class ProtoFieldReadExpression(
   override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
+    lineIndentation: String,
   ): String {
 
     val serdeExpression = WrapWithSerdeExpression(
@@ -61,6 +62,9 @@ class ProtoFieldReadExpression(
       wrapped = protoReadExpression,
     )
 
-    return serdeExpression.render(targetLanguage, terminate)
+    return serdeExpression.render(
+      targetLanguage,
+      terminate,
+      lineIndentation)
   }
 }

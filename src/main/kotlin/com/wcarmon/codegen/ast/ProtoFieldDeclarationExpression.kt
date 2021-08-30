@@ -28,6 +28,7 @@ data class ProtoFieldDeclarationExpression(
   override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
+    lineIndentation: String,
   ): String {
     check(targetLanguage.isProtobuf)
     check(terminate)
@@ -40,8 +41,15 @@ data class ProtoFieldDeclarationExpression(
       if (deprecated) " [deprecated = true]"
       else ""
 
-    return "${repeatedPrefix}${effectiveProtobufType(field)} ${field.name.lowerSnake} " +
-        "= ${number.value}${deprecatedSegment};"
+    return lineIndentation +
+        repeatedPrefix +
+        effectiveProtobufType(field) +
+        " " +
+        field.name.lowerSnake +
+        " = " +
+        number.value +
+        deprecatedSegment +
+        ";"
   }
 
   override fun compareTo(other: ProtoFieldDeclarationExpression) =

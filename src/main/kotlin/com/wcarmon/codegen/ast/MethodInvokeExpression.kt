@@ -24,6 +24,7 @@ data class MethodInvokeExpression(
   override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
+    lineIndentation: String,
   ) =
     when (targetLanguage) {
       C_17 -> TODO()
@@ -39,10 +40,14 @@ data class MethodInvokeExpression(
       JAVA_08,
       JAVA_11,
       JAVA_17,
-      -> handleJava(targetLanguage, terminate)
+      -> handleJava(targetLanguage,
+        terminate,
+        lineIndentation)
 
       KOTLIN_JVM_1_4,
-      -> handleKotlin(targetLanguage)
+      -> handleKotlin(
+        targetLanguage,
+        lineIndentation)
 
       PROTOCOL_BUFFERS_3 -> TODO()
 
@@ -66,6 +71,7 @@ data class MethodInvokeExpression(
   private fun handleJava(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
+    lineIndentation: String,
   ): String {
     val prefix = buildFieldOwnerPrefix(targetLanguage)
     val suffix = targetLanguage.statementTerminatorLiteral(terminate)
@@ -74,17 +80,29 @@ data class MethodInvokeExpression(
 
     val csvArgs = arguments
       .joinToString(",") {
-        it.render(targetLanguage, false)
+        it.render(targetLanguage, false, "")
       }
 
-    return "$prefix${method}($csvArgs)$suffix"
+    return lineIndentation +
+        prefix +
+        method +
+        "(" +
+        csvArgs +
+        ")" +
+        suffix
   }
 
-  private fun handleKotlin(targetLanguage: TargetLanguage): String =
-    handleJava(targetLanguage, false)
+  private fun handleKotlin(
+    targetLanguage: TargetLanguage,
+    lineIndentation: String,
+  ): String =
+    handleJava(
+      targetLanguage,
+      false,
+      lineIndentation)
 
   private fun buildFieldOwnerPrefix(targetLanguage: TargetLanguage): String {
-    val ownerPrefix = fieldOwner.render(targetLanguage, false)
+    val ownerPrefix = fieldOwner.render(targetLanguage, false, "")
     if (ownerPrefix.isBlank()) {
       return ""
     }

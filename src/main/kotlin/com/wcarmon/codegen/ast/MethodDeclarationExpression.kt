@@ -11,7 +11,11 @@ data class MethodDeclarationExpression(
   private val body: List<Expression>,
 ) : Expression {
 
-  override fun render(targetLanguage: TargetLanguage, terminate: Boolean): String {
+  override fun render(
+    targetLanguage: TargetLanguage,
+    terminate: Boolean,
+    lineIndentation: String,
+  ): String {
     return when (targetLanguage) {
       C_17 -> TODO()
       CPP_14,

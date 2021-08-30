@@ -39,6 +39,7 @@ class ResultSetReadExpression(
   override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
+    lineIndentation: String,
   ) =
-    underlying.render(targetLanguage, terminate)
+    underlying.render(targetLanguage, terminate, lineIndentation)
 }

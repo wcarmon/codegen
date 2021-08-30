@@ -34,6 +34,7 @@ data class EqualityTestExpression(
   override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
+    lineIndentation: String,
   ) = when (targetLanguage) {
     C_17 -> TODO()
     CPP_14 -> TODO()
@@ -42,15 +43,15 @@ data class EqualityTestExpression(
     DART_2 -> TODO()
 
     GOLANG_1_7 ->
-      handleGolang(targetLanguage)
+      handleGolang(targetLanguage, lineIndentation)
 
     JAVA_08,
     JAVA_11,
     JAVA_17,
-    -> handleJava(targetLanguage, terminate)
+    -> handleJava(targetLanguage, terminate, lineIndentation)
 
     KOTLIN_JVM_1_4,
-    -> handleKotlin(targetLanguage)
+    -> handleKotlin(targetLanguage, lineIndentation)
 
     PROTOCOL_BUFFERS_3 -> TODO()
     PYTHON_3 -> TODO()
@@ -69,31 +70,6 @@ data class EqualityTestExpression(
     TYPESCRIPT_4 -> TODO()
   }
 
-  @Suppress("ReturnCount")
-  private fun handleKotlin(
-    targetLanguage: TargetLanguage,
-  ): String {
-
-    val e0 = expression0.render(targetLanguage, false)
-    val e1 = expression1.render(targetLanguage, false)
-
-    if (expressionType.base == FLOAT_64) {
-      //TODO: use contentEquals
-      return "java.lang.Double.compare($e0, $e1)"
-    }
-
-    if (expressionType.base == FLOAT_32) {
-      //TODO: use contentEquals
-      return "java.lang.Float.compare($e0, $e1)"
-    }
-
-    if (expressionType.base == ARRAY) {
-      return "Arrays.deepEquals($e0, $e1)"
-    }
-
-    return "$e0 == $e1"
-  }
-
   /**
    * Builds java.lang.Object.equals based comparison expression
    * Useful in POJOs
@@ -104,6 +80,7 @@ data class EqualityTestExpression(
   private fun handleJava(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
+    lineIndentation: String,
   ): String {
     val suffix = targetLanguage.statementTerminatorLiteral(terminate)
     val e0 = expression0.render(targetLanguage, false)
@@ -132,8 +109,35 @@ data class EqualityTestExpression(
     return "Objects.equals($e0, $e1)$suffix"
   }
 
+  @Suppress("ReturnCount")
+  private fun handleKotlin(
+    targetLanguage: TargetLanguage,
+    lineIndentation: String,
+  ): String {
+
+    val e0 = expression0.render(targetLanguage, false)
+    val e1 = expression1.render(targetLanguage, false)
+
+    if (expressionType.base == FLOAT_64) {
+      //TODO: use contentEquals
+      return "java.lang.Double.compare($e0, $e1)"
+    }
+
+    if (expressionType.base == FLOAT_32) {
+      //TODO: use contentEquals
+      return "java.lang.Float.compare($e0, $e1)"
+    }
+
+    if (expressionType.base == ARRAY) {
+      return "Arrays.deepEquals($e0, $e1)"
+    }
+
+    return "$e0 == $e1"
+  }
+
   private fun handleGolang(
     targetLanguage: TargetLanguage,
+    lineIndentation: String,
   ): String {
     val e0 = expression0.render(targetLanguage, false)
     val e1 = expression1.render(targetLanguage, false)

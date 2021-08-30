@@ -16,6 +16,7 @@ data class VariableDeclarationExpression(
   override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
+    lineIndentation: String,
   ): String {
 
     return when (targetLanguage) {
@@ -33,10 +34,10 @@ data class VariableDeclarationExpression(
       JAVA_08,
       JAVA_11,
       JAVA_17,
-      -> handleJava(terminate)
+      -> handleJava(terminate, lineIndentation)
 
       KOTLIN_JVM_1_4,
-      -> handleKotlin(terminate)
+      -> handleKotlin(terminate, lineIndentation)
 
       PROTOCOL_BUFFERS_3 -> TODO()
       PYTHON_3 -> TODO()
@@ -53,11 +54,17 @@ data class VariableDeclarationExpression(
     }
   }
 
-  private fun handleJava(terminate: Boolean): String {
+  private fun handleJava(
+    terminate: Boolean,
+    lineIndentation: String,
+  ): String {
     TODO("Not yet implemented")
   }
 
-  private fun handleKotlin(terminate: Boolean): String {
+  private fun handleKotlin(
+    terminate: Boolean,
+    lineIndentation: String,
+  ): String {
     TODO("Not yet implemented")
   }
 }

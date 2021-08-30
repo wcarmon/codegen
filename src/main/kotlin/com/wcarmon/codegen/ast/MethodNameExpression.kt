@@ -11,6 +11,7 @@ data class MethodNameExpression(
   override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
+    lineIndentation: String,
   ) = when (targetLanguage) {
     C_17 -> TODO()
 

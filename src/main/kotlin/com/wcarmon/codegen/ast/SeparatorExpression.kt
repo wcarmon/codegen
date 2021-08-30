@@ -7,5 +7,6 @@ object SeparatorExpression : Expression {
   override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
+    lineIndentation: String,
   ) = "\n"
 }

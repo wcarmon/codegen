@@ -31,7 +31,9 @@ import com.wcarmon.codegen.view.RDBMSTableView
 data class Entity(
   val name: Name,
   val pkg: PackageName,
-  val documentation: Documentation = Documentation.EMPTY,
+
+  /** No leading comment markers (no leading slashes, no leading asterisk) */
+  val documentation: List<String> = listOf(),
 
   val canCheckForExistence: Boolean = true,
   val canCreate: Boolean = true,

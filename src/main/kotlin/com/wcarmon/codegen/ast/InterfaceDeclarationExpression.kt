@@ -1,7 +1,5 @@
 package com.wcarmon.codegen.ast
 
-import com.wcarmon.codegen.model.Documentation
-import com.wcarmon.codegen.model.Documentation.Companion.EMPTY
 import com.wcarmon.codegen.model.Name
 import com.wcarmon.codegen.model.PackageName
 import com.wcarmon.codegen.model.TargetLanguage
@@ -9,7 +7,7 @@ import com.wcarmon.codegen.model.TargetLanguage.*
 
 data class InterfaceDeclarationExpression(
 
-  private val documentation: Documentation = EMPTY,
+  private val documentation: DocumentationExpression = DocumentationExpression.EMPTY,
 
   private val fullyQualifiedInterfaces: List<String>,
 
@@ -31,6 +29,7 @@ data class InterfaceDeclarationExpression(
   override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
+    lineIndentation: String,
   ): String {
 
     return when (targetLanguage) {
@@ -47,10 +46,10 @@ data class InterfaceDeclarationExpression(
       JAVA_08,
       JAVA_11,
       JAVA_17,
-      -> handleJava()
+      -> handleJava(lineIndentation)
 
       KOTLIN_JVM_1_4,
-      -> handleKotlin()
+      -> handleKotlin(lineIndentation)
 
       PROTOCOL_BUFFERS_3 -> TODO()
 
@@ -73,11 +72,11 @@ data class InterfaceDeclarationExpression(
     }
   }
 
-  private fun handleJava(): String {
+  private fun handleJava(lineIndentation: String): String {
     TODO("Not yet implemented")
   }
 
-  private fun handleKotlin(): String {
+  private fun handleKotlin(lineIndentation: String): String {
     TODO("Not yet implemented")
   }
 

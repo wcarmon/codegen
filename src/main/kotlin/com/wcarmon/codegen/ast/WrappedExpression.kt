@@ -24,6 +24,7 @@ data class WrappedExpression(
   override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
+    lineIndentation: String,
   ) = wrapperTemplate.expand(
     wrapped.render(targetLanguage, false))
 }

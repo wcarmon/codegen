@@ -50,7 +50,8 @@ data class Field(
   //TODO: add tests to enforce above
   val defaultValue: String? = null,
 
-  val documentation: Documentation = Documentation.EMPTY,
+  /** No leading comment markers (no leading slashes, no leading asterisk) */
+  val documentation: List<String> = listOf(),
 
   /**
    * null:  not a Id/PK field
@@ -73,7 +74,7 @@ data class Field(
     @JsonCreator
     fun parse(
       @JsonProperty("defaultValue") defaultValue: String? = null,
-      @JsonProperty("documentation") documentation: Documentation = Documentation.EMPTY,
+      @JsonProperty("documentation") documentation: Iterable<String> = listOf(),
       @JsonProperty("enumType") enumType: Boolean = false,
       @JsonProperty("jvm") jvmFieldConfig: JVMFieldConfig = JVMFieldConfig(),
       @JsonProperty("name") name: Name,
@@ -96,7 +97,7 @@ data class Field(
 
       return Field(
         defaultValue = defaultValue,
-        documentation = documentation,
+        documentation = documentation.toList(),
         jvmConfig = jvmFieldConfig,
         name = name,
         positionInId = positionInId,

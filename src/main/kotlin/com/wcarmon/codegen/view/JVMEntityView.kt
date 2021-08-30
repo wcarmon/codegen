@@ -14,6 +14,7 @@ class JVMEntityView(
 
   val requiresObjectReader =
     entity.fields.any { it.effectiveBaseType.isCollection }
+
 }
 
 

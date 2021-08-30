@@ -11,7 +11,11 @@ data class EnumDeclarationExpression(
   //TODO: lookup
 ) : Expression {
 
-  override fun render(targetLanguage: TargetLanguage, terminate: Boolean): String {
+  override fun render(
+    targetLanguage: TargetLanguage,
+    terminate: Boolean,
+    lineIndentation: String,
+  ): String {
     TODO("Not yet implemented")
   }
 }

@@ -48,7 +48,11 @@ data class PreparedStatementSetExpression(
     )
 
 
-  override fun render(targetLanguage: TargetLanguage, terminate: Boolean) =
+  override fun render(
+    targetLanguage: TargetLanguage,
+    terminate: Boolean,
+    lineIndentation: String,
+  ) =
     if (field.type.nullable) {
       conditionalExpression
 

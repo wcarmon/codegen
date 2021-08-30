@@ -41,9 +41,11 @@ data class ProtoEnumDeclarationExpression(
   override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
+    lineIndentation: String,
   ): String {
     check(targetLanguage.isProtobuf)
 
+    //TODO: use lineIndentation
     return """
     |enum ${name.upperCamel} {
     $renderedItems  
@@ -67,6 +69,7 @@ data class ProtoEnumDeclarationExpression(
         "|  $item = ${index + offset};"
       }
 
+    //TODO: use lineIndentation
     renderedItems.joinToString("\n")
   }
 }

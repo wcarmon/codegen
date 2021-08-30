@@ -11,6 +11,7 @@ class PreconditionExpression : Expression {
   override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
+    lineIndentation: String,
   ) =
     when (targetLanguage) {
       C_17 -> TODO()
@@ -26,9 +27,9 @@ class PreconditionExpression : Expression {
       JAVA_08,
       JAVA_11,
       JAVA_17,
-      -> handleJava()
+      -> handleJava(lineIndentation)
 
-      KOTLIN_JVM_1_4 -> handleKotlin()
+      KOTLIN_JVM_1_4 -> handleKotlin(lineIndentation)
 
       PROTOCOL_BUFFERS_3 -> TODO()
 
@@ -50,11 +51,15 @@ class PreconditionExpression : Expression {
     }
 
   //TODO: just core java (no guava)
-  private fun handleJava(): String {
+  private fun handleJava(
+    lineIndentation: String,
+  ): String {
     TODO("Not yet implemented")
   }
 
-  private fun handleKotlin(): String {
+  private fun handleKotlin(
+    lineIndentation: String,
+  ): String {
     TODO("Not yet implemented")
   }
 }

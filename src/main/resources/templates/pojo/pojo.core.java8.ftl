@@ -15,17 +15,7 @@ ${request.java8View.serializeImports(
 @JsonDeserialize(builder = ${entity.name.upperCamel}.${entity.name.upperCamel}Builder.class)
 public final class ${entity.name.upperCamel} {
 
-  <#list entity.sortedFields as field>
-<#-- -->
-  /**
-<#--  TODO: include field documentation when present (move logic to field class)-->
-    <#if field.idField>
-     * Primary key
-    </#if>
-  */
-  private final ${field.java8View.typeLiteral} ${field.name.lowerCamel};
-
-  </#list>
+  ${entity.java8View.fieldDeclarations}
 
   private ${entity.name.upperCamel}( ${entity.name.upperCamel}Builder builder ) {
     //TODO: Validation here

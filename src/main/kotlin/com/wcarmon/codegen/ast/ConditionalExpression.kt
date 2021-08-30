@@ -18,6 +18,7 @@ data class ConditionalExpression(
   override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
+    lineIndentation: String,
   ) = when (targetLanguage) {
     C_17,
     CPP_14,
@@ -28,17 +29,17 @@ data class ConditionalExpression(
     JAVA_11,
     JAVA_17,
     TYPESCRIPT_4,
-    -> cStyle(targetLanguage, terminate)
+    -> cStyle(targetLanguage, terminate, lineIndentation)
 
     KOTLIN_JVM_1_4,
-    -> cStyle(targetLanguage, false)
+    -> cStyle(targetLanguage, false, lineIndentation)
 
     GOLANG_1_7,
     RUST_1_54,
     SWIFT_5,
-    -> noParens(targetLanguage, false)
+    -> noParens(targetLanguage, false, lineIndentation)
 
-    PYTHON_3 -> pythonStyle(targetLanguage)
+    PYTHON_3 -> pythonStyle(targetLanguage, lineIndentation)
 
     PROTOCOL_BUFFERS_3,
     -> TODO("Conditionals not supported on $targetLanguage")
@@ -46,9 +47,11 @@ data class ConditionalExpression(
     else -> TODO("Conditionals not supported on $targetLanguage")
   }
 
+  //TODO: use lineIndentation
   private fun cStyle(
     targetLanguage: TargetLanguage,
     terminate: Boolean = false,
+    lineIndentation: String,
   ): String = if (expressionForFalse.isBlank(targetLanguage)) {
     """
       |if (${condition.render(targetLanguage, false)}) {
@@ -71,6 +74,7 @@ data class ConditionalExpression(
   private fun noParens(
     targetLanguage: TargetLanguage,
     terminate: Boolean = false,
+    lineIndentation: String,
   ): String = if (expressionForFalse.isBlank(targetLanguage)) {
     """
       |if ${condition.render(targetLanguage, false)} {
@@ -89,7 +93,10 @@ data class ConditionalExpression(
       """
   }.trimMargin()
 
-  private fun pythonStyle(targetLanguage: TargetLanguage) =
+  private fun pythonStyle(
+    targetLanguage: TargetLanguage,
+    lineIndentation: String,
+  ) =
     if (expressionForFalse.isBlank(targetLanguage)) {
       """
       |if ${condition.render(targetLanguage, false)}:
@@ -105,5 +112,4 @@ data class ConditionalExpression(
       |
       """
     }.trimMargin()
-
 }

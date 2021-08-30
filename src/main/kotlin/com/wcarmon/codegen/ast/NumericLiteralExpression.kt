@@ -11,6 +11,7 @@ data class NumericLiteralExpression(
   override fun render(
     targetLanguage: TargetLanguage,
     terminate: Boolean,
+    lineIndentation: String,
   ): String {
     val t = targetLanguage.statementTerminatorLiteral(terminate)
 
