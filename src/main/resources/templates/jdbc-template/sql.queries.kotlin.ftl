@@ -14,55 +14,55 @@ package ${request.packageName.value}
  */
 <#list entities as entity>
 
-  <#if entity.hasPrimaryKeyFields>
+  <#if entity.hasIdFields>
   /**
    * Find-by-PK
    * Entity: {@link ${entity.pkg.value}.${entity.name.upperCamel}}
-   * PK column count: ${entity.primaryKeyFields?size}
+   * PK column count: ${entity.idFields?size}
    * Columns count: ${entity.fields?size}
    */
   val SELECT_BY_PK__${entity.name.upperSnake} =
     """
-    SELECT ${entity.commaSeparatedColumns}
+    SELECT ${entity.rdbmsView.commaSeparatedColumns}
     FROM "${entity.name.lowerSnake}"
-    WHERE ${entity.pkWhereClause}"
+    WHERE ${entity.rdbmsView.primaryKeyWhereClause}"
     """.trimIndent()
 
   /**
    * Test for existence of 1-row
    * Entity: {@link ${entity.pkg.value}.${entity.name.upperCamel}}
-   * PK column count: ${entity.primaryKeyFields?size}
+   * PK column count: ${entity.idFields?size}
    */
   val ROW_EXISTS__${entity.name.upperSnake} =
     """
     SELECT COUNT(*)
     FROM "${entity.name.lowerSnake}"
-    WHERE ${entity.pkWhereClause}
+    WHERE ${entity.rdbmsView.primaryKeyWhereClause}
     """.trimIndent()
 
   /**
    * Update 1-row
    * Entity: {@link ${entity.pkg.value}.${entity.name.upperCamel}}
-   * PK column count: ${entity.primaryKeyFields?size}
+   * PK column count: ${entity.idFields?size}
    * Columns count: ${entity.fields?size}
    */
   val UPDATE__${entity.name.upperSnake} =
     """
     UPDATE "${entity.name.lowerSnake}"
     SET
-      ${entity.updateSetClause}
-    WHERE ${entity.pkWhereClause}
+      ${entity.rdbmsView.updateSetClause}
+    WHERE ${entity.rdbmsView.primaryKeyWhereClause}
     """.trimIndent()
 
   /**
    * Delete 1-row
    * Entity: {@link ${entity.pkg.value}.${entity.name.upperCamel}}
-   * PK column count: ${entity.primaryKeyFields?size}
+   * PK column count: ${entity.idFields?size}
    */
   val DELETE__${entity.name.upperSnake} =
     """
     DELETE FROM "${entity.name.lowerSnake}"
-    WHERE ${entity.pkWhereClause}
+    WHERE ${entity.rdbmsView.primaryKeyWhereClause}
     """.trimIndent()
   </#if>
 
@@ -73,31 +73,31 @@ package ${request.packageName.value}
    */
   val SELECT_ALL__${entity.name.upperSnake} =
     """
-    SELECT ${entity.commaSeparatedColumns}
+    SELECT ${entity.rdbmsView.commaSeparatedColumns}
     FROM "${entity.name.lowerSnake}"
     """.trimIndent()
 
   /**
    * Insert 1-row
    * Entity: {@link ${entity.pkg.value}.${entity.name.upperCamel}}
-   * PK column count: ${entity.primaryKeyFields?size}
+   * PK column count: ${entity.idFields?size}
    * Columns count: ${entity.fields?size}
    */
   val INSERT__${entity.name.upperSnake} =
     """
     INSERT INTO "${entity.name.lowerSnake}" (
-      ${entity.commaSeparatedColumns}
+      ${entity.rdbmsView.commaSeparatedColumns}
     )
-    VALUES (${entity.questionMarkStringForInsert})
+    VALUES (${entity.rdbmsView.questionMarkStringForInsert})
     """.trimIndent()
 
-  <#if entity.hasPrimaryKeyFields>
-    <#list entity.nonPrimaryKeyFields as field>
+  <#if entity.hasIdFields>
+    <#list entity.nonIdFields as field>
     val PATCH__${entity.name.upperSnake}__${field.name.upperSnake} =
       """
       UPDATE "${entity.name.lowerSnake}"
       SET ${field.name.lowerSnake}=?
-      WHERE ${entity.pkWhereClause}
+      WHERE ${entity.rdbmsView.primaryKeyWhereClause}
       """.trimIndent()
 
     </#list>

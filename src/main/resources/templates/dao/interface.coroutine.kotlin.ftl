@@ -3,14 +3,14 @@ package ${request.packageName.value}
 <#list request.extraJVMImports as importable>
 import ${importable}
 </#list>
-<#list entity.javaImportsForFields as importable>
+<#list entity.java8View.importsForFields as importable>
 import ${importable}
 </#list>
 
 
 /**
  * DAO Contract for [${entity.pkg.value}.${entity.name.upperCamel}]
- * PK field count: ${entity.primaryKeyFields?size}
+ * PK field count: ${entity.idFields?size}
  * Field count: ${entity.fields?size}
  *
  * Assumes coroutines & context passed thru coroutineContext.
@@ -20,7 +20,7 @@ import ${importable}
 @Suppress("TooManyFunctions")
 interface ${entity.name.upperCamel}DAO {
 
-<#if entity.hasPrimaryKeyFields>
+<#if entity.hasIdFields>
  /**
   * Delete at-most-one existing {@link ${entity.pkg.value}.${entity.name.upperCamel}} instance
   *
@@ -28,19 +28,19 @@ interface ${entity.name.upperCamel}DAO {
   *
   * @param TODO
   */
-  suspend fun delete(${entity.kotlinMethodArgsForPKFields(false)})
+  suspend fun delete(${entity.kotlinView.methodArgsForIdFields(false)})
 
   /**
    * @param TODO
    * @return true when {@link ${entity.pkg.value}.${entity.name.upperCamel}} exists with matching PK
    */
-  suspend fun exists(${entity.kotlinMethodArgsForPKFields(false)}): Boolean
+  suspend fun exists(${entity.kotlinView.methodArgsForIdFields(false)}): Boolean
 
   /**
    * @param TODO
    * @return one {@link ${entity.pkg.value}.${entity.name.upperCamel}} instance (matching PKs) or null
    */
-  suspend fun findById( ${entity.kotlinMethodArgsForPKFields(false)}): ${entity.name.upperCamel}?
+  suspend fun findById( ${entity.kotlinView.methodArgsForIdFields(false)}): ${entity.name.upperCamel}?
 </#if>
 
   /**
@@ -55,7 +55,7 @@ interface ${entity.name.upperCamel}DAO {
 
   /**
    * Update all (non-PK) fields on one {@link ${entity.pkg.value}.${entity.name.upperCamel}} instance
-   * (${entity.nonPrimaryKeyFields?size} non-PK fields)
+   * (${entity.nonIdFields?size} non-PK fields)
    */
   suspend fun update(entity: ${entity.name.upperCamel})
 
@@ -70,7 +70,7 @@ interface ${entity.name.upperCamel}DAO {
    */
   suspend fun upsert(entity: ${entity.name.upperCamel})
 
-<#list entity.nonPrimaryKeyFields as field>
+<#list entity.nonIdFields as field>
   /**
    * Patch/Set
    *
@@ -79,9 +79,9 @@ interface ${entity.name.upperCamel}DAO {
    * @param ${field.name.lowerCamel} - replacement for existing value
    */
   suspend fun set${field.name.upperCamel}(
-    ${entity.kotlinMethodArgsForPKFields(false)},
-    ${field.name.lowerCamel}: ${field.unqualifiedKotlinType}
+    ${entity.kotlinView.methodArgsForIdFields(false)},
+    ${field.name.lowerCamel}: ${field.kotlinView.unqualifiedType}
   )
 
 </#list>
-  }
+}

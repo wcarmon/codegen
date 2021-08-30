@@ -3,7 +3,7 @@ package ${request.packageName.value};
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-<#list entity.javaImportsForFields as importable>
+<#list entity.java8View.importsForFields as importable>
 import ${importable};
 </#list>
 import java.util.ArrayList;
@@ -30,11 +30,11 @@ public final class ${entity.name.upperCamel} {
 <#-- -->
   /**
 <#--  TODO: include field documentation when present (move logic to field class)-->
-    <#if field.primaryKeyField>
+    <#if field.idField>
      * Primary key
     </#if>
   */
-  private final ${field.java8View.type} ${field.name.lowerCamel};
+  private final ${field.java8View.typeLiteral} ${field.name.lowerCamel};
   </#list>
 
   private ${entity.name.upperCamel}( ${entity.name.upperCamel}Builder builder ) {
@@ -42,7 +42,8 @@ public final class ${entity.name.upperCamel} {
 
     <#list entity.sortedFields as field>
       <#if field.collection>
-      this.${field.name.lowerCamel} = ${field.java8View.unmodifiableCollectionMethod}(builder.${field.name.lowerCamel});
+<#--          TODO: fix this line -->
+<#--      this.${field.name.lowerCamel} = ${field.java8View.unmodifiableCollectionMethod}(builder.${field.name.lowerCamel});-->
       <#else>
       this.${field.name.lowerCamel} = builder.${field.name.lowerCamel};
       </#if>
@@ -76,7 +77,7 @@ public final class ${entity.name.upperCamel} {
   }
 
   <#list entity.sortedFields as field>
-    public ${field.java8View.type} get${field.name.upperCamel}() {
+    public ${field.java8View.typeLiteral} get${field.name.upperCamel}() {
       return this.${field.name.lowerCamel};
     }
 
@@ -103,14 +104,14 @@ public final class ${entity.name.upperCamel} {
   public static class ${entity.name.upperCamel}Builder {
 <#-- TODO: set default values on fields here-->
     <#list entity.sortedFields as field>
-    private ${field.java8View.type} ${field.name.lowerCamel};
+    private ${field.java8View.typeLiteral} ${field.name.lowerCamel};
     </#list>
 
     ${entity.name.upperCamel}Builder() {
     }
 
     <#list entity.sortedFields as field>
-    public ${entity.name.upperCamel}Builder ${field.name.lowerCamel}(${field.java8View.type} value) {
+    public ${entity.name.upperCamel}Builder ${field.name.lowerCamel}(${field.java8View.typeLiteral} value) {
       this.${field.name.lowerCamel} = value;
       return this;
     }

@@ -7,12 +7,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.wcarmon.codegen.CREATED_TS_FIELD_NAMES
 import com.wcarmon.codegen.UPDATED_TS_FIELD_NAMES
 import com.wcarmon.codegen.model.BaseFieldType.STRING
-import com.wcarmon.codegen.model.TargetLanguage.JAVA_08
-import com.wcarmon.codegen.model.TargetLanguage.KOTLIN_JVM_1_4
-import com.wcarmon.codegen.view.JVMFieldView
-import com.wcarmon.codegen.view.JavaFieldView
-import com.wcarmon.codegen.view.KotlinFieldView
-import com.wcarmon.codegen.view.RDBMSColumnView
+import com.wcarmon.codegen.model.TargetLanguage.*
+import com.wcarmon.codegen.view.*
 import kotlin.text.RegexOption.IGNORE_CASE
 
 /**
@@ -140,16 +136,34 @@ data class Field(
   }
 
   val java8View by lazy {
-    JavaFieldView(this, jvmView, JAVA_08)
+    JavaFieldView(
+      field = this,
+      jvmView = jvmView,
+      rdbmsView = rdbmsView,
+      targetLanguage = JAVA_08,
+    )
   }
 
   val kotlinView by lazy {
-    KotlinFieldView(this, jvmView, KOTLIN_JVM_1_4)
+    KotlinFieldView(field = this,
+      jvmView = jvmView,
+      rdbmsView = rdbmsView,
+      targetLanguage = KOTLIN_JVM_1_4)
+  }
+
+  val rdbmsView by lazy {
+    RDBMSColumnView(this)
   }
 
   val sqlView by lazy {
     RDBMSColumnView(this)
   }
+
+  val protoView by lazy {
+    ProtobufFieldView(this, PROTOCOL_BUFFERS_3)
+  }
+
+  val isIdField: Boolean = (positionInId ?: -1) >= 0
 
   //TODO: improve me
   val hasDefault = defaultValue != null
@@ -163,7 +177,7 @@ data class Field(
     defaultValue != null && regex.matches(defaultValue)
   }
 
-  private val jvmView by lazy {
+  val jvmView by lazy {
     JVMFieldView(this)
   }
 

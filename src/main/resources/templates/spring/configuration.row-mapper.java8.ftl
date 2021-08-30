@@ -18,7 +18,7 @@ public class RowMapperBeans {
 
 <#list entities as entity>
   @Bean
-  <#if entity.requiresObjectReader>
+  <#if entity.jvmView.requiresObjectReader>
   RowMapper<${entity.name.upperCamel}> ${entity.name.lowerCamel}RowMapper(ObjectMapper objectMapper) {
     return new ${entity.name.upperCamel}RowMapper(objectMapper);
 <#-- -->

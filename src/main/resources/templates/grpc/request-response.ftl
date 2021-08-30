@@ -65,7 +65,7 @@ message Update${entity.name.upperCamel}Request {
 message Update${entity.name.upperCamel}Response {
 }
 
-  <#list entity.nonPrimaryKeyFields as field>
+  <#list entity.nonIdFields as field>
   //TODO: patch ${entity.name.upperCamel}Proto.${field.name.lowerCamel}
   </#list>
 </#if>

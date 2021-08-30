@@ -6,13 +6,13 @@ import org.springframework.jdbc.core.RowMapper
 <#if request.jvmContextClass?has_content>
 import ${request.jvmContextClass}
 </#if>
-<#list entity.kotlinImportsForFields as importable>
+<#list entity.kotlinView.importsForFields as importable>
 import ${importable}
 </#list>
 <#list request.extraJVMImports as importable>
 import ${importable}
 </#list>
-<#if entity.requiresObjectWriter>
+<#if entity.jvmView.requiresObjectWriter>
 import com.fasterxml.jackson.databind.ObjectWriter
 </#if>
 import java.sql.Types
@@ -30,7 +30,7 @@ import java.sql.Types
 class ${entity.name.upperCamel}DAOImpl(
   private val jdbcTemplate: JdbcTemplate,
 
-  <#if entity.requiresObjectWriter>
+  <#if entity.jvmView.requiresObjectWriter>
   /** To serialize collection fields */
   private val objectWriter: ObjectWriter,
   </#if>
@@ -39,32 +39,32 @@ class ${entity.name.upperCamel}DAOImpl(
 
 ): ${entity.name.upperCamel}DAO {
 
-<#if entity.hasPrimaryKeyFields>
-  override fun delete(context: ${request.unqualifiedContextClass}, ${entity.kotlinMethodArgsForPKFields(false)}) {
+<#if entity.hasIdFields>
+  override fun delete(context: ${request.unqualifiedContextClass}, ${entity.kotlinView.methodArgsForIdFields(false)}) {
     //TODO: kotlin preconditions on PK fields (see FieldValidation)
 
     jdbcTemplate.update(DELETE__${entity.name.upperSnake}) { ps ->
-        ${entity.kotlinPreparedStatementSetterStatementsForPK}
+        ${entity.kotlinView.preparedStatementSetterStatementsForPK}
     }
   }
 
-  override fun exists(context: ${request.unqualifiedContextClass}, ${entity.kotlinMethodArgsForPKFields(false)}): Boolean {
+  override fun exists(context: ${request.unqualifiedContextClass}, ${entity.kotlinView.methodArgsForIdFields(false)}): Boolean {
     //TODO: kotlin preconditions on PK fields (see FieldValidation)
 
     return 1 == jdbcTemplate.queryForObject(
       ROW_EXISTS__${entity.name.upperSnake},
       Int::class.java,
-      ${entity.jdbcSerializedPKFields})
+      ${entity.rdbmsView.jdbcSerializedPrimaryKeyFields})
   }
 
-  override fun findById(context: ${request.unqualifiedContextClass}, ${entity.kotlinMethodArgsForPKFields(false)}): ${entity.name.upperCamel}? {
+  override fun findById(context: ${request.unqualifiedContextClass}, ${entity.kotlinView.methodArgsForIdFields(false)}): ${entity.name.upperCamel}? {
     //TODO: kotlin preconditions on PK fields (see FieldValidation)
 
     val results =
       jdbcTemplate.query(
         SELECT_BY_PK__${entity.name.upperSnake},
         PreparedStatementSetter { ps ->
-          ${entity.kotlinPreparedStatementSetterStatementsForPK}
+          ${entity.kotlinView.preparedStatementSetterStatementsForPK}
         },
         rowMapper)
 
@@ -86,7 +86,7 @@ class ${entity.name.upperCamel}DAOImpl(
     val affectedRowCount = jdbcTemplate.update(
       INSERT__${entity.name.upperSnake},
     ) { ps ->
-        ${entity.kotlinInsertPreparedStatementSetterStatements}
+        ${entity.kotlinView.insertPreparedStatementSetterStatements}
       }
 
     check(affectedRowCount == 1){ "1-row should have been inserted for entity=${r"$"}entity" }
@@ -104,7 +104,7 @@ class ${entity.name.upperCamel}DAOImpl(
     jdbcTemplate.update(
       UPDATE__${entity.name.upperSnake}
     ) { ps ->
-        ${entity.kotlinUpdatePreparedStatementSetterStatements}
+        ${entity.kotlinView.updatePreparedStatementSetterStatements}
     }
   }
 
@@ -113,18 +113,18 @@ class ${entity.name.upperCamel}DAOImpl(
   }
 
   // -- Patch methods
-  <#list entity.nonPrimaryKeyFields as field>
+  <#list entity.nonIdFields as field>
     override fun set${field.name.upperCamel}(
       context: ${request.unqualifiedContextClass},
-      ${entity.kotlinMethodArgsForPKFields(false)},
-      ${field.name.lowerCamel}: ${field.unqualifiedKotlinType}) {
+      ${entity.kotlinView.methodArgsForIdFields(false)},
+      ${field.name.lowerCamel}: ${field.kotlinView.unqualifiedType}) {
 
       //TODO: '${field.name.lowerCamel}' field validation here (since not part of the POJO validation)
 
       jdbcTemplate.update(
         PATCH__${entity.name.upperSnake}__${field.name.upperSnake}
       ) { ps ->
-        ${entity.kotlinUpdateFieldPreparedStatementSetterStatements(field)}
+        ${field.kotlinView.updateFieldPreparedStatementSetterStatements(entity.idFields)}
       }
     }
 

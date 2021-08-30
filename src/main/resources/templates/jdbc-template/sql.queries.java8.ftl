@@ -12,48 +12,48 @@ package ${request.packageName.value};
 public final class SQLQueries {
 <#list entities as entity>
 
-  <#if entity.hasPrimaryKeyFields>
+  <#if entity.hasIdFields>
   /**
    * Find-by-PK
    * Entity: {@link ${entity.pkg.value}.${entity.name.upperCamel}}
-   * PK column count: ${entity.primaryKeyFields?size}
+   * PK column count: ${entity.idFields?size}
    * Columns count: ${entity.fields?size}
    */
   public static final String SELECT_BY_PK__${entity.name.upperSnake} =
-    "SELECT ${entity.commaSeparatedColumns}"
+    "SELECT ${entity.rdbmsView.commaSeparatedColumns}"
     + " FROM \"${entity.name.lowerSnake}\""
-    + " WHERE ${entity.pkWhereClause}";
+    + " WHERE ${entity.rdbmsView.primaryKeyWhereClause}";
 
   /**
    * Test for existence of 1-row
    * Entity: {@link ${entity.pkg.value}.${entity.name.upperCamel}}
-   * PK column count: ${entity.primaryKeyFields?size}
+   * PK column count: ${entity.idFields?size}
    */
   public static final String ROW_EXISTS__${entity.name.upperSnake} =
     "SELECT COUNT(*)"
     + " FROM \"${entity.name.lowerSnake}\""
-    + " WHERE ${entity.pkWhereClause}";
+    + " WHERE ${entity.rdbmsView.primaryKeyWhereClause}";
 
   /**
    * Update 1-row
    * Entity: {@link ${entity.pkg.value}.${entity.name.upperCamel}}
-   * PK column count: ${entity.primaryKeyFields?size}
+   * PK column count: ${entity.idFields?size}
    * Columns count: ${entity.fields?size}
    */
   public static final String UPDATE__${entity.name.upperSnake} =
     "UPDATE \"${entity.name.lowerSnake}\""
     + " SET"
-    + " ${entity.updateSetClause}"
-    + " WHERE ${entity.pkWhereClause}";
+    + " ${entity.rdbmsView.updateSetClause}"
+    + " WHERE ${entity.rdbmsView.primaryKeyWhereClause}";
 
   /**
    * Delete 1-row
    * Entity: {@link ${entity.pkg.value}.${entity.name.upperCamel}}
-   * PK column count: ${entity.primaryKeyFields?size}
+   * PK column count: ${entity.idFields?size}
    */
   public static final String DELETE__${entity.name.upperSnake} =
     "DELETE FROM \"${entity.name.lowerSnake}\""
-    + " WHERE ${entity.pkWhereClause}";
+    + " WHERE ${entity.rdbmsView.primaryKeyWhereClause}";
   </#if>
 
   /**
@@ -62,26 +62,26 @@ public final class SQLQueries {
    * Columns count: ${entity.fields?size}
    */
   public static final String SELECT_ALL__${entity.name.upperSnake} =
-    "SELECT ${entity.commaSeparatedColumns}"
+    "SELECT ${entity.rdbmsView.commaSeparatedColumns}"
     + " FROM \"${entity.name.lowerSnake}\"";
 
   /**
    * Insert 1-row
    * Entity: {@link ${entity.pkg.value}.${entity.name.upperCamel}}
-   * PK column count: ${entity.primaryKeyFields?size}
+   * PK column count: ${entity.idFields?size}
    * Columns count: ${entity.fields?size}
    */
   public static final String INSERT__${entity.name.upperSnake} =
     "INSERT INTO \"${entity.name.lowerSnake}\""
-    + " (${entity.commaSeparatedColumns})"
-    + " VALUES (${entity.questionMarkStringForInsert})";
+    + " (${entity.rdbmsView.commaSeparatedColumns})"
+    + " VALUES (${entity.rdbmsView.questionMarkStringForInsert})";
 
-  <#if entity.hasPrimaryKeyFields>
-    <#list entity.nonPrimaryKeyFields as field>
+  <#if entity.hasIdFields>
+    <#list entity.nonIdFields as field>
       public static final String PATCH__${entity.name.upperSnake}__${field.name.upperSnake} =
         "UPDATE \"${entity.name.lowerSnake}\""
         + " SET ${field.name.lowerSnake}=?"
-        + " WHERE ${entity.pkWhereClause}";
+        + " WHERE ${entity.rdbmsView.primaryKeyWhereClause}";
 
     </#list>
   </#if>

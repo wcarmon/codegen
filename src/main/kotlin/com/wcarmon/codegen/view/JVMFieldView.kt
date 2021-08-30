@@ -11,7 +11,7 @@ class JVMFieldView(
   private val field: Field,
 ) {
 
-  val defaultValueLiteralForJVM: String? by lazy {
+  val defaultValueLiteral: String? by lazy {
     defaultValueLiteralForJVM(field)
   }
 

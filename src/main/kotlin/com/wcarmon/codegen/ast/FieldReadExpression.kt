@@ -31,7 +31,7 @@ data class FieldReadExpression(
    * */
   private val fieldOwner: Expression = EmptyExpression,
 
-  private val overrideFieldReadStyle: FieldReadMode? = null,
+  private val overrideFieldReadMode: FieldReadMode? = null,
 ) : Expression {
 
   override fun render(
@@ -96,7 +96,7 @@ data class FieldReadExpression(
     }
 
   private fun getFieldReadMode(targetLanguage: TargetLanguage) =
-    overrideFieldReadStyle ?: defaultFieldReadMode(targetLanguage)
+    overrideFieldReadMode ?: defaultFieldReadMode(targetLanguage)
 
   private fun defaultFieldReadMode(targetLanguage: TargetLanguage) =
     when (targetLanguage) {
@@ -124,7 +124,7 @@ data class FieldReadExpression(
       JAVA_17,
       -> GETTER
 
-      DART_2 -> TODO("What is a good default FieldReadStyle for Dart?")
-      SWIFT_5 -> TODO("What is a good default FieldReadStyle for Swift?")
+      DART_2 -> TODO("What is a good default FieldReadMode for Dart?")
+      SWIFT_5 -> TODO("What is a good default FieldReadMode for Swift?")
     }
 }

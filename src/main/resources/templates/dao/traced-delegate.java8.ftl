@@ -3,7 +3,7 @@ package ${request.packageName.value};
 <#if request.jvmContextClass?has_content>
 import ${request.jvmContextClass};
 </#if>
-<#list entity.javaImportsForFields as importable>
+<#list entity.java8View.importsForFields as importable>
 import ${importable};
 </#list>
 <#list request.extraJVMImports as importable>
@@ -59,9 +59,9 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
     this.tracer = tracer;
   }
 
-<#if entity.hasPrimaryKeyFields>
+<#if entity.hasIdFields>
   @Override
-  public void delete(${request.unqualifiedContextClass} context, ${entity.javaMethodArgsForPKFields(false)}) {
+  public void delete(${request.unqualifiedContextClass} context, ${entity.java8View.methodArgsForIdFields(false)}) {
     Objects.requireNonNull(context, "context is required and missing.");
     //TODO: preconditions on ok field(s)
 
@@ -69,7 +69,7 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
         .asChildOf(context.currentSpan())
         .ignoreActiveSpan()
         .withTag("entityType", ENTITY_TYPE_NAME)
-        <#list entity.primaryKeyFields as pk>
+        <#list entity.idFields as pk>
         .withTag("${pk.name.lowerCamel}", String.valueOf(${pk.name.lowerCamel}))
         </#list>
         .start();
@@ -77,11 +77,11 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
     final ${request.unqualifiedContextClass} childContext = context.withCurrentSpan(span);
     wrapDAOCall(
         span,
-        () -> realDAO.delete(childContext, ${entity.commaSeparatedPKIdentifiers}));
+        () -> realDAO.delete(childContext, ${entity.rdbmsView.commaSeparatedPrimaryKeyIdentifiers}));
   }
 
   @Override
-  public boolean exists(${request.unqualifiedContextClass} context, ${entity.javaMethodArgsForPKFields(false)}) {
+  public boolean exists(${request.unqualifiedContextClass} context, ${entity.java8View.methodArgsForIdFields(false)}) {
     Objects.requireNonNull(context, "context is required and missing.");
     //TODO: preconditions on ok field(s)
 
@@ -89,7 +89,7 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
         .asChildOf(context.currentSpan())
         .ignoreActiveSpan()
         .withTag("entityType", ENTITY_TYPE_NAME)
-        <#list entity.primaryKeyFields as pk>
+        <#list entity.idFields as pk>
         .withTag("${pk.name.lowerCamel}", String.valueOf(${pk.name.lowerCamel}))
         </#list>
         .start();
@@ -97,11 +97,11 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
       final ${request.unqualifiedContextClass} childContext = context.withCurrentSpan(span);
       return wrapDAOCall(
         span,
-        () -> realDAO.exists(childContext, ${entity.commaSeparatedPKIdentifiers}));
+        () -> realDAO.exists(childContext, ${entity.rdbmsView.commaSeparatedPrimaryKeyIdentifiers}));
   }
 
   @Override
-  public ${entity.name.upperCamel} findById(${request.unqualifiedContextClass} context, ${entity.javaMethodArgsForPKFields(false)}) {
+  public ${entity.name.upperCamel} findById(${request.unqualifiedContextClass} context, ${entity.java8View.methodArgsForIdFields(false)}) {
     Objects.requireNonNull(context, "context is required and missing.");
     //TODO: preconditions on ok field(s)
 
@@ -109,7 +109,7 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
         .asChildOf(context.currentSpan())
         .ignoreActiveSpan()
         .withTag("entityType", ENTITY_TYPE_NAME)
-        <#list entity.primaryKeyFields as pk>
+        <#list entity.idFields as pk>
         .withTag("${pk.name.lowerCamel}", String.valueOf(${pk.name.lowerCamel}))
         </#list>
         .start();
@@ -117,7 +117,7 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
       final ${request.unqualifiedContextClass} childContext = context.withCurrentSpan(span);
       return wrapDAOCall(
         span,
-        () -> realDAO.findById(childContext, ${entity.commaSeparatedPKIdentifiers}));
+        () -> realDAO.findById(childContext, ${entity.rdbmsView.commaSeparatedPrimaryKeyIdentifiers}));
   }
 </#if>
   @Override
@@ -129,7 +129,7 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
         .asChildOf(context.currentSpan())
         .ignoreActiveSpan()
         .withTag("entityType", ENTITY_TYPE_NAME)
-        <#list entity.primaryKeyFields as pk>
+        <#list entity.idFields as pk>
         .withTag("${pk.name.lowerCamel}", String.valueOf(entity.get${pk.name.upperCamel}()))
         </#list>
         .start();
@@ -191,11 +191,11 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
   }
 
   // -- Patch methods
-<#list entity.nonPrimaryKeyFields as field>
+<#list entity.nonIdFields as field>
   @Override
   public void set${field.name.upperCamel}(
       ${request.unqualifiedContextClass} context,
-      ${entity.javaMethodArgsForPKFields(false)},
+      ${entity.java8View.methodArgsForIdFields(false)},
       ${field.java8View.unqualifiedType} ${field.name.lowerCamel}) {
 
     Objects.requireNonNull(context, "context is required and null.");
@@ -216,7 +216,7 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
         span,
         () -> realDAO.set${field.name.upperCamel}(
             context.withCurrentSpan(span),
-            ${entity.commaSeparatedPKIdentifiers},
+            ${entity.rdbmsView.commaSeparatedPrimaryKeyIdentifiers},
             ${field.name.lowerCamel}));
   }
 

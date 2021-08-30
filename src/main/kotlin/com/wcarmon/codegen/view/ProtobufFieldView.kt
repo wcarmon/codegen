@@ -2,8 +2,7 @@ package com.wcarmon.codegen.view
 
 import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.TargetLanguage
-import com.wcarmon.codegen.model.util.protoBuilderSetter
-import com.wcarmon.codegen.util.buildProtoBufMessageFieldDeclarations
+import com.wcarmon.codegen.util.protoBuilderSetter
 
 /**
  * RDBMS related convenience methods for a [Field]
@@ -21,15 +20,19 @@ class ProtobufFieldView(
   }
 
   //TODO: rename
-  val builderSetter: String = protoBuilderSetter(field).value
+  val builderSetter: String = protoBuilderSetter(field).lowerCamel
 
-  val protocolBufferFields: String by lazy {
+  val fields: String by lazy {
+
+    //TODO: use [ProtoFieldDeclarationExpression]
+    TODO("fix me")
+
     //TODO: use [ProtoMessageDeclarationExpression] instead
-    buildProtoBufMessageFieldDeclarations(
-      primaryKeyFields + nonPrimaryKeyFields
-    )
-      .map { "  " + it.render(TargetLanguage.PROTOCOL_BUFFERS_3) }
-      .joinToString("\n")
+//    buildProtoBufMessageFieldDeclarations(
+//      primaryKeyFields + nonPrimaryKeyFields
+//    )
+//      .map { "  " + it.render(TargetLanguage.PROTOCOL_BUFFERS_3) }
+//      .joinToString("\n")
   }
 
 }

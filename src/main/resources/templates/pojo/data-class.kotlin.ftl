@@ -3,7 +3,7 @@ package ${request.packageName.value}
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
-<#list entity.javaImportsForFields as importable>
+<#list entity.java8View.importsForFields as importable>
 import ${importable}
 </#list>
 import java.util.ArrayList
@@ -19,17 +19,17 @@ import java.util.TreeSet
 <#--TODO: include class documentation when present-->
 @JsonPropertyOrder(alphabetic = true)
 data class ${entity.name.upperCamel}(
-  <#list entity.primaryKeyFields as field>
+  <#list entity.idFields as field>
       /** PK field */
-      val ${field.name.lowerCamel}: ${field.kotlinType},
+      val ${field.name.lowerCamel}: ${field.kotlinView.typeLiteral},
 
   </#list>
   // -- Other Fields
-  <#list entity.nonPrimaryKeyFields as field>
+  <#list entity.nonIdFields as field>
     <#if field.hasDefault>
-        val ${field.name.lowerCamel}: ${field.kotlinType} = ${field.defaultValueLiteralForJVM},
+        val ${field.name.lowerCamel}: ${field.kotlinView.typeLiteral} = ${field.jvmView.defaultValueLiteral},
     <#else>
-        val ${field.name.lowerCamel}: ${field.kotlinType},
+        val ${field.name.lowerCamel}: ${field.kotlinView.typeLiteral},
     </#if>
   </#list>
 ) {

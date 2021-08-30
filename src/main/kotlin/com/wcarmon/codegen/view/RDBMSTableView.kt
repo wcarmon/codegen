@@ -1,10 +1,12 @@
 package com.wcarmon.codegen.view
 
-import com.wcarmon.codegen.ast.EmptyExpression
-import com.wcarmon.codegen.ast.FieldReadMode
-import com.wcarmon.codegen.ast.PreparedStatementSetExpression
 import com.wcarmon.codegen.ast.RawExpression
-import com.wcarmon.codegen.model.*
+import com.wcarmon.codegen.model.Entity
+import com.wcarmon.codegen.model.JDBCColumnIndex
+import com.wcarmon.codegen.model.PreparedStatementBuilderConfig
+import com.wcarmon.codegen.model.TargetLanguage
+import com.wcarmon.codegen.model.TargetLanguage.JAVA_08
+import com.wcarmon.codegen.model.TargetLanguage.KOTLIN_JVM_1_4
 import com.wcarmon.codegen.util.*
 import org.atteo.evo.inflector.English
 
@@ -20,35 +22,32 @@ data class RDBMSTableView(
 
   //TODO: return Documentation
   val commentForPrimaryKeyFields: String =
-    if (primaryKeyFields.isEmpty()) ""
-    else "PrimaryKey " + English.plural("field", primaryKeyFields.size)
+    if (entity.idFields.isEmpty()) ""
+    else "PrimaryKey " + English.plural("field", entity.idFields.size)
 
-  val dbSchemaPrefix: String =
+  val schemaPrefix: String =
     if (entity.rdbmsConfig.schema.isBlank() != false) ""
     else "${entity.rdbmsConfig.schema}."
 
 
-  val primaryKeyWhereClause: String = commaSeparatedColumnAssignment(primaryKeyFields)
+  val primaryKeyWhereClause: String = commaSeparatedColumnAssignment(entity.idFields)
 
   val primaryKeyTableConstraint: String = primaryKeyTableConstraint(entity)
 
   val questionMarkStringForInsert: String = (1..entity.fields.size).joinToString { "?" }
 
-  val sortedFieldsWithPrimaryKeyFirst =
-    primaryKeyFields + nonPrimaryKeyFields
-
-  val updateSetClause: String = commaSeparatedColumnAssignment(nonPrimaryKeyFields)
+  val updateSetClause: String = commaSeparatedColumnAssignment(entity.nonIdFields)
 
   val commaSeparatedPrimaryKeyIdentifiers: String by lazy {
-    primaryKeyFields.joinToString(", ") { it.name.lowerCamel }
+    entity.idFields.joinToString(", ") { it.name.lowerCamel }
   }
 
   val jdbcSerializedPrimaryKeyFields by lazy {
-    commaSeparatedJavaFields(primaryKeyFields)
+    commaSeparatedJavaFields(entity.idFields)
   }
 
   // For INSERT, PrimaryKey fields are first
-  private fun buildInsertPreparedStatementSetterStatements(
+  fun insertPreparedStatementSetterStatements(
     targetLanguage: TargetLanguage,
   ): String {
 
@@ -61,14 +60,14 @@ data class RDBMSTableView(
 
     val pk = buildPreparedStatementSetters(
       cfg = cfg,
-      fields = primaryKeyFields,
-      firstIndex = 1,
+      fields = entity.idFields,
+      firstIndex = JDBCColumnIndex.FIRST,
     )
 
     val nonPk = buildPreparedStatementSetters(
       cfg = cfg,
-      fields = nonPrimaryKeyFields,
-      firstIndex = JDBCColumnIndex(primaryKeyFields.size + 1),
+      fields = entity.nonIdFields,
+      firstIndex = JDBCColumnIndex(entity.idFields.size + 1),
     )
 
     return (pk + nonPk)
@@ -77,7 +76,7 @@ data class RDBMSTableView(
   }
 
   // NOTE: For UPDATE, PrimaryKey fields are last
-  private fun buildUpdatePreparedStatementSetterStatements(
+  fun updatePreparedStatementSetterStatements(
     targetLanguage: TargetLanguage,
   ): String {
 
@@ -90,14 +89,14 @@ data class RDBMSTableView(
 
     val nonPk = buildPreparedStatementSetters(
       cfg = cfg,
-      fields = nonPrimaryKeyFields,
+      fields = entity.nonIdFields,
       firstIndex = JDBCColumnIndex.FIRST,
     )
 
     val pk = buildPreparedStatementSetters(
       cfg = cfg,
-      fields = primaryKeyFields,
-      firstIndex = JDBCColumnIndex(nonPrimaryKeyFields.size + 1),
+      fields = entity.idFields,
+      firstIndex = JDBCColumnIndex(entity.nonIdFields.size + 1),
     )
 
     val separator = RawExpression("\n\t\t// Primary key field(s)")
@@ -107,45 +106,16 @@ data class RDBMSTableView(
       .joinToString(separator = "\n")
   }
 
-  private fun buildUpdateFieldPreparedStatementSetterStatements(
-    field: Field,
+  fun preparedStatementSetterStatementsForPrimaryKey(
+    config: PreparedStatementBuilderConfig = PreparedStatementBuilderConfig(),
     targetLanguage: TargetLanguage,
-  ): String {
-    val cfg = PreparedStatementBuilderConfig(
-      allowFieldNonNullAssertion = false,
-      fieldOwner = EmptyExpression, //TODO: verify
-      fieldReadMode = FieldReadMode.DIRECT,
-      preparedStatementIdentifierExpression = RawExpression("ps")
-    )
-
-    val columnSetterStatement = PreparedStatementSetExpression(
-      columnIndex = JDBCColumnIndex.FIRST,
-      field = field,
-    )
-
-    val pk = buildPreparedStatementSetters(
-      cfg = cfg,
-      fields = primaryKeyFields,
-      firstIndex = 2,
-    )
-
-    return (listOf(columnSetterStatement) + pk)
-      .map { it.render(targetLanguage) }
-      .joinToString(separator = "\n")
-  }
-
-  private fun buildPreparedStatementSetterStatementsForPrimaryKey(
-    targetLanguage: TargetLanguage,
-    fieldReadStyle: FieldReadMode = targetLanguage.fieldReadMode,
-  ) =
+  ): String =
     buildPreparedStatementSetters(
-      cfg = PreparedStatementBuilderConfig(
-        fieldReadStyle = fieldReadStyle,
-        targetLanguage = targetLanguage,
-      ),
-      fields = primaryKeyFields,
-      firstIndex = 1,
+      cfg = config,
+      fields = entity.idFields,
+      firstIndex = JDBCColumnIndex.FIRST,
     )
-      .map { it.render(targetLanguage) }
-      .joinToString(separator = "\n")
+      .joinToString(separator = "\n") {
+        it.render(targetLanguage)
+      }
 }

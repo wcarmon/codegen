@@ -1,7 +1,7 @@
 package ${request.packageName.value};
 
 import org.springframework.jdbc.core.RowMapper;
-<#if entity.requiresObjectReader>
+<#if entity.jvmView.requiresObjectReader>
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 </#if>
@@ -38,14 +38,14 @@ import java.util.Set;
  * See https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/jdbc/core/RowMapper.html
  * See: ${request.prettyTemplateName}
 */
-<#if entity.requiresObjectReader>
+<#if entity.jvmView.requiresObjectReader>
 @SuppressWarnings("unchecked")
 </#if>
 public final class ${entity.name.upperCamel}RowMapper implements RowMapper<${entity.name.upperCamel}> {
 
-  <#if entity.requiresObjectReader>
+  <#if entity.jvmView.requiresObjectReader>
     <#list entity.collectionFields as field>
-    private static final TypeReference<${field.jacksonTypeRef}> ${field.name.upperSnake}_TYPE_REF =
+    private static final TypeReference<${field.jvmView.jacksonTypeRef}> ${field.name.upperSnake}_TYPE_REF =
       new TypeReference<>(){};
     </#list>
 
@@ -70,21 +70,21 @@ public final class ${entity.name.upperCamel}RowMapper implements RowMapper<${ent
     Objects.requireNonNull(rs, "null result set passed to ${entity.name.upperCamel}RowMapper");
 
     return ${entity.name.upperCamel}.builder()
-        <#if !entity.primaryKeyFields?has_content>
+        <#if !entity.idFields?has_content>
         // -- ${entity.commentForPKFields}
         </#if>
-        <#list entity.primaryKeyFields as field>
+        <#list entity.idFields as field>
         .${field.name.lowerCamel}(${field.java8View.resultSetGetterExpression})
         </#list>
 
         // -- Other Fields
-        <#list entity.nonPrimaryKeyFields as field>
+        <#list entity.nonIdFields as field>
         .${field.name.lowerCamel}(${field.java8View.resultSetGetterExpression})
         </#list>
     .build();
   }
 
-  <#if entity.requiresObjectReader>
+  <#if entity.jvmView.requiresObjectReader>
   /**
    * Deserialize to a java.util.List
    *

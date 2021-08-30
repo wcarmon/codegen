@@ -2,11 +2,11 @@
 
 package ${request.packageName.value}
 
-<#list entity.kotlinImportsForFields as importable>
+<#list entity.kotlinView.importsForFields as importable>
 import ${importable}
 </#list>
 import org.springframework.jdbc.core.RowMapper
-<#if entity.requiresObjectReader>
+<#if entity.jvmView.requiresObjectReader>
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.core.type.TypeReference
 </#if>
@@ -23,11 +23,11 @@ import java.time.format.DateTimeFormatter
  *
  * See https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/jdbc/core/RowMapper.html
  */
-<#if entity.requiresObjectReader>
+<#if entity.jvmView.requiresObjectReader>
 <#-- @SuppressWarnings("unchecked")-->
 </#if>
 class ${entity.name.upperCamel}RowMapper(
-<#if entity.requiresObjectReader>
+<#if entity.jvmView.requiresObjectReader>
   private val objectMapper: ObjectMapper,
 </#if>
 ) : RowMapper<${entity.name.upperCamel}> {
@@ -35,7 +35,7 @@ class ${entity.name.upperCamel}RowMapper(
   companion object {
     <#list entity.collectionFields as field>
     private val ${field.name.upperSnake}_TYPE_REF =
-      object : TypeReference<${field.jacksonTypeRef}> () {}
+      object : TypeReference<${field.jvmView.jacksonTypeRef}> () {}
     </#list>
   }
 
@@ -46,21 +46,21 @@ class ${entity.name.upperCamel}RowMapper(
    */
   override fun mapRow(rs: ResultSet, rowNum: Int): ${entity.name.upperCamel} =
     ${entity.name.upperCamel}(
-      <#if !entity.primaryKeyFields?has_content>
+      <#if !entity.idFields?has_content>
       // -- ${entity.commentForPKFields}
       </#if>
-      <#list entity.primaryKeyFields as field>
-      ${field.name.lowerCamel} = ${field.kotlinResultSetGetterExpression},
+      <#list entity.idFields as field>
+      ${field.name.lowerCamel} = ${field.kotlinView.resultSetGetterExpression},
       </#list>
 
       // -- Other Fields
-      <#list entity.nonPrimaryKeyFields as field>
-      ${field.name.lowerCamel} = ${field.kotlinResultSetGetterExpression},
+      <#list entity.nonIdFields as field>
+      ${field.name.lowerCamel} = ${field.kotlinView.resultSetGetterExpression},
       </#list>
     )
 
 
-  <#if entity.requiresObjectReader>
+  <#if entity.jvmView.requiresObjectReader>
   /**
    * Deserialize to a java.util.List
    *

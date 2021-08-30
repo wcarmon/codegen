@@ -3,6 +3,7 @@ package com.wcarmon.codegen.model
 import com.wcarmon.codegen.ast.EmptyExpression
 import com.wcarmon.codegen.ast.Expression
 import com.wcarmon.codegen.ast.FieldReadMode
+import com.wcarmon.codegen.ast.FieldReadMode.DIRECT
 import com.wcarmon.codegen.ast.RawExpression
 
 /**
@@ -16,7 +17,7 @@ data class PreparedStatementBuilderConfig(
   /**
    * For the [FieldReadExpression]
    */
-  val fieldReadMode: FieldReadMode,
+  val fieldReadMode: FieldReadMode = DIRECT,
 
   /**
    * For the [FieldReadExpression]

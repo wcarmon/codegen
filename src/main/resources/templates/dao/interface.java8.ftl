@@ -6,7 +6,7 @@ import ${request.jvmContextClass};
 <#list request.extraJVMImports as importable>
 import ${importable};
 </#list>
-<#list entity.javaImportsForFields as importable>
+<#list entity.java8View.importsForFields as importable>
 import ${importable};
 </#list>
 
@@ -18,7 +18,7 @@ import java.util.Set;
 
 /**
  * DAO Contract for {@link ${entity.pkg.value}.${entity.name.upperCamel}}
- * PK field count: ${entity.primaryKeyFields?size}
+ * PK field count: ${entity.idFields?size}
  * Field count: ${entity.fields?size}
  *
  * Implementations must be ThreadSafe
@@ -26,7 +26,7 @@ import java.util.Set;
  */
 public interface ${entity.name.upperCamel}DAO {
 
-  <#if entity.hasPrimaryKeyFields>
+  <#if entity.hasIdFields>
   /**
    * Delete at-most-one existing {@link ${entity.pkg.value}.${entity.name.upperCamel}} instance
    * <p>
@@ -35,21 +35,21 @@ public interface ${entity.name.upperCamel}DAO {
    * @param TODO
    */
   <#-- TODO: Add @param to javadoc for context (dynamic) -->
-  void delete(${request.unqualifiedContextClass} context, ${entity.javaMethodArgsForPKFields(false)});
+  void delete(${request.unqualifiedContextClass} context, ${entity.java8View.methodArgsForIdFields(false)});
 
   /**
    * @param TODO
    * @return true when {@link ${entity.pkg.value}.${entity.name.upperCamel}} exists with matching PK
    */
 <#--  TODO: Add @param to javadoc for context (dynamic) &ndash;&gt;-->
-  boolean exists(${request.unqualifiedContextClass} context, ${entity.javaMethodArgsForPKFields(false)});
+  boolean exists(${request.unqualifiedContextClass} context, ${entity.java8View.methodArgsForIdFields(false)});
 
   /**
    * @param TODO
    * @return one {@link ${entity.pkg.value}.${entity.name.upperCamel}} instance (matching PKs) or null
    */
 <#--  TODO: Add @param to javadoc for context (dynamic) &ndash;&gt;-->
-  ${entity.name.upperCamel} findById(${request.unqualifiedContextClass} context, ${entity.javaMethodArgsForPKFields(false)});
+  ${entity.name.upperCamel} findById(${request.unqualifiedContextClass} context, ${entity.java8View.methodArgsForIdFields(false)});
 
   </#if>
 
@@ -66,7 +66,7 @@ public interface ${entity.name.upperCamel}DAO {
 
   /**
    * Update all (non-PK) fields on one {@link ${entity.pkg.value}.${entity.name.upperCamel}} instance
-   * (${entity.nonPrimaryKeyFields?size} non-PK fields)
+   * (${entity.nonIdFields?size} non-PK fields)
    */
 <#--  TODO: Add @param to javadoc for context -->
   void update(${request.unqualifiedContextClass} context, ${entity.name.upperCamel} entity);
@@ -83,7 +83,7 @@ public interface ${entity.name.upperCamel}DAO {
 <#--  TODO: Add @param to javadoc for context -->
   void upsert(${request.unqualifiedContextClass} context, ${entity.name.upperCamel} entity);
 
-  <#list entity.nonPrimaryKeyFields as field>
+  <#list entity.nonIdFields as field>
   /**
    * Patch/Set
    * <p>
@@ -94,7 +94,7 @@ public interface ${entity.name.upperCamel}DAO {
 <#--  TODO: Add @param to javadoc for context -->
   void set${field.name.upperCamel}(
     ${request.unqualifiedContextClass} context,
-    ${entity.javaMethodArgsForPKFields(false)},
+    ${entity.java8View.methodArgsForIdFields(false)},
     ${field.java8View.unqualifiedType} ${field.name.lowerCamel});
 
     </#list>

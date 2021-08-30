@@ -8,6 +8,7 @@ import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.BaseFieldType.UUID
 import java.util.*
 
+//TODO: return Expressions
 /**
  * @return semicolon terminated statements to execute preconditions
  */

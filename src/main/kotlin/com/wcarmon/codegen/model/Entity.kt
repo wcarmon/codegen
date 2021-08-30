@@ -78,15 +78,29 @@ data class Entity(
   }
 
   val java8View by lazy {
-    JavaEntityView(this, jvmView, JAVA_08)
+    JavaEntityView(
+      entity = this,
+      jvmView = jvmView,
+      rdbmsView = rdbmsView,
+      targetLanguage = JAVA_08,
+    )
   }
 
   val kotlinView by lazy {
-    KotlinEntityView(this, jvmView, KOTLIN_JVM_1_4)
+    KotlinEntityView(
+      entity = this,
+      jvmView = jvmView,
+      rdbmsView = rdbmsView,
+      targetLanguage = KOTLIN_JVM_1_4,
+    )
   }
 
   val jvmView by lazy {
     JVMEntityView(this)
+  }
+
+  val rdbmsView: RDBMSTableView by lazy {
+    RDBMSTableView(this)
   }
 
   val sqlView by lazy {
@@ -110,6 +124,9 @@ data class Entity(
     .sortedBy { it.name.lowerCamel }
 
   val sortedFields = fields.sortedBy { it.name.lowerCamel }
+
+  val sortedFieldsWithIdsFirst =
+    idFields + nonIdFields
 
   val validatedFields = fields
     .sortedBy { it.name.lowerCamel }

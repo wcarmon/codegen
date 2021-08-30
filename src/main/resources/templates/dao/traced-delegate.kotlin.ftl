@@ -3,7 +3,7 @@ package ${request.packageName.value}
 <#if request.jvmContextClass?has_content>
 import ${request.jvmContextClass}
 </#if>
-<#list entity.javaImportsForFields as importable>
+<#list entity.java8View.importsForFields as importable>
 import ${importable}
 </#list>
 <#list request.extraJVMImports as importable>
@@ -39,58 +39,58 @@ class ${entity.name.upperCamel}TracedDAO(
 
 ) : ${entity.name.upperCamel}DAO {
 
-<#if entity.hasPrimaryKeyFields>
-  override fun delete(context: ${request.unqualifiedContextClass}, ${entity.kotlinMethodArgsForPKFields(false)}) {
+<#if entity.hasIdFields>
+  override fun delete(context: ${request.unqualifiedContextClass}, ${entity.kotlinView.methodArgsForIdFields(false)}) {
     //TODO: kotlin preconditions on PK fields (see FieldValidation)
 
     val span = tracer.buildSpan("jdbc::delete")
       .asChildOf(context.currentSpan())
       .ignoreActiveSpan()
       .withTag("entityType", ENTITY_TYPE_NAME)
-      <#list entity.primaryKeyFields as pk>
+      <#list entity.idFields as pk>
       .withTag("${pk.name.lowerCamel}", ${pk.name.lowerCamel}.toString())
       </#list>
       .start()
 
     val childContext = context.withCurrentSpan(span)
     wrapDAOCall(span) {
-      realDAO.delete(childContext, ${entity.commaSeparatedPKIdentifiers})
+      realDAO.delete(childContext, ${entity.rdbmsView.commaSeparatedPrimaryKeyIdentifiers})
     }
   }
 
-  override fun exists(context: ${request.unqualifiedContextClass}, ${entity.kotlinMethodArgsForPKFields(false)}): Boolean {
+  override fun exists(context: ${request.unqualifiedContextClass}, ${entity.kotlinView.methodArgsForIdFields(false)}): Boolean {
     //TODO: kotlin preconditions on PK fields (see FieldValidation)
 
     val span = tracer.buildSpan("jdbc::exists")
       .asChildOf(context.currentSpan())
       .ignoreActiveSpan()
       .withTag("entityType", ENTITY_TYPE_NAME)
-      <#list entity.primaryKeyFields as pk>
+      <#list entity.idFields as pk>
       .withTag("${pk.name.lowerCamel}", ${pk.name.lowerCamel}.toString())
       </#list>
       .start()
 
     val childContext = context.withCurrentSpan(span)
     return wrapDAOCall(span) {
-      realDAO.exists(childContext, ${entity.commaSeparatedPKIdentifiers})
+      realDAO.exists(childContext, ${entity.rdbmsView.commaSeparatedPrimaryKeyIdentifiers})
     }
   }
 
-  override fun findById(context: ${request.unqualifiedContextClass}, ${entity.kotlinMethodArgsForPKFields(false)}): ${entity.name.upperCamel}? {
+  override fun findById(context: ${request.unqualifiedContextClass}, ${entity.kotlinView.methodArgsForIdFields(false)}): ${entity.name.upperCamel}? {
     //TODO: kotlin preconditions on PK fields (see FieldValidation)
 
     val span = tracer.buildSpan("jdbc::findById")
       .asChildOf(context.currentSpan())
       .ignoreActiveSpan()
       .withTag("entityType", ENTITY_TYPE_NAME)
-      <#list entity.primaryKeyFields as pk>
+      <#list entity.idFields as pk>
       .withTag("${pk.name.lowerCamel}", ${pk.name.lowerCamel}.toString())
       </#list>
       .start()
 
     val childContext = context.withCurrentSpan(span)
     return wrapDAOCall(span) {
-      realDAO.findById(childContext, ${entity.commaSeparatedPKIdentifiers})
+      realDAO.findById(childContext, ${entity.rdbmsView.commaSeparatedPrimaryKeyIdentifiers})
     }
   }
 </#if>
@@ -100,7 +100,7 @@ class ${entity.name.upperCamel}TracedDAO(
       .asChildOf(context.currentSpan())
       .ignoreActiveSpan()
       .withTag("entityType", ENTITY_TYPE_NAME)
-      <#list entity.primaryKeyFields as pk>
+      <#list entity.idFields as pk>
       .withTag("${pk.name.lowerCamel}", entity.${pk.name.lowerCamel}.toString())
       </#list>
       .start()
@@ -151,11 +151,11 @@ class ${entity.name.upperCamel}TracedDAO(
   }
 
   // -- Patch methods
-<#list entity.nonPrimaryKeyFields as field>
+<#list entity.nonIdFields as field>
   override fun set${field.name.upperCamel}(
     context: ${request.unqualifiedContextClass},
-    ${entity.kotlinMethodArgsForPKFields(false)},
-    ${field.name.lowerCamel}: ${field.unqualifiedKotlinType}) {
+    ${entity.kotlinView.methodArgsForIdFields(false)},
+    ${field.name.lowerCamel}: ${field.kotlinView.unqualifiedType}) {
 
     //TODO: '${field.name.lowerCamel}' field validation here (since not part of the POJO validation)
 
@@ -169,7 +169,7 @@ class ${entity.name.upperCamel}TracedDAO(
     wrapDAOCall(span) {
       realDAO.set${field.name.upperCamel}(
         context.withCurrentSpan(span),
-        ${entity.commaSeparatedPKIdentifiers},
+        ${entity.rdbmsView.commaSeparatedPrimaryKeyIdentifiers},
         ${field.name.lowerCamel}
       )
     }

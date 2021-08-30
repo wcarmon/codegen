@@ -1,12 +1,10 @@
 package com.wcarmon.codegen.view
 
-import com.wcarmon.codegen.ast.FieldReadMode
 import com.wcarmon.codegen.model.Entity
-import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.TargetLanguage
-import com.wcarmon.codegen.model.util.buildJavaPreconditionStatements
-import com.wcarmon.codegen.model.util.commaSeparatedJavaMethodArgs
-import com.wcarmon.codegen.model.util.javaImportsForFields
+import com.wcarmon.codegen.util.buildJavaPreconditionStatements
+import com.wcarmon.codegen.util.commaSeparatedJavaMethodArgs
+import com.wcarmon.codegen.util.javaImportsForFields
 
 /**
  * Java related convenience methods for a [Entity]
@@ -14,6 +12,7 @@ import com.wcarmon.codegen.model.util.javaImportsForFields
 class JavaEntityView(
   private val entity: Entity,
   private val jvmView: JVMEntityView,
+  private val rdbmsView: RDBMSTableView,
   private val targetLanguage: TargetLanguage = TargetLanguage.JAVA_08,
 ) {
 
@@ -23,31 +22,25 @@ class JavaEntityView(
     }
   }
 
-  val javaImportsForFields: Set<String> = javaImportsForFields(entity)
+  val importsForFields: Set<String> = javaImportsForFields(entity)
 
-  val javaInsertPreparedStatementSetterStatements by lazy {
-    buildInsertPreparedStatementSetterStatements(targetLanguage)
+  val insertPreparedStatementSetterStatements by lazy {
+    rdbmsView.insertPreparedStatementSetterStatements(targetLanguage)
   }
 
-  val javaUpdatePreparedStatementSetterStatements by lazy {
-    buildUpdatePreparedStatementSetterStatements(targetLanguage)
-  }
-
-  val javaPrimaryKeyPreconditionStatements =
-    buildJavaPreconditionStatements(primaryKeyFields)
+  val primaryKeyPreconditionStatements =
+    buildJavaPreconditionStatements(entity.idFields)
       .joinToString("\n\t")
 
-  val javaPreparedStatementSetterStatementsForPK by lazy {
-    buildPreparedStatementSetterStatementsForPK(
-      TargetLanguage.JAVA_08,
-      FieldReadMode.DIRECT)
+  val preparedStatementSetterStatementsForPK by lazy {
+    rdbmsView.preparedStatementSetterStatementsForPrimaryKey(
+      targetLanguage = targetLanguage)
   }
 
-  fun javaUpdateFieldPreparedStatementSetterStatements(field: Field) =
-    buildUpdateFieldPreparedStatementSetterStatements(field, TargetLanguage.JAVA_08)
+  val updatePreparedStatementSetterStatements by lazy {
+    rdbmsView.updatePreparedStatementSetterStatements(targetLanguage)
+  }
 
-  fun javaMethodArgsForPrimaryKeyFields(qualified: Boolean) =
-    commaSeparatedJavaMethodArgs(primaryKeyFields, qualified)
-
-  //TODO: more here
+  fun methodArgsForIdFields(qualified: Boolean) =
+    commaSeparatedJavaMethodArgs(entity.idFields, qualified)
 }

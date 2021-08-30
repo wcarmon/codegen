@@ -17,6 +17,8 @@ import com.wcarmon.codegen.util.newJavaCollectionExpression
  */
 class JavaFieldView(
   private val field: Field,
+  private val jvmView: JVMFieldView,
+  private val rdbmsView: RDBMSColumnView,
   private val targetLanguage: TargetLanguage,
 ) {
 
@@ -26,8 +28,6 @@ class JavaFieldView(
     }
   }
 
-  val typeLiteral: String = javaTypeLiteral(field.type, true)
-
   val resultSetGetterExpression: String by lazy {
     ResultSetReadExpression(
       fieldName = field.name,
@@ -36,6 +36,8 @@ class JavaFieldView(
     )
       .render(targetLanguage, true)
   }
+
+  val typeLiteral: String = javaTypeLiteral(field.type, true)
 
   //TODO: test this on types that are already unqualified
   val unqualifiedType: String = javaTypeLiteral(field.type, false)
@@ -59,6 +61,13 @@ class JavaFieldView(
     TODO("fix")
 //    unmodifiableJavaCollectionMethod(field.effectiveBaseType)
   }
+
+  fun equalityExpression(
+    thisId: String,
+    thatId: String,
+  ) = equalityExpression(
+    RawExpression(thisId),
+    RawExpression(thatId))
 
   fun equalityExpression(
     expression0: Expression = RawExpression("this"),
@@ -94,7 +103,7 @@ class JavaFieldView(
       assertNonNull = false,
       fieldName = field.name,
       fieldOwner = RawExpression(pojoId),
-      overrideFieldReadStyle = GETTER,
+      overrideFieldReadMode = GETTER,
     )
 
     val serdeExpression = WrapWithSerdeExpression(
@@ -110,12 +119,14 @@ class JavaFieldView(
       .render(targetLanguage, false)
   }
 
-  //TODO: use protoBuilderGetter
-//    buildSerdeReadExpression(
-//      fieldReadPrefix = fieldReadPrefix,
-//      fieldReadStyle = targetLanguage.fieldReadMode,
-//      serdeMode = SERIALIZE
-//    ).serialize(targetLanguage)
+  fun updateFieldPreparedStatementSetterStatements(
+    idFields: List<Field>,
+  ): String =
+    rdbmsView.updateFieldPreparedStatementSetterStatements(
+      idFields = idFields,
+      targetLanguage = targetLanguage,
+    )
+
 
   // GOTCHA: Only invoke on collection types
   fun newCollectionExpression() = newJavaCollectionExpression(field.type)

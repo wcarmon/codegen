@@ -5,7 +5,7 @@ import ${importable};
 </#list>
 <#list entities as entity>
 <#-- TODO: dedupe -->
-  <#list entity.javaImportsForFields as importable>
+  <#list entity.java8View.importsForFields as importable>
 import ${importable};
   </#list>
 </#list>
@@ -38,7 +38,7 @@ public final class ProtoPojoConversionUtils {
     }
 
     return ChronoBoardProto.newBuilder()
-      <#list entity.sortedFieldsWithPKFirst as field>
+      <#list entity.sortedFieldsWithIdsFirst as field>
         <#--
         TODO:
         - make expression for ProtoBuilderSetter
@@ -47,7 +47,7 @@ public final class ProtoPojoConversionUtils {
             or use jackson to serialize to json
          -->
 <#--    TODO: use [ProtoFieldWriteExpression]    -->
-        .${field.protoBuilderSetter}(${field.java8View.readForProtoExpression("entity.")})
+<#--        .${field.protoView.builderSetter}(${field.java8View.readForProtoExpression("entity.")})-->
       </#list>
         .build();
   }
@@ -63,7 +63,7 @@ public final class ProtoPojoConversionUtils {
     }
 
     return ChronoBoard.builder()
-    <#list entity.sortedFieldsWithPKFirst as field>
+    <#list entity.sortedFieldsWithIdsFirst as field>
 <#--      TODO: use [ProtoFieldReadExpression] -->
         .${field.name.lowerCamel}(${field.java8View.readFromProtoExpression("proto.")})
     </#list>
@@ -82,10 +82,12 @@ public final class ProtoPojoConversionUtils {
       return Collections.emptyList();
     }
 
+<#-- TODO: fix this
     return items
         .stream()
         .map(item -> ${field.java8View.protoSerializeExpressionForTypeParameters[0]})
         .collect(Collectors.toList());
+-->
   }
 
   /**
@@ -97,9 +99,11 @@ public final class ProtoPojoConversionUtils {
       return Collections.emptySet();
     }
 
+<#-- TODO: fix this
     return items.stream()
         .map(item -> ${field.java8View.protoDeserializeExpressionForTypeParameters[0]})
         .collect(Collectors.toSet());
+-->
   }
 
   /**
@@ -111,9 +115,11 @@ public final class ProtoPojoConversionUtils {
       return Collections.emptyList();
     }
 
+<#-- TODO: fix this
     return items.stream()
         .map(item -> ${field.java8View.protoDeserializeExpressionForTypeParameters[0]})
         .collect(Collectors.toList());
+-->
   }
 
   </#list>

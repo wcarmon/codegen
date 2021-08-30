@@ -2,7 +2,10 @@
 
 package com.wcarmon.codegen.util
 
-import com.wcarmon.codegen.ast.*
+import com.wcarmon.codegen.ast.Expression
+import com.wcarmon.codegen.ast.FieldReadExpression
+import com.wcarmon.codegen.ast.PreparedStatementSetExpression
+import com.wcarmon.codegen.ast.WrapWithSerdeExpression
 import com.wcarmon.codegen.model.*
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.SerdeMode.SERIALIZE
@@ -27,7 +30,7 @@ fun buildPreparedStatementSetters(
       assertNonNull = currentField.type.nullable && cfg.allowFieldNonNullAssertion,
       fieldName = currentField.name,
       fieldOwner = cfg.fieldOwner,
-      overrideFieldReadStyle = cfg.fieldReadMode,
+      overrideFieldReadMode = cfg.fieldReadMode,
     )
 
     PreparedStatementSetExpression(
@@ -39,7 +42,7 @@ fun buildPreparedStatementSetters(
         wrapped = fieldReadExpression,
       ),
       field = currentField,
-      preparedStatementIdentifierExpression = RawExpression("ps"),
+      preparedStatementIdentifierExpression = cfg.preparedStatementIdentifierExpression,
       setterMethod = defaultPreparedStatementSetterMethod(currentField.effectiveBaseType),
     )
   }
@@ -78,7 +81,7 @@ private fun requiresJDBCSerde(field: Field): Boolean =
  *
  * @return setter method name declared on [java.sql.PreparedStatement]
  */
-private fun defaultPreparedStatementSetterMethod(base: BaseFieldType): Name =
+fun defaultPreparedStatementSetterMethod(base: BaseFieldType): Name =
   defaultResultSetGetterMethod(base)
     .lowerCamel
     .replaceFirst("get", "set")
@@ -91,7 +94,7 @@ private fun defaultPreparedStatementSetterMethod(base: BaseFieldType): Name =
  *
  * Essential for [java.sql.PreparedStatement.setNull]
  */
-private fun jdbcType(base: BaseFieldType): JDBCType = when (base) {
+fun jdbcType(base: BaseFieldType): JDBCType = when (base) {
   BOOLEAN -> JDBCType.BOOLEAN
   FLOAT_32 -> JDBCType.FLOAT
   FLOAT_64 -> JDBCType.DOUBLE

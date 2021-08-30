@@ -6,14 +6,14 @@ import ${request.jvmContextClass}
 <#list request.extraJVMImports as importable>
 import ${importable}
 </#list>
-<#list entity.kotlinImportsForFields as importable>
+<#list entity.kotlinView.importsForFields as importable>
 import ${importable}
 </#list>
 
 
 /**
  * DAO Contract for [${entity.pkg.value}.${entity.name.upperCamel}]
- * PK field count: ${entity.primaryKeyFields?size}
+ * PK field count: ${entity.idFields?size}
  * Field count: ${entity.fields?size}
  *
  * Implementations must be ThreadSafe
@@ -22,7 +22,7 @@ import ${importable}
 @Suppress("TooManyFunctions")
 interface ${entity.name.upperCamel}DAO {
 
-<#if entity.hasPrimaryKeyFields>
+<#if entity.hasIdFields>
  /**
   * Delete at-most-one existing {@link ${entity.pkg.value}.${entity.name.upperCamel}} instance
   *
@@ -31,21 +31,21 @@ interface ${entity.name.upperCamel}DAO {
   * @param TODO
   */
 <#-- TODO: Add @param to javadoc for context -->
-  fun delete(context: ${request.unqualifiedContextClass}, ${entity.kotlinMethodArgsForPKFields(false)})
+  fun delete(context: ${request.unqualifiedContextClass}, ${entity.kotlinView.methodArgsForIdFields(false)})
 
   /**
   * @param TODO
   * @return true when {@link ${entity.pkg.value}.${entity.name.upperCamel}} exists with matching PK
   */
 <#-- TODO: Add @param to kotlindoc for context  -->
-  fun exists(context: ${request.unqualifiedContextClass}, ${entity.kotlinMethodArgsForPKFields(false)}): Boolean
+  fun exists(context: ${request.unqualifiedContextClass}, ${entity.kotlinView.methodArgsForIdFields(false)}): Boolean
 
   /**
   * @param TODO
   * @return one {@link ${entity.pkg.value}.${entity.name.upperCamel}} instance (matching PKs) or null
   */
   <#-- TODO: Add @param to kotlindoc for context  -->
-  fun findById( context: ${request.unqualifiedContextClass}, ${entity.kotlinMethodArgsForPKFields(false)}): ${entity.name.upperCamel}?
+  fun findById( context: ${request.unqualifiedContextClass}, ${entity.kotlinView.methodArgsForIdFields(false)}): ${entity.name.upperCamel}?
 </#if>
 
   /**
@@ -61,7 +61,7 @@ interface ${entity.name.upperCamel}DAO {
 
   /**
   * Update all (non-PK) fields on one {@link ${entity.pkg.value}.${entity.name.upperCamel}} instance
-  * (${entity.nonPrimaryKeyFields?size} non-PK fields)
+  * (${entity.nonIdFields?size} non-PK fields)
   */
 <#-- TODO: Add @param to kotlindoc for context  -->
   fun update(context: ${request.unqualifiedContextClass}, entity: ${entity.name.upperCamel})
@@ -78,7 +78,7 @@ interface ${entity.name.upperCamel}DAO {
 <#-- TODO: Add @param to kotlindoc for context  -->
   fun upsert(context: ${request.unqualifiedContextClass}, entity: ${entity.name.upperCamel})
 
-<#list entity.nonPrimaryKeyFields as field>
+<#list entity.nonIdFields as field>
  /**
   * Patch/Set
   *
@@ -88,8 +88,8 @@ interface ${entity.name.upperCamel}DAO {
   */
   <#-- TODO: Add @param to kotlindoc for context  -->
   fun set${field.name.upperCamel}(context: ${request.unqualifiedContextClass},
-    ${entity.kotlinMethodArgsForPKFields(false)},
-    ${field.name.lowerCamel}: ${field.unqualifiedKotlinType})
+    ${entity.kotlinView.methodArgsForIdFields(false)},
+    ${field.name.lowerCamel}: ${field.kotlinView.unqualifiedType})
 
 </#list>
 }

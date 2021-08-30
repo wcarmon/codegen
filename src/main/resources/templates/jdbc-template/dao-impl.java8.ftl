@@ -6,13 +6,13 @@ import org.springframework.jdbc.core.RowMapper;
 <#if request.jvmContextClass?has_content>
 import ${request.jvmContextClass};
 </#if>
-<#list entity.javaImportsForFields as importable>
+<#list entity.java8View.importsForFields as importable>
 import ${importable};
 </#list>
 <#list request.extraJVMImports as importable>
 import ${importable};
 </#list>
-<#if entity.requiresObjectWriter>
+<#if entity.jvmView.requiresObjectWriter>
 import com.fasterxml.jackson.databind.ObjectWriter;
 </#if>
 
@@ -38,7 +38,7 @@ import java.util.Set;
 public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upperCamel}DAO {
 
   private final JdbcTemplate jdbcTemplate;
-  <#if entity.requiresObjectWriter>
+  <#if entity.jvmView.requiresObjectWriter>
   /** To serialize collection fields */
   private final ObjectWriter objectWriter;
   </#if>
@@ -46,59 +46,59 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
 
   public ${entity.name.upperCamel}DAOImpl(
     JdbcTemplate jdbcTemplate,
-    <#if entity.requiresObjectWriter>
+    <#if entity.jvmView.requiresObjectWriter>
     ObjectWriter objectWriter,
     </#if>
     RowMapper<${entity.name.upperCamel}> rowMapper) {
 
     Objects.requireNonNull(jdbcTemplate, "jdbcTemplate is required and null");
-    <#if entity.requiresObjectWriter>
+    <#if entity.jvmView.requiresObjectWriter>
     Objects.requireNonNull(objectWriter, "objectWriter is required and null");
     </#if>
     Objects.requireNonNull(rowMapper, "rowMapper is required and null");
 
     this.jdbcTemplate = jdbcTemplate;
-    <#if entity.requiresObjectWriter>
+    <#if entity.jvmView.requiresObjectWriter>
     this.objectWriter = objectWriter;
     </#if>
     this.rowMapper = rowMapper;
   }
 
-  <#if entity.hasPrimaryKeyFields>
+  <#if entity.hasIdFields>
   @Override
-  public void delete(${request.unqualifiedContextClass} context,${entity.javaMethodArgsForPKFields(false)}) {
+  public void delete(${request.unqualifiedContextClass} context,${entity.java8View.methodArgsForIdFields(false)}) {
     Objects.requireNonNull(context, "context is required and null.");
-    ${entity.javaPrimaryKeyPreconditionStatements}
+    ${entity.java8View.primaryKeyPreconditionStatements}
 
     int affectedRowCount = jdbcTemplate.update(
       SQLQueries.DELETE__${entity.name.upperSnake},
       ps -> {
-        ${entity.javaPreparedStatementSetterStatementsForPK}
+        ${entity.java8View.preparedStatementSetterStatementsForPK}
       });
   }
 
   @Override
-  public boolean exists(${request.unqualifiedContextClass} context,${entity.javaMethodArgsForPKFields(false)}) {
+  public boolean exists(${request.unqualifiedContextClass} context,${entity.java8View.methodArgsForIdFields(false)}) {
     Objects.requireNonNull(context, "context is required and null.");
-    ${entity.javaPrimaryKeyPreconditionStatements}
+    ${entity.java8View.primaryKeyPreconditionStatements}
 
     Integer result = jdbcTemplate.queryForObject(
       SQLQueries.ROW_EXISTS__${entity.name.upperSnake},
       Integer.class,
-      ${entity.jdbcSerializedPKFields});
+      ${entity.rdbmsView.jdbcSerializedPrimaryKeyFields});
 
     return null != result  && 1 == result;
   }
 
   @Override
-  public ${entity.name.upperCamel} findById(${request.unqualifiedContextClass} context,${entity.javaMethodArgsForPKFields(false)}) {
+  public ${entity.name.upperCamel} findById(${request.unqualifiedContextClass} context,${entity.java8View.methodArgsForIdFields(false)}) {
     Objects.requireNonNull(context, "context is required and null.");
-    ${entity.javaPrimaryKeyPreconditionStatements}
+    ${entity.java8View.primaryKeyPreconditionStatements}
 
     List<${entity.name.upperCamel}> results = jdbcTemplate.query(
         SQLQueries.SELECT_BY_PK__${entity.name.upperSnake},
         ps -> {
-          ${entity.javaPreparedStatementSetterStatementsForPK}
+          ${entity.java8View.preparedStatementSetterStatementsForPK}
         },
         rowMapper);
 
@@ -125,7 +125,7 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
       SQLQueries.INSERT__${entity.name.upperSnake},
       ps -> {
         try {
-            ${entity.javaInsertPreparedStatementSetterStatements}
+            ${entity.java8View.insertPreparedStatementSetterStatements}
 
         } catch (Exception ex) {
           throw new RuntimeException("Failed to create ${entity.name.upperCamel}: " +
@@ -155,7 +155,7 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
       SQLQueries.UPDATE__${entity.name.upperSnake},
       ps -> {
         try {
-            ${entity.javaUpdatePreparedStatementSetterStatements}
+            ${entity.java8View.updatePreparedStatementSetterStatements}
 
         } catch (Exception ex) {
           throw new RuntimeException("Failed to update ${entity.name.upperCamel}: " +
@@ -175,14 +175,14 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
   }
 
   // -- Patch methods
-<#list entity.nonPrimaryKeyFields as field>
+<#list entity.nonIdFields as field>
   @Override
   public void set${field.name.upperCamel}(
     ${request.unqualifiedContextClass} context,
-    ${entity.javaMethodArgsForPKFields(false)},
+    ${entity.java8View.methodArgsForIdFields(false)},
     ${field.java8View.unqualifiedType} ${field.name.lowerCamel}) {
     Objects.requireNonNull(context, "context is required and null.");
-    ${entity.javaPrimaryKeyPreconditionStatements}
+    ${entity.java8View.primaryKeyPreconditionStatements}
     <#if field.type.nullable>
     //TODO: requireNonNull precondition on ${field.java8View.unqualifiedType} (except for primitives)
     </#if>
@@ -193,7 +193,7 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
       SQLQueries.PATCH__${entity.name.upperSnake}__${field.name.upperSnake},
       ps -> {
         try {
-          ${entity.javaUpdateFieldPreparedStatementSetterStatements(field)}
+          ${field.java8View.updateFieldPreparedStatementSetterStatements(entity.idFields)}
 
         } catch (Exception ex) {
           throw new RuntimeException("Failed to patch ${entity.name.upperCamel}.${field.name.lowerCamel}: " +
