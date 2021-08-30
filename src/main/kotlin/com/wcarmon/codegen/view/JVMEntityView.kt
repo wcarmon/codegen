@@ -6,7 +6,7 @@ import com.wcarmon.codegen.model.Entity
  * Convenience methods/properties applicable across JVM languages
  */
 class JVMEntityView(
-  private val entity: Entity,
+  entity: Entity,
 ) {
 
   val requiresObjectWriter =
@@ -15,4 +15,5 @@ class JVMEntityView(
   val requiresObjectReader =
     entity.fields.any { it.effectiveBaseType.isCollection }
 }
+
 

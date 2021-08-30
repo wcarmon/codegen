@@ -10,23 +10,23 @@ import com.wcarmon.codegen.model.TargetLanguage.*
  * Signature for a method/function
  */
 data class MethodHeaderExpression(
-  val documentation: Documentation = EMPTY,
+  private val documentation: Documentation = EMPTY,
 
-  val finalityModifier: FinalityModifier = FinalityModifier.NON_FINAL,
+  private val finalityModifier: FinalityModifier = FinalityModifier.NON_FINAL,
 
-  val name: MethodNameExpression,
+  private val name: MethodNameExpression,
 
-  val override: Boolean = false,
+  private val override: Boolean = false,
 
-  val parameters: List<MethodParameterExpression> = listOf(),
+  private val parameters: List<MethodParameterExpression> = listOf(),
 
   /**
    * Java, C, C++, Rust, Typescript, JS, Python, Dart, ... only support 1 return type
    */
   //TODO: golang & Lua support multiple returns
-  val returnType: LogicalFieldType,
+  private val returnType: LogicalFieldType,
 
-  val visibilityModifier: VisibilityModifier = VisibilityModifier.PUBLIC,
+  private val visibilityModifier: VisibilityModifier = VisibilityModifier.PUBLIC,
 
   //TODO: List: Generic parameter(s)  eg. "<T: Bacon, S>"
 ) : Expression {

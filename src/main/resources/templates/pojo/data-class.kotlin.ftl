@@ -1,16 +1,9 @@
 package ${request.packageName.value}
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
-<#list entity.java8View.importsForFields as importable>
-import ${importable}
-</#list>
-import java.util.ArrayList
-import java.util.Arrays
-import java.util.HashSet
-import java.util.StringJoiner
-import java.util.TreeSet
+${request.kotlinView.serializeImports(
+  entity.kotlinView.importsForFields,
+  request.extraJVMImports,
+  request.jvmContextClass)}
 
 /**
  * Immutable POJO

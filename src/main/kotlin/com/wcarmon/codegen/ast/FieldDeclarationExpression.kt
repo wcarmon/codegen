@@ -6,16 +6,15 @@ import com.wcarmon.codegen.model.TargetLanguage
 
 data class FieldDeclarationExpression(
 
-  val finalityModifier: FinalityModifier = FinalityModifier.FINAL,
+  private val finalityModifier: FinalityModifier = FinalityModifier.FINAL,
 
-  //TODO: field name expression?
-  val name: Name,
+  private val name: Name,
 
-  val visibilityModifier: VisibilityModifier = VisibilityModifier.PRIVATE,
+  private val visibilityModifier: VisibilityModifier = VisibilityModifier.PRIVATE,
 
-  val defaultValue: Expression? = null,
+  private val defaultValue: Expression? = null,
 
-  val type: LogicalFieldType,
+  private val type: LogicalFieldType,
 ) : Expression {
 
   override fun render(targetLanguage: TargetLanguage, terminate: Boolean): String {

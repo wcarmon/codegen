@@ -16,6 +16,7 @@ import com.wcarmon.codegen.model.TargetLanguage
 class ResultSetReadExpression(
   fieldName: Name,
   getterMethod: Name,
+
   resultSetIdentifierExpression: Expression = RawExpression("rs"),
 ) : Expression {
 
@@ -27,7 +28,7 @@ class ResultSetReadExpression(
       arguments = listOf(
         StringLiteralExpression(
           quoteType = DOUBLE,
-          fieldName.lowerSnake,
+          value = fieldName.lowerSnake,
         )),
       assertNonNull = false,
       fieldOwner = resultSetIdentifierExpression,

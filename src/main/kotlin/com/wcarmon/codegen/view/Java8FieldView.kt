@@ -15,7 +15,7 @@ import com.wcarmon.codegen.util.newJavaCollectionExpression
  *
  * Pre-rendered [Expression]s
  */
-class JavaFieldView(
+class Java8FieldView(
   private val field: Field,
   private val jvmView: JVMFieldView,
   private val rdbmsView: RDBMSColumnView,

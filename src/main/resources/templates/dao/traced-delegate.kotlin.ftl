@@ -1,18 +1,10 @@
 package ${request.packageName.value}
 
-<#if request.jvmContextClass?has_content>
-import ${request.jvmContextClass}
-</#if>
-<#list entity.java8View.importsForFields as importable>
-import ${importable}
-</#list>
-<#list request.extraJVMImports as importable>
-import ${importable}
-</#list>
-import io.opentracing.Tracer
-import io.opentracing.Span
+${request.kotlinView.serializeImports(
+  entity.kotlinView.importsForFields,
+  request.extraJVMImports,
+  request.jvmContextClass)}
 
-import java.util.function.Function
 
 private const val ENTITY_TYPE_NAME = "${entity.name.upperCamel}"
 
@@ -21,7 +13,7 @@ private const val ENTITY_TYPE_NAME = "${entity.name.upperCamel}"
  *
  * Uses Delegation pattern
  *
- * Relies on the Context class (${request.unqualifiedContextClass}) to:
+ * Relies on the Context class (${request.jvmView.unqualifiedContextClass}) to:
  * 1. provide the current [Span]
  * 2. build a new child Context, with a new [Span]
  *
@@ -40,7 +32,7 @@ class ${entity.name.upperCamel}TracedDAO(
 ) : ${entity.name.upperCamel}DAO {
 
 <#if entity.hasIdFields>
-  override fun delete(context: ${request.unqualifiedContextClass}, ${entity.kotlinView.methodArgsForIdFields(false)}) {
+  override fun delete(context: ${request.jvmView.unqualifiedContextClass}, ${entity.kotlinView.methodArgsForIdFields(false)}) {
     //TODO: kotlin preconditions on PK fields (see FieldValidation)
 
     val span = tracer.buildSpan("jdbc::delete")
@@ -58,7 +50,7 @@ class ${entity.name.upperCamel}TracedDAO(
     }
   }
 
-  override fun exists(context: ${request.unqualifiedContextClass}, ${entity.kotlinView.methodArgsForIdFields(false)}): Boolean {
+  override fun exists(context: ${request.jvmView.unqualifiedContextClass}, ${entity.kotlinView.methodArgsForIdFields(false)}): Boolean {
     //TODO: kotlin preconditions on PK fields (see FieldValidation)
 
     val span = tracer.buildSpan("jdbc::exists")
@@ -76,7 +68,7 @@ class ${entity.name.upperCamel}TracedDAO(
     }
   }
 
-  override fun findById(context: ${request.unqualifiedContextClass}, ${entity.kotlinView.methodArgsForIdFields(false)}): ${entity.name.upperCamel}? {
+  override fun findById(context: ${request.jvmView.unqualifiedContextClass}, ${entity.kotlinView.methodArgsForIdFields(false)}): ${entity.name.upperCamel}? {
     //TODO: kotlin preconditions on PK fields (see FieldValidation)
 
     val span = tracer.buildSpan("jdbc::findById")
@@ -95,7 +87,7 @@ class ${entity.name.upperCamel}TracedDAO(
   }
 </#if>
 
-  override fun create(context: ${request.unqualifiedContextClass}, entity: ${entity.name.upperCamel}) {
+  override fun create(context: ${request.jvmView.unqualifiedContextClass}, entity: ${entity.name.upperCamel}) {
     val span = tracer.buildSpan("jdbc::create")
       .asChildOf(context.currentSpan())
       .ignoreActiveSpan()
@@ -111,7 +103,7 @@ class ${entity.name.upperCamel}TracedDAO(
     }
   }
 
-  override fun list(context: ${request.unqualifiedContextClass}): List<${entity.name.upperCamel}> {
+  override fun list(context: ${request.jvmView.unqualifiedContextClass}): List<${entity.name.upperCamel}> {
     val span = tracer.buildSpan("jdbc::list")
         .asChildOf(context.currentSpan())
         .ignoreActiveSpan()
@@ -124,7 +116,7 @@ class ${entity.name.upperCamel}TracedDAO(
     }
   }
 
-  override fun update(context: ${request.unqualifiedContextClass}, entity: ${entity.name.upperCamel}) {
+  override fun update(context: ${request.jvmView.unqualifiedContextClass}, entity: ${entity.name.upperCamel}) {
     val span = tracer.buildSpan("jdbc::update")
         .asChildOf(context.currentSpan())
         .ignoreActiveSpan()
@@ -137,7 +129,7 @@ class ${entity.name.upperCamel}TracedDAO(
     }
   }
 
-  override fun upsert(context: ${request.unqualifiedContextClass}, entity: ${entity.name.upperCamel}) {
+  override fun upsert(context: ${request.jvmView.unqualifiedContextClass}, entity: ${entity.name.upperCamel}) {
     val span = tracer.buildSpan("jdbc::upsert")
         .asChildOf(context.currentSpan())
         .ignoreActiveSpan()
@@ -153,7 +145,7 @@ class ${entity.name.upperCamel}TracedDAO(
   // -- Patch methods
 <#list entity.nonIdFields as field>
   override fun set${field.name.upperCamel}(
-    context: ${request.unqualifiedContextClass},
+    context: ${request.jvmView.unqualifiedContextClass},
     ${entity.kotlinView.methodArgsForIdFields(false)},
     ${field.name.lowerCamel}: ${field.kotlinView.unqualifiedType}) {
 

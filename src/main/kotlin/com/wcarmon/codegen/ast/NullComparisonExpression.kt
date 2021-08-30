@@ -9,7 +9,7 @@ import com.wcarmon.codegen.model.TargetLanguage.*
  *  nil == x
  */
 data class NullComparisonExpression(
-  val compareTo: Expression,
+  private val compareTo: Expression,
 ) : Expression {
 
   //NOTE: termination not supported

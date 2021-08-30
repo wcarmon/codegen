@@ -9,17 +9,17 @@ import com.wcarmon.codegen.model.TargetLanguage.*
 
 data class InterfaceDeclarationExpression(
 
-  val documentation: Documentation = EMPTY,
+  private val documentation: Documentation = EMPTY,
 
-  val fullyQualifiedInterfaces: List<String>,
+  private val fullyQualifiedInterfaces: List<String>,
 
-  val instanceMethods: List<MethodHeaderExpression> = listOf(),
+  private val instanceMethods: List<MethodHeaderExpression> = listOf(),
 
-  val defaultMethods: List<MethodDeclarationExpression> = listOf(),
+  private val defaultMethods: List<MethodDeclarationExpression> = listOf(),
 
-  val name: Name,
+  private val name: Name,
 
-  val packageName: PackageName,
+  private val packageName: PackageName,
 
   //TODO: List: generic parameters
 ) : Expression {

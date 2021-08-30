@@ -13,12 +13,12 @@ data class WrappedExpression(
   /**
    * Wrapped by [wrapperTemplate]
    */
-  val wrapped: Expression,
+  private val wrapped: Expression,
 
   /**
    * When %s is missing, [wrapped] is ignored
    */
-  val wrapperTemplate: StringFormatTemplate = StringFormatTemplate.INLINE,
+  private val wrapperTemplate: StringFormatTemplate = StringFormatTemplate.INLINE,
 ) : Expression {
 
   override fun render(
@@ -27,4 +27,3 @@ data class WrappedExpression(
   ) = wrapperTemplate.expand(
     wrapped.render(targetLanguage, false))
 }
-

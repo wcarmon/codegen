@@ -5,7 +5,7 @@ import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.model.TargetLanguage.*
 
 data class MethodNameExpression(
-  val name: Name,
+  private val name: Name,
 ) : Expression {
 
   override fun render(

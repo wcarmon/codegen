@@ -1,36 +1,9 @@
 package ${request.packageName.value};
 
-import org.springframework.jdbc.core.RowMapper;
-<#if entity.jvmView.requiresObjectReader>
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.type.TypeReference;
-</#if>
-<#list request.extraJVMImports as importable>
-import ${importable};
-</#list>
-
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.net.URI;
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.NClob;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.format.DateTimeFormatter;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.function.Function;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
-
+${request.java8View.serializeImports(
+  entity.java8View.importsForFields,
+  request.extraJVMImports,
+  request.jvmContextClass)}
 
 /**
  * Maps one row of ResultSet data to ${entity.name.upperCamel} instance

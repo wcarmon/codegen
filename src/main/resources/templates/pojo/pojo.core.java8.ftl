@@ -1,20 +1,9 @@
 package ${request.packageName.value};
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-<#list entity.java8View.importsForFields as importable>
-import ${importable};
-</#list>
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.StringJoiner;
-import java.util.TreeSet;
+${request.java8View.serializeImports(
+  entity.java8View.importsForFields,
+  request.extraJVMImports,
+  request.jvmContextClass)}
 
 /**
  * Immutable POJO
@@ -35,6 +24,7 @@ public final class ${entity.name.upperCamel} {
     </#if>
   */
   private final ${field.java8View.typeLiteral} ${field.name.lowerCamel};
+
   </#list>
 
   private ${entity.name.upperCamel}( ${entity.name.upperCamel}Builder builder ) {

@@ -1,23 +1,9 @@
 package ${request.packageName.value}
 
-import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.jdbc.core.PreparedStatementSetter
-import org.springframework.jdbc.core.RowMapper
-<#if request.jvmContextClass?has_content>
-import ${request.jvmContextClass}
-</#if>
-<#list entity.kotlinView.importsForFields as importable>
-import ${importable}
-</#list>
-<#list request.extraJVMImports as importable>
-import ${importable}
-</#list>
-<#if entity.jvmView.requiresObjectWriter>
-import com.fasterxml.jackson.databind.ObjectWriter
-</#if>
-import java.sql.Types
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+${request.kotlinView.serializeImports(
+  entity.kotlinView.importsForFields,
+  request.extraJVMImports,
+  request.jvmContextClass)}
 
 /**
  * DAO implementation for [${entity.pkg.value}.${entity.name.upperCamel}].

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.wcarmon.codegen.model.TargetLanguage.JAVA_08
 import com.wcarmon.codegen.model.TargetLanguage.KOTLIN_JVM_1_4
 import com.wcarmon.codegen.view.JVMEntityView
-import com.wcarmon.codegen.view.JavaEntityView
+import com.wcarmon.codegen.view.Java8EntityView
 import com.wcarmon.codegen.view.KotlinEntityView
 import com.wcarmon.codegen.view.RDBMSTableView
 
@@ -78,7 +78,7 @@ data class Entity(
   }
 
   val java8View by lazy {
-    JavaEntityView(
+    Java8EntityView(
       entity = this,
       jvmView = jvmView,
       rdbmsView = rdbmsView,

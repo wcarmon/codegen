@@ -4,7 +4,7 @@ import com.wcarmon.codegen.model.Name
 import com.wcarmon.codegen.model.TargetLanguage
 
 data class EnumDeclarationExpression(
-  val name: Name,
+  private val name: Name,
   //TODO: values
   //TODO: fields
   //TODO: field validation

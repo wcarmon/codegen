@@ -1,28 +1,9 @@
 package ${request.packageName.value};
 
-
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-<#if request.jvmContextClass?has_content>
-import ${request.jvmContextClass};
-</#if>
-<#list entity.java8View.importsForFields as importable>
-import ${importable};
-</#list>
-<#list request.extraJVMImports as importable>
-import ${importable};
-</#list>
-<#if entity.jvmView.requiresObjectWriter>
-import com.fasterxml.jackson.databind.ObjectWriter;
-</#if>
-
-import java.sql.Types;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+${request.java8View.serializeImports(
+  entity.java8View.importsForFields,
+  request.extraJVMImports,
+  request.jvmContextClass)}
 
 /**
  * DAO implementation for {@link ${entity.pkg.value}.${entity.name.upperCamel}}.
@@ -66,7 +47,7 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
 
   <#if entity.hasIdFields>
   @Override
-  public void delete(${request.unqualifiedContextClass} context,${entity.java8View.methodArgsForIdFields(false)}) {
+  public void delete(${request.jvmView.unqualifiedContextClass} context,${entity.java8View.methodArgsForIdFields(false)}) {
     Objects.requireNonNull(context, "context is required and null.");
     ${entity.java8View.primaryKeyPreconditionStatements}
 
@@ -78,7 +59,7 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
   }
 
   @Override
-  public boolean exists(${request.unqualifiedContextClass} context,${entity.java8View.methodArgsForIdFields(false)}) {
+  public boolean exists(${request.jvmView.unqualifiedContextClass} context,${entity.java8View.methodArgsForIdFields(false)}) {
     Objects.requireNonNull(context, "context is required and null.");
     ${entity.java8View.primaryKeyPreconditionStatements}
 
@@ -91,7 +72,7 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
   }
 
   @Override
-  public ${entity.name.upperCamel} findById(${request.unqualifiedContextClass} context,${entity.java8View.methodArgsForIdFields(false)}) {
+  public ${entity.name.upperCamel} findById(${request.jvmView.unqualifiedContextClass} context,${entity.java8View.methodArgsForIdFields(false)}) {
     Objects.requireNonNull(context, "context is required and null.");
     ${entity.java8View.primaryKeyPreconditionStatements}
 
@@ -117,7 +98,7 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
   </#if>
 
   @Override
-  public void create(${request.unqualifiedContextClass} context,${entity.name.upperCamel} entity) {
+  public void create(${request.jvmView.unqualifiedContextClass} context,${entity.name.upperCamel} entity) {
     Objects.requireNonNull(context, "context is required and null.");
     Objects.requireNonNull(entity, "entity is required and null.");
 
@@ -137,7 +118,7 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
   }
 
   @Override
-  public List<${entity.name.upperCamel}> list(${request.unqualifiedContextClass} context) {
+  public List<${entity.name.upperCamel}> list(${request.jvmView.unqualifiedContextClass} context) {
     Objects.requireNonNull(context, "context is required and null.");
 
     return Collections.unmodifiableList(
@@ -147,7 +128,7 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
   }
 
   @Override
-  public void update(${request.unqualifiedContextClass} context,${entity.name.upperCamel} entity) {
+  public void update(${request.jvmView.unqualifiedContextClass} context,${entity.name.upperCamel} entity) {
     Objects.requireNonNull(context, "context is required and null.");
     Objects.requireNonNull(entity, "entity is required and null.");
 
@@ -167,7 +148,7 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
   }
 
   @Override
-  public void upsert(${request.unqualifiedContextClass} context,${entity.name.upperCamel} entity) {
+  public void upsert(${request.jvmView.unqualifiedContextClass} context,${entity.name.upperCamel} entity) {
     Objects.requireNonNull(context, "context is required and null.");
     Objects.requireNonNull(entity, "entity is required and null.");
 
@@ -178,7 +159,7 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
 <#list entity.nonIdFields as field>
   @Override
   public void set${field.name.upperCamel}(
-    ${request.unqualifiedContextClass} context,
+    ${request.jvmView.unqualifiedContextClass} context,
     ${entity.java8View.methodArgsForIdFields(false)},
     ${field.java8View.unqualifiedType} ${field.name.lowerCamel}) {
     Objects.requireNonNull(context, "context is required and null.");

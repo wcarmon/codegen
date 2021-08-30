@@ -54,7 +54,7 @@ enum class BaseFieldType {
   companion object {
 
     /**
-     * See [LogicalFieldTypeTest] for examples
+     * See [com.wcarmon.codegen.model.LogicalFieldTypeTest] for examples
      */
     @JvmStatic
     fun parse(value: String): BaseFieldType =

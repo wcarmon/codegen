@@ -6,10 +6,11 @@ import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.model.TargetLanguage.*
 
 data class VariableDeclarationExpression(
-  val defaultValue: Expression? = null,
-  val finalityModifier: FinalityModifier,
-  val name: Name,
-  val type: LogicalFieldType,
+  private val name: Name,
+  private val type: LogicalFieldType,
+
+  private val defaultValue: Expression? = null,
+  private val finalityModifier: FinalityModifier = FinalityModifier.FINAL,
 ) : Expression {
 
   override fun render(

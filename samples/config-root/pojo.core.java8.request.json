@@ -4,6 +4,20 @@
   "entityConfigDirs": [
     "file:///home/wcarmon/git-repos/codegen/samples/entities"
   ],
+  "extraJVMImports": [
+    "com.fasterxml.jackson.annotation.JsonPropertyOrder",
+    "com.fasterxml.jackson.databind.annotation.JsonDeserialize",
+    "com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder",
+    "java.util.ArrayList",
+    "java.util.Arrays",
+    "java.util.Collections",
+    "java.util.HashSet",
+    "java.util.List",
+    "java.util.Objects",
+    "java.util.Set",
+    "java.util.StringJoiner",
+    "java.util.TreeSet"
+  ],
   "outputFileOrDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/java/com/wcarmon/chrono/model01",
   "outputFilenameTemplate": "%s.java",
   "outputMode": "multiple",

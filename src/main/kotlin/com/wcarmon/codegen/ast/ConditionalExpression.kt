@@ -10,9 +10,9 @@ import com.wcarmon.codegen.model.TargetLanguage.*
  * For Kotlin: a Conditional Expression
  */
 data class ConditionalExpression(
-  val condition: Expression,
-  val expressionForTrue: Expression,
-  val expressionForFalse: Expression = EmptyExpression,
+  private val condition: Expression,
+  private val expressionForTrue: Expression,
+  private val expressionForFalse: Expression = EmptyExpression,
 ) : Expression {
 
   override fun render(

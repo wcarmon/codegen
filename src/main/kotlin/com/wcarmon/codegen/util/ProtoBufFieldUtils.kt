@@ -74,12 +74,7 @@ private fun effectiveProtoSerdeForTypeParameters(
     .type
     .typeParameters
     .map {
-      if (field.protobufConfig.overrideRepeatedItemSerde != null) {
-        field.protobufConfig.overrideRepeatedItemSerde
-
-      } else {
-        Serde.INLINE
-      }
+      field.protobufConfig.overrideRepeatedItemSerde ?: Serde.INLINE
     }
 
 

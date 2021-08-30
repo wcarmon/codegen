@@ -37,8 +37,7 @@ fun buildJavaPreconditionStatements(fields: Collection<Field>): Set<String> {
 fun commaSeparatedJavaFields(
   fields: Collection<Field>,
 ) =
-  fields.map { it.name.lowerCamel }
-    .joinToString(", ")
+  fields.joinToString(", ") { it.name.lowerCamel }
 
 /**
  * @return comma separated method args clause
@@ -56,7 +55,7 @@ fun commaSeparatedJavaMethodArgs(
  * Useful for Jackson, and json stores (eg. ElasticSearch, MongoDB, ...)
  *
  * See [com.wcarmon.codegen.model.Serde]
- * See [com.wcarmon.codegen.model.RDBMSColumn.serde]
+ * See [com.wcarmon.codegen.model.RDBMSColumnConfig#overrideSerde]
  */
 //private fun getJavaDeserializeTemplate(field: Field): ExpressionTemplate =
 //  if (field.jvm.serde != null) {

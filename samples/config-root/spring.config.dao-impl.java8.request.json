@@ -5,8 +5,13 @@
     "file:///home/wcarmon/git-repos/codegen/samples/entities"
   ],
   "extraJVMImports": [
+    "com.fasterxml.jackson.databind.ObjectWriter",
     "com.wcarmon.chrono.dao01.*",
-    "com.wcarmon.chrono.model01.*"
+    "com.wcarmon.chrono.model01.*",
+    "org.springframework.context.annotation.Bean",
+    "org.springframework.context.annotation.Configuration",
+    "org.springframework.jdbc.core.JdbcTemplate",
+    "org.springframework.jdbc.core.RowMapper"
   ],
   "outputFileOrDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/java/com/wcarmon/chrono/config/DAOImplBeans.java",
   "outputMode": "single",

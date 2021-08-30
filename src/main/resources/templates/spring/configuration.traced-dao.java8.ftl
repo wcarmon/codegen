@@ -1,12 +1,9 @@
 package ${request.packageName.value};
 
-import io.opentracing.Tracer;
-import java.util.function.Function;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-<#list request.extraJVMImports as importable>
-import ${importable};
-</#list>
+${request.java8View.serializeImports(
+  request.java8View.importsForFieldsOnAllEntities(entities),
+  request.jvmView.contextClass,
+  request.jvmView.extraImports)}
 
 /**
  * OpenTracing based Traced DAO Beans

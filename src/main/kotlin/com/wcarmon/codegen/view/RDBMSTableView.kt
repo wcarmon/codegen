@@ -5,8 +5,6 @@ import com.wcarmon.codegen.model.Entity
 import com.wcarmon.codegen.model.JDBCColumnIndex
 import com.wcarmon.codegen.model.PreparedStatementBuilderConfig
 import com.wcarmon.codegen.model.TargetLanguage
-import com.wcarmon.codegen.model.TargetLanguage.JAVA_08
-import com.wcarmon.codegen.model.TargetLanguage.KOTLIN_JVM_1_4
 import com.wcarmon.codegen.util.*
 import org.atteo.evo.inflector.English
 
@@ -26,7 +24,7 @@ data class RDBMSTableView(
     else "PrimaryKey " + English.plural("field", entity.idFields.size)
 
   val schemaPrefix: String =
-    if (entity.rdbmsConfig.schema.isBlank() != false) ""
+    if (entity.rdbmsConfig.schema.isBlank()) ""
     else "${entity.rdbmsConfig.schema}."
 
 
@@ -71,8 +69,9 @@ data class RDBMSTableView(
     )
 
     return (pk + nonPk)
-      .map { it.render(targetLanguage) }
-      .joinToString(separator = "\n")
+      .joinToString(separator = "\n") {
+        it.render(targetLanguage)
+      }
   }
 
   // NOTE: For UPDATE, PrimaryKey fields are last
@@ -102,8 +101,9 @@ data class RDBMSTableView(
     val separator = RawExpression("\n\t\t// Primary key field(s)")
 
     return (nonPk + separator + pk)
-      .map { it.render(targetLanguage) }
-      .joinToString(separator = "\n")
+      .joinToString(separator = "\n") {
+        it.render(targetLanguage)
+      }
   }
 
   fun preparedStatementSetterStatementsForPrimaryKey(

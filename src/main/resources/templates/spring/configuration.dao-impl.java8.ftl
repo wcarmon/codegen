@@ -1,13 +1,9 @@
 package ${request.packageName.value};
 
-import com.fasterxml.jackson.databind.ObjectWriter;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-<#list request.extraJVMImports as importable>
-import ${importable};
-</#list>
+${request.java8View.serializeImports(
+  request.java8View.importsForFieldsOnAllEntities(entities),
+  request.jvmView.contextClass,
+  request.jvmView.extraImports)}
 
 /**
  * DAO Beans

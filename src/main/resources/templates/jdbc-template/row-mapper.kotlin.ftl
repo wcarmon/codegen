@@ -1,22 +1,9 @@
-// see /home/wcarmon/git-repos/modern-jvm/trading-dao-jdbc/src/main/kotlin/com/wcarmon/trading/dao/rowmapper/convert.kt
-
 package ${request.packageName.value}
 
-<#list entity.kotlinView.importsForFields as importable>
-import ${importable}
-</#list>
-import org.springframework.jdbc.core.RowMapper
-<#if entity.jvmView.requiresObjectReader>
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.core.type.TypeReference
-</#if>
-<#list request.extraJVMImports as importable>
-import ${importable}
-</#list>
-
-import java.sql.ResultSet
-import java.time.format.DateTimeFormatter
-
+${request.kotlinView.serializeImports(
+  entity.kotlinView.importsForFields,
+  request.extraJVMImports,
+  request.jvmContextClass)}
 
 /**
  * Maps one row of ResultSet data to ${entity.name.upperCamel} instance

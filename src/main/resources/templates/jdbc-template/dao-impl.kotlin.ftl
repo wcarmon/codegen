@@ -1,22 +1,9 @@
 package ${request.packageName.value}
 
-import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.jdbc.core.PreparedStatementSetter
-import org.springframework.jdbc.core.RowMapper
-<#if request.jvmContextClass?has_content>
-import ${request.jvmContextClass}
-</#if>
-<#list entity.kotlinView.importsForFields as importable>
-import ${importable}
-</#list>
-<#list request.extraJVMImports as importable>
-import ${importable}
-</#list>
-<#if entity.jvmView.requiresObjectWriter>
-import com.fasterxml.jackson.databind.ObjectWriter
-</#if>
-import java.sql.Types
-
+${request.kotlinView.serializeImports(
+  entity.kotlinView.importsForFields,
+  request.extraJVMImports,
+  request.jvmContextClass)}
 
 /**
  * DAO implementation for [${entity.pkg.value}.${entity.name.upperCamel}].
@@ -40,7 +27,7 @@ class ${entity.name.upperCamel}DAOImpl(
 ): ${entity.name.upperCamel}DAO {
 
 <#if entity.hasIdFields>
-  override fun delete(context: ${request.unqualifiedContextClass}, ${entity.kotlinView.methodArgsForIdFields(false)}) {
+  override fun delete(context: ${request.jvmView.unqualifiedContextClass}, ${entity.kotlinView.methodArgsForIdFields(false)}) {
     //TODO: kotlin preconditions on PK fields (see FieldValidation)
 
     jdbcTemplate.update(DELETE__${entity.name.upperSnake}) { ps ->
@@ -48,7 +35,7 @@ class ${entity.name.upperCamel}DAOImpl(
     }
   }
 
-  override fun exists(context: ${request.unqualifiedContextClass}, ${entity.kotlinView.methodArgsForIdFields(false)}): Boolean {
+  override fun exists(context: ${request.jvmView.unqualifiedContextClass}, ${entity.kotlinView.methodArgsForIdFields(false)}): Boolean {
     //TODO: kotlin preconditions on PK fields (see FieldValidation)
 
     return 1 == jdbcTemplate.queryForObject(
@@ -57,7 +44,7 @@ class ${entity.name.upperCamel}DAOImpl(
       ${entity.rdbmsView.jdbcSerializedPrimaryKeyFields})
   }
 
-  override fun findById(context: ${request.unqualifiedContextClass}, ${entity.kotlinView.methodArgsForIdFields(false)}): ${entity.name.upperCamel}? {
+  override fun findById(context: ${request.jvmView.unqualifiedContextClass}, ${entity.kotlinView.methodArgsForIdFields(false)}): ${entity.name.upperCamel}? {
     //TODO: kotlin preconditions on PK fields (see FieldValidation)
 
     val results =
@@ -81,7 +68,7 @@ class ${entity.name.upperCamel}DAOImpl(
   }
 </#if>
 
-  override fun create(context: ${request.unqualifiedContextClass}, entity: ${entity.name.upperCamel}) {
+  override fun create(context: ${request.jvmView.unqualifiedContextClass}, entity: ${entity.name.upperCamel}) {
 
     val affectedRowCount = jdbcTemplate.update(
       INSERT__${entity.name.upperSnake},
@@ -92,14 +79,14 @@ class ${entity.name.upperCamel}DAOImpl(
     check(affectedRowCount == 1){ "1-row should have been inserted for entity=${r"$"}entity" }
   }
 
-  override fun list(context: ${request.unqualifiedContextClass}): List<${entity.name.upperCamel}> {
+  override fun list(context: ${request.jvmView.unqualifiedContextClass}): List<${entity.name.upperCamel}> {
     return jdbcTemplate.query(
       SELECT_ALL__${entity.name.upperSnake},
       rowMapper
     )
   }
 
-  override fun update(context: ${request.unqualifiedContextClass}, entity: ${entity.name.upperCamel}) {
+  override fun update(context: ${request.jvmView.unqualifiedContextClass}, entity: ${entity.name.upperCamel}) {
 
     jdbcTemplate.update(
       UPDATE__${entity.name.upperSnake}
@@ -108,14 +95,14 @@ class ${entity.name.upperCamel}DAOImpl(
     }
   }
 
-  override fun upsert(context: ${request.unqualifiedContextClass}, entity: ${entity.name.upperCamel}) {
+  override fun upsert(context: ${request.jvmView.unqualifiedContextClass}, entity: ${entity.name.upperCamel}) {
     TODO("finish this method")
   }
 
   // -- Patch methods
   <#list entity.nonIdFields as field>
     override fun set${field.name.upperCamel}(
-      context: ${request.unqualifiedContextClass},
+      context: ${request.jvmView.unqualifiedContextClass},
       ${entity.kotlinView.methodArgsForIdFields(false)},
       ${field.name.lowerCamel}: ${field.kotlinView.unqualifiedType}) {
 

@@ -7,11 +7,11 @@ import com.wcarmon.codegen.model.TargetLanguage
  * See https://developers.google.com/protocol-buffers/docs/proto3#enum
  */
 data class ProtoEnumDeclarationExpression(
-  val items: List<String>,
-  val name: Name,
+  private val items: List<String>,
+  private val name: Name,
 
   /** Defaults to undefined, instead of first element */
-  val prependUndefinedElement: Boolean = true,
+  private val prependUndefinedElement: Boolean = true,
 ) : Expression {
 
   companion object {

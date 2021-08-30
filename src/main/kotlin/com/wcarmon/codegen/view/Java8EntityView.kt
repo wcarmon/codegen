@@ -9,7 +9,7 @@ import com.wcarmon.codegen.util.javaImportsForFields
 /**
  * Java related convenience methods for a [Entity]
  */
-class JavaEntityView(
+class Java8EntityView(
   private val entity: Entity,
   private val jvmView: JVMEntityView,
   private val rdbmsView: RDBMSTableView,

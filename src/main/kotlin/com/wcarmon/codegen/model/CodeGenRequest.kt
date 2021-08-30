@@ -8,6 +8,9 @@ import com.google.common.base.CaseFormat
 import com.wcarmon.codegen.TEMPLATE_SUFFIX
 import com.wcarmon.codegen.model.OutputMode.FILE_PER_ENTITY
 import com.wcarmon.codegen.model.OutputMode.SINGLE_FILE
+import com.wcarmon.codegen.view.JVMRequestView
+import com.wcarmon.codegen.view.Java8RequestView
+import com.wcarmon.codegen.view.KotlinRequestView
 import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.FileSystemResource
 import org.springframework.core.io.PathResource
@@ -159,11 +162,17 @@ data class CodeGenRequest(
     else -> TODO("decide how to pretty-print this template")
   }
 
-  val hasContextClass = jvmContextClass.isNotBlank()
-
   val inDefaultPackage: Boolean = packageName == PackageName.DEFAULT
 
-  val sortedExtraJVMImports = extraJVMImports.sorted()
+  val java8View by lazy {
+    Java8RequestView(this)
+  }
 
-  val unqualifiedContextClass = jvmContextClass.substringAfterLast(".")
+  val jvmView by lazy {
+    JVMRequestView(this)
+  }
+
+  val kotlinView by lazy {
+    KotlinRequestView(this)
+  }
 }

@@ -4,9 +4,11 @@ import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.model.TargetLanguage.*
 
 data class MethodDeclarationExpression(
-  val header: MethodHeaderExpression,
-  val extraPreconditions: List<PreconditionExpression> = listOf(),
-  val body: List<Expression>,
+  private val header: MethodHeaderExpression,
+
+  private val extraPreconditions: List<PreconditionExpression> = listOf(),
+
+  private val body: List<Expression>,
 ) : Expression {
 
   override fun render(targetLanguage: TargetLanguage, terminate: Boolean): String {

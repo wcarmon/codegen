@@ -1,9 +1,9 @@
 package ${request.packageName.value};
 
-<#list request.extraJVMImports as importable>
-import ${importable};
-</#list>
-import org.springframework.core.convert.converter.Converter;
+${request.java8View.serializeImports(
+  request.java8View.importsForFieldsOnAllEntities(entities),
+  request.jvmView.contextClass,
+  request.jvmView.extraImports)}
 
 /**
  * Provides Converter instances suitable for Spring ConversionService

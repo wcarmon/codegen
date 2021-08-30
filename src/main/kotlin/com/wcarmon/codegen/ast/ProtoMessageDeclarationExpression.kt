@@ -1,5 +1,6 @@
 package com.wcarmon.codegen.ast
 
+import com.wcarmon.codegen.ast.ProtoFieldDeclarationExpression.Companion.NUMBER_COMPARATOR
 import com.wcarmon.codegen.model.Name
 import com.wcarmon.codegen.model.TargetLanguage
 
@@ -25,7 +26,7 @@ data class ProtoMessageDeclarationExpression(
   }
 
   private val sortedFieldExpressions: List<ProtoFieldDeclarationExpression> =
-    fields.sortedBy { it.number.value }
+    fields.sortedWith(NUMBER_COMPARATOR)
 
   override fun render(
     targetLanguage: TargetLanguage,

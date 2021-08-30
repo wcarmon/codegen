@@ -8,12 +8,12 @@ import com.wcarmon.codegen.util.protoBuilderSetter
  * Useful when converting from POJO to Proto generated class (via builder)
  */
 data class ProtoFieldWriteExpression(
-  val field: Field,
+  private val field: Field,
 
   /**
    * typically a [FieldReadExpression] or [WrapWithSerdeExpression]
    */
-  val sourceReadExpression: Expression,
+  private val sourceReadExpression: Expression,
 ) : Expression {
 
   /**

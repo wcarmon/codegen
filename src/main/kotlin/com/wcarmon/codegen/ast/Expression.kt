@@ -3,6 +3,12 @@ package com.wcarmon.codegen.ast
 import com.wcarmon.codegen.model.TargetLanguage
 
 /**
+ * The atomic "lego block" for a reusable piece of code
+ * - generally configurable
+ * - responsible for rendering/serializing itself
+ * - responsible for formatting itself (based on config)
+ * - generally language independent
+ *
  * Older Languages (like Java) consider some "Expressions" as Statements
  *
  * Expression:
@@ -26,7 +32,7 @@ import com.wcarmon.codegen.model.TargetLanguage
 fun interface Expression {
 
   /**
-   * Render/Serialize to Kotlin/Java/Golang/Rust/Protobuf... code
+   * Render/Serialize to Kotlin/Java/Golang/Rust/Protobuf... code snippet
    * @param targetLanguage
    * @param terminate only affects languages which require statement terminators (eg. java, c, c++)
    *    converts an expression into a statement

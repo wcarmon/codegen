@@ -7,7 +7,10 @@
   "extraJVMImports": [
     "com.wcarmon.chrono.dao30.*",
     "com.wcarmon.chrono.model30.*",
-    "com.wcarmon.chrono.sql30.*"
+    "com.wcarmon.chrono.sql30.*",
+    "io.opentracing.Span",
+    "io.opentracing.Tracer",
+    "java.util.function.Function"
   ],
   "jvmContextClass": "com.wcarmon.chrono.context.ChronoContext",
   "outputFileOrDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/java/com/wcarmon/chrono/dao30",

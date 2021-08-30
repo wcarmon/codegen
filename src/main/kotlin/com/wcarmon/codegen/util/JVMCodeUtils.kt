@@ -62,6 +62,43 @@ fun defaultJVMSerde(field: Field): Serde =
   )
 
 
+/**
+ * Dedupes, Sorts, trims, flattens (Iterables)
+ *
+ * @param importables: zero or more [Iterable<String>] or [String]
+ */
+fun consolidateImports(
+  importables: Iterable<Any>,
+): Collection<String> {
+
+  // -- Validate
+  importables.forEachIndexed { index, arg ->
+    require((arg is String) || (arg is Iterable<*>)) {
+      "argument must be String or Iterable<String>: index=$index, arg=$arg"
+    }
+  }
+
+  // -- Clean
+  val output = mutableSetOf<String>()
+
+  importables
+    .filter { it is String }
+    .map { (it as String).trim() }
+    .filter { it.isNotBlank() }
+    .forEach(output::add)
+
+  importables
+    .filter { it is Iterable<*> }
+    .map { it as Iterable<*> }
+    .flatMap { it }
+    .map { (it as String).trim() }
+    .filter { it.isNotBlank() }
+    .forEach(output::add)
+
+  return output.toSortedSet()
+}
+
+
 //TODO: document me
 private fun defaultJVMSerializeTemplate(type: LogicalFieldType) = when (type.base) {
 

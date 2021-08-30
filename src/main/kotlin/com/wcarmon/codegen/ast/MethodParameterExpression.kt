@@ -10,9 +10,12 @@ import com.wcarmon.codegen.model.TargetLanguage.*
  * Arguments are passed & read at runtime
  */
 data class MethodParameterExpression(
-  val finalityModifier: FinalityModifier = FinalityModifier.FINAL,
-  val name: Name,
-  val type: LogicalFieldType,
+
+  private val finalityModifier: FinalityModifier = FinalityModifier.FINAL,
+
+  private val name: Name,
+
+  private val type: LogicalFieldType,
 ) : Expression {
 
   override fun render(

@@ -9,10 +9,17 @@ import com.wcarmon.codegen.model.TargetLanguage.*
  * Compares two [Expression]s for equality
  *
  * Useful inside a [ConditionalExpression]
+ *
+ * See also [NullComparisonExpression]
  */
 data class EqualityTestExpression(
   private val expression0: Expression,
   private val expression1: Expression,
+
+  /**
+   * Some languages use different comparison strategy based on type
+   * (eg. Java double/array/string)
+   */
   private val expressionType: LogicalFieldType,
 ) : Expression {
 

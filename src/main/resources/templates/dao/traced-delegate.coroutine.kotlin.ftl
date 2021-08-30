@@ -1,20 +1,10 @@
 package ${request.packageName.value}
 
-<#if request.jvmContextClass?has_content>
-import ${request.jvmContextClass}
-</#if>
-<#list entity.java8View.importsForFields as importable>
-import ${importable}
-</#list>
-<#list request.extraJVMImports as importable>
-import ${importable}
-</#list>
-import io.opentracing.Span
-import io.opentracing.Tracer
-import kotlin.coroutines.coroutineContext
-import kotlinx.coroutines.withContext
+${request.kotlinView.serializeImports(
+  entity.kotlinView.importsForFields,
+  request.extraJVMImports,
+  request.jvmContextClass)}
 
-import java.util.function.Function
 
 private const val ENTITY_TYPE_NAME = "${entity.name.upperCamel}"
 
@@ -23,7 +13,7 @@ private const val ENTITY_TYPE_NAME = "${entity.name.upperCamel}"
  *
  * Uses Delegation pattern
  *
- * Relies on the Context class (${request.unqualifiedContextClass}) to:
+ * Relies on the Context class (${request.jvmView.unqualifiedContextClass}) to:
  * 1. provide the current [Span]
  * 2. build a new child Context, with a new [Span]
  *

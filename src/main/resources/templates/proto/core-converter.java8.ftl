@@ -1,21 +1,9 @@
 package ${request.packageName.value};
 
-<#list request.extraJVMImports as importable>
-import ${importable};
-</#list>
-<#list entities as entity>
-<#-- TODO: dedupe -->
-  <#list entity.java8View.importsForFields as importable>
-import ${importable};
-  </#list>
-</#list>
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+${request.java8View.serializeImports(
+  request.java8View.importsForFieldsOnAllEntities(entities),
+  request.jvmView.contextClass,
+  request.jvmView.extraImports)}
 
 /**
  * Utils to convert to/from proto entities and domain POJOs

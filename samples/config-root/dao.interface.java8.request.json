@@ -5,7 +5,11 @@
     "file:///home/wcarmon/git-repos/codegen/samples/entities"
   ],
   "extraJVMImports": [
-    "com.wcarmon.chrono.model01.*"
+    "com.wcarmon.chrono.model01.*",
+    "java.util.Collection",
+    "java.util.List",
+    "java.util.Map",
+    "java.util.Set"
   ],
   "jvmContextClass": "com.wcarmon.chrono.context.ChronoContext",
   "outputFileOrDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/java/com/wcarmon/chrono/dao01",

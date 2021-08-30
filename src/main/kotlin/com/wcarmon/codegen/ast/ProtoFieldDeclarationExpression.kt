@@ -10,11 +10,20 @@ data class ProtoFieldDeclarationExpression(
   private val field: Field,
   val number: ProtoFieldNumber,
 
+
   private val deprecated: Boolean = false,
   private val repeated: Boolean = false,
 
   //TODO: DocumentationExpression
-) : Expression {
+) : Expression, Comparable<ProtoFieldDeclarationExpression> {
+
+  companion object {
+
+    @JvmStatic
+    val NUMBER_COMPARATOR = Comparator<ProtoFieldDeclarationExpression> { x, y ->
+      x.number.compareTo(y.number)
+    }
+  }
 
   override fun render(
     targetLanguage: TargetLanguage,
@@ -34,4 +43,7 @@ data class ProtoFieldDeclarationExpression(
     return "${repeatedPrefix}${effectiveProtobufType(field)} ${field.name.lowerSnake} " +
         "= ${number.value}${deprecatedSegment};"
   }
+
+  override fun compareTo(other: ProtoFieldDeclarationExpression) =
+    number.compareTo(other.number)
 }

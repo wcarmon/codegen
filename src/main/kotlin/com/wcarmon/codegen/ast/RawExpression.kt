@@ -8,13 +8,15 @@ import com.wcarmon.codegen.model.TargetLanguage
  * Try [StringLiteralExpression] or [NumericLiteralExpression]
  * Prefer all other [Expression] types.
  *
+ * See [EmptyExpression]
+ *
  * Only helpful when it works across languages
  */
 data class RawExpression(
-  val value: String,
+  private val value: String,
 ) : Expression {
   init {
-    require(value.isNotBlank())
+    require(value.isNotBlank()) { "expression cannot be empty" }
   }
 
   /** Assume text is already appropriate for target language */

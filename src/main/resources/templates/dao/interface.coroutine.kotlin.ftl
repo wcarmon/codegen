@@ -1,11 +1,8 @@
 package ${request.packageName.value}
 
-<#list request.extraJVMImports as importable>
-import ${importable}
-</#list>
-<#list entity.java8View.importsForFields as importable>
-import ${importable}
-</#list>
+${request.kotlinView.serializeImports(
+  request.extraJVMImports,
+  entity.kotlinView.importsForFields)}
 
 
 /**

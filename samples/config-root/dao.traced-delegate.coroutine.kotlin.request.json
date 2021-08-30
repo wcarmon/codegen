@@ -7,7 +7,12 @@
   "extraJVMImports": [
     "com.wcarmon.chrono.dao31.*",
     "com.wcarmon.chrono.model30.*",
-    "com.wcarmon.tracing.SpanElement"
+    "com.wcarmon.tracing.SpanElement",
+    "io.opentracing.Span",
+    "io.opentracing.Tracer",
+    "java.util.function.Function",
+    "kotlin.coroutines.coroutineContext",
+    "kotlinx.coroutines.withContext"
   ],
   "outputFileOrDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/java/com/wcarmon/chrono/dao31",
   "outputFilenameTemplate": "%sTracedDAO.kt",

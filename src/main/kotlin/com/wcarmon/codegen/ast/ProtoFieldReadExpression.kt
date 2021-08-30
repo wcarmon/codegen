@@ -12,19 +12,19 @@ import com.wcarmon.codegen.util.protoBuilderGetter
 class ProtoFieldReadExpression(
   private val assertNonNull: Boolean,
   private val field: Field,
-  private val fieldOwner: Expression = defaultFieldOwner,
+  private val fieldOwner: Expression = DEFAULT_FIELD_OWNER,
   private val protoReadExpression: Expression,
 ) : Expression {
 
   companion object {
 
-    private val defaultFieldOwner = RawExpression("proto")
+    private val DEFAULT_FIELD_OWNER = RawExpression("proto")
 
     @JvmStatic
     fun build(
       assertNonNull: Boolean = false,
       field: Field,
-      fieldOwner: Expression = defaultFieldOwner,
+      fieldOwner: Expression = DEFAULT_FIELD_OWNER,
     ) = ProtoFieldReadExpression(
       field = field,
       assertNonNull = assertNonNull,

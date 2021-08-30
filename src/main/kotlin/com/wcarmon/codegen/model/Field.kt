@@ -136,7 +136,7 @@ data class Field(
   }
 
   val java8View by lazy {
-    JavaFieldView(
+    Java8FieldView(
       field = this,
       jvmView = jvmView,
       rdbmsView = rdbmsView,
