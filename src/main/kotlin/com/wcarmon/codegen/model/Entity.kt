@@ -142,7 +142,11 @@ data class Entity(
   val sortedFieldsWithIdsFirst =
     idFields + nonIdFields
 
-  val validatedFields = fields
-    .filter { it.validationConfig.hasValidation }
-    .sortedBy { it.name.lowerCamel }
+  val validatedFields =
+    sortedFieldsWithIdsFirst
+      .filter {
+        it.validationConfig.hasValidation
+            // For Java we need validation to enforce null safety
+            || !it.type.nullable
+      }
 }

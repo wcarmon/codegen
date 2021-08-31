@@ -11,9 +11,14 @@ class JVMRequestView(
   private val request: CodeGenRequest,
 ) {
 
-  val templateNameComment by lazy {
+  val templateDebugInfo by lazy {
     if (debugMode) {
-      "/*\ntemplatePath = ${request.prettyTemplateName} \n*/"
+      """
+      |/*        
+      | * templatePath = ${request.prettyTemplateName}
+      | * timestamp    = ${java.time.Instant.now()}
+      | */
+      """.trimMargin()
     } else {
       ""
     }

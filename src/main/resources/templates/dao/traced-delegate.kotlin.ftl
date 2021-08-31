@@ -1,5 +1,5 @@
 package ${request.packageName.value}
-${request.jvmView.templateNameComment}
+${request.jvmView.templateDebugInfo}
 
 ${request.kotlinView.serializeImports(
   entity.kotlinView.importsForFields,

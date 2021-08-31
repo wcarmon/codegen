@@ -29,18 +29,19 @@ data class DocumentationExpression(
 
   val isNotBlank: Boolean = parts.isNotEmpty() && parts.any { it.isNotBlank() }
 
-  override fun renderWithoutDebugComments(config: RenderConfig): String = when (config.targetLanguage) {
+  override fun renderWithoutDebugComments(config: RenderConfig): String =
+    when (config.targetLanguage) {
 
-    JAVA_08,
-    JAVA_11,
-    JAVA_17,
-    -> handleJava(config)
+      JAVA_08,
+      JAVA_11,
+      JAVA_17,
+      -> handleJava(config)
 
-    KOTLIN_JVM_1_4,
-    -> handleKotlin(config)
+      KOTLIN_JVM_1_4,
+      -> handleKotlin(config)
 
-    else -> TODO("render documentation: config=$config, parts=$parts")
-  }
+      else -> TODO("render documentation: config=$config, parts=$parts")
+    }
 
   //TODO: handle wrapping references in {@link ...}
   private fun handleJava(config: RenderConfig): String {

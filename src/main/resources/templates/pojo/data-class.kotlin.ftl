@@ -1,5 +1,5 @@
 package ${request.packageName.value}
-${request.jvmView.templateNameComment}
+${request.jvmView.templateDebugInfo}
 
 ${request.kotlinView.serializeImports(
   entity.kotlinView.importsForFields,
@@ -29,8 +29,6 @@ data class ${entity.name.upperCamel}(
 ) {
 
   init {
-    <#list entity.validatedFields as field>
-        ${field.kotlinView.validationExpressions}
-    </#list>
+    <#list entity.validatedFields as field>${field.kotlinView.validationExpressions}</#list>
   }
 }

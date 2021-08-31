@@ -1,4 +1,4 @@
-${request.jvmView.templateNameComment}
+${request.jvmView.templateDebugInfo}
 -- See https://dev.mysql.com/doc/refman/8.0/en/create-table.html
 -- See https://dev.mysql.com/doc/refman/8.0/en/data-types.html
 <#-- -->

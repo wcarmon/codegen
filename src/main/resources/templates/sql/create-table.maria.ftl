@@ -1,4 +1,4 @@
-${request.jvmView.templateNameComment}
+${request.jvmView.templateDebugInfo}
 -- See https://mariadb.com/kb/en/create-table/
 -- See https://mariadb.com/kb/en/data-types/
 <#-- -->

@@ -1,5 +1,5 @@
 package ${request.packageName.value};
-${request.jvmView.templateNameComment}
+${request.jvmView.templateDebugInfo}
 
 ${request.java8View.serializeImports(
   entity.java8View.importsForFields,
@@ -25,9 +25,7 @@ ${entity.java8View.fieldDeclarations}
       </#if>
     </#list>
 
-    <#list entity.validatedFields as field>
-    ${field.kotlinView.validationExpressions}
-    </#list>
+    <#list entity.validatedFields as field>${field.java8View.validationExpressions}</#list>
   }
 
   @Override

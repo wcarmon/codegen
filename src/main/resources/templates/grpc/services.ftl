@@ -3,7 +3,7 @@ Generates proto file
 To make java classes, use: ./gradlew generateProto
 -->
 syntax = "proto3";
-${request.jvmView.templateNameComment}
+${request.jvmView.templateDebugInfo}
 
 import "entities.proto";
 import "request-response.proto";

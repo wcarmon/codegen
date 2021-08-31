@@ -47,7 +47,7 @@ class KotlinFieldView(
 
     FieldValidationExpressions(
       fieldName = field.name,
-      type = field.effectiveBaseType,
+      type = field.type,
       validationConfig = field.validationConfig,
     )
       .render(renderConfig)

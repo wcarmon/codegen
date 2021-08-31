@@ -1,4 +1,4 @@
-${request.jvmView.templateNameComment}
+${request.jvmView.templateDebugInfo}
 -- See https://www.h2database.com/html/commands.html#create_table
 -- See http://www.h2database.com/html/datatypes.html
 <#-- -->

@@ -1,6 +1,6 @@
 @file:JvmName("SQLQueries")
 package ${request.packageName.value}
-${request.jvmView.templateNameComment}
+${request.jvmView.templateDebugInfo}
 
 /* -------------------------------------------------------------------
  * SQL Queries

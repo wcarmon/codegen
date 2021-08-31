@@ -2,7 +2,7 @@
 Generates proto file
 To make java classes, use: ./gradlew generateProto
 -->
-${request.jvmView.templateNameComment}
+${request.jvmView.templateDebugInfo}
 syntax = "proto3";
 
 option java_multiple_files = true;

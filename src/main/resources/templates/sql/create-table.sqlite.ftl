@@ -1,4 +1,4 @@
-${request.jvmView.templateNameComment}
+${request.jvmView.templateDebugInfo}
 -- See https://www.sqlite.org/lang_createtable.html
 -- See https://www.sqlite.org/datatype3.html
 <#-- -->

@@ -1,4 +1,4 @@
-${request.jvmView.templateNameComment}
+${request.jvmView.templateDebugInfo}
 -- See https://www.postgresql.org/docs/current/sql-createtable.html
 -- See https://www.postgresql.org/docs/current/datatype.html
 <#-- -->

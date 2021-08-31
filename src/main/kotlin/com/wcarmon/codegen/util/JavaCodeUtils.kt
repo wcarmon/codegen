@@ -93,11 +93,17 @@ fun javaImportsForFields(entity: Entity): SortedSet<String> {
     .toSortedSet()
 }
 
+fun isPrimitive(type: LogicalFieldType): Boolean {
+  val tmp = javaTypeLiteral(type, false)
+  return tmp.lowercase() == tmp
+}
+
 /**
  * See https://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html
  *
  * @return literal for Java type
  */
+@Suppress("ReturnCount")
 fun javaTypeLiteral(
   type: LogicalFieldType,
   qualified: Boolean = true,
@@ -138,9 +144,6 @@ fun newJavaCollectionExpression(type: LogicalFieldType): String {
 }
 
 
-//TODO: handle enums
-
-
 /**
  * @return template which invokes creates an unmodifiable version of the collection
  */
@@ -158,6 +161,7 @@ fun unmodifiableJavaCollectionMethod(base: BaseFieldType): String {
   }
 }
 
+@Suppress("ComplexMethod")
 private fun fullyQualifiedJavaTypeLiteral(
   type: LogicalFieldType,
 ): String = when (type.base) {

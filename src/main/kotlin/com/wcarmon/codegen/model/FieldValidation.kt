@@ -1,7 +1,6 @@
 package com.wcarmon.codegen.model
 
 import java.time.Instant
-import kotlin.reflect.full.declaredMemberProperties
 
 /**
  * Represents logical validations performed on [Field]
@@ -45,8 +44,6 @@ data class FieldValidation(
   val before: Instant? = null,
 ) {
 
-  val hasValidation: Boolean
-
   init {
 
     if (maxSize != null && minSize != null) {
@@ -66,12 +63,23 @@ data class FieldValidation(
         "Conflicting constraint: maxValue=$maxValue, minValue=$minValue"
       }
     }
-
-    // null disables validation
-    hasValidation = FieldValidation::class
-      .declaredMemberProperties
-      .any { property ->
-        null != property.get(this)
-      }
   }
+
+  /**
+   * null disables validation
+   * GOTCHA: if you add a validation, add a line here
+   */
+  val hasValidation: Boolean =
+    after != null
+        || before != null
+        || fileConstraint != null
+        || maxSize != null
+        || maxValue != null
+        || minSize != null
+        || minValue != null
+        || requireLowerCase != null
+        || requireMatchesRegex != null
+        || requireNotBlank != null
+        || requireTrimmed != null
+        || requireUpperCase != null
 }
