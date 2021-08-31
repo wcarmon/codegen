@@ -7,9 +7,9 @@ data class MethodNameExpression(
   private val name: Name,
 ) : Expression {
 
-  override val expressionName = MethodNameExpression::class.java.name
+  override val expressionName = MethodNameExpression::class.java.simpleName
 
-  override fun render(
+  override fun renderWithoutDebugComments(
     config: RenderConfig,
   ) = when (config.targetLanguage) {
     GOLANG_1_7,

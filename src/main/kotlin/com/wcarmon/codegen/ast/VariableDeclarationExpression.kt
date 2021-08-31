@@ -12,9 +12,9 @@ data class VariableDeclarationExpression(
   private val finalityModifier: FinalityModifier = FinalityModifier.FINAL,
 ) : Expression {
 
-  override val expressionName = VariableDeclarationExpression::class.java.name
+  override val expressionName = VariableDeclarationExpression::class.java.simpleName
 
-  override fun render(
+  override fun renderWithoutDebugComments(
     config: RenderConfig,
   ): String = when (config.targetLanguage) {
     JAVA_08,

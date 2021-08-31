@@ -20,9 +20,9 @@ data class WrappedExpression(
   private val wrapperTemplate: StringFormatTemplate = StringFormatTemplate.INLINE,
 ) : Expression {
 
-  override val expressionName = WrappedExpression::class.java.name
+  override val expressionName = WrappedExpression::class.java.simpleName
 
-  override fun render(config: RenderConfig) =
+  override fun renderWithoutDebugComments(config: RenderConfig) =
     wrapperTemplate.expand(
       wrapped.render(config.unterminated))
 }

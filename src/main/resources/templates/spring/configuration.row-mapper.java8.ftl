@@ -1,4 +1,5 @@
 package ${request.packageName.value};
+${request.jvmView.templateNameComment}
 
 ${request.java8View.serializeImports(
   request.java8View.importsForFieldsOnAllEntities(entities),

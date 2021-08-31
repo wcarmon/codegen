@@ -16,7 +16,7 @@ data class ProtoMessageDeclarationExpression(
   // https://developers.google.com/protocol-buffers/docs/proto3#reserved
 ) : Expression {
 
-  override val expressionName = ProtoMessageDeclarationExpression::class.java.name
+  override val expressionName = ProtoMessageDeclarationExpression::class.java.simpleName
 
   init {
 
@@ -29,7 +29,7 @@ data class ProtoMessageDeclarationExpression(
   private val sortedFieldExpressions: List<ProtoFieldDeclarationExpression> =
     fields.sortedWith(NUMBER_COMPARATOR)
 
-  override fun render(
+  override fun renderWithoutDebugComments(
     config: RenderConfig,
   ): String {
     check(config.targetLanguage.isProtobuf)

@@ -5,10 +5,7 @@ import com.wcarmon.codegen.ast.FieldReadMode.GETTER
 import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.SerdeMode.SERIALIZE
 import com.wcarmon.codegen.model.TargetLanguage
-import com.wcarmon.codegen.util.defaultResultSetGetterMethod
-import com.wcarmon.codegen.util.effectiveProtoSerde
-import com.wcarmon.codegen.util.javaTypeLiteral
-import com.wcarmon.codegen.util.newJavaCollectionExpression
+import com.wcarmon.codegen.util.*
 
 /**
  * Java related convenience methods for a [Field]
@@ -62,12 +59,21 @@ class Java8FieldView(
 //      }
   }
 
+  val validationExpressions: String by lazy {
+
+    FieldValidationExpressions(
+      fieldName = field.name,
+      type = field.effectiveBaseType,
+      validationConfig = field.validationConfig,
+    )
+      .render(renderConfig)
+  }
+
   //TODO: convert to fun,
   //    accept template placeholder replacement here
   //    rename
   val unmodifiableCollectionMethod: String by lazy {
-    TODO("fix")
-//    unmodifiableJavaCollectionMethod(field.effectiveBaseType)
+    unmodifiableJavaCollectionMethod(field.effectiveBaseType)
   }
 
   fun equalityExpression(
@@ -84,7 +90,8 @@ class Java8FieldView(
     expression0 = expression0,
     expression1 = expression1,
     expressionType = field.type,
-  ).render(renderConfig.unterminated)
+  )
+    .render(renderConfig.unterminated)
 
   //TODO: improve this
 //  val protoDeserializeExpressionForTypeParameters by lazy {
@@ -103,7 +110,8 @@ class Java8FieldView(
       assertNonNull = false,
       field = field,
       fieldOwner = RawExpression(protoId),
-    ).render(renderConfig.unterminated)
+    )
+      .render(renderConfig.unterminated)
 
   fun writeToProtoExpression(pojoId: String = "entity"): String {
 

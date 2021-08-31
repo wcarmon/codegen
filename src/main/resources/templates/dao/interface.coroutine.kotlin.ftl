@@ -1,4 +1,5 @@
 package ${request.packageName.value}
+${request.jvmView.templateNameComment}
 
 ${request.kotlinView.serializeImports(
   request.extraJVMImports,
@@ -12,7 +13,6 @@ ${request.kotlinView.serializeImports(
  *
  * Assumes coroutines & context passed thru coroutineContext.
  * Implementations must be ThreadSafe
- * See: ${request.prettyTemplateName}
  */
 @Suppress("TooManyFunctions")
 interface ${entity.name.upperCamel}DAO {

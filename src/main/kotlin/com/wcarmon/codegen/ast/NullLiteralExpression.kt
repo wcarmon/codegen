@@ -5,9 +5,9 @@ import com.wcarmon.codegen.model.TargetLanguage.PYTHON_3
 
 object NullLiteralExpression : Expression {
 
-  override val expressionName = NumericLiteralExpression::class.java.name
+  override val expressionName = NumericLiteralExpression::class.java.simpleName
 
-  override fun render(
+  override fun renderWithoutDebugComments(
     config: RenderConfig,
   ) = config.lineIndentation +
       when (config.targetLanguage) {

@@ -34,9 +34,9 @@ data class FieldReadExpression(
   private val overrideFieldReadMode: FieldReadMode? = null,
 ) : Expression {
 
-  override val expressionName = FieldReadExpression::class.java.name
+  override val expressionName = FieldReadExpression::class.java.simpleName
 
-  override fun render(
+  override fun renderWithoutDebugComments(
     config: RenderConfig,
   ) =
     getFieldReadPrefix(config) +

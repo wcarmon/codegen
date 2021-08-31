@@ -1,8 +1,14 @@
 package com.wcarmon.codegen
 
-const val MAX_NAME_LENGTH = 64
+/**
+ * Enables/Disables Tracing/debug comments in generated code
+ */
+const val DEBUG_MODE = false
 
-const val DEBUG_MODE = true
+/**
+ * For Identifiers
+ */
+const val MAX_NAME_LENGTH = 64
 
 /**
  * Official docs on patterns: https://docs.oracle.com/javase/tutorial/essential/io/fileOps.html#glob

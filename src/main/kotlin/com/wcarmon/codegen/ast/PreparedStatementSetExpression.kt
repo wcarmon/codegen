@@ -22,7 +22,7 @@ data class PreparedStatementSetExpression(
   private val setterMethod: Name,
 ) : Expression {
 
-  override val expressionName = PreparedStatementSetExpression::class.java.name
+  override val expressionName = PreparedStatementSetExpression::class.java.simpleName
 
   private val nonNullExpression: PreparedStatementNonNullSetExpression =
     PreparedStatementNonNullSetExpression(
@@ -49,7 +49,7 @@ data class PreparedStatementSetExpression(
     )
 
 
-  override fun render(
+  override fun renderWithoutDebugComments(
     config: RenderConfig,
   ) =
     if (field.type.nullable) {

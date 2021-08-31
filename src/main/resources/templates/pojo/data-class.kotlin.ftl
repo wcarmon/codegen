@@ -1,4 +1,5 @@
 package ${request.packageName.value}
+${request.jvmView.templateNameComment}
 
 ${request.kotlinView.serializeImports(
   entity.kotlinView.importsForFields,
@@ -7,11 +8,11 @@ ${request.kotlinView.serializeImports(
 
 /**
  * Immutable POJO
- * See ${request.prettyTemplateName}
  */
 <#--TODO: include class documentation when present-->
 @JsonPropertyOrder(alphabetic = true)
 data class ${entity.name.upperCamel}(
+  <#-- TODO: use expressions for these declarations -->
   <#list entity.idFields as field>
       /** PK field */
       val ${field.name.lowerCamel}: ${field.kotlinView.typeLiteral},
@@ -29,77 +30,7 @@ data class ${entity.name.upperCamel}(
 
   init {
     <#list entity.validatedFields as field>
-        <#if field.validationConfig.maxSize??>
-
-<#--            TODO: allow collections to use .size-->
-        require(${field.name.lowerCamel}.length <= ${field.validationConfig.maxSize}) {
-<#--            TODO: Smart trim with ellipse here-->
-            "'${field.name.lowerCamel}' is too long: maxSize=${field.validationConfig.maxSize}, value=$${field.name.lowerCamel}"
-        }
-        </#if>
-<#-- -->
-        <#if field.validationConfig.minSize??>
-
-<#--            TODO: allow collections to use .size-->
-        require(${field.name.lowerCamel}.length <= ${field.validationConfig.minSize}) {
-<#--            TODO: Smart trim with ellipse here-->
-            "'${field.name.lowerCamel}' is too short: minSize=${field.validationConfig.minSize}, value=$${field.name.lowerCamel}"
-        }
-        </#if>
-<#-- -->
-        <#if field.validationConfig.requireNotBlank>
-
-        require(${field.name.lowerCamel}.isNotBlank()) {
-            "'${field.name.lowerCamel}' is required and blank"
-        }
-        </#if>
-<#-- -->
-        <#if field.validationConfig.requireTrimmed>
-
-        require(${field.name.lowerCamel}.trim() == ${field.name.lowerCamel}) {
-            "'${field.name.lowerCamel}' must be trimmed: value=$${field.name.lowerCamel}"
-        }
-        </#if>
-<#-- -->
-        <#if field.validationConfig.maxValue??>
-
-            //TODO: add maxValue validation for $field
-        </#if>
-<#-- -->
-        <#if field.validationConfig.minValue??>
-
-            //TODO: add minValue validation for $field
-        </#if>
-<#-- -->
-        <#if field.validationConfig.fileConstraint??>
-
-            //TODO: add fileConstraint validation for $field
-        </#if>
-<#-- -->
-        <#if field.validationConfig.after??>
-
-            //TODO: add after validation for $field
-        </#if>
-<#-- -->
-        <#if field.validationConfig.before??>
-
-            //TODO: add before validation for $field
-        </#if>
-<#-- -->
-        <#if field.validationConfig.requireLowerCase>
-
-            //TODO: add requireLowerCase validation for $field
-        </#if>
-<#-- -->
-        <#if field.validationConfig.requireUpperCase>
-
-            //TODO: add requireUpperCase validation for $field
-        </#if>
-<#-- -->
-        <#if field.validationConfig.requireMatchesRegex??>
-
-            //TODO: add requireMatchesRegex validation for $field
-        </#if>
+        ${field.kotlinView.validationExpressions}
     </#list>
   }
 }

@@ -29,16 +29,16 @@ data class ClassDeclarationExpression(
    */
   private val pojo: Boolean = false,
 
-  private val validationExpressions: List<PreconditionExpression> = listOf(),
+  private val validationExpressions: List<FieldValidationExpressions> = listOf(),
 
   private val visibilityModifier: VisibilityModifier = VisibilityModifier.PUBLIC,
 
   //TODO: generic parameters
 ) : Expression {
 
-  override val expressionName = ClassDeclarationExpression::class.java.name
+  override val expressionName = ClassDeclarationExpression::class.java.simpleName
 
-  override fun render(config: RenderConfig): String {
+  override fun renderWithoutDebugComments(config: RenderConfig): String {
     TODO("Not yet implemented")
   }
 }

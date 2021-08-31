@@ -1,11 +1,14 @@
 package com.wcarmon.codegen.model
 
 import java.time.Instant
+import kotlin.reflect.full.declaredMemberProperties
 
 /**
  * Represents logical validations performed on [Field]
  *
  * See src/main/resources/json-schema/field-validation.schema.json
+ *
+ * assigning null disables a validation
  */
 data class FieldValidation(
 
@@ -24,12 +27,12 @@ data class FieldValidation(
 
   // For Strings
   val requireMatchesRegex: Regex? = null,
-  val requireNotBlank: Boolean = false,
-  val requireTrimmed: Boolean = false,
+  val requireNotBlank: Boolean? = null,
+  val requireTrimmed: Boolean? = null,
 
   // TODO: consider combining these (eg. requireCase enum)
-  val requireLowerCase: Boolean = false,
-  val requireUpperCase: Boolean = false,
+  val requireLowerCase: Boolean? = null,
+  val requireUpperCase: Boolean? = null,
 
 
   // For Numeric
@@ -41,6 +44,9 @@ data class FieldValidation(
   val after: Instant? = null,
   val before: Instant? = null,
 ) {
+
+  val hasValidation: Boolean
+
   init {
 
     if (maxSize != null && minSize != null) {
@@ -60,5 +66,12 @@ data class FieldValidation(
         "Conflicting constraint: maxValue=$maxValue, minValue=$minValue"
       }
     }
+
+    // null disables validation
+    hasValidation = FieldValidation::class
+      .declaredMemberProperties
+      .any { property ->
+        null != property.get(this)
+      }
   }
 }

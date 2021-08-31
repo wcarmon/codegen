@@ -55,7 +55,7 @@ private fun handleCStyle(
   expressionName: String,
   renderedCode: String,
 ): String =
-  "/*[[START: $expressionName]]*/ $renderedCode /*[[END: $expressionName]]*/"
+  "/* <$expressionName> */$renderedCode/* </$expressionName> */"
 
 private fun handlePython(
   expressionName: String,

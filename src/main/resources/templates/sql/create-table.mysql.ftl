@@ -1,6 +1,6 @@
+${request.jvmView.templateNameComment}
 -- See https://dev.mysql.com/doc/refman/8.0/en/create-table.html
 -- See https://dev.mysql.com/doc/refman/8.0/en/data-types.html
--- See ${request.prettyTemplateName}
 <#-- -->
 SET sql_mode='ANSI_QUOTES';
 

@@ -23,13 +23,13 @@ data class DocumentationExpression(
     val EMPTY = DocumentationExpression(listOf())
   }
 
-  override val expressionName = DocumentationExpression::class.java.name
+  override val expressionName = DocumentationExpression::class.java.simpleName
 
   val isBlank: Boolean = parts.isEmpty() || parts.all { it.isBlank() }
 
   val isNotBlank: Boolean = parts.isNotEmpty() && parts.any { it.isNotBlank() }
 
-  override fun render(config: RenderConfig): String = when (config.targetLanguage) {
+  override fun renderWithoutDebugComments(config: RenderConfig): String = when (config.targetLanguage) {
 
     JAVA_08,
     JAVA_11,

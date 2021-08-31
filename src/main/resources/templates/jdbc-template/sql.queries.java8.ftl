@@ -1,4 +1,5 @@
 package ${request.packageName.value};
+${request.jvmView.templateNameComment}
 
 /**
  * SQL Queries
@@ -6,8 +7,6 @@ package ${request.packageName.value};
  * Compatible with PostgreSQL, MariaDB, MySQL, Oracle, SQLite, DB2
  * <p>
  * Useful for {@link java.sql.PreparedStatement} and {@link org.springframework.jdbc.core.JdbcTemplate}
- * <p>
- * See: ${request.prettyTemplateName}
  */
 public final class SQLQueries {
 <#list entities as entity>

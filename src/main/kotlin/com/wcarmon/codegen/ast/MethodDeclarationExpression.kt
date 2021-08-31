@@ -5,14 +5,14 @@ import com.wcarmon.codegen.model.TargetLanguage.*
 data class MethodDeclarationExpression(
   private val header: MethodHeaderExpression,
 
-  private val extraPreconditions: List<PreconditionExpression> = listOf(),
+  private val extraPreconditions: List<FieldValidationExpressions> = listOf(),
 
   private val body: List<Expression>,
 ) : Expression {
 
-  override val expressionName = MethodDeclarationExpression::class.java.name
+  override val expressionName = MethodDeclarationExpression::class.java.simpleName
 
-  override fun render(
+  override fun renderWithoutDebugComments(
     config: RenderConfig,
   ): String = when (config.targetLanguage) {
     JAVA_08,

@@ -15,7 +15,7 @@ class ProtoFieldReadExpression(
   private val protoReadExpression: Expression,
 ) : Expression {
 
-  override val expressionName = ProtoFieldReadExpression::class.java.name
+  override val expressionName = ProtoFieldReadExpression::class.java.simpleName
 
   companion object {
 
@@ -51,7 +51,7 @@ class ProtoFieldReadExpression(
    * eg. proto.foo!!
    * eg. proto.getFoo()
    */
-  override fun render(config: RenderConfig): String {
+  override fun renderWithoutDebugComments(config: RenderConfig): String {
 
     val serdeExpression = WrapWithSerdeExpression(
       serde = effectiveProtoSerde(field),

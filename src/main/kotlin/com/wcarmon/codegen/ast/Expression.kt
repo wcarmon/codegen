@@ -35,36 +35,40 @@ interface Expression {
   val expressionName: String
 
   /**
-   * Render/Serialize to Kotlin/Java/Golang/Rust/Protobuf... code snippet
-   *
-   * No tracing, no debugging comments
-   */
-  fun render(config: RenderConfig): String
-
-  fun isEmpty(config: RenderConfig) =
-    render(config)
-      .isEmpty()
-
-  fun isBlank(config: RenderConfig) =
-    render(config)
-      .isBlank()
-
-  /**
    * Conditionally wraps rendered expression with tracing/debug comments
    *
    * [config] controls tracing
    */
-  fun renderWithConditionalTracing(
+  fun render(
     config: RenderConfig,
-  ): String =
-    if (!config.debugMode) {
-      render(config)
+  ): String {
+    val output = renderWithoutDebugComments(config)
+
+    return if (!config.debugMode || output.isBlank()) {
+      // Don't wrap empty expressions
+      output
 
     } else {
       wrapWithExpressionTracingComments(
         config = config,
         expressionName = expressionName,
-        renderedCode = render(config),
+        renderedCode = output,
       )
     }
+  }
+
+  /**
+   * Render/Serialize to Kotlin/Java/Golang/Rust/Protobuf... code snippet
+   *
+   * No tracing, no debugging comments
+   */
+  fun renderWithoutDebugComments(config: RenderConfig): String
+
+  fun isEmpty(config: RenderConfig) =
+    renderWithoutDebugComments(config)
+      .isEmpty()
+
+  fun isBlank(config: RenderConfig) =
+    renderWithoutDebugComments(config)
+      .isBlank()
 }

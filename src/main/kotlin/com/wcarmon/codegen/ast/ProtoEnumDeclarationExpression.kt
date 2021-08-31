@@ -13,7 +13,7 @@ data class ProtoEnumDeclarationExpression(
   private val prependUndefinedElement: Boolean = true,
 ) : Expression {
 
-  override val expressionName = ProtoEnumDeclarationExpression::class.java.name
+  override val expressionName = ProtoEnumDeclarationExpression::class.java.simpleName
 
   companion object {
     const val UNDEFINED_ITEM: String = "UNDEFINED"
@@ -39,7 +39,7 @@ data class ProtoEnumDeclarationExpression(
   private val formattedItems: List<String> = items
     .map { Name(it).upperSnake }
 
-  override fun render(
+  override fun renderWithoutDebugComments(
     config: RenderConfig,
   ): String {
     check(config.targetLanguage.isProtobuf)

@@ -1,4 +1,5 @@
 package ${request.packageName.value}
+${request.jvmView.templateNameComment}
 
 ${request.kotlinView.serializeImports(
   entity.kotlinView.importsForFields,
@@ -12,7 +13,6 @@ ${request.kotlinView.serializeImports(
  * Field count: ${entity.fields?size}
  *
  * Implementations must be ThreadSafe
- * See: ${request.prettyTemplateName}
  */
 @Suppress("TooManyFunctions")
 interface ${entity.name.upperCamel}DAO {

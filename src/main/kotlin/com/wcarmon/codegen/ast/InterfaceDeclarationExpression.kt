@@ -21,13 +21,13 @@ data class InterfaceDeclarationExpression(
   //TODO: List: generic parameters
 ) : Expression {
 
-  override val expressionName = InterfaceDeclarationExpression::class.java.name
+  override val expressionName = InterfaceDeclarationExpression::class.java.simpleName
 
   val isFunctional by lazy {
     instanceMethods.size == 1
   }
 
-  override fun render(
+  override fun renderWithoutDebugComments(
     config: RenderConfig,
   ): String = when (config.targetLanguage) {
     JAVA_08,

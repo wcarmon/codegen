@@ -10,7 +10,7 @@ data class WrapWithSerdeExpression(
   private val wrapped: Expression,
 ) : Expression {
 
-  override val expressionName = WrapWithSerdeExpression::class.java.name
+  override val expressionName = WrapWithSerdeExpression::class.java.simpleName
 
   private val wrappedExpression: WrappedExpression =
     WrappedExpression(
@@ -18,5 +18,5 @@ data class WrapWithSerdeExpression(
       wrapperTemplate = serde.forMode(serdeMode)
     )
 
-  override fun render(config: RenderConfig) = wrappedExpression.render(config)
+  override fun renderWithoutDebugComments(config: RenderConfig) = wrappedExpression.render(config)
 }

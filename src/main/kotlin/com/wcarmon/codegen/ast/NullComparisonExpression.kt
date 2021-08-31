@@ -11,10 +11,10 @@ data class NullComparisonExpression(
   private val compareToMe: Expression,
 ) : Expression {
 
-  override val expressionName = NullComparisonExpression::class.java.name
+  override val expressionName = NullComparisonExpression::class.java.simpleName
 
   //NOTE: termination not supported
-  override fun render(
+  override fun renderWithoutDebugComments(
     config: RenderConfig,
   ) =
     when (config.targetLanguage) {

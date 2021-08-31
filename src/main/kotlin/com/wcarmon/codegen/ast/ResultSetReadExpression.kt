@@ -19,7 +19,7 @@ class ResultSetReadExpression(
   resultSetIdentifierExpression: Expression = RawExpression("rs"),
 ) : Expression {
 
-  override val expressionName = ResultSetReadExpression::class.java.name
+  override val expressionName = ResultSetReadExpression::class.java.simpleName
 
   private val underlying: MethodInvokeExpression
 
@@ -37,5 +37,5 @@ class ResultSetReadExpression(
     )
   }
 
-  override fun render(config: RenderConfig) = underlying.render(config)
+  override fun renderWithoutDebugComments(config: RenderConfig) = underlying.render(config)
 }

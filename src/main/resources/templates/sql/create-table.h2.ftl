@@ -1,6 +1,6 @@
+${request.jvmView.templateNameComment}
 -- See https://www.h2database.com/html/commands.html#create_table
 -- See http://www.h2database.com/html/datatypes.html
--- See ${request.prettyTemplateName}
 <#-- -->
 <#list entities as entity>
 

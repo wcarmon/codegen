@@ -41,6 +41,7 @@ class FreemarkerBeans {
         it.logTemplateExceptions = false
         it.templateExceptionHandler = TemplateExceptionHandler.DEBUG_HANDLER
         it.templateLoader = templateLoader
+        it.whitespaceStripping = true
         it.wrapUncheckedExceptions = true
 //      it.templateExceptionHandler = TemplateExceptionHandler.RETHROW_HANDLER
       }

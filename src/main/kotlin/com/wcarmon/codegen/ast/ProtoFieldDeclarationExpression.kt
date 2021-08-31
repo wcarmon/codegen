@@ -16,7 +16,7 @@ data class ProtoFieldDeclarationExpression(
   //TODO: DocumentationExpression
 ) : Expression, Comparable<ProtoFieldDeclarationExpression> {
 
-  override val expressionName = ProtoFieldDeclarationExpression::class.java.name
+  override val expressionName = ProtoFieldDeclarationExpression::class.java.simpleName
 
   companion object {
 
@@ -26,7 +26,7 @@ data class ProtoFieldDeclarationExpression(
     }
   }
 
-  override fun render(
+  override fun renderWithoutDebugComments(
     config: RenderConfig,
   ): String {
     check(config.targetLanguage.isProtobuf)

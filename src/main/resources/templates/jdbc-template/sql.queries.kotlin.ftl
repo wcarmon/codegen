@@ -1,5 +1,6 @@
 @file:JvmName("SQLQueries")
 package ${request.packageName.value}
+${request.jvmView.templateNameComment}
 
 /* -------------------------------------------------------------------
  * SQL Queries
@@ -8,8 +9,6 @@ package ${request.packageName.value}
  *
  * Useful for {@link java.sql.PreparedStatement}
  *   and {@link org.springframework.jdbc.core.JdbcTemplate}
- *
- * See: ${request.prettyTemplateName}
  * -------------------------------------------------------------------
  */
 <#list entities as entity>

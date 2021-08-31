@@ -59,8 +59,9 @@ class KotlinEntityView(
           type = field.type,
           visibilityModifier = VisibilityModifier.PRIVATE,
 //      defaultValue = TODO()  TODO: fix this
-        ).render(
-          renderConfig.copy(lineIndentation = "  "))
+        )
+          .render(
+            renderConfig.copy(lineIndentation = "  "))
       }
       .joinToString("\n")
   }

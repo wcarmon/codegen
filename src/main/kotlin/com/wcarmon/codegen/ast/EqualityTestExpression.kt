@@ -22,7 +22,7 @@ data class EqualityTestExpression(
   private val expressionType: LogicalFieldType,
 ) : Expression {
 
-  override val expressionName = EqualityTestExpression::class.java.name
+  override val expressionName = EqualityTestExpression::class.java.simpleName
 
   /**
    * eg. "Arrays.deepEquals(xArr, yArr)"
@@ -32,7 +32,7 @@ data class EqualityTestExpression(
    * eg. "Objects.equals(x, y)"
    * eg. "x == y"
    */
-  override fun render(config: RenderConfig) = when (config.targetLanguage) {
+  override fun renderWithoutDebugComments(config: RenderConfig) = when (config.targetLanguage) {
     C_17 -> TODO()
     CPP_14 -> TODO()
     CPP_17 -> TODO()

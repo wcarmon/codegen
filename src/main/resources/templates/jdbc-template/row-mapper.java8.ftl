@@ -1,4 +1,5 @@
 package ${request.packageName.value};
+${request.jvmView.templateNameComment}
 
 ${request.java8View.serializeImports(
   entity.java8View.importsForFields,
@@ -9,7 +10,6 @@ ${request.java8View.serializeImports(
  * Maps one row of ResultSet data to ${entity.name.upperCamel} instance
  *
  * See https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/jdbc/core/RowMapper.html
- * See: ${request.prettyTemplateName}
 */
 <#if entity.jvmView.requiresObjectReader>
 @SuppressWarnings("unchecked")

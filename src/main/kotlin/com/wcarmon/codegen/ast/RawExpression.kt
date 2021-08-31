@@ -17,8 +17,8 @@ data class RawExpression(
     require(value.isNotBlank()) { "expression cannot be empty" }
   }
 
-  override val expressionName = RawExpression::class.java.name
+  override val expressionName = RawExpression::class.java.simpleName
 
   /** Assume text is already appropriate for target language */
-  override fun render(config: RenderConfig) = value
+  override fun renderWithoutDebugComments(config: RenderConfig) = value
 }

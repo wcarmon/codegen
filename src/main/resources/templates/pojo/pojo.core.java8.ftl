@@ -1,4 +1,5 @@
 package ${request.packageName.value};
+${request.jvmView.templateNameComment}
 
 ${request.java8View.serializeImports(
   entity.java8View.importsForFields,
@@ -7,8 +8,6 @@ ${request.java8View.serializeImports(
 
 /**
  * Immutable POJO
- * <p>
- * See ${request.prettyTemplateName}
  */
 <#-- TODO: include class documentation when present-->
 @JsonPropertyOrder(alphabetic = true)
@@ -17,16 +16,17 @@ public final class ${entity.name.upperCamel} {
 
 ${entity.java8View.fieldDeclarations}
 
-  private ${entity.name.upperCamel}( ${entity.name.upperCamel}Builder builder ) {
-    //TODO: Validation here
-
+  private ${entity.name.upperCamel} (${entity.name.upperCamel}Builder builder) {
     <#list entity.sortedFields as field>
       <#if field.collection>
-<#--          TODO: fix this line -->
-<#--      this.${field.name.lowerCamel} = ${field.java8View.unmodifiableCollectionMethod}(builder.${field.name.lowerCamel});-->
+      this.${field.name.lowerCamel} = ${field.java8View.unmodifiableCollectionMethod}(builder.${field.name.lowerCamel});
       <#else>
       this.${field.name.lowerCamel} = builder.${field.name.lowerCamel};
       </#if>
+    </#list>
+
+    <#list entity.validatedFields as field>
+    ${field.kotlinView.validationExpressions}
     </#list>
   }
 

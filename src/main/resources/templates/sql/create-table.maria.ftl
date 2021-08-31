@@ -1,6 +1,6 @@
+${request.jvmView.templateNameComment}
 -- See https://mariadb.com/kb/en/create-table/
 -- See https://mariadb.com/kb/en/data-types/
--- See ${request.prettyTemplateName}
 <#-- -->
 SET sql_mode='ANSI_QUOTES';
 

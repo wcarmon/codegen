@@ -10,9 +10,9 @@ data class EnumDeclarationExpression(
   //TODO: lookup
 ) : Expression {
 
-  override val expressionName = EnumDeclarationExpression::class.java.name
+  override val expressionName = EnumDeclarationExpression::class.java.simpleName
 
-  override fun render(config: RenderConfig): String {
+  override fun renderWithoutDebugComments(config: RenderConfig): String {
     TODO("Not yet implemented")
   }
 }

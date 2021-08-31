@@ -2,7 +2,7 @@ package com.wcarmon.codegen.ast
 
 object SeparatorExpression : Expression {
 
-  override val expressionName = SeparatorExpression::class.java.name
+  override val expressionName = SeparatorExpression::class.java.simpleName
 
-  override fun render(config: RenderConfig) = "\n"
+  override fun renderWithoutDebugComments(config: RenderConfig) = "\n"
 }

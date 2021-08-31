@@ -143,5 +143,6 @@ data class Entity(
     idFields + nonIdFields
 
   val validatedFields = fields
+    .filter { it.validationConfig.hasValidation }
     .sortedBy { it.name.lowerCamel }
 }

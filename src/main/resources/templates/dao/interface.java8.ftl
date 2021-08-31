@@ -1,4 +1,5 @@
 package ${request.packageName.value};
+${request.jvmView.templateNameComment}
 
 ${request.java8View.serializeImports(
   entity.java8View.importsForFields,
@@ -12,7 +13,6 @@ ${request.java8View.serializeImports(
  * Field count: ${entity.fields?size}
  *
  * Implementations must be ThreadSafe
- * See: ${request.prettyTemplateName}
  */
 public interface ${entity.name.upperCamel}DAO {
 

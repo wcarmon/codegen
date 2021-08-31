@@ -15,7 +15,7 @@ data class ProtoFieldWriteExpression(
   private val sourceReadExpression: Expression,
 ) : Expression {
 
-  override val expressionName = ProtoFieldWriteExpression::class.java.name
+  override val expressionName = ProtoFieldWriteExpression::class.java.simpleName
 
   /**
    * eg. addAllFoo( myCollectionSerializer(entity.foo) )
@@ -25,7 +25,7 @@ data class ProtoFieldWriteExpression(
    * eg. setFoo( entity.getFoo().toString() );
    * eg. setFoo( mySerializer(entity.foo) )
    */
-  override fun render(config: RenderConfig) =
+  override fun renderWithoutDebugComments(config: RenderConfig) =
     config.lineIndentation +
         protoBuilderSetter(field) +
         "(" +

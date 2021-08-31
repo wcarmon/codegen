@@ -1,4 +1,5 @@
 package ${request.packageName.value}
+${request.jvmView.templateNameComment}
 
 ${request.kotlinView.serializeImports(
   entity.kotlinView.importsForFields,

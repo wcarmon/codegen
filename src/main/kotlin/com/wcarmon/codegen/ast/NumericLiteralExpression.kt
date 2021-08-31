@@ -7,9 +7,9 @@ data class NumericLiteralExpression(
   private val value: Number,
 ) : Expression {
 
-  override val expressionName = NumericLiteralExpression::class.java.name
+  override val expressionName = NumericLiteralExpression::class.java.simpleName
 
-  override fun render(
+  override fun renderWithoutDebugComments(
     config: RenderConfig,
   ): String {
     val t = config.statementTerminatorLiteral

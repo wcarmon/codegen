@@ -20,9 +20,9 @@ data class MethodInvokeExpression(
   private val fieldOwner: Expression = EmptyExpression,
 ) : Expression {
 
-  override val expressionName = MethodInvokeExpression::class.java.name
+  override val expressionName = MethodInvokeExpression::class.java.simpleName
 
-  override fun render(
+  override fun renderWithoutDebugComments(
     config: RenderConfig,
   ) =
     when (config.targetLanguage) {

@@ -22,7 +22,7 @@ class PreparedStatementNonNullSetExpression(
   preparedStatementIdentifierExpression: Expression = RawExpression("ps"),
 ) : Expression {
 
-  override val expressionName = PreparedStatementNonNullSetExpression::class.java.name
+  override val expressionName = PreparedStatementNonNullSetExpression::class.java.simpleName
 
   private val underlying: MethodInvokeExpression
 
@@ -38,5 +38,5 @@ class PreparedStatementNonNullSetExpression(
     )
   }
 
-  override fun render(config: RenderConfig) = underlying.render(config)
+  override fun renderWithoutDebugComments(config: RenderConfig) = underlying.render(config)
 }
