@@ -7,6 +7,7 @@ import com.wcarmon.codegen.model.Entity
  */
 class JVMEntityView(
   entity: Entity,
+  private val debugMode: Boolean,
 ) {
 
   val requiresObjectWriter =

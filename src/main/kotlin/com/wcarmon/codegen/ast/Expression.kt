@@ -1,6 +1,6 @@
 package com.wcarmon.codegen.ast
 
-import com.wcarmon.codegen.model.TargetLanguage
+import com.wcarmon.codegen.util.wrapWithExpressionTracingComments
 
 /**
  * The atomic "lego block" for a reusable piece of code
@@ -31,32 +31,40 @@ import com.wcarmon.codegen.model.TargetLanguage
  */
 interface Expression {
 
+  /** Useful for Tracing & Debugging */
+  val expressionName: String
+
   /**
    * Render/Serialize to Kotlin/Java/Golang/Rust/Protobuf... code snippet
-   * @param targetLanguage
-   * @param terminate only affects languages which require statement terminators (eg. java, c, c++)
-   *    converts an expression into a statement
-   * @param lineIndentation
+   *
+   * No tracing, no debugging comments
    */
-  fun render(
-    targetLanguage: TargetLanguage,
-    terminate: Boolean,
-    lineIndentation: String = "",
-  ): String
+  fun render(config: RenderConfig): String
 
-  /** Convenience helper */
-  fun render(
-    targetLanguage: TargetLanguage,
-  ) = render(
-    targetLanguage = targetLanguage,
-    terminate = targetLanguage.requiresStatementTerminator,
-    lineIndentation = "")
-
-  fun isEmpty(targetLanguage: TargetLanguage) =
-    this.render(targetLanguage, false, "")
+  fun isEmpty(config: RenderConfig) =
+    render(config)
       .isEmpty()
 
-  fun isBlank(targetLanguage: TargetLanguage) =
-    this.render(targetLanguage, false, "")
+  fun isBlank(config: RenderConfig) =
+    render(config)
       .isBlank()
+
+  /**
+   * Conditionally wraps rendered expression with tracing/debug comments
+   *
+   * [config] controls tracing
+   */
+  fun renderWithConditionalTracing(
+    config: RenderConfig,
+  ): String =
+    if (!config.debugMode) {
+      render(config)
+
+    } else {
+      wrapWithExpressionTracingComments(
+        config = config,
+        expressionName = expressionName,
+        renderedCode = render(config),
+      )
+    }
 }

@@ -1,9 +1,6 @@
 package com.wcarmon.codegen.view
 
-import com.wcarmon.codegen.ast.DocumentationExpression
-import com.wcarmon.codegen.ast.FieldDeclarationExpression
-import com.wcarmon.codegen.ast.FinalityModifier
-import com.wcarmon.codegen.ast.VisibilityModifier
+import com.wcarmon.codegen.ast.*
 import com.wcarmon.codegen.model.Entity
 import com.wcarmon.codegen.model.PreparedStatementBuilderConfig
 import com.wcarmon.codegen.model.TargetLanguage
@@ -14,6 +11,7 @@ import com.wcarmon.codegen.util.kotlinMethodArgsForFields
  * Kotlin related convenience methods for a [Entity]
  */
 class KotlinEntityView(
+  private val debugMode: Boolean,
   private val entity: Entity,
   private val jvmView: JVMEntityView,
   private val rdbmsView: RDBMSTableView,
@@ -25,6 +23,12 @@ class KotlinEntityView(
       "invalid target language: $targetLanguage"
     }
   }
+
+  private val renderConfig = RenderConfig(
+    debugMode = debugMode,
+    targetLanguage = targetLanguage,
+    terminate = false
+  )
 
   val importsForFields: Set<String> = getKotlinImportsForFields(entity)
 
@@ -55,7 +59,8 @@ class KotlinEntityView(
           type = field.type,
           visibilityModifier = VisibilityModifier.PRIVATE,
 //      defaultValue = TODO()  TODO: fix this
-        ).render(targetLanguage, true)
+        ).render(
+          renderConfig.copy(lineIndentation = "  "))
       }
       .joinToString("\n")
   }

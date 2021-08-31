@@ -2,7 +2,6 @@ package com.wcarmon.codegen.ast
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonValue
-import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.model.TargetLanguage.*
 
 /** Represents javadoc, kdoc, godoc, rustdoc, jsdoc, tsdoc, cppdoc, ... */
@@ -24,31 +23,27 @@ data class DocumentationExpression(
     val EMPTY = DocumentationExpression(listOf())
   }
 
+  override val expressionName = DocumentationExpression::class.java.name
+
   val isBlank: Boolean = parts.isEmpty() || parts.all { it.isBlank() }
 
   val isNotBlank: Boolean = parts.isNotEmpty() && parts.any { it.isNotBlank() }
 
-  override fun render(
-    targetLanguage: TargetLanguage,
-    terminate: Boolean,
-    lineIndentation: String,
-  ): String = when (targetLanguage) {
+  override fun render(config: RenderConfig): String = when (config.targetLanguage) {
 
     JAVA_08,
     JAVA_11,
     JAVA_17,
-    -> handleJava(lineIndentation)
+    -> handleJava(config)
 
     KOTLIN_JVM_1_4,
-    -> handleKotlin(lineIndentation)
+    -> handleKotlin(config)
 
-    else -> TODO("render documentation: language=$targetLanguage, parts=$parts")
+    else -> TODO("render documentation: config=$config, parts=$parts")
   }
 
   //TODO: handle wrapping references in {@link ...}
-  private fun handleJava(
-    lineIndentation: String = "",
-  ): String {
+  private fun handleJava(config: RenderConfig): String {
     if (isBlank) {
       return ""
     }
@@ -58,14 +53,12 @@ data class DocumentationExpression(
       prefix = "/**\n",
       separator = "\n ",
     ) {
-      "$lineIndentation * $it"
+      "${config.lineIndentation} * $it"
     }
   }
 
   //TODO: handle wrapping references in [...]
-  private fun handleKotlin(
-    lineIndentation: String = "",
-  ): String {
+  private fun handleKotlin(config: RenderConfig): String {
     if (isBlank) {
       return ""
     }
@@ -75,7 +68,7 @@ data class DocumentationExpression(
       prefix = "/**\n",
       separator = "\n ",
     ) {
-      "$lineIndentation * $it"
+      "${config.lineIndentation} * $it"
     }
   }
 }

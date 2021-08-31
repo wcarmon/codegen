@@ -2,7 +2,6 @@ package com.wcarmon.codegen.ast
 
 import com.wcarmon.codegen.model.Name
 import com.wcarmon.codegen.model.PackageName
-import com.wcarmon.codegen.model.TargetLanguage
 
 data class ClassDeclarationExpression(
 
@@ -37,11 +36,9 @@ data class ClassDeclarationExpression(
   //TODO: generic parameters
 ) : Expression {
 
-  override fun render(
-    targetLanguage: TargetLanguage,
-    terminate: Boolean,
-    lineIndentation: String,
-  ): String {
+  override val expressionName = ClassDeclarationExpression::class.java.name
+
+  override fun render(config: RenderConfig): String {
     TODO("Not yet implemented")
   }
 }

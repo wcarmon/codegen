@@ -2,7 +2,6 @@ package com.wcarmon.codegen.ast
 
 import com.wcarmon.codegen.ast.ProtoFieldDeclarationExpression.Companion.NUMBER_COMPARATOR
 import com.wcarmon.codegen.model.Name
-import com.wcarmon.codegen.model.TargetLanguage
 
 /**
  * See https://developers.google.com/protocol-buffers/docs/proto3#simple
@@ -17,6 +16,8 @@ data class ProtoMessageDeclarationExpression(
   // https://developers.google.com/protocol-buffers/docs/proto3#reserved
 ) : Expression {
 
+  override val expressionName = ProtoMessageDeclarationExpression::class.java.name
+
   init {
 
     val fieldNumbers = fields.map { it.number }
@@ -29,31 +30,29 @@ data class ProtoMessageDeclarationExpression(
     fields.sortedWith(NUMBER_COMPARATOR)
 
   override fun render(
-    targetLanguage: TargetLanguage,
-    terminate: Boolean,
-    lineIndentation: String,
+    config: RenderConfig,
   ): String {
-    check(targetLanguage.isProtobuf)
+    check(config.targetLanguage.isProtobuf)
 
     //TODO: documentation on top
     return """
     |message ${name.upperCamel}{
-    ${renderFields(targetLanguage)}
+    ${renderFields(config)}
     |  
-    ${renderEnums(targetLanguage)}  
+    ${renderEnums(config)}  
     |}
     """.trimMargin()
 
     //TODO: prefix every lines with lineIndentation
   }
 
-  private fun renderFields(targetLanguage: TargetLanguage): String =
+  private fun renderFields(config: RenderConfig): String =
     sortedFieldExpressions.joinToString("\n") {
-      "|  ${it.render(targetLanguage, true)}"
+      "|  ${it.render(config.terminated)}"
     }
 
-  private fun renderEnums(targetLanguage: TargetLanguage): String =
+  private fun renderEnums(config: RenderConfig): String =
     enums.joinToString("\n") {
-      "|  ${it.render(targetLanguage)}"
+      "|  ${it.render(config)}"
     }
 }

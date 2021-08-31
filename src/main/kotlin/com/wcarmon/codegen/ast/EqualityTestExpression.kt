@@ -2,7 +2,6 @@ package com.wcarmon.codegen.ast
 
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.LogicalFieldType
-import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.model.TargetLanguage.*
 
 /**
@@ -23,6 +22,8 @@ data class EqualityTestExpression(
   private val expressionType: LogicalFieldType,
 ) : Expression {
 
+  override val expressionName = EqualityTestExpression::class.java.name
+
   /**
    * eg. "Arrays.deepEquals(xArr, yArr)"
    * eg. "Arrays.deepEquals(xArr, yArr);"
@@ -31,11 +32,7 @@ data class EqualityTestExpression(
    * eg. "Objects.equals(x, y)"
    * eg. "x == y"
    */
-  override fun render(
-    targetLanguage: TargetLanguage,
-    terminate: Boolean,
-    lineIndentation: String,
-  ) = when (targetLanguage) {
+  override fun render(config: RenderConfig) = when (config.targetLanguage) {
     C_17 -> TODO()
     CPP_14 -> TODO()
     CPP_17 -> TODO()
@@ -43,15 +40,15 @@ data class EqualityTestExpression(
     DART_2 -> TODO()
 
     GOLANG_1_7 ->
-      handleGolang(targetLanguage, lineIndentation)
+      handleGolang(config)
 
     JAVA_08,
     JAVA_11,
     JAVA_17,
-    -> handleJava(targetLanguage, terminate, lineIndentation)
+    -> handleJava(config)
 
     KOTLIN_JVM_1_4,
-    -> handleKotlin(targetLanguage, lineIndentation)
+    -> handleKotlin(config)
 
     PROTOCOL_BUFFERS_3 -> TODO()
     PYTHON_3 -> TODO()
@@ -78,13 +75,11 @@ data class EqualityTestExpression(
    */
   @Suppress("ReturnCount")
   private fun handleJava(
-    targetLanguage: TargetLanguage,
-    terminate: Boolean,
-    lineIndentation: String,
+    config: RenderConfig,
   ): String {
-    val suffix = targetLanguage.statementTerminatorLiteral(terminate)
-    val e0 = expression0.render(targetLanguage, false)
-    val e1 = expression1.render(targetLanguage, false)
+    val suffix = config.targetLanguage.statementTerminatorLiteral(config.terminate)
+    val e0 = expression0.render(config.unterminated)
+    val e1 = expression1.render(config.unterminated)
 
     if (expressionType.enumType ||
       expressionType.base == BOOLEAN ||
@@ -111,12 +106,11 @@ data class EqualityTestExpression(
 
   @Suppress("ReturnCount")
   private fun handleKotlin(
-    targetLanguage: TargetLanguage,
-    lineIndentation: String,
+    config: RenderConfig,
   ): String {
 
-    val e0 = expression0.render(targetLanguage, false)
-    val e1 = expression1.render(targetLanguage, false)
+    val e0 = expression0.render(config.unterminated)
+    val e1 = expression1.render(config.unterminated)
 
     if (expressionType.base == FLOAT_64) {
       //TODO: use contentEquals
@@ -136,11 +130,10 @@ data class EqualityTestExpression(
   }
 
   private fun handleGolang(
-    targetLanguage: TargetLanguage,
-    lineIndentation: String,
+    config: RenderConfig,
   ): String {
-    val e0 = expression0.render(targetLanguage, false)
-    val e1 = expression1.render(targetLanguage, false)
+    val e0 = expression0.render(config.unterminated)
+    val e1 = expression1.render(config.unterminated)
 
     return "$e0 == $e1"
   }

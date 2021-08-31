@@ -6,6 +6,7 @@ import com.wcarmon.codegen.model.CodeGenRequest
  * Convenience methods/properties applicable across JVM languages
  */
 class JVMRequestView(
+  private val debugMode: Boolean,
   private val request: CodeGenRequest,
 ) {
 

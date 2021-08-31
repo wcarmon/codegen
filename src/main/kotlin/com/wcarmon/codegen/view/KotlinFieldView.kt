@@ -13,6 +13,7 @@ import com.wcarmon.codegen.util.getKotlinTypeLiteral
  * Kotlin related convenience methods for a [Field]
  */
 class KotlinFieldView(
+  private val debugMode: Boolean,
   private val field: Field,
   private val jvmView: JVMFieldView,
   private val rdbmsView: RDBMSColumnView,
@@ -25,13 +26,19 @@ class KotlinFieldView(
     }
   }
 
+  private val renderConfig = RenderConfig(
+    debugMode = debugMode,
+    targetLanguage = targetLanguage,
+    terminate = false
+  )
+
   val resultSetGetterExpression: String by lazy {
     ResultSetReadExpression(
       fieldName = field.name,
       getterMethod = defaultResultSetGetterMethod(field.effectiveBaseType),
       resultSetIdentifierExpression = RawExpression("rs"),
     )
-      .render(targetLanguage, false)
+      .render(renderConfig)
   }
 
   val typeLiteral: String = getKotlinTypeLiteral(field.type, true)
@@ -44,7 +51,7 @@ class KotlinFieldView(
       assertNonNull = false,  //TODO: verify
       field = field,
       fieldOwner = RawExpression(protoId),
-    ).render(targetLanguage, false)
+    ).render(renderConfig)
 
 
   fun writeToProtoExpression(pojoId: String = "entity"): String {
@@ -66,7 +73,7 @@ class KotlinFieldView(
       field = field,
       sourceReadExpression = serdeExpression,
     )
-      .render(targetLanguage, false)
+      .render(renderConfig)
   }
 
   fun updateFieldPreparedStatementSetterStatements(

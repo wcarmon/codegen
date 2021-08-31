@@ -8,6 +8,7 @@ import com.wcarmon.codegen.util.defaultValueLiteralForJVM
  * Convenience methods/properties applicable across JVM languages
  */
 class JVMFieldView(
+  private val debugMode: Boolean,
   private val field: Field,
 ) {
 

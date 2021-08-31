@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.wcarmon.codegen.CREATED_TS_FIELD_NAMES
+import com.wcarmon.codegen.DEBUG_MODE
 import com.wcarmon.codegen.UPDATED_TS_FIELD_NAMES
 import com.wcarmon.codegen.model.BaseFieldType.STRING
 import com.wcarmon.codegen.model.TargetLanguage.*
@@ -138,6 +139,7 @@ data class Field(
 
   val java8View by lazy {
     Java8FieldView(
+      debugMode = DEBUG_MODE,
       field = this,
       jvmView = jvmView,
       rdbmsView = rdbmsView,
@@ -146,22 +148,35 @@ data class Field(
   }
 
   val kotlinView by lazy {
-    KotlinFieldView(field = this,
+    KotlinFieldView(
+      debugMode = DEBUG_MODE,
+      field = this,
       jvmView = jvmView,
       rdbmsView = rdbmsView,
-      targetLanguage = KOTLIN_JVM_1_4)
+      targetLanguage = KOTLIN_JVM_1_4,
+    )
   }
 
   val rdbmsView by lazy {
-    RDBMSColumnView(this)
+    RDBMSColumnView(
+      debugMode = DEBUG_MODE,
+      field = this,
+    )
   }
 
   val sqlView by lazy {
-    RDBMSColumnView(this)
+    RDBMSColumnView(
+      debugMode = DEBUG_MODE,
+      field = this,
+    )
   }
 
   val protoView by lazy {
-    ProtobufFieldView(this, PROTOCOL_BUFFERS_3)
+    ProtobufFieldView(
+      debugMode = DEBUG_MODE,
+      field = this,
+      targetLanguage = PROTOCOL_BUFFERS_3,
+    )
   }
 
   val isIdField: Boolean = (positionInId ?: -1) >= 0
@@ -179,7 +194,9 @@ data class Field(
   }
 
   val jvmView by lazy {
-    JVMFieldView(this)
+    JVMFieldView(
+      field = this,
+      debugMode = DEBUG_MODE)
   }
 
   // -- Language & Framework specific convenience methods

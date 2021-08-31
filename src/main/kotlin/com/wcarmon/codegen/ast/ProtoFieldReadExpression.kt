@@ -2,7 +2,6 @@ package com.wcarmon.codegen.ast
 
 import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.SerdeMode.DESERIALIZE
-import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.util.effectiveProtoSerde
 import com.wcarmon.codegen.util.protoBuilderGetter
 
@@ -15,6 +14,8 @@ class ProtoFieldReadExpression(
   private val fieldOwner: Expression = DEFAULT_FIELD_OWNER,
   private val protoReadExpression: Expression,
 ) : Expression {
+
+  override val expressionName = ProtoFieldReadExpression::class.java.name
 
   companion object {
 
@@ -50,11 +51,7 @@ class ProtoFieldReadExpression(
    * eg. proto.foo!!
    * eg. proto.getFoo()
    */
-  override fun render(
-    targetLanguage: TargetLanguage,
-    terminate: Boolean,
-    lineIndentation: String,
-  ): String {
+  override fun render(config: RenderConfig): String {
 
     val serdeExpression = WrapWithSerdeExpression(
       serde = effectiveProtoSerde(field),
@@ -62,9 +59,6 @@ class ProtoFieldReadExpression(
       wrapped = protoReadExpression,
     )
 
-    return serdeExpression.render(
-      targetLanguage,
-      terminate,
-      lineIndentation)
+    return serdeExpression.render(config)
   }
 }

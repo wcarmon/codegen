@@ -1,7 +1,5 @@
 package com.wcarmon.codegen.ast
 
-import com.wcarmon.codegen.model.TargetLanguage
-
 /**
  * Last resort!
  *
@@ -19,10 +17,8 @@ data class RawExpression(
     require(value.isNotBlank()) { "expression cannot be empty" }
   }
 
+  override val expressionName = RawExpression::class.java.name
+
   /** Assume text is already appropriate for target language */
-  override fun render(
-    targetLanguage: TargetLanguage,
-    terminate: Boolean,
-    lineIndentation: String,
-  ) = value
+  override fun render(config: RenderConfig) = value
 }

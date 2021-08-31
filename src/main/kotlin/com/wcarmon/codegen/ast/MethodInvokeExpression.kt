@@ -1,6 +1,5 @@
 package com.wcarmon.codegen.ast
 
-import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.model.TargetLanguage.*
 
 /**
@@ -21,69 +20,35 @@ data class MethodInvokeExpression(
   private val fieldOwner: Expression = EmptyExpression,
 ) : Expression {
 
+  override val expressionName = MethodInvokeExpression::class.java.name
+
   override fun render(
-    targetLanguage: TargetLanguage,
-    terminate: Boolean,
-    lineIndentation: String,
+    config: RenderConfig,
   ) =
-    when (targetLanguage) {
-      C_17 -> TODO()
-      CPP_14,
-      CPP_17,
-      CPP_20,
-      -> TODO()
-
-      DART_2 -> TODO()
-
-      GOLANG_1_7 -> TODO()
-
+    when (config.targetLanguage) {
       JAVA_08,
       JAVA_11,
       JAVA_17,
-      -> handleJava(targetLanguage,
-        terminate,
-        lineIndentation)
+      -> handleJava(config)
 
       KOTLIN_JVM_1_4,
-      -> handleKotlin(
-        targetLanguage,
-        lineIndentation)
+      -> handleKotlin(config)
 
-      PROTOCOL_BUFFERS_3 -> TODO()
-
-      PYTHON_3 -> TODO()
-
-      RUST_1_54 -> TODO()
-
-      SQL_DB2 -> TODO()
-      SQL_H2 -> TODO()
-      SQL_MARIA -> TODO()
-      SQL_MYSQL -> TODO()
-      SQL_ORACLE -> TODO()
-      SQL_POSTGRESQL -> TODO()
-      SQL_SQLITE -> TODO()
-
-      SWIFT_5 -> TODO()
-
-      TYPESCRIPT_4 -> TODO()
+      else -> TODO()
     }
 
-  private fun handleJava(
-    targetLanguage: TargetLanguage,
-    terminate: Boolean,
-    lineIndentation: String,
-  ): String {
-    val prefix = buildFieldOwnerPrefix(targetLanguage)
-    val suffix = targetLanguage.statementTerminatorLiteral(terminate)
+  private fun handleJava(config: RenderConfig): String {
+    val prefix = buildFieldOwnerPrefix(config)
+    val suffix = config.targetLanguage.statementTerminatorLiteral(config.terminate)
 
-    val method = methodName.render(targetLanguage)
+    val method = methodName.render(config)
 
     val csvArgs = arguments
       .joinToString(",") {
-        it.render(targetLanguage, false, "")
+        it.render(config.unindented.unterminated)
       }
 
-    return lineIndentation +
+    return config.lineIndentation +
         prefix +
         method +
         "(" +
@@ -92,17 +57,11 @@ data class MethodInvokeExpression(
         suffix
   }
 
-  private fun handleKotlin(
-    targetLanguage: TargetLanguage,
-    lineIndentation: String,
-  ): String =
-    handleJava(
-      targetLanguage,
-      false,
-      lineIndentation)
+  private fun handleKotlin(config: RenderConfig): String =
+    handleJava(config.unterminated)
 
-  private fun buildFieldOwnerPrefix(targetLanguage: TargetLanguage): String {
-    val ownerPrefix = fieldOwner.render(targetLanguage, false, "")
+  private fun buildFieldOwnerPrefix(config: RenderConfig): String {
+    val ownerPrefix = fieldOwner.render(config.unindented.unterminated)
     if (ownerPrefix.isBlank()) {
       return ""
     }

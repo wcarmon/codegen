@@ -2,7 +2,6 @@ package com.wcarmon.codegen.ast
 
 import com.wcarmon.codegen.model.Name
 import com.wcarmon.codegen.model.QuoteType.DOUBLE
-import com.wcarmon.codegen.model.TargetLanguage
 
 
 /**
@@ -20,6 +19,8 @@ class ResultSetReadExpression(
   resultSetIdentifierExpression: Expression = RawExpression("rs"),
 ) : Expression {
 
+  override val expressionName = ResultSetReadExpression::class.java.name
+
   private val underlying: MethodInvokeExpression
 
   init {
@@ -36,10 +37,5 @@ class ResultSetReadExpression(
     )
   }
 
-  override fun render(
-    targetLanguage: TargetLanguage,
-    terminate: Boolean,
-    lineIndentation: String,
-  ) =
-    underlying.render(targetLanguage, terminate, lineIndentation)
+  override fun render(config: RenderConfig) = underlying.render(config)
 }

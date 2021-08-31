@@ -8,6 +8,7 @@ import com.wcarmon.codegen.util.consolidateImports
  * Convenience methods/properties applicable to Java
  */
 class Java8RequestView(
+  private val debugMode: Boolean,
   private val request: CodeGenRequest,
 ) {
 

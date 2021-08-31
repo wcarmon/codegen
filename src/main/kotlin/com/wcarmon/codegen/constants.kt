@@ -2,6 +2,7 @@ package com.wcarmon.codegen
 
 const val MAX_NAME_LENGTH = 64
 
+const val DEBUG_MODE = true
 
 /**
  * Official docs on patterns: https://docs.oracle.com/javase/tutorial/essential/io/fileOps.html#glob

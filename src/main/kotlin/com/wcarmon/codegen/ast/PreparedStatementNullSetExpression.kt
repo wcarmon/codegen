@@ -3,7 +3,6 @@ package com.wcarmon.codegen.ast
 import com.wcarmon.codegen.ast.NumericLiteralBase.DECIMAL
 import com.wcarmon.codegen.model.JDBCColumnIndex
 import com.wcarmon.codegen.model.Name
-import com.wcarmon.codegen.model.TargetLanguage
 import java.sql.JDBCType
 
 /**
@@ -22,6 +21,8 @@ class PreparedStatementNullSetExpression(
   preparedStatementIdentifierExpression: Expression = RawExpression("ps"),
 ) : Expression {
 
+  override val expressionName = PreparedStatementNullSetExpression::class.java.name
+
   private val underlying: MethodInvokeExpression
 
   init {
@@ -36,10 +37,5 @@ class PreparedStatementNullSetExpression(
     )
   }
 
-  override fun render(
-    targetLanguage: TargetLanguage,
-    terminate: Boolean,
-    lineIndentation: String,
-  ) =
-    underlying.render(targetLanguage, terminate, lineIndentation)
+  override fun render(config: RenderConfig) = underlying.render(config)
 }

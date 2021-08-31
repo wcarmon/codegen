@@ -4,7 +4,6 @@ import com.wcarmon.codegen.ast.FinalityModifier.FINAL
 import com.wcarmon.codegen.ast.VisibilityModifier.PRIVATE
 import com.wcarmon.codegen.model.LogicalFieldType
 import com.wcarmon.codegen.model.Name
-import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.model.TargetLanguage.*
 import com.wcarmon.codegen.util.getKotlinTypeLiteral
 import com.wcarmon.codegen.util.javaTypeLiteral
@@ -22,44 +21,37 @@ data class FieldDeclarationExpression(
   private val visibilityModifier: VisibilityModifier = PRIVATE,
 ) : Expression {
 
+  override val expressionName = FieldDeclarationExpression::class.java.name
+
   override fun render(
-    targetLanguage: TargetLanguage,
-    terminate: Boolean,
-    lineIndentation: String,
+    config: RenderConfig,
   ): String =
-    when (targetLanguage) {
+    when (config.targetLanguage) {
       JAVA_08,
       JAVA_11,
       JAVA_17,
-      -> handleJava(
-        targetLanguage,
-        terminate,
-        lineIndentation)
+      -> handleJava(config)
 
       KOTLIN_JVM_1_4,
-      -> handleKotlin(
-        targetLanguage,
-        lineIndentation)
+      -> handleKotlin(config.unterminated)
 
-      else -> TODO("handle: $targetLanguage")
+      else -> TODO("handle: $config")
     }
 
   private fun handleJava(
-    targetLanguage: TargetLanguage,
-    terminate: Boolean = true,
-    lineIndentation: String,
+    config: RenderConfig,
   ): String {
 
 
     val output = StringBuilder(512)
 
-    val doc = documentation.render(targetLanguage, false, lineIndentation)
+    val doc = documentation.render(config.unterminated)
     if (doc.isNotBlank()) {
       output.append(doc)
       output.append("\n")
     }
 
-    output.append(lineIndentation)
+    output.append(config.lineIndentation)
 
     val modifiers = buildJavaModifierFragments()
     if (modifiers.isNotEmpty()) {
@@ -71,34 +63,31 @@ data class FieldDeclarationExpression(
     output.append(" ")
     output.append(name.lowerCamel)
 
-    val dflt = defaultValue.render(targetLanguage)
+    val dflt = defaultValue.render(config)
     if (dflt.isNotBlank()) {
       TODO("handle default value: $dflt")
     }
 
-    if (terminate) {
+    if (config.terminate) {
       output.append(";")
     }
 
     return output.toString()
   }
 
-  private fun handleKotlin(
-    targetLanguage: TargetLanguage,
-    lineIndentation: String,
-  ): String {
+  private fun handleKotlin(config: RenderConfig): String {
 
-    val doc = documentation.render(targetLanguage, false, lineIndentation)
-    val dValue = defaultValue.render(targetLanguage, false)
+    val doc = documentation.render(config.unterminated)
+    val dValue = defaultValue.render(config.unterminated)
     val typeLiteral = getKotlinTypeLiteral(type, false)
     val variableKeyword = if (finalityModifier == FINAL) "val " else "var "
 
     val defaultValueFragment = if (dValue.isNotBlank()) " = $dValue" else ""
     val docFragment = if (doc.isNotBlank()) doc + "\n" else ""
-    val visibilityFragment = visibilityModifier.render(targetLanguage)
+    val visibilityFragment = visibilityModifier.render(config.targetLanguage)
 
     return docFragment +
-        lineIndentation +
+        config.lineIndentation +
         visibilityFragment +
         variableKeyword +
         name.lowerCamel +

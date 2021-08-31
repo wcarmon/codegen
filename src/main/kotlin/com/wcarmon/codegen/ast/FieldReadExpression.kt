@@ -34,23 +34,23 @@ data class FieldReadExpression(
   private val overrideFieldReadMode: FieldReadMode? = null,
 ) : Expression {
 
+  override val expressionName = FieldReadExpression::class.java.name
+
   override fun render(
-    targetLanguage: TargetLanguage,
-    terminate: Boolean,
-    lineIndentation: String,
+    config: RenderConfig,
   ) =
-    getFieldReadPrefix(targetLanguage) +
-        when (getFieldReadMode(targetLanguage)) {
-          DIRECT -> getDirectFieldName(targetLanguage) + nonNullSnippet
+    getFieldReadPrefix(config) +
+        when (getFieldReadMode(config)) {
+          DIRECT -> getDirectFieldName(config.targetLanguage) + nonNullSnippet
           GETTER -> "get${fieldName.upperCamel}()"
         } +
-        targetLanguage.statementTerminatorLiteral(terminate)
+        config.statementTerminatorLiteral
 
   private fun getFieldReadPrefix(
-    targetLanguage: TargetLanguage,
+    config: RenderConfig,
   ): String {
 
-    val output = fieldOwner.render(targetLanguage, false)
+    val output = fieldOwner.render(config.unterminated)
 
     return if (output.isBlank()) {
       ""
@@ -96,8 +96,8 @@ data class FieldReadExpression(
       -> TODO("what is the field read naming idiom for $targetLanguage")
     }
 
-  private fun getFieldReadMode(targetLanguage: TargetLanguage) =
-    overrideFieldReadMode ?: defaultFieldReadMode(targetLanguage)
+  private fun getFieldReadMode(config: RenderConfig) =
+    overrideFieldReadMode ?: defaultFieldReadMode(config.targetLanguage)
 
   private fun defaultFieldReadMode(targetLanguage: TargetLanguage) =
     when (targetLanguage) {

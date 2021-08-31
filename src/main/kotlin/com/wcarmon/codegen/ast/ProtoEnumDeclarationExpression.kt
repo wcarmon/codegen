@@ -1,7 +1,6 @@
 package com.wcarmon.codegen.ast
 
 import com.wcarmon.codegen.model.Name
-import com.wcarmon.codegen.model.TargetLanguage
 
 /**
  * See https://developers.google.com/protocol-buffers/docs/proto3#enum
@@ -13,6 +12,8 @@ data class ProtoEnumDeclarationExpression(
   /** Defaults to undefined, instead of first element */
   private val prependUndefinedElement: Boolean = true,
 ) : Expression {
+
+  override val expressionName = ProtoEnumDeclarationExpression::class.java.name
 
   companion object {
     const val UNDEFINED_ITEM: String = "UNDEFINED"
@@ -39,11 +40,9 @@ data class ProtoEnumDeclarationExpression(
     .map { Name(it).upperSnake }
 
   override fun render(
-    targetLanguage: TargetLanguage,
-    terminate: Boolean,
-    lineIndentation: String,
+    config: RenderConfig,
   ): String {
-    check(targetLanguage.isProtobuf)
+    check(config.targetLanguage.isProtobuf)
 
     //TODO: use lineIndentation
     return """

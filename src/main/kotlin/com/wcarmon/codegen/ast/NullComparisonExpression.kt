@@ -1,6 +1,5 @@
 package com.wcarmon.codegen.ast
 
-import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.model.TargetLanguage.*
 
 /**
@@ -12,57 +11,37 @@ data class NullComparisonExpression(
   private val compareToMe: Expression,
 ) : Expression {
 
+  override val expressionName = NullComparisonExpression::class.java.name
+
   //NOTE: termination not supported
   override fun render(
-    targetLanguage: TargetLanguage,
-    terminate: Boolean,
-    lineIndentation: String,
+    config: RenderConfig,
   ) =
-    when (targetLanguage) {
+    when (config.targetLanguage) {
       CPP_14,
       CPP_17,
       CPP_20,
-      -> "nullptr == " + compareToMe.render(
-        targetLanguage,
-        false,
-        lineIndentation)
+      -> "nullptr == " + compareToMe.render(config.unterminated)
 
       C_17,
-      -> "NULL == " + compareToMe.render(
-        targetLanguage,
-        false,
-        lineIndentation)
+      -> "NULL == " + compareToMe.render(config.unterminated)
 
       GOLANG_1_7,
-      -> "nil == " + compareToMe.render(
-        targetLanguage,
-        false,
-        lineIndentation)
+      -> "nil == " + compareToMe.render(config.unterminated)
 
       DART_2,
       JAVA_08,
       JAVA_11,
       JAVA_17,
       KOTLIN_JVM_1_4,
-      -> "null == " + compareToMe.render(
-        targetLanguage,
-        false,
-        lineIndentation)
+      -> "null == " + compareToMe.render(config.unterminated)
 
       PROTOCOL_BUFFERS_3 -> TODO()
       PYTHON_3 -> TODO()  // foo is None
       RUST_1_54 -> TODO()
 
-      SWIFT_5 -> TODO()
-
       TYPESCRIPT_4 -> TODO()  // == null || undefined
 
-      SQL_DB2 -> TODO()
-      SQL_H2 -> TODO()
-      SQL_MARIA -> TODO()
-      SQL_MYSQL -> TODO()
-      SQL_ORACLE -> TODO()
-      SQL_POSTGRESQL -> TODO()
-      SQL_SQLITE -> TODO()
+      else -> TODO()
     }
 }

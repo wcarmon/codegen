@@ -2,7 +2,6 @@ package com.wcarmon.codegen.ast
 
 import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.ProtoFieldNumber
-import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.util.effectiveProtobufType
 
 //TODO: document me
@@ -17,6 +16,8 @@ data class ProtoFieldDeclarationExpression(
   //TODO: DocumentationExpression
 ) : Expression, Comparable<ProtoFieldDeclarationExpression> {
 
+  override val expressionName = ProtoFieldDeclarationExpression::class.java.name
+
   companion object {
 
     @JvmStatic
@@ -26,12 +27,10 @@ data class ProtoFieldDeclarationExpression(
   }
 
   override fun render(
-    targetLanguage: TargetLanguage,
-    terminate: Boolean,
-    lineIndentation: String,
+    config: RenderConfig,
   ): String {
-    check(targetLanguage.isProtobuf)
-    check(terminate)
+    check(config.targetLanguage.isProtobuf)
+    check(config.terminate)
 
     val repeatedPrefix =
       if (repeated) "repeated "
@@ -41,7 +40,7 @@ data class ProtoFieldDeclarationExpression(
       if (deprecated) " [deprecated = true]"
       else ""
 
-    return lineIndentation +
+    return config.lineIndentation +
         repeatedPrefix +
         effectiveProtobufType(field) +
         " " +

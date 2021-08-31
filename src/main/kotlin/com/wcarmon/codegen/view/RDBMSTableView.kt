@@ -1,10 +1,12 @@
 package com.wcarmon.codegen.view
 
 import com.wcarmon.codegen.ast.RawExpression
+import com.wcarmon.codegen.ast.RenderConfig
 import com.wcarmon.codegen.model.Entity
 import com.wcarmon.codegen.model.JDBCColumnIndex
 import com.wcarmon.codegen.model.PreparedStatementBuilderConfig
 import com.wcarmon.codegen.model.TargetLanguage
+import com.wcarmon.codegen.model.TargetLanguage.SQL_POSTGRESQL
 import com.wcarmon.codegen.util.*
 import org.atteo.evo.inflector.English
 
@@ -13,8 +15,15 @@ import org.atteo.evo.inflector.English
  * See [com.wcarmon.codegen.model.RDBMSTableConfig]
  */
 data class RDBMSTableView(
+  private val debugMode: Boolean,
   private val entity: Entity,
 ) {
+
+  private val renderConfig = RenderConfig(
+    debugMode = debugMode,
+    targetLanguage = SQL_POSTGRESQL,
+    terminate = false
+  )
 
   val commaSeparatedColumns: String = commaSeparatedColumns(entity)
 
@@ -70,7 +79,11 @@ data class RDBMSTableView(
 
     return (pk + nonPk)
       .joinToString(separator = "\n") {
-        it.render(targetLanguage)
+        it.render(
+          renderConfig.copy(
+            terminate = false,
+            targetLanguage = targetLanguage,
+          ))
       }
   }
 
@@ -102,7 +115,10 @@ data class RDBMSTableView(
 
     return (nonPk + separator + pk)
       .joinToString(separator = "\n") {
-        it.render(targetLanguage)
+        it.render(renderConfig.copy(
+          terminate = false,
+          targetLanguage = targetLanguage,
+        ))
       }
   }
 
@@ -116,6 +132,9 @@ data class RDBMSTableView(
       firstIndex = JDBCColumnIndex.FIRST,
     )
       .joinToString(separator = "\n") {
-        it.render(targetLanguage)
+        it.render(renderConfig.copy(
+          terminate = false,
+          targetLanguage = targetLanguage,
+        ))
       }
 }

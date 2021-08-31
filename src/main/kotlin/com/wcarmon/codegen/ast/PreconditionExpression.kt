@@ -1,6 +1,5 @@
 package com.wcarmon.codegen.ast
 
-import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.model.TargetLanguage.*
 
 /**
@@ -8,57 +7,29 @@ import com.wcarmon.codegen.model.TargetLanguage.*
  */
 class PreconditionExpression : Expression {
 
-  override fun render(
-    targetLanguage: TargetLanguage,
-    terminate: Boolean,
-    lineIndentation: String,
-  ) =
-    when (targetLanguage) {
-      C_17 -> TODO()
-      CPP_14,
-      CPP_17,
-      CPP_20,
-      -> TODO()
+  override val expressionName = PreconditionExpression::class.java.name
 
-      DART_2 -> TODO()
-
-      GOLANG_1_7 -> TODO()
-
+  override fun render(config: RenderConfig) =
+    when (config.targetLanguage) {
       JAVA_08,
       JAVA_11,
       JAVA_17,
-      -> handleJava(lineIndentation)
+      -> handleJava(config)
 
-      KOTLIN_JVM_1_4 -> handleKotlin(lineIndentation)
+      KOTLIN_JVM_1_4 -> handleKotlin(config)
 
-      PROTOCOL_BUFFERS_3 -> TODO()
-
-      PYTHON_3 -> TODO()
-
-      RUST_1_54 -> TODO()
-
-      SWIFT_5 -> TODO()
-
-      TYPESCRIPT_4 -> TODO()
-
-      SQL_DB2 -> TODO()
-      SQL_H2 -> TODO()
-      SQL_MARIA -> TODO()
-      SQL_MYSQL -> TODO()
-      SQL_ORACLE -> TODO()
-      SQL_POSTGRESQL -> TODO()
-      SQL_SQLITE -> TODO()
+      else -> TODO()
     }
 
   //TODO: just core java (no guava)
   private fun handleJava(
-    lineIndentation: String,
+    config: RenderConfig,
   ): String {
     TODO("Not yet implemented")
   }
 
   private fun handleKotlin(
-    lineIndentation: String,
+    config: RenderConfig,
   ): String {
     TODO("Not yet implemented")
   }

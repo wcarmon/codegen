@@ -9,6 +9,7 @@ import com.wcarmon.codegen.util.protoBuilderSetter
  * See [com.wcarmon.codegen.model.RDBMSColumnConfig]
  */
 class ProtobufFieldView(
+  private val debugMode: Boolean,
   private val field: Field,
   private val targetLanguage: TargetLanguage,
 ) {

@@ -1,19 +1,18 @@
 package com.wcarmon.codegen.ast
 
 import com.wcarmon.codegen.ast.NumericLiteralBase.*
-import com.wcarmon.codegen.model.TargetLanguage
 
 data class NumericLiteralExpression(
   private val base: NumericLiteralBase = DECIMAL,
   private val value: Number,
 ) : Expression {
 
+  override val expressionName = NumericLiteralExpression::class.java.name
+
   override fun render(
-    targetLanguage: TargetLanguage,
-    terminate: Boolean,
-    lineIndentation: String,
+    config: RenderConfig,
   ): String {
-    val t = targetLanguage.statementTerminatorLiteral(terminate)
+    val t = config.statementTerminatorLiteral
 
     return when (base) {
       BINARY -> TODO("convert to hex: $value")

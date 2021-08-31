@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.google.common.base.CaseFormat
+import com.wcarmon.codegen.DEBUG_MODE
 import com.wcarmon.codegen.TEMPLATE_SUFFIX
 import com.wcarmon.codegen.model.OutputMode.FILE_PER_ENTITY
 import com.wcarmon.codegen.model.OutputMode.SINGLE_FILE
@@ -165,14 +166,23 @@ data class CodeGenRequest(
   val inDefaultPackage: Boolean = packageName == PackageName.DEFAULT
 
   val java8View by lazy {
-    Java8RequestView(this)
+    Java8RequestView(
+      debugMode = DEBUG_MODE,
+      request = this,
+    )
   }
 
   val jvmView by lazy {
-    JVMRequestView(this)
+    JVMRequestView(
+      debugMode = DEBUG_MODE,
+      request = this,
+    )
   }
 
   val kotlinView by lazy {
-    KotlinRequestView(this)
+    KotlinRequestView(
+      debugMode = DEBUG_MODE,
+      request = this,
+    )
   }
 }

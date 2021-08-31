@@ -1,9 +1,6 @@
 package com.wcarmon.codegen.view
 
-import com.wcarmon.codegen.ast.DocumentationExpression
-import com.wcarmon.codegen.ast.FieldDeclarationExpression
-import com.wcarmon.codegen.ast.FinalityModifier
-import com.wcarmon.codegen.ast.VisibilityModifier
+import com.wcarmon.codegen.ast.*
 import com.wcarmon.codegen.model.Entity
 import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.util.buildJavaPreconditionStatements
@@ -14,6 +11,7 @@ import com.wcarmon.codegen.util.javaImportsForFields
  * Java related convenience methods for a [Entity]
  */
 class Java8EntityView(
+  private val debugMode: Boolean,
   private val entity: Entity,
   private val jvmView: JVMEntityView,
   private val rdbmsView: RDBMSTableView,
@@ -25,6 +23,13 @@ class Java8EntityView(
       "invalid target language: $targetLanguage"
     }
   }
+
+  private val renderConfig = RenderConfig(
+    debugMode = debugMode,
+    lineIndentation = "",
+    targetLanguage = targetLanguage,
+    terminate = true,
+  )
 
   val importsForFields: Set<String> = javaImportsForFields(entity)
 
@@ -57,11 +62,10 @@ class Java8EntityView(
           type = field.type,
           visibilityModifier = VisibilityModifier.PRIVATE,
 //      defaultValue = TODO()  TODO: fix this
-        ).render(targetLanguage, true, "  ")
+        ).render(renderConfig.indented)
       }
       .joinToString("\n")
   }
-
 
   fun methodArgsForIdFields(qualified: Boolean) =
     commaSeparatedJavaMethodArgs(entity.idFields, qualified)

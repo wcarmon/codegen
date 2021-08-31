@@ -16,6 +16,7 @@ import com.wcarmon.codegen.util.newJavaCollectionExpression
  * Pre-rendered [Expression]s
  */
 class Java8FieldView(
+  private val debugMode: Boolean,
   private val field: Field,
   private val jvmView: JVMFieldView,
   private val rdbmsView: RDBMSColumnView,
@@ -28,13 +29,20 @@ class Java8FieldView(
     }
   }
 
+  private val renderConfig = RenderConfig(
+    debugMode = debugMode,
+    targetLanguage = targetLanguage,
+    terminate = false
+  )
+
   val resultSetGetterExpression: String by lazy {
+
     ResultSetReadExpression(
       fieldName = field.name,
       getterMethod = defaultResultSetGetterMethod(field.effectiveBaseType),
       resultSetIdentifierExpression = RawExpression("rs"),
     )
-      .render(targetLanguage, true)
+      .render(renderConfig.terminated.indented)
   }
 
   val typeLiteral: String = javaTypeLiteral(field.type, true)
@@ -76,7 +84,7 @@ class Java8FieldView(
     expression0 = expression0,
     expression1 = expression1,
     expressionType = field.type,
-  ).render(targetLanguage, false)
+  ).render(renderConfig.unterminated)
 
   //TODO: improve this
 //  val protoDeserializeExpressionForTypeParameters by lazy {
@@ -95,7 +103,7 @@ class Java8FieldView(
       assertNonNull = false,
       field = field,
       fieldOwner = RawExpression(protoId),
-    ).render(targetLanguage, false)
+    ).render(renderConfig.unterminated)
 
   fun writeToProtoExpression(pojoId: String = "entity"): String {
 
@@ -116,7 +124,7 @@ class Java8FieldView(
       field = field,
       sourceReadExpression = serdeExpression,
     )
-      .render(targetLanguage, false)
+      .render(renderConfig.unterminated)
   }
 
   fun updateFieldPreparedStatementSetterStatements(

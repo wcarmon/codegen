@@ -2,10 +2,12 @@ package com.wcarmon.codegen.view
 
 import com.wcarmon.codegen.ast.FieldReadExpression
 import com.wcarmon.codegen.ast.PreparedStatementSetExpression
+import com.wcarmon.codegen.ast.RenderConfig
 import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.JDBCColumnIndex
 import com.wcarmon.codegen.model.PreparedStatementBuilderConfig
 import com.wcarmon.codegen.model.TargetLanguage
+import com.wcarmon.codegen.model.TargetLanguage.SQL_POSTGRESQL
 import com.wcarmon.codegen.util.*
 
 /**
@@ -13,8 +15,15 @@ import com.wcarmon.codegen.util.*
  * See [com.wcarmon.codegen.model.RDBMSColumnConfig]
  */
 class RDBMSColumnView(
+  private val debugMode: Boolean,
   private val field: Field,
 ) {
+
+  private val renderConfig = RenderConfig(
+    debugMode = debugMode,
+    targetLanguage = SQL_POSTGRESQL,
+    terminate = false
+  )
 
   /**
    * Works on PostgreSQL, H2, Maria, MySQL, DB2
@@ -57,7 +66,8 @@ class RDBMSColumnView(
 
     return (listOf(columnSetterStatement) + pk)
       .joinToString(separator = "\n") {
-        it.render(targetLanguage)
+        it.render(
+          renderConfig.copy(targetLanguage))
       }
   }
 

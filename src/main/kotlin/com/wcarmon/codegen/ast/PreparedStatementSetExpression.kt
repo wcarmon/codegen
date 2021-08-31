@@ -3,7 +3,6 @@ package com.wcarmon.codegen.ast
 import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.JDBCColumnIndex
 import com.wcarmon.codegen.model.Name
-import com.wcarmon.codegen.model.TargetLanguage
 import java.sql.JDBCType
 
 /**
@@ -22,6 +21,8 @@ data class PreparedStatementSetExpression(
   private val preparedStatementIdentifierExpression: Expression = RawExpression("ps"),
   private val setterMethod: Name,
 ) : Expression {
+
+  override val expressionName = PreparedStatementSetExpression::class.java.name
 
   private val nonNullExpression: PreparedStatementNonNullSetExpression =
     PreparedStatementNonNullSetExpression(
@@ -49,9 +50,7 @@ data class PreparedStatementSetExpression(
 
 
   override fun render(
-    targetLanguage: TargetLanguage,
-    terminate: Boolean,
-    lineIndentation: String,
+    config: RenderConfig,
   ) =
     if (field.type.nullable) {
       conditionalExpression
@@ -59,5 +58,5 @@ data class PreparedStatementSetExpression(
     } else {
       nonNullExpression
     }
-      .render(targetLanguage, false)
+      .render(config.unterminated)
 }

@@ -1,7 +1,6 @@
 package com.wcarmon.codegen.ast
 
 import com.wcarmon.codegen.model.LogicalFieldType
-import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.model.TargetLanguage.*
 
 /**
@@ -29,53 +28,29 @@ data class MethodHeaderExpression(
   //TODO: List: Generic parameter(s)  eg. "<T: Bacon, S>"
 ) : Expression {
 
+  override val expressionName = MethodHeaderExpression::class.java.name
+
   override fun render(
-    targetLanguage: TargetLanguage,
-    terminate: Boolean,
-    lineIndentation: String,
+    config: RenderConfig,
   ) =
-    when (targetLanguage) {
-      C_17 -> TODO()
-      CPP_14,
-      CPP_17,
-      CPP_20,
-      -> TODO()
-
-      DART_2 -> TODO()
-
-      GOLANG_1_7 -> TODO()
+    when (config.targetLanguage) {
 
       JAVA_08,
       JAVA_11,
       JAVA_17,
-      -> handleJava()
+      -> handleJava(config)
 
-      KOTLIN_JVM_1_4 -> handleKotlin()
+      KOTLIN_JVM_1_4,
+      -> handleKotlin(config)
 
-      PROTOCOL_BUFFERS_3 -> TODO()
-
-      PYTHON_3 -> TODO()
-
-      RUST_1_54 -> TODO()
-
-      SQL_DB2 -> TODO()
-      SQL_H2 -> TODO()
-      SQL_MARIA -> TODO()
-      SQL_MYSQL -> TODO()
-      SQL_ORACLE -> TODO()
-      SQL_POSTGRESQL -> TODO()
-      SQL_SQLITE -> TODO()
-
-      SWIFT_5 -> TODO()
-
-      TYPESCRIPT_4 -> TODO()
+      else -> TODO()
     }
 
-  private fun handleJava(): String {
+  private fun handleJava(config: RenderConfig): String {
     TODO("Not yet implemented")
   }
 
-  private fun handleKotlin(): String {
+  private fun handleKotlin(config: RenderConfig): String {
     TODO("Not yet implemented")
   }
 }

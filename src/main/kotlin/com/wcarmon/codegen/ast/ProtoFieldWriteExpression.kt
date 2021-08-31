@@ -1,7 +1,6 @@
 package com.wcarmon.codegen.ast
 
 import com.wcarmon.codegen.model.Field
-import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.util.protoBuilderSetter
 
 /**
@@ -16,6 +15,8 @@ data class ProtoFieldWriteExpression(
   private val sourceReadExpression: Expression,
 ) : Expression {
 
+  override val expressionName = ProtoFieldWriteExpression::class.java.name
+
   /**
    * eg. addAllFoo( myCollectionSerializer(entity.foo) )
    * eg. addAllFoo( myCollectionSerializer(entity.getFoo()) )
@@ -24,15 +25,11 @@ data class ProtoFieldWriteExpression(
    * eg. setFoo( entity.getFoo().toString() );
    * eg. setFoo( mySerializer(entity.foo) )
    */
-  override fun render(
-    targetLanguage: TargetLanguage,
-    terminate: Boolean,
-    lineIndentation: String,
-  ) =
-    lineIndentation +
+  override fun render(config: RenderConfig) =
+    config.lineIndentation +
         protoBuilderSetter(field) +
         "(" +
-        sourceReadExpression.render(targetLanguage, false, "") +
+        sourceReadExpression.render(config.unindented.unterminated) +
         ")" +
-        targetLanguage.statementTerminatorLiteral(terminate)
+        config.statementTerminatorLiteral
 }

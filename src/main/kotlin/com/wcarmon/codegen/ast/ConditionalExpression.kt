@@ -1,6 +1,5 @@
 package com.wcarmon.codegen.ast
 
-import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.model.TargetLanguage.*
 
 /**
@@ -15,11 +14,9 @@ data class ConditionalExpression(
   private val expressionForFalse: Expression = EmptyExpression,
 ) : Expression {
 
-  override fun render(
-    targetLanguage: TargetLanguage,
-    terminate: Boolean,
-    lineIndentation: String,
-  ) = when (targetLanguage) {
+  override val expressionName = ConditionalExpression::class.java.name
+
+  override fun render(config: RenderConfig) = when (config.targetLanguage) {
     C_17,
     CPP_14,
     CPP_17,
@@ -29,86 +26,77 @@ data class ConditionalExpression(
     JAVA_11,
     JAVA_17,
     TYPESCRIPT_4,
-    -> cStyle(targetLanguage, terminate, lineIndentation)
+    -> cStyle(config)
 
     KOTLIN_JVM_1_4,
-    -> cStyle(targetLanguage, false, lineIndentation)
+    -> cStyle(config.unterminated)
 
     GOLANG_1_7,
     RUST_1_54,
     SWIFT_5,
-    -> noParens(targetLanguage, false, lineIndentation)
+    -> noParens(config.unterminated)
 
-    PYTHON_3 -> pythonStyle(targetLanguage, lineIndentation)
+    PYTHON_3 -> pythonStyle(config)
 
     PROTOCOL_BUFFERS_3,
-    -> TODO("Conditionals not supported on $targetLanguage")
+    -> TODO("Conditionals not supported on $config")
 
-    else -> TODO("Conditionals not supported on $targetLanguage")
+    else -> TODO("Conditionals not supported on $config")
   }
 
   //TODO: use lineIndentation
-  private fun cStyle(
-    targetLanguage: TargetLanguage,
-    terminate: Boolean = false,
-    lineIndentation: String,
-  ): String = if (expressionForFalse.isBlank(targetLanguage)) {
-    """
-      |if (${condition.render(targetLanguage, false)}) {
-      |  ${expressionForTrue.render(targetLanguage, terminate)}   
+  private fun cStyle(config: RenderConfig): String =
+    if (expressionForFalse.isBlank(config)) {
+      """
+      |if (${condition.render(config.unterminated)}) {
+      |  ${expressionForTrue.render(config)}   
       |}
       |
       """
 
-  } else {
-    """
-      |if (${condition.render(targetLanguage, false)}) {
-      |  ${expressionForTrue.render(targetLanguage, terminate)}   
+    } else {
+      """
+      |if (${condition.render(config.unterminated)}) {
+      |  ${expressionForTrue.render(config)}   
       |} else {
-      |  ${expressionForFalse.render(targetLanguage, terminate)}
+      |  ${expressionForFalse.render(config)}
       |}
       |
       """
-  }.trimMargin()
+    }.trimMargin()
 
-  private fun noParens(
-    targetLanguage: TargetLanguage,
-    terminate: Boolean = false,
-    lineIndentation: String,
-  ): String = if (expressionForFalse.isBlank(targetLanguage)) {
+  private fun noParens(config: RenderConfig)
+      : String = if (expressionForFalse.isBlank(config)) {
     """
-      |if ${condition.render(targetLanguage, false)} {
-      |  ${expressionForTrue.render(targetLanguage, terminate)}
+      |if ${condition.render(config.unterminated)} {
+      |  ${expressionForTrue.render(config)}
       |}
       |
       """
   } else {
     """
-      |if ${condition.render(targetLanguage, false)} {
-      |  ${expressionForTrue.render(targetLanguage, terminate)}
+      |if ${condition.render(config.unterminated)} {
+      |  ${expressionForTrue.render(config)}
       |} else {
-      |  ${expressionForFalse.render(targetLanguage, terminate)}
+      |  ${expressionForFalse.render(config)}
       |}
       |
       """
   }.trimMargin()
 
-  private fun pythonStyle(
-    targetLanguage: TargetLanguage,
-    lineIndentation: String,
-  ) =
-    if (expressionForFalse.isBlank(targetLanguage)) {
+  private fun pythonStyle(config: RenderConfig) =
+    if (expressionForFalse.isBlank(config)) {
       """
-      |if ${condition.render(targetLanguage, false)}:
-      |  ${expressionForTrue.render(targetLanguage, false)}
+      |if ${condition.render(config.unterminated)}:
+      |  ${expressionForTrue.render(config.unterminated)}
       |
       """
     } else {
       """
-      |if ${condition.render(targetLanguage, false)}:
-      |  ${expressionForTrue.render(targetLanguage, false)}
+      |if ${condition.render(config.unterminated)}:
+      |  ${expressionForTrue.render(config.unterminated)}
       |else:          
-      |  ${expressionForFalse.render(targetLanguage, false)}
+      |  ${expressionForFalse.render(config.unterminated)}
       |
       """
     }.trimMargin()

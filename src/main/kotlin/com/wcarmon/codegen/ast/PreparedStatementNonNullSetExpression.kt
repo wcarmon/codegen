@@ -3,7 +3,6 @@ package com.wcarmon.codegen.ast
 import com.wcarmon.codegen.ast.NumericLiteralBase.DECIMAL
 import com.wcarmon.codegen.model.JDBCColumnIndex
 import com.wcarmon.codegen.model.Name
-import com.wcarmon.codegen.model.TargetLanguage
 
 /**
  * See [java.sql.PreparedStatement]
@@ -23,6 +22,8 @@ class PreparedStatementNonNullSetExpression(
   preparedStatementIdentifierExpression: Expression = RawExpression("ps"),
 ) : Expression {
 
+  override val expressionName = PreparedStatementNonNullSetExpression::class.java.name
+
   private val underlying: MethodInvokeExpression
 
   init {
@@ -37,13 +38,5 @@ class PreparedStatementNonNullSetExpression(
     )
   }
 
-  override fun render(
-    targetLanguage: TargetLanguage,
-    terminate: Boolean,
-    lineIndentation: String,
-  ) =
-    underlying.render(
-      targetLanguage,
-      terminate,
-      lineIndentation)
+  override fun render(config: RenderConfig) = underlying.render(config)
 }

@@ -2,6 +2,7 @@ package com.wcarmon.codegen.model
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.wcarmon.codegen.DEBUG_MODE
 import com.wcarmon.codegen.model.TargetLanguage.JAVA_08
 import com.wcarmon.codegen.model.TargetLanguage.KOTLIN_JVM_1_4
 import com.wcarmon.codegen.view.JVMEntityView
@@ -81,6 +82,7 @@ data class Entity(
 
   val java8View by lazy {
     Java8EntityView(
+      debugMode = DEBUG_MODE,
       entity = this,
       jvmView = jvmView,
       rdbmsView = rdbmsView,
@@ -90,6 +92,7 @@ data class Entity(
 
   val kotlinView by lazy {
     KotlinEntityView(
+      debugMode = DEBUG_MODE,
       entity = this,
       jvmView = jvmView,
       rdbmsView = rdbmsView,
@@ -98,15 +101,24 @@ data class Entity(
   }
 
   val jvmView by lazy {
-    JVMEntityView(this)
+    JVMEntityView(
+      debugMode = DEBUG_MODE,
+      entity = this,
+    )
   }
 
   val rdbmsView: RDBMSTableView by lazy {
-    RDBMSTableView(this)
+    RDBMSTableView(
+      debugMode = DEBUG_MODE,
+      entity = this,
+    )
   }
 
   val sqlView by lazy {
-    RDBMSTableView(this)
+    RDBMSTableView(
+      debugMode = DEBUG_MODE,
+      entity = this,
+    )
   }
 
   val idFields = fields
