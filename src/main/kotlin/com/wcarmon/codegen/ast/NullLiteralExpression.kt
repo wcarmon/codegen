@@ -5,7 +5,7 @@ import com.wcarmon.codegen.model.TargetLanguage.PYTHON_3
 
 object NullLiteralExpression : Expression {
 
-  override val expressionName = NumericLiteralExpression::class.java.simpleName
+  override val expressionName: String = NumericLiteralExpression::class.java.simpleName
 
   override fun renderWithoutDebugComments(
     config: RenderConfig,

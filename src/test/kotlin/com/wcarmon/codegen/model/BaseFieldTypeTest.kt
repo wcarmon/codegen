@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 class BaseFieldTypeTest {
 
   // Map<TypeInJson, BaseFieldType>
-  val expected: Map<String, BaseFieldType> = mapOf(
+  private val expected: Map<String, BaseFieldType> = mapOf(
     "golang.bool" to BOOLEAN,
     "golang.byte" to INT_8,
     "golang.float32" to FLOAT_32,

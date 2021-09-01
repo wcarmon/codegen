@@ -17,7 +17,7 @@ data class MethodParameterExpression(
   private val type: LogicalFieldType,
 ) : Expression {
 
-  override val expressionName = MethodParameterExpression::class.java.simpleName
+  override val expressionName: String = MethodParameterExpression::class.java.simpleName
 
   override fun renderWithoutDebugComments(
     config: RenderConfig,

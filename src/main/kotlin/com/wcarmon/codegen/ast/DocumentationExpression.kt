@@ -23,7 +23,7 @@ data class DocumentationExpression(
     val EMPTY = DocumentationExpression(listOf())
   }
 
-  override val expressionName = DocumentationExpression::class.java.simpleName
+  override val expressionName: String = DocumentationExpression::class.java.simpleName
 
   val isBlank: Boolean = parts.isEmpty() || parts.all { it.isBlank() }
 

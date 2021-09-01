@@ -8,7 +8,7 @@ data class StringLiteralExpression(
   private val quoteType: QuoteType = QuoteType.DOUBLE,
 ) : Expression {
 
-  override val expressionName = StringLiteralExpression::class.java.simpleName
+  override val expressionName: String = StringLiteralExpression::class.java.simpleName
 
   override fun renderWithoutDebugComments(config: RenderConfig) =
     quoteType.wrap(value) + config.statementTerminatorLiteral

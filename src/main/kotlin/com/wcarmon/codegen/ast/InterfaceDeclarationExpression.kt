@@ -21,7 +21,7 @@ data class InterfaceDeclarationExpression(
   //TODO: List: generic parameters
 ) : Expression {
 
-  override val expressionName = InterfaceDeclarationExpression::class.java.simpleName
+  override val expressionName: String = InterfaceDeclarationExpression::class.java.simpleName
 
   val isFunctional by lazy {
     instanceMethods.size == 1

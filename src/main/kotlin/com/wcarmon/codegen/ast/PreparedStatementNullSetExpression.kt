@@ -18,10 +18,10 @@ import java.sql.JDBCType
 class PreparedStatementNullSetExpression(
   columnIndex: JDBCColumnIndex,
   columnType: JDBCType,
-  preparedStatementIdentifierExpression: Expression = RawExpression("ps"),
+  preparedStatementIdentifierExpression: Expression = RawLiteralExpression("ps"),
 ) : Expression {
 
-  override val expressionName = PreparedStatementNullSetExpression::class.java.simpleName
+  override val expressionName: String = PreparedStatementNullSetExpression::class.java.simpleName
 
   private val underlying: MethodInvokeExpression
 
@@ -29,7 +29,7 @@ class PreparedStatementNullSetExpression(
     underlying = MethodInvokeExpression(
       arguments = listOf(
         NumericLiteralExpression(DECIMAL, columnIndex.value),
-        RawExpression("Types.${columnType.name}"),
+        RawLiteralExpression("Types.${columnType.name}"),
       ),
       assertNonNull = false,
       fieldOwner = preparedStatementIdentifierExpression,

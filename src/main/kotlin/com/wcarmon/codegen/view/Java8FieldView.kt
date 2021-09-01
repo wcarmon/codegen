@@ -37,7 +37,7 @@ class Java8FieldView(
     ResultSetReadExpression(
       fieldName = field.name,
       getterMethod = defaultResultSetGetterMethod(field.effectiveBaseType),
-      resultSetIdentifierExpression = RawExpression("rs"),
+      resultSetIdentifierExpression = RawLiteralExpression("rs"),
     )
       .render(renderConfig.terminated.indented)
   }
@@ -80,12 +80,12 @@ class Java8FieldView(
     thisId: String,
     thatId: String,
   ) = equalityExpression(
-    RawExpression(thisId),
-    RawExpression(thatId))
+    RawLiteralExpression(thisId),
+    RawLiteralExpression(thatId))
 
   fun equalityExpression(
-    expression0: Expression = RawExpression("this"),
-    expression1: Expression = RawExpression("that"),
+    expression0: Expression = RawLiteralExpression("this"),
+    expression1: Expression = RawLiteralExpression("that"),
   ): String = EqualityTestExpression(
     expression0 = expression0,
     expression1 = expression1,
@@ -109,7 +109,7 @@ class Java8FieldView(
     ProtoFieldReadExpression.build(
       assertNonNull = false,
       field = field,
-      fieldOwner = RawExpression(protoId),
+      fieldOwner = RawLiteralExpression(protoId),
     )
       .render(renderConfig.unterminated)
 
@@ -118,7 +118,7 @@ class Java8FieldView(
     val pojoReadExpression = FieldReadExpression(
       assertNonNull = false,
       fieldName = field.name,
-      fieldOwner = RawExpression(pojoId),
+      fieldOwner = RawLiteralExpression(pojoId),
       overrideFieldReadMode = GETTER,
     )
 

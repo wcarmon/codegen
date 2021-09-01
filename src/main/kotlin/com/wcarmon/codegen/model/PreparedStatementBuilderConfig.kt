@@ -4,7 +4,7 @@ import com.wcarmon.codegen.ast.EmptyExpression
 import com.wcarmon.codegen.ast.Expression
 import com.wcarmon.codegen.ast.FieldReadMode
 import com.wcarmon.codegen.ast.FieldReadMode.DIRECT
-import com.wcarmon.codegen.ast.RawExpression
+import com.wcarmon.codegen.ast.RawLiteralExpression
 
 /**
  * Configurable properties for generating PreparedStatement setters
@@ -29,5 +29,5 @@ data class PreparedStatementBuilderConfig(
    */
   val allowFieldNonNullAssertion: Boolean = true,
 
-  val preparedStatementIdentifierExpression: Expression = RawExpression("ps"),
+  val preparedStatementIdentifierExpression: Expression = RawLiteralExpression("ps"),
 )

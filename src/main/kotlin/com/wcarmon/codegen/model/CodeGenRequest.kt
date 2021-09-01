@@ -35,7 +35,7 @@ import java.nio.file.Path
 data class CodeGenRequest(
   val entityConfigDirs: Collection<Path>,
 
-  private val outputFileOrDirectory: Path,
+  private val outputDirectory: Path,
 
   /**
    * Prefixed with "classpath:" or "file:"
@@ -61,7 +61,7 @@ data class CodeGenRequest(
   val jvmContextClass: String = "",
 
   /**
-   * Uses format of String.format
+   * Uses format of String.format (for outputMode=multiple)
    * See https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html#format(java.lang.String,java.lang.Object...)
    */
   val outputFilenameTemplate: String = "",
@@ -76,7 +76,7 @@ data class CodeGenRequest(
 ) {
 
   @JsonIgnore
-  val cleanOutput: Path = outputFileOrDirectory.normalize().toAbsolutePath()
+  val cleanOutputDir: Path = outputDirectory.normalize().toAbsolutePath()
 
   /**
    * eg. file: or classpath:
@@ -125,35 +125,28 @@ data class CodeGenRequest(
     //TODO: validate regex on extraJVMImports
     // See pattern in src/main/resources/json-schema/request.schema.json
 
-    when (outputMode) {
-
-      SINGLE_FILE -> {
-        require(outputFilenameTemplate.isBlank()) {
-          "outputFilenameTemplate is forbidden when generating single file"
-        }
-
-        if (Files.exists(cleanOutput)) {
-          require(Files.isRegularFile(cleanOutput)) {
-            "Either delete or put a regular file at $cleanOutput"
-          }
-        }
+    if (Files.exists(cleanOutputDir)) {
+      require(Files.isDirectory(cleanOutputDir)) {
+        "A regular directory is required at $cleanOutputDir"
       }
+    }
 
-      FILE_PER_ENTITY -> {
-        require(outputFilenameTemplate.isNotBlank()) {
-          "outputFilenameTemplate required when generating multiple files"
+    // -- Validate: outputFilenameTemplate
+    require(outputFilenameTemplate.isNotBlank()) {
+      "outputFilenameTemplate is required and blank"
+    }
+
+    val fileNameContainsPlaceholder = outputFilenameTemplate.contains("%s")
+    when (outputMode) {
+      SINGLE_FILE ->
+        require(!fileNameContainsPlaceholder) {
+          "outputFilenameTemplate must not contain a placeholder, since outputMode=single: $outputFilenameTemplate"
         }
 
-        require(outputFilenameTemplate.contains("%s")) {
+      FILE_PER_ENTITY ->
+        require(fileNameContainsPlaceholder) {
           "outputFilenameTemplate must contain a placeholder for entity name: $outputFilenameTemplate"
         }
-
-        if (Files.exists(cleanOutput)) {
-          require(Files.isDirectory(cleanOutput)) {
-            "Either delete or put a directory at $cleanOutput"
-          }
-        }
-      }
     }
   }
 

@@ -36,7 +36,7 @@ data class ClassDeclarationExpression(
   //TODO: generic parameters
 ) : Expression {
 
-  override val expressionName = ClassDeclarationExpression::class.java.simpleName
+  override val expressionName: String = ClassDeclarationExpression::class.java.simpleName
 
   override fun renderWithoutDebugComments(config: RenderConfig): String {
     TODO("Not yet implemented")

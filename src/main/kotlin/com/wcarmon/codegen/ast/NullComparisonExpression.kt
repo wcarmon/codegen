@@ -11,7 +11,7 @@ data class NullComparisonExpression(
   private val compareToMe: Expression,
 ) : Expression {
 
-  override val expressionName = NullComparisonExpression::class.java.simpleName
+  override val expressionName: String = NullComparisonExpression::class.java.simpleName
 
   //NOTE: termination not supported
   override fun renderWithoutDebugComments(

@@ -12,7 +12,7 @@
     "java.util.Set"
   ],
   "jvmContextClass": "com.wcarmon.chrono.context.ChronoContext",
-  "outputFileOrDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/java/com/wcarmon/chrono/dao01",
+  "outputDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/java/com/wcarmon/chrono/dao01",
   "outputFilenameTemplate": "%sDAO.java",
   "outputMode": "multiple",
   "package": "com.wcarmon.chrono.dao01",

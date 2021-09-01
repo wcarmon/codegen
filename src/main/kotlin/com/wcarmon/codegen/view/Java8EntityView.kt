@@ -53,7 +53,7 @@ class Java8EntityView(
   val fieldDeclarations: String by lazy {
 
     entity.sortedFieldsWithIdsFirst
-      .map { field ->
+      .joinToString("\n") { field ->
         FieldDeclarationExpression(
           //TODO: suffix "ID/Primary key" when `field.idField`
           documentation = DocumentationExpression(field.documentation),
@@ -64,7 +64,6 @@ class Java8EntityView(
 //      defaultValue = TODO()  TODO: fix this
         ).render(renderConfig.indented)
       }
-      .joinToString("\n")
   }
 
   fun methodArgsForIdFields(qualified: Boolean) =

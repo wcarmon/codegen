@@ -12,7 +12,7 @@ data class VariableDeclarationExpression(
   private val finalityModifier: FinalityModifier = FinalityModifier.FINAL,
 ) : Expression {
 
-  override val expressionName = VariableDeclarationExpression::class.java.simpleName
+  override val expressionName: String = VariableDeclarationExpression::class.java.simpleName
 
   override fun renderWithoutDebugComments(
     config: RenderConfig,

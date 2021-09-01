@@ -4,7 +4,8 @@
   "entityConfigDirs": [
     "file:///home/wcarmon/git-repos/codegen/samples/entities"
   ],
-  "outputFileOrDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/proto/services.proto",
+  "outputDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/proto",
+  "outputFilenameTemplate": "services.proto",
   "outputMode": "single",
   "package": "com.wcarmon.chrono.grpc",
   "templateURI": "classpath:/templates/grpc/services.ftl"

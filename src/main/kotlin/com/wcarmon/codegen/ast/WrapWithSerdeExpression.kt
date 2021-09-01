@@ -10,7 +10,7 @@ data class WrapWithSerdeExpression(
   private val wrapped: Expression,
 ) : Expression {
 
-  override val expressionName = WrapWithSerdeExpression::class.java.simpleName
+  override val expressionName: String = WrapWithSerdeExpression::class.java.simpleName
 
   private val wrappedExpression: WrappedExpression =
     WrappedExpression(

@@ -56,12 +56,13 @@
       "minLength": 1,
       "type": "string"
     },
-    "outputFileOrDirectory": {
+    "outputDirectory": {
       "maxLength": 250,
       "minLength": 1,
       "type": "string"
     },
     "outputFilenameTemplate": {
+      "description": "contains %s placeholder when outputMode=multiple, just a file name when outputMode=single",
       "maxLength": 64,
       "minLength": 2,
       "type": "string"
@@ -89,7 +90,8 @@
   },
   "required": [
     "entityConfigDirs",
-    "outputFileOrDirectory",
+    "outputDirectory",
+    "outputFilenameTemplate",
     "outputMode",
     "templateURI"
   ],

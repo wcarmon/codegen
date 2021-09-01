@@ -14,7 +14,7 @@ data class ConditionalExpression(
   private val expressionForFalse: Expression = EmptyExpression,
 ) : Expression {
 
-  override val expressionName = ConditionalExpression::class.java.simpleName
+  override val expressionName: String = ConditionalExpression::class.java.simpleName
 
   override fun renderWithoutDebugComments(config: RenderConfig) = when (config.targetLanguage) {
     C_17,

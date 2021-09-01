@@ -38,7 +38,12 @@ class CodeGeneratorApp(
     require(Files.exists(cleanRoot)) { "configRoot must exist at $cleanRoot" }
     require(Files.isDirectory(cleanRoot)) { "expected directory at $cleanRoot" }
 
-    findCodeGenRequests(cleanRoot)
+    val requests = findCodeGenRequests(cleanRoot)
+    check(requests.isNotEmpty()) {
+      "Cannot find any codegen requests under $cleanRoot"
+    }
+
+    requests
       .forEach { codeGenRequest ->
 
         val entities = findEntityConfigs(codeGenRequest.entityConfigDirs)
@@ -67,8 +72,9 @@ class CodeGeneratorApp(
     request: CodeGenRequest,
     entities: Collection<Entity>,
   ) {
-
     val template = templateFinder(request.template.file.toPath())
+
+    Files.createDirectories(request.cleanOutputDir)
 
     if (request.outputMode == SINGLE_FILE) {
       generator.generateOneFileForEntities(

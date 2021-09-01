@@ -7,7 +7,7 @@ data class NumericLiteralExpression(
   private val value: Number,
 ) : Expression {
 
-  override val expressionName = NumericLiteralExpression::class.java.simpleName
+  override val expressionName: String = NumericLiteralExpression::class.java.simpleName
 
   override fun renderWithoutDebugComments(
     config: RenderConfig,

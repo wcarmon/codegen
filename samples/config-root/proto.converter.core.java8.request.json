@@ -14,7 +14,8 @@
     "java.util.Set",
     "java.util.stream.Collectors"
   ],
-  "outputFileOrDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/java/com/wcarmon/chrono/proto01/ProtoPojoConversionUtils.java",
+  "outputDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/java/com/wcarmon/chrono/proto01",
+  "outputFilenameTemplate": "ProtoPojoConversionUtils.java",
   "outputMode": "single",
   "package": "com.wcarmon.chrono.proto01",
   "templateURI": "classpath:/templates/proto/core-converter.java8.ftl"

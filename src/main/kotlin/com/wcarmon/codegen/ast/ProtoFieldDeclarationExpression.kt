@@ -16,7 +16,7 @@ data class ProtoFieldDeclarationExpression(
   //TODO: DocumentationExpression
 ) : Expression, Comparable<ProtoFieldDeclarationExpression> {
 
-  override val expressionName = ProtoFieldDeclarationExpression::class.java.simpleName
+  override val expressionName: String = ProtoFieldDeclarationExpression::class.java.simpleName
 
   companion object {
 

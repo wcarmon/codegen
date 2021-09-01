@@ -16,10 +16,10 @@ class ResultSetReadExpression(
   fieldName: Name,
   getterMethod: Name,
 
-  resultSetIdentifierExpression: Expression = RawExpression("rs"),
+  resultSetIdentifierExpression: Expression = RawLiteralExpression("rs"),
 ) : Expression {
 
-  override val expressionName = ResultSetReadExpression::class.java.simpleName
+  override val expressionName: String = ResultSetReadExpression::class.java.simpleName
 
   private val underlying: MethodInvokeExpression
 

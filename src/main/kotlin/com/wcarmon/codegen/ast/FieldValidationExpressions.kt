@@ -16,7 +16,7 @@ data class FieldValidationExpressions(
   val validationConfig: FieldValidation,
 ) : Expression {
 
-  override val expressionName = FieldValidationExpressions::class.java.simpleName
+  override val expressionName: String = FieldValidationExpressions::class.java.simpleName
 
   override fun renderWithoutDebugComments(config: RenderConfig): String =
     when (config.targetLanguage) {

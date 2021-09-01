@@ -16,7 +16,7 @@ data class ProtoMessageDeclarationExpression(
   // https://developers.google.com/protocol-buffers/docs/proto3#reserved
 ) : Expression {
 
-  override val expressionName = ProtoMessageDeclarationExpression::class.java.simpleName
+  override val expressionName: String = ProtoMessageDeclarationExpression::class.java.simpleName
 
   init {
 

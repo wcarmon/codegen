@@ -15,11 +15,11 @@ class ProtoFieldReadExpression(
   private val protoReadExpression: Expression,
 ) : Expression {
 
-  override val expressionName = ProtoFieldReadExpression::class.java.simpleName
+  override val expressionName: String = ProtoFieldReadExpression::class.java.simpleName
 
   companion object {
 
-    private val DEFAULT_FIELD_OWNER = RawExpression("proto")
+    private val DEFAULT_FIELD_OWNER = RawLiteralExpression("proto")
 
     @JvmStatic
     fun build(

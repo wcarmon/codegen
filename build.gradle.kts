@@ -148,14 +148,14 @@ java {
 }
 
 dependencies {
-  implementation("com.fasterxml.jackson.core:jackson-databind")
+  implementation("com.fasterxml.jackson.core:jackson-databind:2.12.5")
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("com.fasterxml.jackson.module:jackson-module-jsonSchema")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-  implementation("com.google.guava:guava")
-  implementation("com.lmax:disruptor")
-  implementation("org.apache.commons:commons-compress")
+  implementation("com.google.guava:guava:30.1.1-jre")
+  implementation("com.lmax:disruptor:3.4.4")
+  implementation("org.apache.commons:commons-compress:1.21")
   implementation("org.apache.commons:commons-lang3")
   implementation("org.apache.commons:commons-text")
   implementation("org.apache.logging.log4j:log4j-api")

@@ -74,6 +74,7 @@ fun getFullyQualifiedKotlinTypeLiteral(
 
 fun getKotlinImportsForFields(entity: Entity) =
   entity.fields
+    .asSequence()
     .filter { it.effectiveBaseType == USER_DEFINED || !it.type.isParameterized }
     .map { getKotlinTypeLiteral(it.type) }
     .map { it.removeSuffix("?") }

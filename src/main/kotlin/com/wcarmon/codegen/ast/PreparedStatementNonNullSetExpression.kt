@@ -19,10 +19,10 @@ class PreparedStatementNonNullSetExpression(
   columnIndex: JDBCColumnIndex,
   fieldReadExpression: Expression,
   setterMethod: Name,
-  preparedStatementIdentifierExpression: Expression = RawExpression("ps"),
+  preparedStatementIdentifierExpression: Expression = RawLiteralExpression("ps"),
 ) : Expression {
 
-  override val expressionName = PreparedStatementNonNullSetExpression::class.java.simpleName
+  override val expressionName: String = PreparedStatementNonNullSetExpression::class.java.simpleName
 
   private val underlying: MethodInvokeExpression
 

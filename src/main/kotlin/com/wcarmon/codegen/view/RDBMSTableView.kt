@@ -1,6 +1,6 @@
 package com.wcarmon.codegen.view
 
-import com.wcarmon.codegen.ast.RawExpression
+import com.wcarmon.codegen.ast.RawLiteralExpression
 import com.wcarmon.codegen.ast.RenderConfig
 import com.wcarmon.codegen.model.Entity
 import com.wcarmon.codegen.model.JDBCColumnIndex
@@ -60,9 +60,9 @@ data class RDBMSTableView(
 
     val cfg = PreparedStatementBuilderConfig(
       allowFieldNonNullAssertion = true, //TODO fix this
-      fieldOwner = RawExpression("entity"),
+      fieldOwner = RawLiteralExpression("entity"),
       fieldReadMode = targetLanguage.fieldReadMode,
-      preparedStatementIdentifierExpression = RawExpression("ps")
+      preparedStatementIdentifierExpression = RawLiteralExpression("ps")
     )
 
     val pk = buildPreparedStatementSetters(
@@ -94,9 +94,9 @@ data class RDBMSTableView(
 
     val cfg = PreparedStatementBuilderConfig(
       allowFieldNonNullAssertion = true, //TODO fix this
-      fieldOwner = RawExpression("entity"),
+      fieldOwner = RawLiteralExpression("entity"),
       fieldReadMode = targetLanguage.fieldReadMode,
-      preparedStatementIdentifierExpression = RawExpression("ps")
+      preparedStatementIdentifierExpression = RawLiteralExpression("ps")
     )
 
     val nonPk = buildPreparedStatementSetters(
@@ -111,7 +111,7 @@ data class RDBMSTableView(
       firstIndex = JDBCColumnIndex(entity.nonIdFields.size + 1),
     )
 
-    val separator = RawExpression("\n\t\t// Primary key field(s)")
+    val separator = RawLiteralExpression("\n\t\t// Primary key field(s)")
 
     return (nonPk + separator + pk)
       .joinToString(separator = "\n") {

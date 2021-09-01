@@ -43,9 +43,8 @@ class CodeGenerator(
   ) {
     require(entities.isNotEmpty()) { "no entities passed" }
 
-    val outputDir = request.cleanOutput
+    val outputDir = request.cleanOutputDir
 
-    Files.createDirectories(outputDir)
     require(Files.isDirectory(outputDir)) {
       "Either delete or put a directory at $outputDir"
     }
@@ -95,9 +94,10 @@ class CodeGenerator(
   ) {
     require(entities.isNotEmpty()) { "no entities passed" }
 
-    val outputFile = request.cleanOutput
-
-    Files.createDirectories(outputFile.parent)
+    val outputFile = Paths.get(
+      request.cleanOutputDir.toString(),
+      request.outputFilenameTemplate
+    )
 
     if (Files.exists(outputFile)) {
       if (!allowOverwrite) {

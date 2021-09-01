@@ -18,11 +18,11 @@ data class PreparedStatementSetExpression(
   private val columnType: JDBCType,
   private val field: Field,
   private val fieldReadExpression: Expression,
-  private val preparedStatementIdentifierExpression: Expression = RawExpression("ps"),
+  private val preparedStatementIdentifierExpression: Expression = RawLiteralExpression("ps"),
   private val setterMethod: Name,
 ) : Expression {
 
-  override val expressionName = PreparedStatementSetExpression::class.java.simpleName
+  override val expressionName: String = PreparedStatementSetExpression::class.java.simpleName
 
   private val nonNullExpression: PreparedStatementNonNullSetExpression =
     PreparedStatementNonNullSetExpression(

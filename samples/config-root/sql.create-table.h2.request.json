@@ -4,7 +4,8 @@
   "entityConfigDirs": [
     "file:///home/wcarmon/git-repos/codegen/samples/entities"
   ],
-  "outputFileOrDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/java/com/wcarmon/chrono/create-tables/h2.sql",
+  "outputDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/java/com/wcarmon/chrono/create-tables",
+  "outputFilenameTemplate": "h2.sql",
   "outputMode": "single",
   "package": "",
   "templateURI": "classpath:/templates/sql/create-table.h2.ftl"

@@ -20,7 +20,7 @@ data class WrappedExpression(
   private val wrapperTemplate: StringFormatTemplate = StringFormatTemplate.INLINE,
 ) : Expression {
 
-  override val expressionName = WrappedExpression::class.java.simpleName
+  override val expressionName: String = WrappedExpression::class.java.simpleName
 
   override fun renderWithoutDebugComments(config: RenderConfig) =
     wrapperTemplate.expand(

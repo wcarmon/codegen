@@ -12,7 +12,8 @@
     "org.springframework.context.annotation.Configuration",
     "org.springframework.jdbc.core.RowMapper"
   ],
-  "outputFileOrDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/java/com/wcarmon/chrono/config/RowMapperBeans.java",
+  "outputDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/java/com/wcarmon/chrono/config",
+  "outputFilenameTemplate": "RowMapperBeans.java",
   "outputMode": "single",
   "package": "com.wcarmon.chrono.config",
   "templateURI": "classpath:/templates/spring/configuration.row-mapper.java8.ftl"

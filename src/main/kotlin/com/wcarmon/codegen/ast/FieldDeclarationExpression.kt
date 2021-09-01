@@ -21,7 +21,7 @@ data class FieldDeclarationExpression(
   private val visibilityModifier: VisibilityModifier = PRIVATE,
 ) : Expression {
 
-  override val expressionName = FieldDeclarationExpression::class.java.simpleName
+  override val expressionName: String = FieldDeclarationExpression::class.java.simpleName
 
   override fun renderWithoutDebugComments(
     config: RenderConfig,

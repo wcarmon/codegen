@@ -28,7 +28,7 @@ data class MethodHeaderExpression(
   //TODO: List: Generic parameter(s)  eg. "<T: Bacon, S>"
 ) : Expression {
 
-  override val expressionName = MethodHeaderExpression::class.java.simpleName
+  override val expressionName: String = MethodHeaderExpression::class.java.simpleName
 
   override fun renderWithoutDebugComments(
     config: RenderConfig,

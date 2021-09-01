@@ -15,7 +15,7 @@ data class ProtoFieldWriteExpression(
   private val sourceReadExpression: Expression,
 ) : Expression {
 
-  override val expressionName = ProtoFieldWriteExpression::class.java.simpleName
+  override val expressionName: String = ProtoFieldWriteExpression::class.java.simpleName
 
   /**
    * eg. addAllFoo( myCollectionSerializer(entity.foo) )

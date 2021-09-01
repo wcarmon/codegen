@@ -16,7 +16,7 @@ class SQLDelightColumnDeclarationExpression(
     private const val TYPE_WIDTH = 19
   }
 
-  override val expressionName = SQLDelightColumnDeclarationExpression::class.java.simpleName
+  override val expressionName: String = SQLDelightColumnDeclarationExpression::class.java.simpleName
 
   /**
    * eg.  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,

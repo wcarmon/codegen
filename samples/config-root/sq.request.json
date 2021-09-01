@@ -4,7 +4,7 @@
   "entityConfigDirs": [
     "file:///home/wcarmon/git-repos/codegen/samples/entities"
   ],
-  "outputFileOrDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/sqldelight/com/wcarmon/chrono",
+  "outputDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/main/sqldelight/com/wcarmon/chrono",
   "outputFilenameTemplate": "%s.sq",
   "outputMode": "multiple",
   "package": "com.wcarmon.chrono.sqldelight",

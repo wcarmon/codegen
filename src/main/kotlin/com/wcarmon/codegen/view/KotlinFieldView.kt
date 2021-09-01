@@ -36,7 +36,7 @@ class KotlinFieldView(
     ResultSetReadExpression(
       fieldName = field.name,
       getterMethod = defaultResultSetGetterMethod(field.effectiveBaseType),
-      resultSetIdentifierExpression = RawExpression("rs"),
+      resultSetIdentifierExpression = RawLiteralExpression("rs"),
     )
       .render(renderConfig)
   }
@@ -60,7 +60,7 @@ class KotlinFieldView(
     ProtoFieldReadExpression.build(
       assertNonNull = false,  //TODO: verify
       field = field,
-      fieldOwner = RawExpression(protoId),
+      fieldOwner = RawLiteralExpression(protoId),
     )
       .render(renderConfig)
 
@@ -70,7 +70,7 @@ class KotlinFieldView(
     val pojoReadExpression = FieldReadExpression(
       assertNonNull = false,
       fieldName = field.name,
-      fieldOwner = RawExpression(pojoId),
+      fieldOwner = RawLiteralExpression(pojoId),
       overrideFieldReadMode = DIRECT,
     )
 

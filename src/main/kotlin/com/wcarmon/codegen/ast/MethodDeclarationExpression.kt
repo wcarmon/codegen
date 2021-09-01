@@ -10,7 +10,7 @@ data class MethodDeclarationExpression(
   private val body: List<Expression>,
 ) : Expression {
 
-  override val expressionName = MethodDeclarationExpression::class.java.simpleName
+  override val expressionName: String = MethodDeclarationExpression::class.java.simpleName
 
   override fun renderWithoutDebugComments(
     config: RenderConfig,

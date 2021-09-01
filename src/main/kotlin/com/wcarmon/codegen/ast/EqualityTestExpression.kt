@@ -22,7 +22,7 @@ data class EqualityTestExpression(
   private val expressionType: LogicalFieldType,
 ) : Expression {
 
-  override val expressionName = EqualityTestExpression::class.java.simpleName
+  override val expressionName: String = EqualityTestExpression::class.java.simpleName
 
   /**
    * eg. "Arrays.deepEquals(xArr, yArr)"

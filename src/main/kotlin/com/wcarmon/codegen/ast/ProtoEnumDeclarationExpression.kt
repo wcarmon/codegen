@@ -13,7 +13,7 @@ data class ProtoEnumDeclarationExpression(
   private val prependUndefinedElement: Boolean = true,
 ) : Expression {
 
-  override val expressionName = ProtoEnumDeclarationExpression::class.java.simpleName
+  override val expressionName: String = ProtoEnumDeclarationExpression::class.java.simpleName
 
   companion object {
     const val UNDEFINED_ITEM: String = "UNDEFINED"

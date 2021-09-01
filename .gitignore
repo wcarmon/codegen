@@ -186,6 +186,9 @@ maven-status/
 Network Trash Folder
 node_modules/
 npm-debug.log
+out/
+out/production/
+out/test/
 root/src/gen/java/
 samples/output/
 sonarlint/
