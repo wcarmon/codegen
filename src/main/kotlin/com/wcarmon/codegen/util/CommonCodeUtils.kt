@@ -33,6 +33,7 @@ fun wrapWithExpressionTracingComments(
     PROTOCOL_BUFFERS_3,
     RUST_1_54,
     SQL_DB2,
+    SQL_DELIGHT,
     SQL_H2,
     SQL_MARIA,
     SQL_MYSQL,

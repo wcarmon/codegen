@@ -23,6 +23,7 @@ enum class TargetLanguage {
   SQL_MYSQL,
   SQL_ORACLE,
   SQL_POSTGRESQL,
+  SQL_DELIGHT,
   SQL_SQLITE,
   SWIFT_5,
   TYPESCRIPT_4,
@@ -98,6 +99,7 @@ enum class TargetLanguage {
       JAVA_11,
       JAVA_17,
       PROTOCOL_BUFFERS_3,
+      SQL_DELIGHT,
       TYPESCRIPT_4,
       -> true
 

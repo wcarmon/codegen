@@ -50,21 +50,7 @@ data class EqualityTestExpression(
     KOTLIN_JVM_1_4,
     -> handleKotlin(config)
 
-    PROTOCOL_BUFFERS_3 -> TODO()
-    PYTHON_3 -> TODO()
-    RUST_1_54 -> TODO()
-
-    SQL_DB2 -> TODO()
-    SQL_H2 -> TODO()
-    SQL_MARIA -> TODO()
-    SQL_MYSQL -> TODO()
-    SQL_ORACLE -> TODO()
-    SQL_POSTGRESQL -> TODO()
-    SQL_SQLITE -> TODO()
-
-    SWIFT_5 -> TODO()
-
-    TYPESCRIPT_4 -> TODO()
+    else -> TODO()
   }
 
   /**

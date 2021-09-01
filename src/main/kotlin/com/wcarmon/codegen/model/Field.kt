@@ -164,6 +164,14 @@ data class Field(
     )
   }
 
+  val protoView by lazy {
+    ProtobufFieldView(
+      debugMode = DEBUG_MODE,
+      field = this,
+      targetLanguage = PROTOCOL_BUFFERS_3,
+    )
+  }
+
   val sqlView by lazy {
     RDBMSColumnView(
       debugMode = DEBUG_MODE,
@@ -171,11 +179,10 @@ data class Field(
     )
   }
 
-  val protoView by lazy {
-    ProtobufFieldView(
+  val sqlDelightView by lazy {
+    SQLDelightColumnView(
       debugMode = DEBUG_MODE,
       field = this,
-      targetLanguage = PROTOCOL_BUFFERS_3,
     )
   }
 

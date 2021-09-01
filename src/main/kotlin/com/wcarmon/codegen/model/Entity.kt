@@ -5,10 +5,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.wcarmon.codegen.DEBUG_MODE
 import com.wcarmon.codegen.model.TargetLanguage.JAVA_08
 import com.wcarmon.codegen.model.TargetLanguage.KOTLIN_JVM_1_4
-import com.wcarmon.codegen.view.JVMEntityView
-import com.wcarmon.codegen.view.Java8EntityView
-import com.wcarmon.codegen.view.KotlinEntityView
-import com.wcarmon.codegen.view.RDBMSTableView
+import com.wcarmon.codegen.view.*
 
 
 /**
@@ -116,6 +113,13 @@ data class Entity(
 
   val sqlView by lazy {
     RDBMSTableView(
+      debugMode = DEBUG_MODE,
+      entity = this,
+    )
+  }
+
+  val sqlDelightView by lazy {
+    SQLDelightTableView(
       debugMode = DEBUG_MODE,
       entity = this,
     )
