@@ -15,8 +15,13 @@ data class Index(
   @JsonValue
   val fieldNames: List<Name>,
 ) {
+  //TODO: implement comparable
 
   companion object {
+
+    @JvmStatic
+    fun build(vararg names: String): Index =
+      Index(names.map { Name(it) }.toList())
 
     @JvmStatic
     @JsonCreator
@@ -38,4 +43,5 @@ data class Index(
 
   val first: Name = fieldNames.first()
   val size: Int = fieldNames.size
+
 }
