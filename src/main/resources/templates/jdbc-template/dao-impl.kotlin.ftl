@@ -80,12 +80,11 @@ class ${entity.name.upperCamel}DAOImpl(
     check(affectedRowCount == 1){ "1-row should have been inserted for entity=${r"$"}entity" }
   }
 
-  override fun list(context: ${request.jvmView.unqualifiedContextClass}): List<${entity.name.upperCamel}> {
-    return jdbcTemplate.query(
+  override fun list(context: ${request.jvmView.unqualifiedContextClass}): List<${entity.name.upperCamel}> =
+    jdbcTemplate.query(
       SELECT_ALL__${entity.name.upperSnake},
       rowMapper
     )
-  }
 
   override fun update(context: ${request.jvmView.unqualifiedContextClass}, entity: ${entity.name.upperCamel}) {
 

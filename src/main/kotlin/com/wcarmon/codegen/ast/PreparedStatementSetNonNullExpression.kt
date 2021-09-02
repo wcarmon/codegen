@@ -6,23 +6,23 @@ import com.wcarmon.codegen.model.Name
 
 /**
  * See [java.sql.PreparedStatement]
- * See [PreparedStatementNullSetExpression]
+ * See [PreparedStatementSetNullExpression]
  *
  * eg. ps.setString(7, myEntity.getFoo())
  * eg. ps.setDouble(8, entity.bar)
  *
  * <preparedStatementIdentifier>.<setterName>( columnIndex, newValueExpression )
  *
- * setting null values are handled by [PreparedStatementNullSetExpression]
+ * setting null values are handled by [PreparedStatementSetNullExpression]
  */
-class PreparedStatementNonNullSetExpression(
+class PreparedStatementSetNonNullExpression(
   columnIndex: JDBCColumnIndex,
   fieldReadExpression: Expression,
   setterMethod: Name,
   preparedStatementIdentifierExpression: Expression = RawLiteralExpression("ps"),
 ) : Expression {
 
-  override val expressionName: String = PreparedStatementNonNullSetExpression::class.java.simpleName
+  override val expressionName: String = PreparedStatementSetNonNullExpression::class.java.simpleName
 
   private val underlying: MethodInvokeExpression
 
@@ -38,5 +38,6 @@ class PreparedStatementNonNullSetExpression(
     )
   }
 
-  override fun renderWithoutDebugComments(config: RenderConfig) = underlying.render(config)
+  override fun renderWithoutDebugComments(config: RenderConfig) =
+    underlying.render(config)
 }

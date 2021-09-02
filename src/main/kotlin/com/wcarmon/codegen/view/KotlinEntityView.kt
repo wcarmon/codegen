@@ -1,11 +1,14 @@
 package com.wcarmon.codegen.view
 
 import com.wcarmon.codegen.ast.*
+import com.wcarmon.codegen.ast.FieldReadMode.DIRECT
 import com.wcarmon.codegen.model.BaseFieldType.LIST
 import com.wcarmon.codegen.model.BaseFieldType.SET
 import com.wcarmon.codegen.model.Entity
+import com.wcarmon.codegen.model.JDBCColumnIndex.Companion.FIRST
 import com.wcarmon.codegen.model.PreparedStatementBuilderConfig
 import com.wcarmon.codegen.model.TargetLanguage
+import com.wcarmon.codegen.util.buildPreparedStatementSetters
 import com.wcarmon.codegen.util.getKotlinImportsForFields
 import com.wcarmon.codegen.util.kotlinMethodArgsForFields
 
@@ -35,18 +38,30 @@ class KotlinEntityView(
   val importsForFields: Set<String> = getKotlinImportsForFields(entity)
 
   val insertPreparedStatementSetterStatements by lazy {
-    rdbmsView.insertPreparedStatementSetterStatements(targetLanguage)
+    rdbmsView.insertPreparedStatementSetterStatements(renderConfig)
   }
 
   val preparedStatementSetterStatementsForPK by lazy {
-    rdbmsView.preparedStatementSetterStatementsForPrimaryKey(
-      config = PreparedStatementBuilderConfig(),
-      targetLanguage = targetLanguage,
+
+    val psConfig = PreparedStatementBuilderConfig(
+      allowFieldNonNullAssertion = false,
+      fieldOwner = EmptyExpression,
+      fieldReadMode = DIRECT,
+      preparedStatementIdentifierExpression = RawLiteralExpression("ps"),
     )
+
+    buildPreparedStatementSetters(
+      fields = entity.idFields,
+      firstIndex = FIRST,
+      psConfig = psConfig,
+    )
+      .joinToString(separator = "\n") {
+        it.render(renderConfig)
+      }
   }
 
   val updatePreparedStatementSetterStatements by lazy {
-    rdbmsView.updatePreparedStatementSetterStatements(targetLanguage)
+    rdbmsView.updatePreparedStatementSetterStatements(renderConfig)
   }
 
   val fieldDeclarations: String by lazy {

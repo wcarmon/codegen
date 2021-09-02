@@ -1,14 +1,15 @@
 package com.wcarmon.codegen.view
 
-import com.wcarmon.codegen.ast.FieldReadExpression
-import com.wcarmon.codegen.ast.PreparedStatementSetExpression
 import com.wcarmon.codegen.ast.RenderConfig
 import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.JDBCColumnIndex
 import com.wcarmon.codegen.model.PreparedStatementBuilderConfig
 import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.model.TargetLanguage.SQL_POSTGRESQL
-import com.wcarmon.codegen.util.*
+import com.wcarmon.codegen.util.buildPreparedStatementSetter
+import com.wcarmon.codegen.util.buildPreparedStatementSetters
+import com.wcarmon.codegen.util.postgresColumnDefinition
+import com.wcarmon.codegen.util.sqliteColumnDefinition
 
 /**
  * RDBMS related convenience methods for a [Field]
@@ -39,27 +40,17 @@ class RDBMSColumnView(
   fun updateFieldPreparedStatementSetterStatements(
     idFields: List<Field>,
     targetLanguage: TargetLanguage,
-    cfg: PreparedStatementBuilderConfig = PreparedStatementBuilderConfig(),
+    psConfig: PreparedStatementBuilderConfig = PreparedStatementBuilderConfig(),
   ): String {
 
-    val fieldReadExpression = FieldReadExpression(
-      assertNonNull = cfg.allowFieldNonNullAssertion,
-      fieldName = field.name,
-      fieldOwner = cfg.fieldOwner,
-      overrideFieldReadMode = cfg.fieldReadMode,
-    )
-
-    val columnSetterStatement = PreparedStatementSetExpression(
+    val columnSetterStatement = buildPreparedStatementSetter(
       columnIndex = JDBCColumnIndex.FIRST,
-      columnType = jdbcType(field.effectiveBaseType),
       field = field,
-      fieldReadExpression = fieldReadExpression,
-      preparedStatementIdentifierExpression = cfg.preparedStatementIdentifierExpression,
-      setterMethod = defaultPreparedStatementSetterMethod(field.effectiveBaseType),
+      psConfig = psConfig,
     )
 
     val pk = buildPreparedStatementSetters(
-      cfg = cfg,
+      psConfig = psConfig,
       fields = idFields,
       firstIndex = JDBCColumnIndex(2),
     )
@@ -70,5 +61,4 @@ class RDBMSColumnView(
           renderConfig.copy(targetLanguage = targetLanguage))
       }
   }
-
 }

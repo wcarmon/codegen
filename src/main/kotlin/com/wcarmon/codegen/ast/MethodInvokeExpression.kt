@@ -39,12 +39,12 @@ data class MethodInvokeExpression(
 
   private fun handleJava(config: RenderConfig): String {
     val prefix = buildFieldOwnerPrefix(config)
-    val suffix = config.targetLanguage.statementTerminatorLiteral(config.terminate)
+    val suffix = config.targetLanguage.statementTerminatorLiteral(config.unindented.terminate)
 
-    val method = methodName.render(config)
+    val method = methodName.render(config.unindented.unterminated)
 
     val csvArgs = arguments
-      .joinToString(",") {
+      .joinToString(", ") {
         it.render(config.unindented.unterminated)
       }
 

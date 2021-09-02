@@ -2,10 +2,7 @@
 
 package com.wcarmon.codegen.util
 
-import com.wcarmon.codegen.ast.Expression
-import com.wcarmon.codegen.ast.FieldReadExpression
-import com.wcarmon.codegen.ast.PreparedStatementSetExpression
-import com.wcarmon.codegen.ast.WrapWithSerdeExpression
+import com.wcarmon.codegen.ast.*
 import com.wcarmon.codegen.model.*
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.SerdeMode.SERIALIZE
@@ -20,32 +17,53 @@ import java.sql.JDBCType
  * @return statements for assigning properties on [java.sql.PreparedStatement]
  */
 fun buildPreparedStatementSetters(
-  cfg: PreparedStatementBuilderConfig,
+  psConfig: PreparedStatementBuilderConfig,
   fields: List<Field>,
   firstIndex: JDBCColumnIndex = JDBCColumnIndex.FIRST,
 ): Collection<Expression> =
+
   fields.mapIndexed { columnIndex, currentField ->
 
-    val fieldReadExpression = FieldReadExpression(
-      assertNonNull = currentField.type.nullable && cfg.allowFieldNonNullAssertion,
-      fieldName = currentField.name,
-      fieldOwner = cfg.fieldOwner,
-      overrideFieldReadMode = cfg.fieldReadMode,
-    )
-
-    PreparedStatementSetExpression(
+    buildPreparedStatementSetter(
       columnIndex = JDBCColumnIndex(firstIndex.value + columnIndex),
-      columnType = jdbcType(currentField.effectiveBaseType),
-      fieldReadExpression = WrapWithSerdeExpression(
-        serde = effectiveJDBCSerde(currentField),
-        serdeMode = SERIALIZE,
-        wrapped = fieldReadExpression,
-      ),
       field = currentField,
-      preparedStatementIdentifierExpression = cfg.preparedStatementIdentifierExpression,
-      setterMethod = defaultPreparedStatementSetterMethod(currentField.effectiveBaseType),
+      psConfig = psConfig,
     )
   }
+
+fun buildPreparedStatementSetter(
+  columnIndex: JDBCColumnIndex,
+  field: Field,
+  psConfig: PreparedStatementBuilderConfig,
+): PreparedStatementSetExpression {
+
+  val fieldReadExpression = FieldReadExpression(
+    assertNonNull = false, //currentField.type.nullable && cfg.allowFieldNonNullAssertion,
+    fieldName = field.name,
+    fieldOwner = psConfig.fieldOwner,
+    overrideFieldReadMode = psConfig.fieldReadMode,
+  )
+
+  val nullTestExpression = NullComparisonExpression(
+    compareToMe = fieldReadExpression
+  )
+
+  val wrappedFieldRead = WrapWithSerdeExpression(
+    serde = effectiveJDBCSerde(field),
+    serdeMode = SERIALIZE,
+    wrapped = fieldReadExpression,
+  )
+
+  return PreparedStatementSetExpression(
+    columnIndex = columnIndex,
+    columnType = jdbcType(field.effectiveBaseType),
+    fieldReadExpression = wrappedFieldRead,
+    field = field,
+    nullTestExpression = nullTestExpression,
+    preparedStatementIdentifierExpression = psConfig.preparedStatementIdentifierExpression,
+    setterMethod = defaultPreparedStatementSetterMethod(field.effectiveBaseType),
+  )
+}
 
 /**
  * @return the most appropriate Serde for JDBC

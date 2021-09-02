@@ -1,10 +1,14 @@
 package com.wcarmon.codegen.view
 
 import com.wcarmon.codegen.ast.*
+import com.wcarmon.codegen.ast.FieldReadMode.DIRECT
 import com.wcarmon.codegen.model.BaseFieldType
 import com.wcarmon.codegen.model.Entity
+import com.wcarmon.codegen.model.JDBCColumnIndex.Companion.FIRST
+import com.wcarmon.codegen.model.PreparedStatementBuilderConfig
 import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.util.buildJavaPreconditionStatements
+import com.wcarmon.codegen.util.buildPreparedStatementSetters
 import com.wcarmon.codegen.util.commaSeparatedJavaMethodArgs
 import com.wcarmon.codegen.util.javaImportsForFields
 
@@ -35,7 +39,7 @@ class Java8EntityView(
   val importsForFields: Set<String> = javaImportsForFields(entity)
 
   val insertPreparedStatementSetterStatements by lazy {
-    rdbmsView.insertPreparedStatementSetterStatements(targetLanguage)
+    rdbmsView.insertPreparedStatementSetterStatements(renderConfig)
   }
 
   val primaryKeyPreconditionStatements =
@@ -43,12 +47,28 @@ class Java8EntityView(
       .joinToString("\n\t")
 
   val preparedStatementSetterStatementsForPK by lazy {
-    rdbmsView.preparedStatementSetterStatementsForPrimaryKey(
-      targetLanguage = targetLanguage)
+
+    val psConfig = PreparedStatementBuilderConfig(
+      allowFieldNonNullAssertion = false,
+      fieldOwner = EmptyExpression,
+      fieldReadMode = DIRECT,
+      preparedStatementIdentifierExpression = RawLiteralExpression("ps"),
+    )
+
+    //TODO: this needs termination
+
+    buildPreparedStatementSetters(
+      fields = entity.idFields,
+      firstIndex = FIRST,
+      psConfig = psConfig,
+    )
+      .joinToString(separator = "\n") {
+        it.render(renderConfig.terminated)
+      }
   }
 
   val updatePreparedStatementSetterStatements by lazy {
-    rdbmsView.updatePreparedStatementSetterStatements(targetLanguage)
+    rdbmsView.updatePreparedStatementSetterStatements(renderConfig)
   }
 
   val fieldDeclarations: String by lazy {

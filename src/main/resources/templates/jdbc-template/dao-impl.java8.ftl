@@ -48,7 +48,7 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
 
   <#if entity.hasIdFields>
   @Override
-  public void delete(${request.jvmView.unqualifiedContextClass} context,${entity.java8View.methodArgsForIdFields(false)}) {
+  public void delete(${request.jvmView.unqualifiedContextClass} context, ${entity.java8View.methodArgsForIdFields(false)}) {
     Objects.requireNonNull(context, "context is required and null.");
     ${entity.java8View.primaryKeyPreconditionStatements}
 
@@ -60,7 +60,7 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
   }
 
   @Override
-  public boolean exists(${request.jvmView.unqualifiedContextClass} context,${entity.java8View.methodArgsForIdFields(false)}) {
+  public boolean exists(${request.jvmView.unqualifiedContextClass} context, ${entity.java8View.methodArgsForIdFields(false)}) {
     Objects.requireNonNull(context, "context is required and null.");
     ${entity.java8View.primaryKeyPreconditionStatements}
 
@@ -73,7 +73,7 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
   }
 
   @Override
-  public ${entity.name.upperCamel} findById(${request.jvmView.unqualifiedContextClass} context,${entity.java8View.methodArgsForIdFields(false)}) {
+  public ${entity.name.upperCamel} findById(${request.jvmView.unqualifiedContextClass} context, ${entity.java8View.methodArgsForIdFields(false)}) {
     Objects.requireNonNull(context, "context is required and null.");
     ${entity.java8View.primaryKeyPreconditionStatements}
 

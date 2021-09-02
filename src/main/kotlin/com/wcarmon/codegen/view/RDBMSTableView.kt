@@ -5,8 +5,6 @@ import com.wcarmon.codegen.ast.RenderConfig
 import com.wcarmon.codegen.model.Entity
 import com.wcarmon.codegen.model.JDBCColumnIndex
 import com.wcarmon.codegen.model.PreparedStatementBuilderConfig
-import com.wcarmon.codegen.model.TargetLanguage
-import com.wcarmon.codegen.model.TargetLanguage.SQL_POSTGRESQL
 import com.wcarmon.codegen.util.*
 import org.atteo.evo.inflector.English
 
@@ -18,12 +16,6 @@ data class RDBMSTableView(
   private val debugMode: Boolean,
   private val entity: Entity,
 ) {
-
-  private val renderConfig = RenderConfig(
-    debugMode = debugMode,
-    targetLanguage = SQL_POSTGRESQL,
-    terminate = false
-  )
 
   val commaSeparatedColumns: String = commaSeparatedColumns(entity)
 
@@ -55,58 +47,54 @@ data class RDBMSTableView(
 
   // For INSERT, PrimaryKey fields are first
   fun insertPreparedStatementSetterStatements(
-    targetLanguage: TargetLanguage,
+    renderConfig: RenderConfig,
   ): String {
 
-    val cfg = PreparedStatementBuilderConfig(
+    val psConfig = PreparedStatementBuilderConfig(
       allowFieldNonNullAssertion = true, //TODO fix this
       fieldOwner = RawLiteralExpression("entity"),
-      fieldReadMode = targetLanguage.fieldReadMode,
+      fieldReadMode = renderConfig.targetLanguage.fieldReadMode,
       preparedStatementIdentifierExpression = RawLiteralExpression("ps")
     )
 
     val pk = buildPreparedStatementSetters(
-      cfg = cfg,
+      psConfig = psConfig,
       fields = entity.idFields,
       firstIndex = JDBCColumnIndex.FIRST,
     )
 
     val nonPk = buildPreparedStatementSetters(
-      cfg = cfg,
+      psConfig = psConfig,
       fields = entity.nonIdFields,
       firstIndex = JDBCColumnIndex(entity.idFields.size + 1),
     )
 
     return (pk + nonPk)
       .joinToString(separator = "\n") {
-        it.render(
-          renderConfig.copy(
-            terminate = false,
-            targetLanguage = targetLanguage,
-          ))
+        it.render(renderConfig)
       }
   }
 
   // NOTE: For UPDATE, PrimaryKey fields are last
   fun updatePreparedStatementSetterStatements(
-    targetLanguage: TargetLanguage,
+    renderConfig: RenderConfig,
   ): String {
 
-    val cfg = PreparedStatementBuilderConfig(
+    val psConfig = PreparedStatementBuilderConfig(
       allowFieldNonNullAssertion = true, //TODO fix this
       fieldOwner = RawLiteralExpression("entity"),
-      fieldReadMode = targetLanguage.fieldReadMode,
+      fieldReadMode = renderConfig.targetLanguage.fieldReadMode,
       preparedStatementIdentifierExpression = RawLiteralExpression("ps")
     )
 
     val nonPk = buildPreparedStatementSetters(
-      cfg = cfg,
+      psConfig = psConfig,
       fields = entity.nonIdFields,
       firstIndex = JDBCColumnIndex.FIRST,
     )
 
     val pk = buildPreparedStatementSetters(
-      cfg = cfg,
+      psConfig = psConfig,
       fields = entity.idFields,
       firstIndex = JDBCColumnIndex(entity.nonIdFields.size + 1),
     )
@@ -115,26 +103,7 @@ data class RDBMSTableView(
 
     return (nonPk + separator + pk)
       .joinToString(separator = "\n") {
-        it.render(renderConfig.copy(
-          terminate = false,
-          targetLanguage = targetLanguage,
-        ))
+        it.render(renderConfig)
       }
   }
-
-  fun preparedStatementSetterStatementsForPrimaryKey(
-    config: PreparedStatementBuilderConfig = PreparedStatementBuilderConfig(),
-    targetLanguage: TargetLanguage,
-  ): String =
-    buildPreparedStatementSetters(
-      cfg = config,
-      fields = entity.idFields,
-      firstIndex = JDBCColumnIndex.FIRST,
-    )
-      .joinToString(separator = "\n") {
-        it.render(renderConfig.copy(
-          terminate = false,
-          targetLanguage = targetLanguage,
-        ))
-      }
 }

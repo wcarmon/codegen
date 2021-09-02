@@ -7,21 +7,21 @@ import java.sql.JDBCType
 
 /**
  * See [java.sql.PreparedStatement.setNull]
- * See [PreparedStatementNonNullSetExpression]
+ * See [PreparedStatementSetNonNullExpression]
  *
  * eg. ps.setNull(3, Types.INTEGER)
  *
  * <preparedStatementIdentifier>.setNull( columnIndex, <column-type> )
  *
- * Setting non-null values is handled by [PreparedStatementNonNullSetExpression]
+ * Setting non-null values is handled by [PreparedStatementSetNonNullExpression]
  */
-class PreparedStatementNullSetExpression(
+class PreparedStatementSetNullExpression(
   columnIndex: JDBCColumnIndex,
   columnType: JDBCType,
   preparedStatementIdentifierExpression: Expression = RawLiteralExpression("ps"),
 ) : Expression {
 
-  override val expressionName: String = PreparedStatementNullSetExpression::class.java.simpleName
+  override val expressionName: String = PreparedStatementSetNullExpression::class.java.simpleName
 
   private val underlying: MethodInvokeExpression
 
@@ -37,5 +37,6 @@ class PreparedStatementNullSetExpression(
     )
   }
 
-  override fun renderWithoutDebugComments(config: RenderConfig) = underlying.render(config)
+  override fun renderWithoutDebugComments(config: RenderConfig) =
+    underlying.render(config)
 }
