@@ -47,6 +47,21 @@ data class Entity(
 
   val fields: List<Field>,
 
+  /**
+   * Automatically updated when created
+   */
+  val createdTimestampFieldName: Name? = null,
+
+  /**
+   * Automatically updated when modified/updated
+   */
+  val updatedTimestampFieldName: Name? = null,
+
+  /**
+   * ID fields are implicitly indexed
+   */
+  val indexes: Set<Index> = setOf(),
+
   val rdbmsConfig: RDBMSTableConfig = RDBMSTableConfig(),
 
   // TODO: list: pagination
@@ -75,6 +90,27 @@ data class Entity(
     require(extraImplements.size == extraImplements.toSet().size) {
       "remove duplicate extraImplements values: $extraImplements"
     }
+
+    // -- Validate indexes
+    indexes
+      .flatMap { it.fieldNames }
+      .distinct()
+      .forEach { indexFieldName ->
+        require(fields.any { it.name == indexFieldName }) {
+          "Cannot find property on ${name.upperCamel} matching the Index field: ${indexFieldName.lowerCamel}"
+        }
+      }
+
+    val idFields = fields
+      .filter { it.positionInId != null }
+
+    indexes
+      .filter { it.size == 1 }
+      .forEach { index ->
+        require(idFields.none { it.name == index.first }) {
+          "Remove unnecessary index for ID field: ${name.upperCamel}.${index.first.lowerCamel}"
+        }
+      }
   }
 
   val java8View by lazy {
@@ -132,6 +168,9 @@ data class Entity(
   val nonIdFields = fields
     .filter { it.positionInId == null }
     .sortedBy { it.name.lowerCamel }
+
+  val patchableFields = nonIdFields
+    .filter { it.canUpdate }
 
   val hasIdFields: Boolean = idFields.isNotEmpty()
 

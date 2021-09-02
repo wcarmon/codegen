@@ -4,6 +4,9 @@
   "additionalProperties": false,
   "description": "Field, Property, Column, ...",
   "properties": {
+    "canUpdate": {
+      "type": "boolean"
+    },
     "defaultValue": {
       "maxLength": 2048,
       "type": "string"

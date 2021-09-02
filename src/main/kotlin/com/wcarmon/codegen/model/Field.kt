@@ -39,6 +39,11 @@ data class Field(
   val type: LogicalFieldType,
 
   /**
+   * always false for id fields
+   */
+  val canUpdate: Boolean = true,
+
+  /**
    * JSON                         | in here   | Interpretation
    * ---------------------------- | --------- | --------------
    * (no defaultValue attribute)  |
@@ -62,6 +67,7 @@ data class Field(
    */
   val positionInId: Int? = null,
 
+
   // -- Technology specific config
   val jvmConfig: JVMFieldConfig = JVMFieldConfig(),
   val protobufConfig: ProtocolBufferFieldConfig = ProtocolBufferFieldConfig(),
@@ -75,6 +81,7 @@ data class Field(
     @JsonCreator
     fun parse(
       @JsonProperty("defaultValue") defaultValue: String? = null,
+      @JsonProperty("canUpdate") canUpdate: Boolean = true,
       @JsonProperty("documentation") documentation: Iterable<String> = listOf(),
       @JsonProperty("enumType") enumType: Boolean = false,
       @JsonProperty("jvm") jvmFieldConfig: JVMFieldConfig = JVMFieldConfig(),
@@ -97,6 +104,7 @@ data class Field(
       //TODO: signed should override whatever is specified on type literal
 
       return Field(
+        canUpdate = canUpdate,
         defaultValue = defaultValue,
         documentation = documentation.toList(),
         jvmConfig = jvmFieldConfig,

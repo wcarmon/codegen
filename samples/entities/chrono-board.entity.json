@@ -1,5 +1,6 @@
 {
   "$schema": "https://wcarmon.com/schemas/codegen/entity.schema.json",
+  "createdTimestampFieldName": "created",
   "fields": [
     {
       "name": "uuid",
@@ -187,6 +188,12 @@
       "type": "com.wcarmon.chrono.model.ChronoColor"
     }
   ],
+  "indexes": [
+    [
+      "name"
+    ]
+  ],
   "name": "ChronoBoard",
-  "pkg": "com.wcarmon.chrono.model"
+  "pkg": "com.wcarmon.chrono.model",
+  "updatedTimestampFieldName": "updated"
 }

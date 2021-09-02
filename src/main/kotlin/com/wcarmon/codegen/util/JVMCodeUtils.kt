@@ -82,15 +82,14 @@ fun consolidateImports(
   val output = mutableSetOf<String>()
 
   importables
-    .filter { it is String }
-    .map { (it as String).trim() }
+    .filterIsInstance<String>()
+    .map { it.trim() }
     .filter { it.isNotBlank() }
     .forEach(output::add)
 
   importables
-    .filter { it is Iterable<*> }
-    .map { it as Iterable<*> }
-    .flatMap { it }
+    .filterIsInstance<Iterable<*>>()
+    .flatten()
     .map { (it as String).trim() }
     .filter { it.isNotBlank() }
     .forEach(output::add)

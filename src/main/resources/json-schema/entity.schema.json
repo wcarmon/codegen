@@ -29,6 +29,12 @@
     "canUpdate": {
       "type": "boolean"
     },
+    "createdTimestampFieldName": {
+      "maxLength": 48,
+      "minLength": 1,
+      "pattern": "^[a-z][A-Za-z0-9]*$",
+      "type": "string"
+    },
     "documentation": {
       "maxLength": 4096,
       "minLength": 0,
@@ -52,6 +58,24 @@
       "type": "array",
       "uniqueItems": true
     },
+    "indexes": {
+      "items": {
+        "items": {
+          "maxLength": 48,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z][A-Za-z0-9]*$",
+          "type": "string"
+        },
+        "maxItems": 5,
+        "minItems": 1,
+        "type": "array",
+        "uniqueItems": true
+      },
+      "maxItems": 16,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
     "name": {
       "maxLength": 48,
       "minLength": 1,
@@ -64,6 +88,12 @@
     },
     "rdbms": {
       "$ref": "rdbms-table.schema.json"
+    },
+    "updatedTimestampFieldName": {
+      "maxLength": 48,
+      "minLength": 1,
+      "pattern": "^[a-z][A-Za-z0-9]*$",
+      "type": "string"
     }
   },
   "propertyNames": {

@@ -7,7 +7,8 @@ package com.wcarmon.codegen.model
  */
 data class RDBMSTableConfig(
   val schema: String = "",
-  // TODO: unique index & order
+
+  // TODO: order
 ) {
 
   init {

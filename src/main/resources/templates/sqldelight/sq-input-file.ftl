@@ -17,176 +17,53 @@ ${entity.sqlDelightView.columnDefinitions}
 
 <#-- TODO: Indexes -->
 
-<#-- TODO: Delete -->
-
-<#-- TODO: Exists/Contains -->
-
-<#-- TODO: FindById -->
-
-<#-- TODO: Insert -->
-
-<#-- TODO: Select-all -->
-
-<#-- TODO: Update -->
-
-<#-- TODO: Patch -->
--- ==========================================================
-<#--
-
-
-CREATE INDEX boardRecord_horizon ON boardRecord (horizon);
-CREATE INDEX boardRecord_created ON boardRecord (created_at);
-CREATE INDEX boardRecord_importance ON boardRecord (importance);
-CREATE INDEX boardRecord_name ON boardRecord (name);
-CREATE INDEX boardRecord_updated ON boardRecord (updated_at);
-
-
-selectAll:
-SELECT *
-FROM boardRecord
-ORDER BY name;
-
-
-findById:
-SELECT *
-FROM boardRecord
-WHERE uuid = ?;
-
-
 contains:
 SELECT COUNT(1)
-FROM boardRecord
-WHERE uuid = ?;
-
-
-insert:
-INSERT INTO boardRecord(
-uuid,
-background_image,
-closed,
-created_at,
-details,
-enable_search,
-horizon,
-icon_code,
-importance,
-keywords,
-name,
-pinned_position,
-tags,
-theme_color,
-updated_at
-)
-VALUES ?;
-
-
-update:
-UPDATE boardRecord
-SET
-background_image = ?,
-closed = ?,
-details = ?,
-enable_search = ?,
-horizon = ?,
-icon_code = ?,
-importance = ?,
-keywords = ?,
-name = ?,
-pinned_position = ?,
-tags = ?,
-updated_at = ?,
-theme_color = ?
-WHERE uuid = ?;
+FROM ${entity.name.lowerCamel}Record
+${entity.sqlDelightView.whereClauseForIdFields};
 
 
 delete:
 DELETE
-FROM boardRecord
-WHERE uuid = ?;
+FROM ${entity.name.lowerCamel}Record
+${entity.sqlDelightView.whereClauseForIdFields};
 
 
-setBackgroundImage:
-UPDATE boardRecord
-SET background_image = ?,
-updated_at = ?
-WHERE uuid = ?;
+findById:
+SELECT *
+FROM ${entity.name.lowerCamel}Record
+${entity.sqlDelightView.whereClauseForIdFields};
 
 
-setClosed:
-UPDATE boardRecord
-SET closed = ?,
-updated_at = ?
-WHERE uuid = ?;
+insert:
+${entity.sqlDelightView.insertQuery}
 
 
-setDetails:
-UPDATE boardRecord
-SET details = ?,
-updated_at = ?
-WHERE uuid = ?;
+selectAll:
+SELECT *
+FROM ${entity.name.lowerCamel}Record;
 
 
-setEnableSearch:
-UPDATE boardRecord
-SET enable_search = ?,
-updated_at = ?
-WHERE uuid = ?;
+update:
+UPDATE ${entity.name.lowerCamel}Record
+SET
+${entity.sqlDelightView.placeholderColumnSetters}
+${entity.sqlDelightView.whereClauseForIdFields};
 
 
-setIconCode:
-UPDATE boardRecord
-SET icon_code = ?,
-updated_at = ?
-WHERE uuid = ?;
+<#-- TODO: Allow other select queries in json -->
 
+<#list entity.patchableFields as field>
+set${field.name.upperCamel}:
+${entity.sqlDelightView.patchQuery(field)}
 
-setName:
-UPDATE boardRecord
-SET name = ?,
-updated_at = ?
-WHERE uuid = ?;
-
-
-setHorizon:
-UPDATE boardRecord
-SET horizon = ?,
-updated_at = ?
-WHERE uuid = ?;
-
-
-setImportance:
-UPDATE boardRecord
-SET importance = ?,
-updated_at = ?
-WHERE uuid = ?;
-
-
-setKeywords:
-UPDATE boardRecord
-SET keywords = ?,
-updated_at = ?
-WHERE uuid = ?;
-
-
-setPinnedPosition:
-UPDATE boardRecord
-SET pinned_position = ?,
-updated_at = ?
-WHERE uuid = ?;
-
-
-setTags:
-UPDATE boardRecord
-SET tags = ?,
-updated_at = ?
-WHERE uuid = ?;
-
-
-setThemeColor:
-UPDATE boardRecord
-SET theme_color = ?,
-updated_at = ?
-WHERE uuid = ?;
+</#list>
+<#--
+CREATE INDEX ${entity.name.lowerCamel}Record_horizon    ON ${entity.name.lowerCamel}Record (horizon);
+CREATE INDEX ${entity.name.lowerCamel}Record_created    ON ${entity.name.lowerCamel}Record (created_at);
+CREATE INDEX ${entity.name.lowerCamel}Record_importance ON ${entity.name.lowerCamel}Record (importance);
+CREATE INDEX ${entity.name.lowerCamel}Record_name       ON ${entity.name.lowerCamel}Record (name);
+CREATE INDEX ${entity.name.lowerCamel}Record_updated    ON ${entity.name.lowerCamel}Record (updated_at);
 
 
 
@@ -197,9 +74,6 @@ UNIQUE( attachment_uuid, task_uuid )
 );
 
 
-selectAll:
-SELECT *
-FROM attachmentTaskJoin;
 
 
 selectForAttachment:

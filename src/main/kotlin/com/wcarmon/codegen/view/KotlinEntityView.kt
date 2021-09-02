@@ -50,7 +50,7 @@ class KotlinEntityView(
   val fieldDeclarations: String by lazy {
 
     entity.sortedFieldsWithIdsFirst
-      .map { field ->
+      .joinToString("\n") { field ->
         FieldDeclarationExpression(
           //TODO: suffix "ID/Primary key" when `field.idField`
           documentation = DocumentationExpression(field.documentation),
@@ -63,7 +63,6 @@ class KotlinEntityView(
           .render(
             renderConfig.copy(lineIndentation = "  "))
       }
-      .joinToString("\n")
   }
 
   fun methodArgsForIdFields(qualified: Boolean) =

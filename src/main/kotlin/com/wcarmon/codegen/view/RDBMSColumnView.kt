@@ -67,7 +67,7 @@ class RDBMSColumnView(
     return (listOf(columnSetterStatement) + pk)
       .joinToString(separator = "\n") {
         it.render(
-          renderConfig.copy(targetLanguage))
+          renderConfig.copy(targetLanguage = targetLanguage))
       }
   }
 
