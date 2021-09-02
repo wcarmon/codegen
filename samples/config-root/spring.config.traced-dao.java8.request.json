@@ -5,7 +5,7 @@
     "file:///home/wcarmon/git-repos/codegen/samples/entities"
   ],
   "extraJVMImports": [
-    "com.wcarmon.chrono.dao01.*",
+    "com.wcarmon.chrono.dao00.*",
     "io.opentracing.Tracer",
     "java.util.function.Function",
     "org.springframework.context.annotation.Bean",

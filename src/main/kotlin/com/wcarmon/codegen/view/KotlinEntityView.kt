@@ -7,8 +7,10 @@ import com.wcarmon.codegen.model.BaseFieldType.SET
 import com.wcarmon.codegen.model.Entity
 import com.wcarmon.codegen.model.JDBCColumnIndex.Companion.FIRST
 import com.wcarmon.codegen.model.PreparedStatementBuilderConfig
+import com.wcarmon.codegen.model.SerdeMode
 import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.util.buildPreparedStatementSetters
+import com.wcarmon.codegen.util.effectiveProtoSerde
 import com.wcarmon.codegen.util.getKotlinImportsForFields
 import com.wcarmon.codegen.util.kotlinMethodArgsForFields
 
@@ -106,6 +108,57 @@ class KotlinEntityView(
         output.toString()
       }
   }
+
+  /**
+   * setter methods on a Proto builder
+   */
+  val entityToProtoSetters: String by lazy {
+
+    entity.sortedFieldsWithIdsFirst
+      .joinToString(
+        separator = "\n"
+      ) { field ->
+
+        //TODO: improve the null handling
+        val read = FieldReadExpression(
+          assertNonNull = false,
+          fieldName = field.name,
+          fieldOwner = RawLiteralExpression("entity"),
+          overrideFieldReadMode = DIRECT,
+        )
+
+        val wrapper = WrapWithSerdeExpression(
+          serde = effectiveProtoSerde(field),
+          serdeMode = SerdeMode.SERIALIZE,
+          wrapped = read,
+        )
+
+        ProtoFieldWriteExpression(
+          field = field,
+          sourceReadExpression = wrapper,
+        )
+          .render(renderConfig.unterminated)
+      }
+  }
+
+  val protoToEntitySetters: String by lazy {
+    entity.sortedFieldsWithIdsFirst
+      .joinToString(
+        separator = "\n",
+      ) { field ->
+
+        val read = ProtoFieldReadExpression(
+          assertNonNull = false,
+          field = field,
+          fieldOwner = RawLiteralExpression("proto"),
+          serde = effectiveProtoSerde(field),
+        )
+
+        val renderedRead = read.render(renderConfig.unterminated)
+        "${field.name.lowerCamel} = $renderedRead,"
+      }
+  }
+
 
   fun methodArgsForIdFields(qualified: Boolean) =
     kotlinMethodArgsForFields(entity.idFields, qualified)

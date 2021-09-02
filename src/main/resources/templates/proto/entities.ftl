@@ -16,9 +16,7 @@ package ${request.packageName.value};
 // Entity: ${entity.pkg.value}.${entity.name.upperCamel}
 // Field count: ${entity.fields?size}
 message ${entity.name.upperCamel}Proto {
-<#-- TODO: fix this
-  ${entity.protocolBufferFields}
--->
+${entity.protobufView.fieldDeclarations}
 }
 
 </#list>

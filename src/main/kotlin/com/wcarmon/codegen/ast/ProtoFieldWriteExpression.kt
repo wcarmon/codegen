@@ -1,10 +1,12 @@
 package com.wcarmon.codegen.ast
 
 import com.wcarmon.codegen.model.Field
-import com.wcarmon.codegen.util.protoBuilderSetter
+import com.wcarmon.codegen.util.protoSetterMethodName
 
 /**
- * Useful when converting from POJO to Proto generated class (via builder)
+ * Useful when converting from POJO to generated proto class (via builder)
+ *
+ * See examples below
  */
 data class ProtoFieldWriteExpression(
   private val field: Field,
@@ -27,7 +29,8 @@ data class ProtoFieldWriteExpression(
    */
   override fun renderWithoutDebugComments(config: RenderConfig) =
     config.lineIndentation +
-        protoBuilderSetter(field) +
+        "." +
+        protoSetterMethodName(field).lowerCamel +
         "(" +
         sourceReadExpression.render(config.unindented.unterminated) +
         ")" +

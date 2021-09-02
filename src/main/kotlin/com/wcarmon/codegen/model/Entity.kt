@@ -3,8 +3,7 @@ package com.wcarmon.codegen.model
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.wcarmon.codegen.DEBUG_MODE
-import com.wcarmon.codegen.model.TargetLanguage.JAVA_08
-import com.wcarmon.codegen.model.TargetLanguage.KOTLIN_JVM_1_4
+import com.wcarmon.codegen.model.TargetLanguage.*
 import com.wcarmon.codegen.view.*
 
 
@@ -143,6 +142,14 @@ data class Entity(
     RDBMSTableView(
       debugMode = DEBUG_MODE,
       entity = this,
+    )
+  }
+
+  val protobufView by lazy {
+    ProtobufEntityView(
+      debugMode = DEBUG_MODE,
+      entity = this,
+      targetLanguage = PROTOCOL_BUFFERS_3,
     )
   }
 

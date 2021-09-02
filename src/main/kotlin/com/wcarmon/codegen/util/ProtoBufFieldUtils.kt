@@ -4,10 +4,13 @@ package com.wcarmon.codegen.util
 
 import com.wcarmon.codegen.model.*
 import com.wcarmon.codegen.model.BaseFieldType.*
+import com.wcarmon.codegen.model.Serde.Companion.INLINE
 
 
-//TODO: document me
-fun protoBuilderSetter(field: Field): Name =
+/**
+ * @return Name of setter method on builder
+ */
+fun protoSetterMethodName(field: Field): Name =
   if (field.isCollection) {
     "addAll"
   } else {
@@ -18,27 +21,19 @@ fun protoBuilderSetter(field: Field): Name =
     }
 
 
-//TODO: document me
-fun protoBuilderGetter(field: Field): Name =
+/**
+ * Method name on a proto to retrieve a field
+ */
+fun protoGetterMethodName(field: Field): Name =
   if (field.isCollection) {
-    "getAll"
+    "List"
   } else {
-    "get"
+    ""
   }
-    .let { prefix ->
-      Name("$prefix${field.name.upperCamel}")
+    .let { suffix ->
+      Name("get${field.name.upperCamel}$suffix")
     }
 
-
-//TODO: improve documentation
-// Get the collection fields, avoid duplicate serde conversion method signatures
-fun getDistinctProtoCollectionFields(entities: Collection<Entity>): Collection<Field> {
-  return entities
-    .flatMap { it.fields }
-    .filter { it.isCollection }
-    .sortedBy { it.name.lowerCamel }
-  //TODO: distinct here
-}
 
 fun effectiveProtobufType(field: Field): String {
 
@@ -51,7 +46,7 @@ fun effectiveProtobufType(field: Field): String {
 
 
 fun effectiveProtoSerde(field: Field): Serde =
-  if (field.protobufConfig.overrideSerde != Serde.INLINE) {
+  if (field.protobufConfig.overrideSerde != INLINE) {
     // -- User override is highest priority
     field.protobufConfig.overrideSerde
 
@@ -63,18 +58,18 @@ fun effectiveProtoSerde(field: Field): Serde =
     defaultJVMSerde(field)
 
   } else {
-    Serde.INLINE
+    INLINE
   }
 
 
-private fun effectiveProtoSerdeForTypeParameters(
+fun effectiveProtoSerdesForTypeParameters(
   field: Field,
 ): List<Serde> =
   field
     .type
     .typeParameters
     .map {
-      field.protobufConfig.overrideRepeatedItemSerde ?: Serde.INLINE
+      field.protobufConfig.overrideRepeatedItemSerde ?: INLINE
     }
 
 

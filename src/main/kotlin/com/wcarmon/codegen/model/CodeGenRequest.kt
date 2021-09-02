@@ -178,4 +178,25 @@ data class CodeGenRequest(
       request = this,
     )
   }
+
+  /**
+   * @return CollectionFields, with the owning Entity
+   */
+  fun getCollectionFields(entities: Collection<Entity>): Collection<FieldAndOwner> =
+    entities
+      .flatMap { entity ->
+
+        // -- Pair each field with the owning entity
+        entity.fields.map { field ->
+          FieldAndOwner(field = field, owner = entity)
+        }
+      }
+
+      // -- Only retain collection fields
+      .filter { pair ->
+        pair.field.isCollection
+      }
+      .sortedBy { pair ->
+        pair.field.name.lowerCamel
+      }
 }

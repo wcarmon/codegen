@@ -6,10 +6,7 @@ import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.SerdeMode.DESERIALIZE
 import com.wcarmon.codegen.model.SerdeMode.SERIALIZE
 import com.wcarmon.codegen.model.TargetLanguage
-import com.wcarmon.codegen.util.defaultResultSetGetterMethod
-import com.wcarmon.codegen.util.effectiveJDBCSerde
-import com.wcarmon.codegen.util.effectiveProtoSerde
-import com.wcarmon.codegen.util.getKotlinTypeLiteral
+import com.wcarmon.codegen.util.*
 
 /**
  * Kotlin related convenience methods for a [Field]
@@ -67,8 +64,8 @@ class KotlinFieldView(
   val unqualifiedType = getKotlinTypeLiteral(field.type, false)
 
   fun readFromProtoExpression(protoId: String = "proto") =
-    ProtoFieldReadExpression.build(
-      assertNonNull = false,  //TODO: verify
+    ProtoFieldReadExpression(
+      assertNonNull = false,
       field = field,
       fieldOwner = RawLiteralExpression(protoId),
     )
@@ -103,4 +100,37 @@ class KotlinFieldView(
     rdbmsView.updateFieldPreparedStatementSetterStatements(
       idFields = idFields,
       targetLanguage = targetLanguage)
+
+  fun deserializerForTypeParameter(
+    typeParameterNumber: Int = 0,
+    thingToDeserialize: String,
+  ): String {
+    require(typeParameterNumber >= 0)
+
+    val serdes = effectiveProtoSerdesForTypeParameters(field)
+    check(serdes.size > typeParameterNumber) {
+      "serde count: ${serdes.size}, requested index: ${typeParameterNumber}"
+    }
+
+    return serdes[typeParameterNumber]
+      .forMode(DESERIALIZE)
+      .expand(thingToDeserialize)
+  }
+
+  fun serializerForTypeParameter(
+    typeParameterNumber: Int = 0,
+    thingToSerialize: String,
+  ): String {
+    require(typeParameterNumber >= 0)
+
+    val serdes = effectiveProtoSerdesForTypeParameters(field)
+    check(serdes.size > typeParameterNumber) {
+      "serde count: ${serdes.size}, requested index: ${typeParameterNumber}"
+    }
+
+    return serdes[typeParameterNumber]
+      .forMode(SERIALIZE)
+      .expand(thingToSerialize)
+  }
+
 }

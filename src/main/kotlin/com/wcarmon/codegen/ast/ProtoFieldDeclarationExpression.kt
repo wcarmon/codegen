@@ -9,7 +9,6 @@ data class ProtoFieldDeclarationExpression(
   private val field: Field,
   val number: ProtoFieldNumber,
 
-
   private val deprecated: Boolean = false,
   private val repeated: Boolean = false,
 

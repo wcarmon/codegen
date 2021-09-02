@@ -2,25 +2,24 @@ package com.wcarmon.codegen.view
 
 import com.wcarmon.codegen.ast.*
 import com.wcarmon.codegen.ast.FieldReadMode.DIRECT
+import com.wcarmon.codegen.ast.FieldReadMode.GETTER
 import com.wcarmon.codegen.model.BaseFieldType
 import com.wcarmon.codegen.model.Entity
 import com.wcarmon.codegen.model.JDBCColumnIndex.Companion.FIRST
 import com.wcarmon.codegen.model.PreparedStatementBuilderConfig
+import com.wcarmon.codegen.model.SerdeMode.SERIALIZE
 import com.wcarmon.codegen.model.TargetLanguage
-import com.wcarmon.codegen.util.buildJavaPreconditionStatements
-import com.wcarmon.codegen.util.buildPreparedStatementSetters
-import com.wcarmon.codegen.util.commaSeparatedJavaMethodArgs
-import com.wcarmon.codegen.util.javaImportsForFields
+import com.wcarmon.codegen.util.*
 
 /**
  * Java related convenience methods for a [Entity]
  */
 class Java8EntityView(
-  private val debugMode: Boolean,
+  debugMode: Boolean,
   private val entity: Entity,
   private val jvmView: JVMEntityView,
   private val rdbmsView: RDBMSTableView,
-  private val targetLanguage: TargetLanguage = TargetLanguage.JAVA_08,
+  targetLanguage: TargetLanguage = TargetLanguage.JAVA_08,
 ) {
 
   init {
@@ -84,6 +83,57 @@ class Java8EntityView(
           visibilityModifier = VisibilityModifier.PRIVATE,
 //      defaultValue = TODO()  TODO: fix this
         ).render(renderConfig.indented)
+      }
+  }
+
+
+  val protoToEntitySetters: String by lazy {
+    entity.sortedFieldsWithIdsFirst
+      .joinToString(
+        separator = "\n",
+      ) { field ->
+
+        val read = ProtoFieldReadExpression(
+          assertNonNull = false,
+          field = field,
+          fieldOwner = RawLiteralExpression("proto"),
+          serde = effectiveProtoSerde(field),
+        )
+
+        val renderedRead = read.render(renderConfig.unterminated)
+        ".${field.name.lowerCamel}($renderedRead)"
+      }
+  }
+
+
+  /**
+   * setter methods on a Proto builder
+   */
+  val entityToProtoSetters: String by lazy {
+
+    entity.sortedFieldsWithIdsFirst
+      .joinToString(
+        separator = "\n"
+      ) { field ->
+
+        val read = FieldReadExpression(
+          assertNonNull = false,
+          fieldName = field.name,
+          fieldOwner = RawLiteralExpression("entity"),
+          overrideFieldReadMode = GETTER,
+        )
+
+        val wrapper = WrapWithSerdeExpression(
+          serde = effectiveProtoSerde(field),
+          serdeMode = SERIALIZE,
+          wrapped = read,
+        )
+
+        ProtoFieldWriteExpression(
+          field = field,
+          sourceReadExpression = wrapper,
+        )
+          .render(renderConfig.unterminated)
       }
   }
 

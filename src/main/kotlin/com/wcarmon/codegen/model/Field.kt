@@ -172,7 +172,7 @@ data class Field(
     )
   }
 
-  val protoView by lazy {
+  val protoBufView by lazy {
     ProtobufFieldView(
       debugMode = DEBUG_MODE,
       field = this,

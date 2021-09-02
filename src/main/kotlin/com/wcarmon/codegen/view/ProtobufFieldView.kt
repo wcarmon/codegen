@@ -1,17 +1,18 @@
 package com.wcarmon.codegen.view
 
+import com.wcarmon.codegen.ast.RenderConfig
 import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.TargetLanguage
-import com.wcarmon.codegen.util.protoBuilderSetter
 
 /**
- * RDBMS related convenience methods for a [Field]
- * See [com.wcarmon.codegen.model.RDBMSColumnConfig]
+ * Protobuf related convenience methods for a [Field]
+ *
+ * See [com.wcarmon.codegen.model.ProtocolBufferFieldConfig]
  */
 class ProtobufFieldView(
-  private val debugMode: Boolean,
+  debugMode: Boolean,
   private val field: Field,
-  private val targetLanguage: TargetLanguage,
+  targetLanguage: TargetLanguage,
 ) {
 
   init {
@@ -20,20 +21,11 @@ class ProtobufFieldView(
     }
   }
 
-  //TODO: rename
-  val builderSetter: String = protoBuilderSetter(field).lowerCamel
-
-  val fields: String by lazy {
-
-    //TODO: use [ProtoFieldDeclarationExpression]
-    TODO("fix me")
-
-    //TODO: use [ProtoMessageDeclarationExpression] instead
-//    buildProtoBufMessageFieldDeclarations(
-//      primaryKeyFields + nonPrimaryKeyFields
-//    )
-//      .map { "  " + it.render(TargetLanguage.PROTOCOL_BUFFERS_3) }
-//      .joinToString("\n")
-  }
+  private val renderConfig = RenderConfig(
+    debugMode = debugMode,
+    lineIndentation = "",
+    targetLanguage = targetLanguage,
+    terminate = true,
+  )
 
 }

@@ -6,8 +6,8 @@
   ],
   "extraJVMImports": [
     "com.fasterxml.jackson.databind.ObjectWriter",
-    "com.wcarmon.chrono.dao01.*",
-    "com.wcarmon.chrono.model01.*",
+    "com.wcarmon.chrono.dao00.*",
+    "com.wcarmon.chrono.model00.*",
     "org.springframework.context.annotation.Bean",
     "org.springframework.context.annotation.Configuration",
     "org.springframework.jdbc.core.JdbcTemplate",

@@ -101,20 +101,9 @@ class Java8FieldView(
   )
     .render(renderConfig.unterminated)
 
-  //TODO: improve this
-//  val protoDeserializeExpressionForTypeParameters by lazy {
-//    protoReadExpressionForTypeParameters(
-//      field,
-//      listOf(RawExpression("item")),
-//      DESERIALIZE)
-//      .map {
-//        it.serialize(targetLanguage)
-//      }
-//  }
-
 
   fun readFromProtoExpression(protoId: String = "proto") =
-    ProtoFieldReadExpression.build(
+    ProtoFieldReadExpression(
       assertNonNull = false,
       field = field,
       fieldOwner = RawLiteralExpression(protoId),
@@ -142,6 +131,39 @@ class Java8FieldView(
     )
       .render(renderConfig.unterminated)
   }
+
+  fun deserializerForTypeParameter(
+    typeParameterNumber: Int = 0,
+    thingToDeserialize: String,
+  ): String {
+    require(typeParameterNumber >= 0)
+
+    val serdes = effectiveProtoSerdesForTypeParameters(field)
+    check(serdes.size > typeParameterNumber) {
+      "serde count: ${serdes.size}, requested index: ${typeParameterNumber}"
+    }
+
+    return serdes[typeParameterNumber]
+      .forMode(DESERIALIZE)
+      .expand(thingToDeserialize)
+  }
+
+  fun serializerForTypeParameter(
+    typeParameterNumber: Int = 0,
+    thingToSerialize: String,
+  ): String {
+    require(typeParameterNumber >= 0)
+
+    val serdes = effectiveProtoSerdesForTypeParameters(field)
+    check(serdes.size > typeParameterNumber) {
+      "serde count: ${serdes.size}, requested index: ${typeParameterNumber}"
+    }
+
+    return serdes[typeParameterNumber]
+      .forMode(SERIALIZE)
+      .expand(thingToSerialize)
+  }
+
 
   fun updateFieldPreparedStatementSetterStatements(
     idFields: List<Field>,

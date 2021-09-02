@@ -7,7 +7,7 @@
   "extraJVMImports": [
     "com.fasterxml.jackson.core.type.TypeReference",
     "com.fasterxml.jackson.databind.ObjectMapper",
-    "com.wcarmon.chrono.model01.*",
+    "com.wcarmon.chrono.model00.*",
     "java.math.BigDecimal",
     "java.math.BigInteger",
     "java.net.URI",
@@ -29,11 +29,11 @@
     "java.util.Objects",
     "java.util.Set",
     "org.springframework.jdbc.core.RowMapper",
-    "static com.wcarmon.chrono.model01.TypeReferences.*"
+    "static com.wcarmon.chrono.model00.TypeReferences.*"
   ],
-  "outputDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/java/com/wcarmon/chrono/rowmappers01",
+  "outputDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/java/com/wcarmon/chrono/rowmappers00",
   "outputFilenameTemplate": "%sRowMapper.java",
   "outputMode": "multiple",
-  "package": "com.wcarmon.chrono.rowmappers01",
+  "package": "com.wcarmon.chrono.rowmappers00",
   "templateURI": "classpath:/templates/jdbc-template/row-mapper.java8.ftl"
 }
