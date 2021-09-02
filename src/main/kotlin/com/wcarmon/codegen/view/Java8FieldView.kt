@@ -3,6 +3,7 @@ package com.wcarmon.codegen.view
 import com.wcarmon.codegen.ast.*
 import com.wcarmon.codegen.ast.FieldReadMode.GETTER
 import com.wcarmon.codegen.model.Field
+import com.wcarmon.codegen.model.SerdeMode.DESERIALIZE
 import com.wcarmon.codegen.model.SerdeMode.SERIALIZE
 import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.util.*
@@ -34,12 +35,19 @@ class Java8FieldView(
 
   val resultSetGetterExpression: String by lazy {
 
-    ResultSetReadExpression(
-      fieldName = field.name,
-      getterMethod = defaultResultSetGetterMethod(field.effectiveBaseType),
-      resultSetIdentifierExpression = RawLiteralExpression("rs"),
+    val wrapped =
+      ResultSetReadExpression(
+        fieldName = field.name,
+        getterMethod = defaultResultSetGetterMethod(field.effectiveBaseType),
+        resultSetIdentifierExpression = RawLiteralExpression("rs"),
+      )
+
+    WrapWithSerdeExpression(
+      serde = effectiveJDBCSerde(field),
+      serdeMode = DESERIALIZE,
+      wrapped = wrapped,
     )
-      .render(renderConfig.terminated.indented)
+      .render(renderConfig.unterminated.unindented)
   }
 
   val typeLiteral: String = javaTypeLiteral(field.type, true)

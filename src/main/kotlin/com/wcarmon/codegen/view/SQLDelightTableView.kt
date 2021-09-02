@@ -192,17 +192,24 @@ class SQLDelightTableView(
         wrapped = RawLiteralExpression(columnRead),
       ).render(renderConfig)
 
-      // nullsafe & typesafe
-      val canonicalColumnRead =
-        if (field.type.nullable) {
-          "$recordId.${field.name.lowerSnake}?.let{ $serdeWrapped }"
-        } else {
+      // nullsafe & serde-wrapped column read
+      val rightHandSide =
+        if (!field.type.nullable) {
           serdeWrapped
+
+        } else {
+          if (serdeWrapped.trim() == "it") {
+            // inline redundant .let{ }
+            "$recordId.${field.name.lowerSnake}"
+
+          } else {
+            "$recordId.${field.name.lowerSnake}?.let{ $serdeWrapped }"
+          }
         }
 
       output.append(indentation)
       output.append(indentation)
-      output.append("${field.name.lowerCamel} = $canonicalColumnRead")
+      output.append("${field.name.lowerCamel} = $rightHandSide")
       output.append(",\n")
     }
 

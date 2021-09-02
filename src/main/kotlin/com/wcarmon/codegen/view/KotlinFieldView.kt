@@ -3,9 +3,11 @@ package com.wcarmon.codegen.view
 import com.wcarmon.codegen.ast.*
 import com.wcarmon.codegen.ast.FieldReadMode.DIRECT
 import com.wcarmon.codegen.model.Field
+import com.wcarmon.codegen.model.SerdeMode.DESERIALIZE
 import com.wcarmon.codegen.model.SerdeMode.SERIALIZE
 import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.util.defaultResultSetGetterMethod
+import com.wcarmon.codegen.util.effectiveJDBCSerde
 import com.wcarmon.codegen.util.effectiveProtoSerde
 import com.wcarmon.codegen.util.getKotlinTypeLiteral
 
@@ -33,12 +35,20 @@ class KotlinFieldView(
   )
 
   val resultSetGetterExpression: String by lazy {
-    ResultSetReadExpression(
-      fieldName = field.name,
-      getterMethod = defaultResultSetGetterMethod(field.effectiveBaseType),
-      resultSetIdentifierExpression = RawLiteralExpression("rs"),
+
+    val wrapped =
+      ResultSetReadExpression(
+        fieldName = field.name,
+        getterMethod = defaultResultSetGetterMethod(field.effectiveBaseType),
+        resultSetIdentifierExpression = RawLiteralExpression("rs"),
+      )
+
+    WrapWithSerdeExpression(
+      serde = effectiveJDBCSerde(field),
+      serdeMode = DESERIALIZE,
+      wrapped = wrapped,
     )
-      .render(renderConfig)
+      .render(renderConfig.unindented)
   }
 
   val typeLiteral: String = getKotlinTypeLiteral(field.type, true)

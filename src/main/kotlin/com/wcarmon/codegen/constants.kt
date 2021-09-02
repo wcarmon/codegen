@@ -3,6 +3,7 @@ package com.wcarmon.codegen
 /**
  * Enables/Disables Tracing/debug comments in generated code
  */
+//TODO: make this a command line flag
 const val DEBUG_MODE = false
 
 /**
