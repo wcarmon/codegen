@@ -2,8 +2,8 @@ package com.wcarmon.codegen.ast
 
 import com.wcarmon.codegen.model.BaseFieldType.BOOLEAN
 import com.wcarmon.codegen.model.Field
+import com.wcarmon.codegen.util.effectiveSQLDelightTypeLiteral
 import com.wcarmon.codegen.util.quoteTypeForSQLDelightLiteral
-import com.wcarmon.codegen.util.sqlDelightTypeLiteral
 
 //TODO: document me
 class SQLDelightColumnDeclarationExpression(
@@ -28,9 +28,7 @@ class SQLDelightColumnDeclarationExpression(
     val nameSegment = field.name.lowerSnake
     val nullableSegment = if (field.type.nullable) "" else "NOT NULL"
 
-    //TODO: allow override
-    //    field.rdbmsConfig.overrideTypeLiteral
-    val typeSegment = sqlDelightTypeLiteral(field.type)
+    val typeSegment = effectiveSQLDelightTypeLiteral(field)
 
     val defaultValueSegment = buildDefaultValueSegment(field)
 

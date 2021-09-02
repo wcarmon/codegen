@@ -8,7 +8,7 @@ package com.wcarmon.codegen.model
 data class RDBMSTableConfig(
   val schema: String = "",
 
-  // TODO: order
+  // TODO: list: order by fieldX, asc|desc
 ) {
 
   init {

@@ -4,9 +4,9 @@
   "entityConfigDirs": [
     "file:///home/wcarmon/git-repos/codegen/samples/entities"
   ],
-  "outputDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/main/sqldelight/com/wcarmon/chrono",
+  "outputDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/main/sqldelight/com/wcarmon/chrono/dao30",
   "outputFilenameTemplate": "%s.sq",
   "outputMode": "multiple",
-  "package": "com.wcarmon.chrono.sqldelight",
-  "templateURI": "classpath:/templates/sqldelight/sq-input-file.ftl"
+  "package": "com.wcarmon.chrono.dao30",
+  "templateURI": "classpath:/templates/sqldelight/sq.ftl"
 }

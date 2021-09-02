@@ -17,7 +17,7 @@
       "$ref": "serde.schema.json"
     },
     "overrideTypeLiteral": {
-      "description": "Allows custom DB type, replaces auto-derived DB type",
+      "description": "Allows custom DB type, replaces auto-derived DB type (use Postgres types)",
       "maxLength": 64,
       "minLength": 1,
       "type": "string"

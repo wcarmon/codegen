@@ -1,0 +1,17 @@
+{
+  "$schema": "https://wcarmon.com/schemas/codegen/request.schema.json",
+  "allowOverride": true,
+  "entityConfigDirs": [
+    "file:///home/wcarmon/git-repos/codegen/samples/entities"
+  ],
+  "extraJVMImports": [
+    "com.fasterxml.jackson.core.type.TypeReference",
+    "java.util.List",
+    "java.util.Set"
+  ],
+  "outputDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/java/com/wcarmon/chrono/model01",
+  "outputFilenameTemplate": "TypeReferences.java",
+  "outputMode": "single",
+  "package": "com.wcarmon.chrono.model01",
+  "templateURI": "classpath:/templates/pojo/type-references.java8.ftl"
+}

@@ -151,7 +151,7 @@
       "rdbms": {
         "overrideDefaultValue": "''",
         "overrideSerde": {
-          "deserializeTemplate": "toSet(%s, TAGS_TYPE_REF)",
+          "deserializeTemplate": "toSet(%s, objectMapper, CHRONO_BOARD__TAGS_TYPE_REF)",
           "serializeTemplate": "objectWriter.writeValueAsString(%s)"
         },
         "varcharLength": 512

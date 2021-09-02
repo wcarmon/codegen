@@ -30,9 +30,6 @@ data class Entity(
   val name: Name,
   val pkg: PackageName,
 
-  /** No leading comment markers (no leading slashes, no leading asterisk) */
-  val documentation: List<String> = listOf(),
-
   val canCheckForExistence: Boolean = true,
   val canCreate: Boolean = true,
   val canDelete: Boolean = true,
@@ -41,21 +38,19 @@ data class Entity(
   val canList: Boolean = true,
   val canUpdate: Boolean = true,
 
-  // Likely easier to specify directly in template
-  // unique, order matters
-  val extraImplements: List<String> = listOf(),
-
-  val fields: List<Field>,
-
   /**
    * Automatically updated when created
    */
   val createdTimestampFieldName: Name? = null,
 
-  /**
-   * Automatically updated when modified/updated
-   */
-  val updatedTimestampFieldName: Name? = null,
+  /** No leading comment markers (no leading slashes, no leading asterisk) */
+  val documentation: List<String> = listOf(),
+
+  // Likely easier to specify directly in template
+  // unique, order matters
+  val extraImplements: List<String> = listOf(),
+
+  val fields: List<Field>,
 
   /**
    * ID fields are implicitly indexed
@@ -64,8 +59,12 @@ data class Entity(
 
   val rdbmsConfig: RDBMSTableConfig = RDBMSTableConfig(),
 
+  /**
+   * Automatically updated when modified/updated
+   */
+  val updatedTimestampFieldName: Name? = null,
+
   // TODO: list: pagination
-  // TODO: list: order by fieldX, asc|desc
 ) {
 
   init {

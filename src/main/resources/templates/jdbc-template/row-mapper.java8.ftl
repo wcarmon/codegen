@@ -17,11 +17,6 @@ ${request.java8View.serializeImports(
 public final class ${entity.name.upperCamel}RowMapper implements RowMapper<${entity.name.upperCamel}> {
 
   <#if entity.jvmView.requiresObjectReader>
-    <#list entity.collectionFields as field>
-    private static final TypeReference<${field.jvmView.jacksonTypeRef}> ${field.name.upperSnake}_TYPE_REF =
-      new TypeReference<>(){};
-    </#list>
-
   private final ObjectMapper objectMapper;
 
   public ${entity.name.upperCamel}RowMapper(ObjectMapper objectMapper) {

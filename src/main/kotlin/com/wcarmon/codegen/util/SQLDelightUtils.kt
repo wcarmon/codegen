@@ -4,16 +4,29 @@ package com.wcarmon.codegen.util
 
 import com.wcarmon.codegen.model.BaseFieldType
 import com.wcarmon.codegen.model.BaseFieldType.*
-import com.wcarmon.codegen.model.LogicalFieldType
+import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.QuoteType
 import com.wcarmon.codegen.model.QuoteType.DOUBLE
 import com.wcarmon.codegen.model.QuoteType.NONE
 
 
+fun effectiveSQLDelightTypeLiteral(field: Field): String {
+
+  val base =
+    if (field.rdbmsConfig.overrideTypeLiteral.isNotBlank()) {
+      BaseFieldType.parse(field.rdbmsConfig.overrideTypeLiteral)
+
+    } else {
+      field.type.base
+    }
+
+  return sqlDelightTypeLiteral(base)
+}
+
 /**
  * See https://cashapp.github.io/sqldelight/jvm_sqlite/types/
  */
-fun sqlDelightTypeLiteral(type: LogicalFieldType): String = when (type.base) {
+private fun sqlDelightTypeLiteral(baseType: BaseFieldType): String = when (baseType) {
 
   BOOLEAN -> "INTEGER AS Boolean"
   CHAR -> TODO()
@@ -52,7 +65,7 @@ fun sqlDelightTypeLiteral(type: LogicalFieldType): String = when (type.base) {
   //TODO: allow override in json config
   USER_DEFINED -> "TEXT"
 
-  else -> TODO("get sqldelight type for: $type")
+  else -> TODO("get sqldelight type for: $baseType")
 }
 
 

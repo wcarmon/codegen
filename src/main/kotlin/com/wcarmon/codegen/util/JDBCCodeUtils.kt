@@ -50,7 +50,7 @@ fun buildPreparedStatementSetters(
 /**
  * @return the most appropriate Serde for JDBC
  */
-private fun effectiveJDBCSerde(field: Field): Serde =
+fun effectiveJDBCSerde(field: Field): Serde =
   if (field.rdbmsConfig.overrideSerde != Serde.INLINE) {
     // -- User override is highest priority
     field.rdbmsConfig.overrideSerde

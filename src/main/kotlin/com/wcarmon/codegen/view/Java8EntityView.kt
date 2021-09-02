@@ -1,6 +1,7 @@
 package com.wcarmon.codegen.view
 
 import com.wcarmon.codegen.ast.*
+import com.wcarmon.codegen.model.BaseFieldType
 import com.wcarmon.codegen.model.Entity
 import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.util.buildJavaPreconditionStatements
@@ -65,6 +66,32 @@ class Java8EntityView(
         ).render(renderConfig.indented)
       }
   }
+
+  val typeReferenceDeclarations: String by lazy {
+    val indentation = "  "
+
+    entity
+      .collectionFields
+      .joinToString("\n") { field ->
+        val output = StringBuilder(512)
+
+        val collectionLiteral = when (field.type.base) {
+          BaseFieldType.SET -> "Set"
+          BaseFieldType.LIST -> "List"
+          else -> TODO("Add typeref support for field=$field, entity=$entity")
+        }
+
+        //TODO: should I use field.jvmView.jacksonTypeRef
+        output.append("public static final TypeReference<$collectionLiteral<${field.type.typeParameters.first()}>> ")
+        output.append("${entity.name.upperSnake}__${field.name.upperSnake}_TYPE_REF ")
+        output.append("=\n")
+        output.append(indentation)
+        output.append("new TypeReference<>(){};")
+
+        output.toString()
+      }
+  }
+
 
   fun methodArgsForIdFields(qualified: Boolean) =
     commaSeparatedJavaMethodArgs(entity.idFields, qualified)

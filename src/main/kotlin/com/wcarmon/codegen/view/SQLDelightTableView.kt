@@ -1,10 +1,15 @@
 package com.wcarmon.codegen.view
 
+import com.wcarmon.codegen.ast.RawLiteralExpression
 import com.wcarmon.codegen.ast.RenderConfig
+import com.wcarmon.codegen.ast.WrapWithSerdeExpression
 import com.wcarmon.codegen.model.Entity
 import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.Index
+import com.wcarmon.codegen.model.SerdeMode.DESERIALIZE
+import com.wcarmon.codegen.model.SerdeMode.SERIALIZE
 import com.wcarmon.codegen.model.TargetLanguage.SQL_DELIGHT
+import com.wcarmon.codegen.util.effectiveJDBCSerde
 
 class SQLDelightTableView(
   private val debugMode: Boolean,
@@ -97,6 +102,7 @@ class SQLDelightTableView(
   }
 
   val createTableStatement: String by lazy {
+    //TODO: move to expression
     val indentation = "  "
 
     val output = StringBuilder(1024)
@@ -132,6 +138,7 @@ class SQLDelightTableView(
   }
 
   fun patchQuery(field: Field): String {
+    //TODO: move to expression
     val output = StringBuilder(256)
     output.append("UPDATE ${entity.name.lowerCamel}Record\n")
     output.append("SET ${field.name.lowerSnake}=?")
@@ -150,6 +157,98 @@ class SQLDelightTableView(
     output.append(";")
 
     return output.toString()
+  }
+
+  val recordToModel: String by lazy {
+    val indentation = "  "
+    val recordId = "record"
+    val returnType = entity.name.upperCamel
+
+    val argsSegment = listOf(
+      "record: ${entity.name.upperCamel}Record",
+      if (entity.jvmView.requiresObjectReader) "objectMapper: ObjectMapper" else "",
+    )
+      .filter { it.isNotBlank() }
+      .joinToString(separator = ", ")
+
+    // ------------------------------------------------
+
+    //TODO: move to expression
+    val output = StringBuilder(1024)
+
+    //TODO: [com.wcarmon.codegen.ast.MethodDeclarationExpression]
+    output.append("fun toModel($argsSegment): $returnType =\n")
+    output.append("$indentation$returnType(\n")
+
+    entity.sortedFieldsWithIdsFirst.map { field ->
+
+      val columnRead =
+        if (field.type.nullable) "it"
+        else "$recordId.${field.name.lowerSnake}"
+
+      val serdeWrapped = WrapWithSerdeExpression(
+        serde = effectiveJDBCSerde(field),
+        serdeMode = DESERIALIZE,
+        wrapped = RawLiteralExpression(columnRead),
+      ).render(renderConfig)
+
+      // nullsafe & typesafe
+      val canonicalColumnRead =
+        if (field.type.nullable) {
+          "$recordId.${field.name.lowerSnake}?.let{ $serdeWrapped }"
+        } else {
+          serdeWrapped
+        }
+
+      output.append(indentation)
+      output.append(indentation)
+      output.append("${field.name.lowerCamel} = $canonicalColumnRead")
+      output.append(",\n")
+    }
+
+    output.append(")")
+
+    output.toString()
+  }
+
+  val modelToRecord: String by lazy {
+    //TODO: move to expression class
+
+    val indentation = "  "
+    val entityId = "entity"
+    val returnType = "${entity.name.upperCamel}Record"
+
+    val argsSegment = listOf(
+      "entity: ${entity.name.upperCamel}",
+      if (entity.jvmView.requiresObjectWriter) "objectWriter: ObjectWriter" else "",
+    )
+      .filter { it.isNotBlank() }
+      .joinToString(separator = ", ")
+
+    // ------------------------------------------------
+    val output = StringBuilder(1024)
+
+    //TODO: [com.wcarmon.codegen.ast.MethodDeclarationExpression]
+    output.append("fun toRecord($argsSegment): $returnType =\n")
+    output.append("$indentation$returnType(\n")
+
+    entity.sortedFieldsWithIdsFirst.map { field ->
+
+      val read = WrapWithSerdeExpression(
+        serde = effectiveJDBCSerde(field),
+        serdeMode = SERIALIZE,
+        wrapped = RawLiteralExpression("${entityId}.${field.name.lowerCamel}"),
+      ).render(renderConfig)
+
+      output.append(indentation)
+      output.append(indentation)
+      output.append("${field.name.lowerSnake} = $read")
+      output.append(",\n")
+    }
+
+    output.append(")")
+
+    output.toString()
   }
 
   private fun buildIndexConstraint(index: Index): String =

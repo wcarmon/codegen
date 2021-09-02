@@ -20,13 +20,6 @@ class ${entity.name.upperCamel}RowMapper(
 </#if>
 ) : RowMapper<${entity.name.upperCamel}> {
 
-  companion object {
-    <#list entity.collectionFields as field>
-    private val ${field.name.upperSnake}_TYPE_REF =
-      object : TypeReference<${field.jvmView.jacksonTypeRef}> () {}
-    </#list>
-  }
-
   /**
    * Maps ${entity.fields?size}-fields from ResultSet
    *

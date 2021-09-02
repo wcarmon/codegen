@@ -1,6 +1,8 @@
 package com.wcarmon.codegen.view
 
 import com.wcarmon.codegen.ast.*
+import com.wcarmon.codegen.model.BaseFieldType.LIST
+import com.wcarmon.codegen.model.BaseFieldType.SET
 import com.wcarmon.codegen.model.Entity
 import com.wcarmon.codegen.model.PreparedStatementBuilderConfig
 import com.wcarmon.codegen.model.TargetLanguage
@@ -62,6 +64,31 @@ class KotlinEntityView(
         )
           .render(
             renderConfig.copy(lineIndentation = "  "))
+      }
+  }
+
+  val typeReferenceDeclarations: String by lazy {
+    val indentation = "  "
+
+    entity
+      .collectionFields
+      .joinToString("\n") { field ->
+        val output = StringBuilder(512)
+
+        val collectionLiteral = when (field.type.base) {
+          SET -> "Set"
+          LIST -> "List"
+          else -> TODO("Add typeref support for field=$field, entity=$entity")
+        }
+
+        //TODO: should I use field.jvmView.jacksonTypeRef
+        output.append("val ${entity.name.upperSnake}__${field.name.upperSnake}_TYPE_REF")
+        output.append(": TypeReference<$collectionLiteral<${field.type.typeParameters.first()}>> ")
+        output.append("=\n")
+        output.append(indentation)
+        output.append("object : TypeReference<$collectionLiteral<${field.type.typeParameters.first()}>>() {}")
+
+        output.toString()
       }
   }
 
