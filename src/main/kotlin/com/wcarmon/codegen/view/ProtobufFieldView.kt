@@ -27,5 +27,4 @@ class ProtobufFieldView(
     targetLanguage = targetLanguage,
     terminate = true,
   )
-
 }

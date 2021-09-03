@@ -8,8 +8,7 @@
       "type": "boolean"
     },
     "defaultValue": {
-      "maxLength": 2048,
-      "type": "string"
+      "$ref": "default-value.schema.json"
     },
     "documentation": {
       "type": "string"

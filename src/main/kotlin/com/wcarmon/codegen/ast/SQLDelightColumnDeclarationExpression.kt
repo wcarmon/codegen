@@ -56,15 +56,19 @@ class SQLDelightColumnDeclarationExpression(
       defaultValueLiteral = "NULL"
     }
 
-    if (field.defaultValue != null) {
-      if (field.defaultValue.lowercase() != "null") {
-        //TODO: use field.defaultValue here
-        //TODO: use field.rdbmsConfig.overrideDefaultValue
-      }
+    if (field.defaultValue.isPresent) {
+
+      /* See [Field.defaultValueExpression] */
+      TODO("improve default value on sqlDelight column declaration: field=$field")
+
+//      if (field.defaultValue.lowercase() != "null") {
+//        //TODO: use field.defaultValue here
+//        //TODO: use field.rdbmsConfig.overrideDefaultValue
+//      }
     }
 
-    if (field.rdbmsConfig.overrideDefaultValue != null) {
-      //TODO: use default value here
+    if (field.rdbmsConfig.overrideDefaultValue.isPresent) {
+      TODO("Handle the rdbms override default here")
     }
 
     if (defaultValueLiteral == null) {

@@ -9,9 +9,7 @@
     },
     "overrideDefaultValue": {
       "description": "literal for default value, wrap strings in single quotes",
-      "maxLength": 64,
-      "minLength": 1,
-      "type": "string"
+      "$ref": "default-value.schema.json"
     },
     "overrideSerde": {
       "$ref": "serde.schema.json"

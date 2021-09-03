@@ -25,7 +25,7 @@ data class RDBMSColumnConfig(
   /**
    * For VARCHAR columns, wrap in single quotes
    */
-  val overrideDefaultValue: String? = null,
+  val overrideDefaultValue: DefaultValue = DefaultValue(),
 
   //TODO: represent foreign Keys
 ) {

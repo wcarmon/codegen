@@ -70,14 +70,19 @@ class KotlinEntityView(
 
     entity.sortedFieldsWithIdsFirst
       .joinToString("\n") { field ->
+
+        val defaultValueExpression = DefaultValueExpression(
+          defaultValue = field.defaultValue,
+        )
+
         FieldDeclarationExpression(
           //TODO: suffix "ID/Primary key" when `field.idField`
+          defaultValue = defaultValueExpression,
           documentation = DocumentationExpression(field.documentation),
           finalityModifier = FinalityModifier.FINAL,
           name = field.name,
           type = field.type,
           visibilityModifier = VisibilityModifier.PRIVATE,
-//      defaultValue = TODO()  TODO: fix this
         )
           .render(
             renderConfig.copy(lineIndentation = "  "))
@@ -119,7 +124,6 @@ class KotlinEntityView(
         separator = "\n"
       ) { field ->
 
-        //TODO: improve the null handling
         val read = FieldReadExpression(
           assertNonNull = false,
           fieldName = field.name,
@@ -127,10 +131,23 @@ class KotlinEntityView(
           overrideFieldReadMode = DIRECT,
         )
 
+        val wrapMe =
+          if (!field.type.nullable) {
+            read
+
+          } else {
+            DefaultWhenNullExpression(
+              primaryExpression = read,
+              defaultValueExpression = DefaultValueExpression(
+                defaultValue = field.defaultValue,
+              )
+            )
+          }
+
         val wrapper = WrapWithSerdeExpression(
           serde = effectiveProtoSerde(field),
           serdeMode = SerdeMode.SERIALIZE,
-          wrapped = read,
+          wrapped = wrapMe,
         )
 
         ProtoFieldWriteExpression(

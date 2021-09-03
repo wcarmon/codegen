@@ -10,7 +10,6 @@ import com.wcarmon.codegen.UPDATED_TS_FIELD_NAMES
 import com.wcarmon.codegen.model.BaseFieldType.STRING
 import com.wcarmon.codegen.model.TargetLanguage.*
 import com.wcarmon.codegen.view.*
-import kotlin.text.RegexOption.IGNORE_CASE
 
 /**
  * See src/main/resources/json-schema/field.schema.json
@@ -43,18 +42,7 @@ data class Field(
    */
   val canUpdate: Boolean = true,
 
-  /**
-   * JSON                         | in here   | Interpretation
-   * ---------------------------- | --------- | --------------
-   * (no defaultValue attribute)  |
-   * defaultValue: null           |
-   * defaultValue: "null"         |
-   * defaultValue: "'null'"       |
-   * defaultValue: ""             |
-   * defaultValue: "\"null\""     |
-   */
-  //TODO: add tests to enforce above
-  val defaultValue: String? = null,
+  val defaultValue: DefaultValue = DefaultValue(),
 
   /** No leading comment markers (no leading slashes, no leading asterisk) */
   val documentation: List<String> = listOf(),
@@ -66,7 +54,6 @@ data class Field(
    * ...
    */
   val positionInId: Int? = null,
-
 
   // -- Technology specific config
   val jvmConfig: JVMFieldConfig = JVMFieldConfig(),
@@ -80,49 +67,50 @@ data class Field(
     @JvmStatic
     @JsonCreator
     fun parse(
-      @JsonProperty("defaultValue") defaultValue: String? = null,
-      @JsonProperty("canUpdate") canUpdate: Boolean = true,
-      @JsonProperty("documentation") documentation: Iterable<String> = listOf(),
-      @JsonProperty("enumType") enumType: Boolean = false,
-      @JsonProperty("jvm") jvmFieldConfig: JVMFieldConfig = JVMFieldConfig(),
+      @JsonProperty("defaultValue") defaultValue: DefaultValue?,
+      @JsonProperty("canUpdate") canUpdate: Boolean?,
+      @JsonProperty("documentation") documentation: Iterable<String>?,
+      @JsonProperty("enumType") enumType: Boolean?,
+      @JsonProperty("jvm") jvmFieldConfig: JVMFieldConfig?,
       @JsonProperty("name") name: Name,
-      @JsonProperty("nullable") nullable: Boolean = false,
-      @JsonProperty("positionInId") positionInId: Int? = null,
-      @JsonProperty("precision") precision: Int? = null,
-      @JsonProperty("protobuf") protobufConfig: ProtocolBufferFieldConfig = ProtocolBufferFieldConfig(),
-      @JsonProperty("rdbms") rdbmsConfig: RDBMSColumnConfig = RDBMSColumnConfig(),
-      @JsonProperty("scale") scale: Int = 0,
-      @JsonProperty("signed") signed: Boolean = true,
-      @JsonProperty("type") typeLiteral: String = "",
-      @JsonProperty("typeParameters") typeParameters: List<String> = listOf(),
-      @JsonProperty("validation") validationConfig: FieldValidation = FieldValidation(),
+      @JsonProperty("nullable") nullable: Boolean?,
+      @JsonProperty("positionInId") positionInId: Int?,
+      @JsonProperty("precision") precision: Int?,
+      @JsonProperty("protobuf") protobufConfig: ProtocolBufferFieldConfig?,
+      @JsonProperty("rdbms") rdbmsConfig: RDBMSColumnConfig?,
+      @JsonProperty("scale") scale: Int?,
+      @JsonProperty("signed") signed: Boolean?,
+      @JsonProperty("type") typeLiteral: String?,
+      @JsonProperty("typeParameters") typeParameters: List<String>?,
+      @JsonProperty("validation") validationConfig: FieldValidation?,
     ): Field {
 
-      //TODO: missing context
-      require(typeLiteral.isNotBlank()) { "Field.type is required: this=$this" }
+      require(typeLiteral?.isNotBlank() ?: false) {
+        "Field.type is required: this=$this, name=$name"
+      }
 
       //TODO: signed should override whatever is specified on type literal
 
       return Field(
-        canUpdate = canUpdate,
-        defaultValue = defaultValue,
-        documentation = documentation.toList(),
-        jvmConfig = jvmFieldConfig,
+        canUpdate = canUpdate ?: true,
+        defaultValue = defaultValue ?: DefaultValue(),
+        documentation = documentation?.toList() ?: listOf(),
+        jvmConfig = jvmFieldConfig ?: JVMFieldConfig(),
         name = name,
         positionInId = positionInId,
-        protobufConfig = protobufConfig,
-        rdbmsConfig = rdbmsConfig,
+        protobufConfig = protobufConfig ?: ProtocolBufferFieldConfig(),
+        rdbmsConfig = rdbmsConfig ?: RDBMSColumnConfig(),
         type = LogicalFieldType(
-          base = BaseFieldType.parse(typeLiteral),
-          enumType = enumType,
-          nullable = nullable,
+          base = BaseFieldType.parse(typeLiteral ?: ""),
+          enumType = enumType ?: false,
+          nullable = nullable ?: false,
           precision = precision,
-          rawTypeLiteral = typeLiteral,
-          scale = scale,
-          signed = signed,
-          typeParameters = typeParameters,
+          rawTypeLiteral = typeLiteral ?: "",
+          scale = scale ?: 0,
+          signed = signed ?: true,
+          typeParameters = typeParameters ?: listOf(),
         ),
-        validationConfig = validationConfig,
+        validationConfig = validationConfig ?: FieldValidation(),
       )
     }
   }
@@ -196,18 +184,6 @@ data class Field(
 
   val isIdField: Boolean = (positionInId ?: -1) >= 0
 
-  //TODO: improve me
-  val hasDefault = defaultValue != null
-
-  //TODO: improve me
-  val shouldDefaultToNull: Boolean by lazy {
-    //TODO: is this reusable & threadsafe?
-    val regex =
-      """^['"]?null['"]?$""".toRegex(IGNORE_CASE)
-
-    defaultValue != null && regex.matches(defaultValue)
-  }
-
   val jvmView by lazy {
     JVMFieldView(
       field = this,
@@ -240,7 +216,6 @@ data class Field(
   val usesNumericValidation = effectiveBaseType.isNumeric
 
   val usesStringValidation = effectiveBaseType == STRING
-
 
   val isCreatedTimestamp =
     effectiveBaseType.isTemporal &&

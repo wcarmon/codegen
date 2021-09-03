@@ -109,16 +109,16 @@ fun quoteTypeForRDBMSLiteral(base: BaseFieldType): QuoteType = when (base) {
  *
  * @return literal for Default value (called "default_expr" in PostgreSQL AST)
  */
-//TODO: more tests here
 fun rdbmsDefaultValueLiteral(field: Field): String {
-  if (field.defaultValue == null) {
+
+  if (field.defaultValue.isAbsent) {
     return ""
   }
 
-  if (field.shouldDefaultToNull) {
+  if (field.defaultValue.isNullLiteral) {
     return "NULL"
   }
 
   return quoteTypeForRDBMSLiteral(field.effectiveBaseType)
-    .wrap(field.defaultValue)
+    .wrap(field.defaultValue.literal.toString())
 }

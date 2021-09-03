@@ -33,7 +33,9 @@
       }
     },
     {
-      "defaultValue": "false",
+      "defaultValue": {
+        "value": "false"
+      },
       "name": "closed",
       "type": "Boolean"
     },
@@ -46,7 +48,9 @@
       "type": "Instant"
     },
     {
-      "defaultValue": "null",
+      "defaultValue": {
+        "value": null
+      },
       "name": "backgroundImage",
       "nullable": true,
       "rdbms": {
@@ -55,7 +59,6 @@
       "type": "java.net.URI"
     },
     {
-      "defaultValue": "",
       "name": "details",
       "rdbms": {
         "varcharLength": 512
@@ -63,7 +66,9 @@
       "type": "String"
     },
     {
-      "defaultValue": "true",
+      "defaultValue": {
+        "value": "true"
+      },
       "name": "enableSearch",
       "type": "Boolean"
     },
@@ -93,7 +98,7 @@
       "type": "com.wcarmon.chrono.model.ChronoHorizon"
     },
     {
-      "defaultValue": "",
+      "defaultValue": null,
       "name": "iconCode",
       "rdbms": {
         "varcharLength": 48
@@ -120,7 +125,7 @@
       "type": "com.wcarmon.chrono.model.ChronoLevel"
     },
     {
-      "defaultValue": "",
+      "defaultValue": null,
       "name": "keywords",
       "rdbms": {
         "varcharLength": 192
@@ -131,7 +136,9 @@
       }
     },
     {
-      "defaultValue": "null",
+      "defaultValue": {
+        "value": null
+      },
       "name": "pinnedPosition",
       "nullable": true,
       "precision": 6,
@@ -149,7 +156,9 @@
         "repeated": true
       },
       "rdbms": {
-        "overrideDefaultValue": "''",
+        "overrideDefaultValue": {
+          "value": ""
+        },
         "overrideSerde": {
           "deserializeTemplate": "toSet(%s, objectMapper, CHRONO_BOARD__TAGS_TYPE_REF)",
           "serializeTemplate": "objectWriter.writeValueAsString(%s)"
@@ -162,7 +171,9 @@
       ]
     },
     {
-      "defaultValue": "null",
+      "defaultValue": {
+        "value": null
+      },
       "jvm": {
         "overrideSerde": {
           "deserializeTemplate": "com.wcarmon.chrono.model.ChronoColor.parse(%s)",

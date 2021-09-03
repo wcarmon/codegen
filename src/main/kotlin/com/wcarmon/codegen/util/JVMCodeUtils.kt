@@ -42,16 +42,17 @@ fun quoteTypeForJVMLiterals(base: BaseFieldType) = when (base) {
  */
 @Suppress("ReturnCount")
 fun defaultValueLiteralForJVM(field: Field): String? {
-  if (field.defaultValue == null) {
+
+  if (!field.defaultValue.isAbsent) {
     return null
   }
 
-  if (field.shouldDefaultToNull) {
+  if (field.defaultValue.isNullLiteral) {
     return "null"
   }
 
   return quoteTypeForJVMLiterals(field.type.base)
-    .wrap(field.defaultValue)
+    .wrap(field.defaultValue.literal.toString())
 }
 
 //TODO: document me
