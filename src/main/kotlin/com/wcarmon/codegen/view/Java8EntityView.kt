@@ -162,6 +162,30 @@ class Java8EntityView(
       }
   }
 
+  val validatedFields =
+    entity.sortedFieldsWithIdsFirst
+      .filter {
+        it.validationConfig.hasValidation
+            // For Java we need validation to enforce null safety
+            || !it.type.nullable
+      }
+
+  val validationExpressions: String by lazy {
+
+    validatedFields.map { field ->
+      FieldValidationExpressions(
+        fieldName = field.name,
+        type = field.type,
+        validationConfig = field.validationConfig,
+        validationSeparator = "\n"
+      )
+        .render(renderConfig.doubleIndented)
+    }
+      .filter { it.isNotBlank() }
+      .joinToString(
+        separator = "\n\n",
+      )
+  }
 
   fun methodArgsForIdFields(qualified: Boolean) =
     commaSeparatedJavaMethodArgs(entity.idFields, qualified)

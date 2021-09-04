@@ -67,16 +67,6 @@ class Java8FieldView(
 //      }
   }
 
-  val validationExpressions: String by lazy {
-
-    FieldValidationExpressions(
-      fieldName = field.name,
-      type = field.type,
-      validationConfig = field.validationConfig,
-    )
-      .render(renderConfig)
-  }
-
   //TODO: convert to fun,
   //    accept template placeholder replacement here
   //    rename
@@ -172,7 +162,6 @@ class Java8FieldView(
       idFields = idFields,
       targetLanguage = targetLanguage,
     )
-
 
   // GOTCHA: Only invoke on collection types
   fun newCollectionExpression() = newJavaCollectionExpression(field.type)

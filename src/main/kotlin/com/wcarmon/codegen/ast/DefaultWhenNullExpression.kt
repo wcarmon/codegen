@@ -18,19 +18,27 @@ data class DefaultWhenNullExpression(
 
   override val expressionName: String = DefaultWhenNullExpression::class.java.simpleName
 
-  override fun renderWithoutDebugComments(config: RenderConfig) = when (config.targetLanguage) {
-    GOLANG_1_7,
-    -> handleGolang(config)
+  override fun renderWithoutDebugComments(config: RenderConfig): String {
 
-    JAVA_08,
-    JAVA_11,
-    JAVA_17,
-    -> handleJava(config)
+    val renderedDefault = defaultValueExpression.render(config)
+    check(renderedDefault.isNotBlank()) {
+      "${DefaultWhenNullExpression::class.java.simpleName} only useful when defaultValue.isPresent"
+    }
 
-    KOTLIN_JVM_1_4,
-    -> handleKotlin(config)
+    return when (config.targetLanguage) {
+      GOLANG_1_7,
+      -> handleGolang(config)
 
-    else -> TODO("handle default-when-null for targetLanguage=${config.targetLanguage}")
+      JAVA_08,
+      JAVA_11,
+      JAVA_17,
+      -> handleJava(config)
+
+      KOTLIN_JVM_1_4,
+      -> handleKotlin(config)
+
+      else -> TODO("handle default-when-null for targetLanguage=${config.targetLanguage}")
+    }
   }
 
   private fun handleGolang(config: RenderConfig): String {

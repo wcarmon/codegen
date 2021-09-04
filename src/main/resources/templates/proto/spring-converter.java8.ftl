@@ -21,10 +21,10 @@ public final class SpringConverters {
 
 <#list entities as entity>
   public static final Converter<${entity.name.upperCamel}, ${entity.name.upperCamel}Proto> ${entity.name.upperSnake}_TO_PROTO =
-    ProtoPojoConversionUtils::toProto;
+    ProtoMappers::toProto;
 
   public static final Converter<${entity.name.upperCamel}Proto, ${entity.name.upperCamel}> PROTO_TO_${entity.name.upperSnake} =
-      ProtoPojoConversionUtils::fromProto;
+    ProtoMappers::fromProto;
 
 </#list>
 }

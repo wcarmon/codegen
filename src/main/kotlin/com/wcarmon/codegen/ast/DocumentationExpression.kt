@@ -50,9 +50,9 @@ data class DocumentationExpression(
     }
 
     return parts.joinToString(
-      postfix = "\n*/",
-      prefix = "/**\n",
+      prefix = "${config.lineIndentation}/**\n",
       separator = "\n ",
+      postfix = "\n${config.lineIndentation}*/",
     ) {
       "${config.lineIndentation} * $it"
     }
@@ -65,9 +65,9 @@ data class DocumentationExpression(
     }
 
     return parts.joinToString(
-      postfix = "\n*/",
-      prefix = "/**\n",
+      prefix = "${config.lineIndentation}/**\n",
       separator = "\n ",
+      postfix = "\n*/",
     ) {
       "${config.lineIndentation} * $it"
     }

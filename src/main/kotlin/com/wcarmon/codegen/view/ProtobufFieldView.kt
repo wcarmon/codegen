@@ -3,6 +3,7 @@ package com.wcarmon.codegen.view
 import com.wcarmon.codegen.ast.RenderConfig
 import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.TargetLanguage
+import com.wcarmon.codegen.util.effectiveProtobufType
 
 /**
  * Protobuf related convenience methods for a [Field]
@@ -27,4 +28,8 @@ class ProtobufFieldView(
     targetLanguage = targetLanguage,
     terminate = true,
   )
-}
+
+  val typeLiteral: String by lazy {
+    effectiveProtobufType(field)
+  }
+  }

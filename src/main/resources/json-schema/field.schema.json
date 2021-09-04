@@ -11,7 +11,15 @@
       "$ref": "default-value.schema.json"
     },
     "documentation": {
-      "type": "string"
+      "maxItems": 100,
+      "minItems": 0,
+      "items": {
+        "maxLength": 200,
+        "minLength": 0
+        "type": "string"
+      },
+      "type": "array",
+      "uniqueItems": false
     },
     "enumType": {
       "type": "boolean"

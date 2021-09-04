@@ -50,16 +50,6 @@ class KotlinFieldView(
 
   val typeLiteral: String = getKotlinTypeLiteral(field.type, true)
 
-  val validationExpressions: String by lazy {
-
-    FieldValidationExpressions(
-      fieldName = field.name,
-      type = field.type,
-      validationConfig = field.validationConfig,
-    )
-      .render(renderConfig)
-  }
-
   //TODO: test this on types that are already unqualified
   val unqualifiedType = getKotlinTypeLiteral(field.type, false)
 

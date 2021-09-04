@@ -18,6 +18,7 @@ ${entity.java8View.fieldDeclarations}
 
   private ${entity.name.upperCamel} (${entity.name.upperCamel}Builder builder) {
     <#list entity.sortedFields as field>
+      <#-- TODO: use [FieldReadExpression] on the right side of assignment -->
       <#if field.collection>
       this.${field.name.lowerCamel} = ${field.java8View.unmodifiableCollectionMethod}(builder.${field.name.lowerCamel});
       <#else>
@@ -25,7 +26,7 @@ ${entity.java8View.fieldDeclarations}
       </#if>
     </#list>
 
-    <#list entity.validatedFields as field>${field.java8View.validationExpressions}</#list>
+    ${entity.java8View.validationExpressions}
   }
 
   @Override

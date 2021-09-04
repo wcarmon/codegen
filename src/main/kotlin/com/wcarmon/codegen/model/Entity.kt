@@ -190,12 +190,4 @@ data class Entity(
 
   val sortedFieldsWithIdsFirst =
     idFields + nonIdFields
-
-  val validatedFields =
-    sortedFieldsWithIdsFirst
-      .filter {
-        it.validationConfig.hasValidation
-            // For Java we need validation to enforce null safety
-            || !it.type.nullable
-      }
 }

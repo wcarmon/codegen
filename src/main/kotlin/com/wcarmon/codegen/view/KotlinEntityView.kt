@@ -132,7 +132,7 @@ class KotlinEntityView(
         )
 
         val wrapMe =
-          if (!field.type.nullable) {
+          if (!field.type.nullable || field.defaultValue.isAbsent) {
             read
 
           } else {
@@ -176,6 +176,28 @@ class KotlinEntityView(
       }
   }
 
+  val validatedFields =
+    entity.sortedFieldsWithIdsFirst
+      .filter {
+        it.validationConfig.hasValidation
+      }
+
+  val validationExpressions: String by lazy {
+
+    validatedFields.map { field ->
+      FieldValidationExpressions(
+        fieldName = field.name,
+        type = field.type,
+        validationConfig = field.validationConfig,
+        validationSeparator = "\n"
+      )
+        .render(renderConfig.doubleIndented)
+    }
+      .filter { it.isNotBlank() }
+      .joinToString(
+        separator = "\n\n",
+      )
+  }
 
   fun methodArgsForIdFields(qualified: Boolean) =
     kotlinMethodArgsForFields(entity.idFields, qualified)

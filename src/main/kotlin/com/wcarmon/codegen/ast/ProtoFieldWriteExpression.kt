@@ -24,6 +24,8 @@ data class ProtoFieldWriteExpression(
    * eg. addAllFoo( myCollectionSerializer(entity.getFoo()) )
    * eg. setFoo( entity.foo!! )
    * eg. setFoo( entity.getFoo() );
+   * eg. setFoo( entity.getFoo() == null ? "" : entity.getFoo() );  // java
+   * eg. setFoo( entity.getFoo() ?: "" )  // kotlin
    * eg. setFoo( entity.getFoo().toString() );
    * eg. setFoo( mySerializer(entity.foo) )
    */

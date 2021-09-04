@@ -12,12 +12,18 @@ import com.wcarmon.codegen.model.TargetLanguage.*
  * May or may not invoke a method (depends on the language)
  *
  * Uses appropriate name style for target language
- * Allows prefix (eg. "entity.getFoo()")
- * Allows (zero arg) getter or direct access (eg. "entity.foo" or "entity.getFoo()" )
+ *
+ * Examples:
+ *  - foo
+ *  - getFoo()
+ *  - x.foo
+ *  - x.Foo
+ *  - x.GetFoo()
+ *  - x.getFoo()
  *
  * See also [MethodInvokeExpression]
  *
- * This is NOT related to Serde, see [WrappedExpression]
+ * This is NOT related to Serde, see [WrappedExpression] or [WrapWithSerdeExpression]
  */
 data class FieldReadExpression(
   private val fieldName: Name,

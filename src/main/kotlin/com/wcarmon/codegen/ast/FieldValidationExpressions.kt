@@ -8,12 +8,14 @@ import com.wcarmon.codegen.model.TargetLanguage.*
 import com.wcarmon.codegen.util.isPrimitive
 
 /**
- * Builds multiple expressions for the field
+ * Builds 1 or more expressions for the field.
+ * Validations are performed in a safe order.
  */
 data class FieldValidationExpressions(
   val fieldName: Name,
   val type: LogicalFieldType,
   val validationConfig: FieldValidation,
+  val validationSeparator: String = "\n",
 ) : Expression {
 
   override val expressionName: String = FieldValidationExpressions::class.java.simpleName
@@ -28,114 +30,107 @@ data class FieldValidationExpressions(
       KOTLIN_JVM_1_4 -> handleKotlin(config)
 
       else -> TODO()
-    }
+    }.trimEnd()
 
-  //TODO: use the indentation
+  //TODO: fix indentation on multi-line validations
   private fun handleJava(config: RenderConfig): String {
 
-    val output = StringBuilder(2048)
+    val output = mutableListOf<String>()
 
     // GOTCHA: Java type system doesn't enforce null safety, so we do it manually
     if (!isPrimitive(type) && !type.nullable) {
-      output.append("""
-        |Objects.requireNonNull(${fieldName.lowerCamel}, "'${fieldName.lowerCamel}' cannot be null");
-        """.trimMargin())
+      output +=
+        """Objects.requireNonNull(${fieldName.lowerCamel}, "'${fieldName.lowerCamel}' cannot be null");"""
     }
 
     if (!validationConfig.hasValidation) {
-      return output.toString()
+      return output.joinToString(
+        separator = validationSeparator) {
+        "${config.lineIndentation}$it"
+      }
     }
 
     //TODO: Smart trim (only) Strings with StringUtils.abbreviate(x, 128) here
     if (validationConfig.maxSize != null) {
       val operator = if (type.base.isCollection) "size()" else "length()"
-      output.append("""
+      output += """
         |Preconditions.checkArgument(${fieldName.lowerCamel}.${operator} <= ${validationConfig.maxSize},
-        |  "'${fieldName.lowerCamel}' is too large: maxSize=${validationConfig.maxSize}"); 
-        | 
-        """.trimMargin())
+        |  "'${fieldName.lowerCamel}' is too large: maxSize=${validationConfig.maxSize}");         
+        """.trimMargin()
     }
 
     if (validationConfig.minSize != null) {
       val operator = if (type.base.isCollection) "size()" else "length()"
 
-      output.append("""
+      output += """
         |Preconditions.checkArgument(${fieldName.lowerCamel}.${operator} <= ${validationConfig.minSize}
-        |  "'${fieldName.lowerCamel}' is too small: minSize=${validationConfig.minSize}"); 
-        | 
-        """.trimMargin())
+        |  "'${fieldName.lowerCamel}' is too small: minSize=${validationConfig.minSize}");         
+        """.trimMargin()
     }
 
     if (validationConfig.requireNotBlank != null && validationConfig.requireNotBlank) {
-      output.append("""
+      output += """
         |Preconditions.checkArgument(
         |  StringUtils.isNotBlank(${fieldName.lowerCamel}), "'${fieldName.lowerCamel}' is required and blank");
-        """.trimMargin())
+        """.trimMargin()
     }
 
     if (validationConfig.requireTrimmed != null && validationConfig.requireTrimmed) {
-      output.append("""
+      output += """
         |Preconditions.checkArgument(
         |  Objects.equals(
         |    StringUtils.trim(${fieldName.lowerCamel}),
         |    ${fieldName.lowerCamel}),  
         |  "'${fieldName.lowerCamel}' must be trimmed");
-        """.trimMargin())
+        """.trimMargin()
     }
 
     if (validationConfig.requireLowerCase != null && validationConfig.requireLowerCase) {
-      output.append("""
+      output += """
         |Preconditions.checkArgument(
         |  ${fieldName.lowerCamel}.toLowerCase() == ${fieldName.lowerCamel},
         |  "'${fieldName.lowerCamel}' must be lower case: value=$${fieldName.lowerCamel});"
-        |
-        """.trimMargin())
+        """.trimMargin()
     }
 
     if (validationConfig.requireUpperCase != null && validationConfig.requireUpperCase) {
-      output.append("""
+      output += """
         |Preconditions.checkArgument(
         |  ${fieldName.lowerCamel}.toUpperCase() == ${fieldName.lowerCamel},
         |  "'${fieldName.lowerCamel}' must be upper case: value=$${fieldName.lowerCamel});"
-        |
-        """.trimMargin())
+        """.trimMargin()
     }
 
     if (validationConfig.maxValue != null) {
-      output.append("""
+      output += """
         |Preconditions.checkArgument(
         |  ${fieldName.lowerCamel} <= ${validationConfig.maxValue},
-        |  "'${fieldName.lowerCamel}' is too large: maxValue=${validationConfig.maxValue}, value=$${fieldName.lowerCamel});"
-        |
-        """.trimMargin())
+        |  "'${fieldName.lowerCamel}' is too large: maxValue=${validationConfig.maxValue}, value=" + ${fieldName.lowerCamel});       
+        """.trimMargin()
     }
 
     if (validationConfig.minValue != null) {
-      output.append("""
+      output += """
         |Preconditions.checkArgument(
         |  ${fieldName.lowerCamel} >= ${validationConfig.minValue},
-        |  "'${fieldName.lowerCamel}' is too large: minValue=${validationConfig.minValue}, value=$${fieldName.lowerCamel});"
-        |}
-        |
-        """.trimMargin())
+        |  "'${fieldName.lowerCamel}' is too small: minValue=${validationConfig.minValue}, value=" + ${fieldName.lowerCamel});        
+        """.trimMargin()
     }
 
     if (validationConfig.after != null) {
-      output.append("""
+      output += """
         |Preconditions.checkArgument(
         |  ${fieldName.lowerCamel}.isAfter(${validationConfig.after}),
         |  "'${fieldName.lowerCamel}' must be after ${validationConfig.after}, value=$${fieldName.lowerCamel});"
-        |
-        """.trimMargin())
+        """.trimMargin()
     }
 
     if (validationConfig.before != null) {
-      output.append("""
+      output += """
         |Preconditions.checkArgument(
         |  ${fieldName.lowerCamel}.isBefore(${validationConfig.before}),
         |  "'${fieldName.lowerCamel}' must be before ${validationConfig.before}, value=$${fieldName.lowerCamel});"
-        |
-        """.trimMargin())
+        """.trimMargin()
     }
 
     if (type.base == PATH && validationConfig.fileConstraint != null) {
@@ -146,107 +141,100 @@ data class FieldValidationExpressions(
       TODO("add validation for validationConfig.requireMatchesRegex=${validationConfig.requireMatchesRegex}")
     }
 
-    return output.toString()
+    check(output.none { it.isBlank() })
+    return output.joinToString(
+      separator = validationSeparator) {
+      "${config.lineIndentation}$it"
+    }
   }
 
-  //TODO: use the indentation
   private fun handleKotlin(config: RenderConfig): String {
 
     if (!validationConfig.hasValidation) {
       return ""
     }
 
-    val output = StringBuilder(2048)
+    val output = mutableListOf<String>()
 
     //TODO: Smart trim with ellipse here
     if (validationConfig.maxSize != null) {
-      output.append("""
+      output += """
         |require(${fieldName.lowerCamel}.length <= ${validationConfig.maxSize}){
         |  "'${fieldName.lowerCamel}' is too long: maxSize=${validationConfig.maxSize}, value=$${fieldName.lowerCamel}"
         |}
-        |
-        """.trimMargin())
+        """.trimMargin()
     }
 
     if (validationConfig.minSize != null) {
-      output.append("""
+      output += """
         |require(${fieldName.lowerCamel}.length <= ${validationConfig.minSize}) {
         |  "'${fieldName.lowerCamel}' is too short: maxSize=${validationConfig.minSize}, value=$${fieldName.lowerCamel}"
         |}
-        |
-        """.trimMargin())
+        """.trimMargin()
     }
 
     if (validationConfig.requireNotBlank != null && validationConfig.requireNotBlank) {
-      output.append("""
+      output += """
         |require(${fieldName.lowerCamel}.isNotBlank()) {
         |  "'${fieldName.lowerCamel}' is required and blank"
         |}
-        |
-        """.trimMargin())
+        """.trimMargin()
     }
 
     if (validationConfig.requireTrimmed != null && validationConfig.requireTrimmed) {
-      output.append("""
+      output += """
         |require(${fieldName.lowerCamel}.trim() == ${fieldName.lowerCamel}) {
         |  "'${fieldName.lowerCamel}' must be trimmed"
         |}
-        |
-        """.trimMargin())
+        """.trimMargin()
     }
 
     if (validationConfig.requireLowerCase != null && validationConfig.requireLowerCase) {
-      output.append("""
+      output += """
         |require(${fieldName.lowerCamel}.lowercase() == ${fieldName.lowerCamel}) {
         |  "'${fieldName.lowerCamel}' must be lower case: value=$${fieldName.lowerCamel}"
         |}
-        |
-        """.trimMargin())
+        """.trimMargin()
     }
 
     if (validationConfig.requireUpperCase != null && validationConfig.requireUpperCase) {
-      output.append("""
+      output += """
         |require(${fieldName.lowerCamel}.uppercase() == ${fieldName.lowerCamel}) {
         |  "'${fieldName.lowerCamel}' must be upper case: value=$${fieldName.lowerCamel}"
         |}
-        |
-        """.trimMargin())
+        """.trimMargin()
     }
 
     if (validationConfig.maxValue != null) {
-      output.append("""
+      output += """
         |require(${fieldName.lowerCamel} <= ${validationConfig.maxValue}) {
         |  "'${fieldName.lowerCamel}' is too large: maxValue=${validationConfig.maxValue}, value=$${fieldName.lowerCamel}"
         |}
-        |
-        """.trimMargin())
+        """.trimMargin()
     }
 
     if (validationConfig.minValue != null) {
-      output.append("""
+      output += """
         |require(${fieldName.lowerCamel} >= ${validationConfig.minValue}) {
-        |  "'${fieldName.lowerCamel}' is too large: minValue=${validationConfig.minValue}, value=$${fieldName.lowerCamel}"
+        |  "'${fieldName.lowerCamel}' is too small: minValue=${validationConfig.minValue}, value=$${fieldName.lowerCamel}"
         |}
-        |
-        """.trimMargin())
+        """.trimMargin()
     }
 
     if (validationConfig.after != null) {
-      output.append("""
+      output += """
         |require(${fieldName.lowerCamel}.isAfter(${validationConfig.after})) {
         |  "'${fieldName.lowerCamel}' must be after ${validationConfig.after}, value=$${fieldName.lowerCamel}"
         |}
-        |
-        """.trimMargin())
+        """.trimMargin()
     }
 
     if (validationConfig.before != null) {
-      output.append("""
+      output += """
         |require(${fieldName.lowerCamel}.isBefore(${validationConfig.before})) {
         |  "'${fieldName.lowerCamel}' must be before ${validationConfig.before}, value=$${fieldName.lowerCamel}"
         |}
-        |
-        """.trimMargin())
+        """.trimMargin()
     }
 
     if (type.base == PATH && validationConfig.fileConstraint != null) {
@@ -257,6 +245,10 @@ data class FieldValidationExpressions(
       TODO("add validation for validationConfig.requireMatchesRegex=${validationConfig.requireMatchesRegex}")
     }
 
-    return output.toString()
+    check(output.none { it.isBlank() })
+    return output.joinToString(
+      separator = validationSeparator) {
+      "${config.lineIndentation}$it"
+    }
   }
 }

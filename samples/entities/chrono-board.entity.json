@@ -137,13 +137,21 @@
     },
     {
       "defaultValue": {
-        "value": null
+        "value": -1
       },
+      "documentation": [
+        "Non-negative.  Zero is the first pinned item",
+        "Non-consecutive is ok",
+        "Negative numbers indicate unpinned"
+      ],
       "name": "pinnedPosition",
-      "nullable": true,
+      "nullable": false,
       "precision": 6,
       "scale": 0,
-      "type": "java.lang.Integer"
+      "type": "java.lang.Integer",
+      "validation": {
+        "minValue": -1
+      }
     },
     {
       "name": "tags",

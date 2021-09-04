@@ -47,6 +47,7 @@ data class FieldDeclarationExpression(
 
     val doc = documentation.render(config.unterminated)
     if (doc.isNotBlank()) {
+      output.append("\n")
       output.append(doc)
       output.append("\n")
     }

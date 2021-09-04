@@ -30,6 +30,6 @@ data class ${entity.name.upperCamel}(
 ) {
 
   init {
-    <#list entity.validatedFields as field>${field.kotlinView.validationExpressions}</#list>
+${entity.kotlinView.validationExpressions}
   }
 }
