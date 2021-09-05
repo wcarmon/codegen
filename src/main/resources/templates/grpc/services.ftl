@@ -1,6 +1,26 @@
 <#--
 Generates proto file
 To make java classes, use: ./gradlew generateProto
+
+or:
+./gradlew clean build generateProto -x detekt -x test -q;
+
+-------------------------------------------------------
+Example of using the stub:
+```
+  val channelBuilder =
+    ManagedChannelBuilder.forAddress("localhost", 8080).usePlaintext();
+
+  val channel = channelBuilder.build()
+
+  val serviceStub = FooServiceGrpc.newFutureStub(channel)
+
+  val request = CreateFooRequest
+    .newBuilder()
+    .build()
+
+  val responseFuture = serviceStub.createFoo(request)
+```
 -->
 syntax = "proto3";
 ${request.jvmView.templateDebugInfo}
@@ -28,20 +48,23 @@ service ${entity.name.upperCamel}Service {
 </#if>
 <#-- -->
 <#if entity.canCheckForExistence>
-<#-- exists -->
+  rpc ${entity.name.upperCamel}Exists(${entity.name.upperCamel}ExistsRequest) returns (${entity.name.upperCamel}ExistsResponse) {}
 </#if>
 <#-- -->
 <#if entity.canFindById>
-<#-- FindbyId -->
+  rpc FindById${entity.name.upperCamel}(FindById${entity.name.upperCamel}Request) returns (FindById${entity.name.upperCamel}Response) {}
 </#if>
 <#-- -->
 <#if entity.canList>
-<#-- list -->
+  rpc List${entity.name.upperCamel}(List${entity.name.upperCamel}Request) returns (List${entity.name.upperCamel}Response) {}
 </#if>
 <#-- -->
 <#if entity.canUpdate>
-<#-- Patch -->
-<#-- Update -->
+  rpc Update${entity.name.upperCamel}(Update${entity.name.upperCamel}Request) returns (Update${entity.name.upperCamel}Response) {}
+
+  <#list entity.nonIdFields as field>
+  rpc Set${field.name.upperCamel}(Set${entity.name.upperCamel}${field.name.upperCamel}Request) returns (PatchResponse) {}
+  </#list>
 <#-- TODO: upsert -->
 </#if>
 }
