@@ -1,15 +1,9 @@
 package com.wcarmon.codegen.view
 
-import com.wcarmon.codegen.ast.RenderConfig
-import com.wcarmon.codegen.model.Field
-import com.wcarmon.codegen.model.JDBCColumnIndex
-import com.wcarmon.codegen.model.PreparedStatementBuilderConfig
-import com.wcarmon.codegen.model.TargetLanguage
+import com.wcarmon.codegen.ast.*
+import com.wcarmon.codegen.model.*
 import com.wcarmon.codegen.model.TargetLanguage.SQL_POSTGRESQL
-import com.wcarmon.codegen.util.buildPreparedStatementSetter
-import com.wcarmon.codegen.util.buildPreparedStatementSetters
-import com.wcarmon.codegen.util.postgresColumnDefinition
-import com.wcarmon.codegen.util.sqliteColumnDefinition
+import com.wcarmon.codegen.util.*
 
 /**
  * RDBMS related convenience methods for a [Field]
@@ -37,28 +31,69 @@ class RDBMSColumnView(
    */
   val sqliteColumnDefinition = sqliteColumnDefinition(field)
 
+  /**
+   * Build & Render [PreparedStatement] setters for updating 1 field
+   * Include setting the update timestamp when [fieldForUpdateTimestamp] available
+   *
+   * @param idFields - for the WHERE clause
+   * @param targetLanguage - for rendering
+   */
   fun updateFieldPreparedStatementSetterStatements(
     idFields: List<Field>,
     targetLanguage: TargetLanguage,
+    fieldForUpdateTimestamp: Field? = null,
     psConfig: PreparedStatementBuilderConfig = PreparedStatementBuilderConfig(),
   ): String {
 
-    val columnSetterStatement = buildPreparedStatementSetter(
-      columnIndex = JDBCColumnIndex.FIRST,
+    require(field.canUpdate) { "field must be updatable: $field" }
+    require(idFields.isNotEmpty()) { "id fields required for update: $field" }
+
+    val setterExpressions = mutableListOf<Expression>()
+    var currentColumnIndex = JDBCColumnIndex.FIRST
+
+    // -- Add Field setter
+    setterExpressions += buildPreparedStatementSetter(
+      columnIndex = currentColumnIndex,
       field = field,
       psConfig = psConfig,
     )
 
-    val pk = buildPreparedStatementSetters(
+    currentColumnIndex = currentColumnIndex.next()
+
+    // -- (Conditionally) Add setter for updateTimestamp
+    if (!field.isUpdatedTimestamp && fieldForUpdateTimestamp != null) {
+
+      val wrappedFieldRead = WrapWithSerdeExpression(
+        serde = effectiveJDBCSerde(fieldForUpdateTimestamp),
+        serdeMode = SerdeMode.SERIALIZE,
+        wrapped = RawLiteralExpression("clock.instant()"),
+      )
+
+      setterExpressions += PreparedStatementSetNonNullExpression(
+        columnIndex = currentColumnIndex,
+        fieldReadExpression = wrappedFieldRead,
+        setterMethod = defaultPreparedStatementSetterMethod(fieldForUpdateTimestamp.effectiveBaseType),
+        preparedStatementIdentifierExpression = psConfig.preparedStatementIdentifierExpression,
+        // TODO: termination
+      )
+
+      currentColumnIndex = currentColumnIndex.next()
+    }
+
+    // -- PK setter (last, see WHERE clause)
+    setterExpressions += buildPreparedStatementSetters(
       psConfig = psConfig,
       fields = idFields,
-      firstIndex = JDBCColumnIndex(2),
+      firstIndex = currentColumnIndex,
     )
 
-    return (listOf(columnSetterStatement) + pk)
+    // -- Combine the setters, one on each line
+    return setterExpressions
       .joinToString(separator = "\n") {
         it.render(
-          renderConfig.copy(targetLanguage = targetLanguage))
+          renderConfig
+            .copy(targetLanguage = targetLanguage)
+            .terminated)
       }
   }
 }

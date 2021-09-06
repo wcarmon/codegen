@@ -10,6 +10,7 @@
     "com.wcarmon.chrono.model00.*",
     "com.wcarmon.chrono.sql00.SQLQueries",
     "java.sql.Types",
+    "java.time.Clock",
     "java.util.Collection",
     "java.util.Collections",
     "java.util.List",

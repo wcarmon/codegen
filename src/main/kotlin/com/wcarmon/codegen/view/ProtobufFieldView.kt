@@ -32,4 +32,4 @@ class ProtobufFieldView(
   val typeLiteral: String by lazy {
     effectiveProtobufType(field)
   }
-  }
+}

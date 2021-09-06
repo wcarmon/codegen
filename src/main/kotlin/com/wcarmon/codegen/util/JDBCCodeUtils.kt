@@ -31,6 +31,13 @@ fun buildPreparedStatementSetters(
     )
   }
 
+/**
+ * Handles null able fields, See [PreparedStatementSetExpression]
+ * Wraps read in serde, See [WrapWithSerdeExpression]
+ * Handles statement termination (when applicable)
+ *
+ * @return [PreparedStatementSetExpression]
+ */
 fun buildPreparedStatementSetter(
   columnIndex: JDBCColumnIndex,
   field: Field,
@@ -38,7 +45,7 @@ fun buildPreparedStatementSetter(
 ): PreparedStatementSetExpression {
 
   val fieldReadExpression = FieldReadExpression(
-    assertNonNull = false, //currentField.type.nullable && cfg.allowFieldNonNullAssertion,
+    assertNonNull = false,
     fieldName = field.name,
     fieldOwner = psConfig.fieldOwner,
     overrideFieldReadMode = psConfig.fieldReadMode,

@@ -42,6 +42,8 @@ data class Field(
    */
   val canUpdate: Boolean = true,
 
+  val canLog: Boolean = true,
+
   val defaultValue: DefaultValue = DefaultValue(),
 
   /** No leading comment markers (no leading slashes, no leading asterisk) */
@@ -67,8 +69,9 @@ data class Field(
     @JvmStatic
     @JsonCreator
     fun parse(
-      @JsonProperty("defaultValue") defaultValue: DefaultValue?,
+      @JsonProperty("canLog") canLog: Boolean?,
       @JsonProperty("canUpdate") canUpdate: Boolean?,
+      @JsonProperty("defaultValue") defaultValue: DefaultValue?,
       @JsonProperty("documentation") documentation: Iterable<String>?,
       @JsonProperty("enumType") enumType: Boolean?,
       @JsonProperty("jvm") jvmFieldConfig: JVMFieldConfig?,
@@ -92,6 +95,7 @@ data class Field(
       //TODO: signed should override whatever is specified on type literal
 
       return Field(
+        canLog = canLog ?: true,
         canUpdate = canUpdate ?: true,
         defaultValue = defaultValue ?: DefaultValue(),
         documentation = documentation?.toList() ?: listOf(),

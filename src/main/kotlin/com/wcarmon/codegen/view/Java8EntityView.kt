@@ -187,6 +187,46 @@ class Java8EntityView(
       )
   }
 
+  //TODO: indentation
+  fun patchQueries(): String {
+    val indentation = "  "
+
+    if (!entity.hasIdFields || !entity.hasNonIdFields) {
+      // need ID fields for WHERE clause
+      return ""
+    }
+
+    if (!entity.canUpdate) {
+      return ""
+    }
+
+    return entity.nonIdFields
+      .map { field ->
+        val lines = mutableListOf<String>()
+
+        lines += "public static final String PATCH__${entity.name.upperSnake}__${field.name.upperSnake} ="
+        lines += """${indentation}"UPDATE \"${entity.name.lowerSnake}\" " +"""
+        lines += """${indentation}"SET ${field.name.lowerSnake}=? " + """
+
+        if (entity.updatedTimestampFieldName != null && !field.isUpdatedTimestamp) {
+          lines += """${indentation}"AND ${entity.updatedTimestampFieldName.lowerSnake}=? " + """
+        }
+
+        lines += """${indentation}"WHERE ${entity.rdbmsView.primaryKeyWhereClause}";"""
+
+        lines.joinToString(
+          separator = "\n"
+        ) {
+          "$indentation$it"
+        }
+
+      }.joinToString(
+        separator = "\n\n"
+      ) {
+        "$indentation$it"
+      }
+  }
+
   fun methodArgsForIdFields(qualified: Boolean) =
     commaSeparatedJavaMethodArgs(entity.idFields, qualified)
 }

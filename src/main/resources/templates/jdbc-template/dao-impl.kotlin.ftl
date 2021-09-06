@@ -16,6 +16,9 @@ ${request.kotlinView.serializeImports(
  */
 @Suppress("MagicNumber", "TooManyFunctions") // column & placeholder numbers
 class ${entity.name.upperCamel}DAOImpl(
+  /** To set timestamp on patch methods */
+  private val clock: Clock,
+
   private val jdbcTemplate: JdbcTemplate,
 
   <#if entity.jvmView.requiresObjectWriter>
@@ -111,7 +114,9 @@ class ${entity.name.upperCamel}DAOImpl(
       jdbcTemplate.update(
         PATCH__${entity.name.upperSnake}__${field.name.upperSnake}
       ) { ps ->
-        ${field.kotlinView.updateFieldPreparedStatementSetterStatements(entity.idFields)}
+        ${field.kotlinView.updateFieldPreparedStatementSetterStatements(
+          entity.idFields,
+          entity.updatedTimestampField)}
       }
     }
 

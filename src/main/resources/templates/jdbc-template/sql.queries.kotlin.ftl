@@ -22,10 +22,10 @@ ${request.jvmView.templateDebugInfo}
    */
   val SELECT_BY_PK__${entity.name.upperSnake} =
     """
-    SELECT ${entity.rdbmsView.commaSeparatedColumns}
-    FROM "${entity.name.lowerSnake}"
-    WHERE ${entity.rdbmsView.primaryKeyWhereClause}"
-    """.trimIndent()
+    |SELECT ${entity.rdbmsView.commaSeparatedColumns}
+    |FROM "${entity.name.lowerSnake}"
+    |WHERE ${entity.rdbmsView.primaryKeyWhereClause}"
+    """.trimMargin()
 
   /**
    * Test for existence of 1-row
@@ -34,10 +34,10 @@ ${request.jvmView.templateDebugInfo}
    */
   val ROW_EXISTS__${entity.name.upperSnake} =
     """
-    SELECT COUNT(*)
-    FROM "${entity.name.lowerSnake}"
-    WHERE ${entity.rdbmsView.primaryKeyWhereClause}
-    """.trimIndent()
+    |SELECT COUNT(*)
+    |FROM "${entity.name.lowerSnake}"
+    |WHERE ${entity.rdbmsView.primaryKeyWhereClause}
+    """.trimMargin()
 
   /**
    * Update 1-row
@@ -47,11 +47,11 @@ ${request.jvmView.templateDebugInfo}
    */
   val UPDATE__${entity.name.upperSnake} =
     """
-    UPDATE "${entity.name.lowerSnake}"
-    SET
-      ${entity.rdbmsView.updateSetClause}
-    WHERE ${entity.rdbmsView.primaryKeyWhereClause}
-    """.trimIndent()
+    |UPDATE "${entity.name.lowerSnake}"
+    |SET
+    |  ${entity.rdbmsView.updateSetClause}
+    |WHERE ${entity.rdbmsView.primaryKeyWhereClause}
+    """.trimMargin()
 
   /**
    * Delete 1-row
@@ -60,9 +60,9 @@ ${request.jvmView.templateDebugInfo}
    */
   val DELETE__${entity.name.upperSnake} =
     """
-    DELETE FROM "${entity.name.lowerSnake}"
-    WHERE ${entity.rdbmsView.primaryKeyWhereClause}
-    """.trimIndent()
+    |DELETE FROM "${entity.name.lowerSnake}"
+    |WHERE ${entity.rdbmsView.primaryKeyWhereClause}
+    """.trimMargin()
   </#if>
 
   /**
@@ -72,9 +72,9 @@ ${request.jvmView.templateDebugInfo}
    */
   val SELECT_ALL__${entity.name.upperSnake} =
     """
-    SELECT ${entity.rdbmsView.commaSeparatedColumns}
-    FROM "${entity.name.lowerSnake}"
-    """.trimIndent()
+    |SELECT ${entity.rdbmsView.commaSeparatedColumns}
+    |FROM "${entity.name.lowerSnake}"
+    """.trimMargin()
 
   /**
    * Insert 1-row
@@ -84,22 +84,12 @@ ${request.jvmView.templateDebugInfo}
    */
   val INSERT__${entity.name.upperSnake} =
     """
-    INSERT INTO "${entity.name.lowerSnake}" (
-      ${entity.rdbmsView.commaSeparatedColumns}
-    )
-    VALUES (${entity.rdbmsView.questionMarkStringForInsert})
-    """.trimIndent()
+    |INSERT INTO "${entity.name.lowerSnake}" (
+    |  ${entity.rdbmsView.commaSeparatedColumns}
+    |)
+    |VALUES (${entity.rdbmsView.questionMarkStringForInsert})
+    """.trimMargin()
 
-  <#if entity.hasIdFields>
-    <#list entity.nonIdFields as field>
-    val PATCH__${entity.name.upperSnake}__${field.name.upperSnake} =
-      """
-      UPDATE "${entity.name.lowerSnake}"
-      SET ${field.name.lowerSnake}=?
-      WHERE ${entity.rdbmsView.primaryKeyWhereClause}
-      """.trimIndent()
-
-    </#list>
-  </#if>
+    ${entity.kotlinView.patchQueries()}
 
 </#list>

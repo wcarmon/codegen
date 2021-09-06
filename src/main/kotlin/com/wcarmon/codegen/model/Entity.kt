@@ -190,4 +190,17 @@ data class Entity(
 
   val sortedFieldsWithIdsFirst =
     idFields + nonIdFields
+
+  val updatedTimestampField: Field? by lazy {
+    fields
+      .filter { field ->
+        field.name == updatedTimestampFieldName
+      }
+      .also {
+        check(it.size <= 1) {
+          "Cannot have multiple updateTimestamp fields"
+        }
+      }
+      .firstOrNull()
+  }
 }

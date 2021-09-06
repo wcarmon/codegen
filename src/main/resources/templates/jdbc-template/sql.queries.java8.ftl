@@ -75,14 +75,7 @@ public final class SQLQueries {
     + " (${entity.rdbmsView.commaSeparatedColumns})"
     + " VALUES (${entity.rdbmsView.questionMarkStringForInsert})";
 
-  <#if entity.hasIdFields>
-    <#list entity.nonIdFields as field>
-      public static final String PATCH__${entity.name.upperSnake}__${field.name.upperSnake} =
-        "UPDATE \"${entity.name.lowerSnake}\""
-        + " SET ${field.name.lowerSnake}=?"
-        + " WHERE ${entity.rdbmsView.primaryKeyWhereClause}";
+${entity.java8View.patchQueries()}
 
-    </#list>
-  </#if>
 </#list>
 }

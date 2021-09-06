@@ -18,4 +18,6 @@ data class JDBCColumnIndex(
   }
 
   override fun compareTo(other: JDBCColumnIndex) = this.value.compareTo(other.value)
+
+  fun next(): JDBCColumnIndex = JDBCColumnIndex(value + 1)
 }

@@ -5,11 +5,12 @@
     "file:///home/wcarmon/git-repos/codegen/samples/entities"
   ],
   "extraJVMImports": [
-    "com.wcarmon.chrono.dao30.*",
     "com.fasterxml.jackson.databind.ObjectWriter",
+    "com.wcarmon.chrono.dao30.*",
     "com.wcarmon.chrono.model30.*",
     "com.wcarmon.chrono.sql30.*",
     "java.sql.Types",
+    "java.time.Clock",
     "org.springframework.jdbc.core.JdbcTemplate",
     "org.springframework.jdbc.core.PreparedStatementSetter",
     "org.springframework.jdbc.core.RowMapper"

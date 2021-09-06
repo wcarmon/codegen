@@ -86,10 +86,13 @@ class KotlinFieldView(
 
   fun updateFieldPreparedStatementSetterStatements(
     idFields: List<Field>,
+    fieldForUpdateTimestamp: Field?,
   ) =
     rdbmsView.updateFieldPreparedStatementSetterStatements(
+      fieldForUpdateTimestamp = fieldForUpdateTimestamp,
       idFields = idFields,
-      targetLanguage = targetLanguage)
+      targetLanguage = targetLanguage,
+    )
 
   fun deserializerForTypeParameter(
     typeParameterNumber: Int = 0,

@@ -4,6 +4,10 @@
   "additionalProperties": false,
   "description": "Field, Property, Column, ...",
   "properties": {
+    "canLog": {
+      "description": "for PII, set false",
+      "type": "boolean"
+    },
     "canUpdate": {
       "type": "boolean"
     },
@@ -11,13 +15,13 @@
       "$ref": "default-value.schema.json"
     },
     "documentation": {
-      "maxItems": 100,
-      "minItems": 0,
       "items": {
         "maxLength": 200,
-        "minLength": 0
+        "minLength": 0,
         "type": "string"
       },
+      "maxItems": 100,
+      "minItems": 0,
       "type": "array",
       "uniqueItems": false
     },

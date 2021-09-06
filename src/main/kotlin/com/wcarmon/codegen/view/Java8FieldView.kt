@@ -157,8 +157,10 @@ class Java8FieldView(
 
   fun updateFieldPreparedStatementSetterStatements(
     idFields: List<Field>,
+    fieldForUpdateTimestamp: Field?,
   ): String =
     rdbmsView.updateFieldPreparedStatementSetterStatements(
+      fieldForUpdateTimestamp = fieldForUpdateTimestamp,
       idFields = idFields,
       targetLanguage = targetLanguage,
     )

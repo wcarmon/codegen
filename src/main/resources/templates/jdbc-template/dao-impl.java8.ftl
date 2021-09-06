@@ -19,6 +19,8 @@ ${request.java8View.serializeImports(
  */
 public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upperCamel}DAO {
 
+  /** To set timestamp on patch methods */
+  private final Clock clock;
   private final JdbcTemplate jdbcTemplate;
   <#if entity.jvmView.requiresObjectWriter>
   /** To serialize collection fields */
@@ -27,18 +29,21 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
   private final RowMapper<${entity.name.upperCamel}> rowMapper;
 
   public ${entity.name.upperCamel}DAOImpl(
+    Clock clock,
     JdbcTemplate jdbcTemplate,
     <#if entity.jvmView.requiresObjectWriter>
     ObjectWriter objectWriter,
     </#if>
     RowMapper<${entity.name.upperCamel}> rowMapper) {
 
+    Objects.requireNonNull(clock, "clock is required and null");
     Objects.requireNonNull(jdbcTemplate, "jdbcTemplate is required and null");
     <#if entity.jvmView.requiresObjectWriter>
     Objects.requireNonNull(objectWriter, "objectWriter is required and null");
     </#if>
     Objects.requireNonNull(rowMapper, "rowMapper is required and null");
 
+    this.clock = clock;
     this.jdbcTemplate = jdbcTemplate;
     <#if entity.jvmView.requiresObjectWriter>
     this.objectWriter = objectWriter;
@@ -99,7 +104,7 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
   </#if>
 
   @Override
-  public void create(${request.jvmView.unqualifiedContextClass} context,${entity.name.upperCamel} entity) {
+  public void create(${request.jvmView.unqualifiedContextClass} context, ${entity.name.upperCamel} entity) {
     Objects.requireNonNull(context, "context is required and null.");
     Objects.requireNonNull(entity, "entity is required and null.");
 
@@ -129,7 +134,7 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
   }
 
   @Override
-  public void update(${request.jvmView.unqualifiedContextClass} context,${entity.name.upperCamel} entity) {
+  public void update(${request.jvmView.unqualifiedContextClass} context, ${entity.name.upperCamel} entity) {
     Objects.requireNonNull(context, "context is required and null.");
     Objects.requireNonNull(entity, "entity is required and null.");
 
@@ -175,7 +180,9 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
       SQLQueries.PATCH__${entity.name.upperSnake}__${field.name.upperSnake},
       ps -> {
         try {
-          ${field.java8View.updateFieldPreparedStatementSetterStatements(entity.idFields)}
+          ${field.java8View.updateFieldPreparedStatementSetterStatements(
+            entity.idFields,
+            entity.updatedTimestampField)}
 
         } catch (Exception ex) {
           throw new RuntimeException("Failed to patch ${entity.name.upperCamel}.${field.name.lowerCamel}: " +

@@ -15,11 +15,13 @@ public class DAOImplBeans {
 <#list entities as entity>
   @Bean
   ${entity.name.upperCamel}DAOImpl ${entity.name.lowerCamel}DAOImpl(
+      Clock clock,
       JdbcTemplate jdbcTemplate,
       RowMapper<${entity.name.upperCamel}> rowMapper,
       ObjectWriter objectWriter) {
 
     return new ${entity.name.upperCamel}DAOImpl(
+      clock,
       jdbcTemplate,
       objectWriter,
       rowMapper);
