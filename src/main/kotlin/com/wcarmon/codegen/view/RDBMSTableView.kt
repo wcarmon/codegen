@@ -37,10 +37,6 @@ data class RDBMSTableView(
 
   val updateSetClause: String = commaSeparatedColumnAssignment(entity.nonIdFields)
 
-  val commaSeparatedPrimaryKeyIdentifiers: String by lazy {
-    entity.idFields.joinToString(", ") { it.name.lowerCamel }
-  }
-
   val jdbcSerializedPrimaryKeyFields by lazy {
     commaSeparatedJavaFields(entity.idFields)
   }

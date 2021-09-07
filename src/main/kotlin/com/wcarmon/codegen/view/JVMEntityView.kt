@@ -16,6 +16,9 @@ class JVMEntityView(
   val requiresObjectReader =
     entity.fields.any { it.effectiveBaseType.isCollection }
 
+  val commaSeparatedIDFieldNames: String by lazy {
+    entity.idFields.joinToString(", ") { it.name.lowerCamel }
+  }
 }
 
 

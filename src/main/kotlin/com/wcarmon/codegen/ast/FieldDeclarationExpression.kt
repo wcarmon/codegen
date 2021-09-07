@@ -15,6 +15,7 @@ data class FieldDeclarationExpression(
   private val name: Name,
   private val type: LogicalFieldType,
 
+  private val annotations: Set<AnnotationExpression> = setOf(),
   private val defaultValue: Expression = EmptyExpression,
   private val documentation: DocumentationExpression = DocumentationExpression.EMPTY,
   private val finalityModifier: FinalityModifier = FINAL,
@@ -42,6 +43,7 @@ data class FieldDeclarationExpression(
     config: RenderConfig,
   ): String {
 
+    //TODO: support annotations
 
     val output = StringBuilder(512)
 
@@ -87,6 +89,7 @@ data class FieldDeclarationExpression(
     val docFragment = if (doc.isNotBlank()) doc + "\n" else ""
     val visibilityFragment = visibilityModifier.render(config.targetLanguage)
 
+    //TODO: support annotations
     return docFragment +
         config.lineIndentation +
         visibilityFragment +

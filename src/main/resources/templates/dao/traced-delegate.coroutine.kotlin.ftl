@@ -46,7 +46,7 @@ class ${entity.name.upperCamel}TracedDAO(
       .start()
 
     wrapDAOCall(span) {
-      realDAO.delete(${entity.rdbmsView.commaSeparatedPrimaryKeyIdentifiers})
+      realDAO.delete(${entity.jvmView.commaSeparatedIDFieldNames})
     }
   }
 
@@ -63,7 +63,7 @@ class ${entity.name.upperCamel}TracedDAO(
       .start()
 
     return wrapDAOCall(span) {
-      realDAO.exists(${entity.rdbmsView.commaSeparatedPrimaryKeyIdentifiers})
+      realDAO.exists(${entity.jvmView.commaSeparatedIDFieldNames})
     }
   }
 
@@ -80,7 +80,7 @@ class ${entity.name.upperCamel}TracedDAO(
       .start()
 
     return wrapDAOCall(span) {
-      realDAO.findById(${entity.rdbmsView.commaSeparatedPrimaryKeyIdentifiers})
+      realDAO.findById(${entity.jvmView.commaSeparatedIDFieldNames})
     }
   }
 </#if>
@@ -152,7 +152,7 @@ class ${entity.name.upperCamel}TracedDAO(
       .start()
 
     wrapDAOCall(span) {
-      realDAO.set${field.name.upperCamel}(${entity.rdbmsView.commaSeparatedPrimaryKeyIdentifiers}, ${field.name.lowerCamel})
+      realDAO.set${field.name.upperCamel}(${entity.jvmView.commaSeparatedIDFieldNames}, ${field.name.lowerCamel})
     }
   }
 

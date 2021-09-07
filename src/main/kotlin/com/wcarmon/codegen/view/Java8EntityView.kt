@@ -227,6 +227,7 @@ class Java8EntityView(
       }
   }
 
+  //TODO: accept annotations
   fun methodArgsForIdFields(qualified: Boolean) =
     commaSeparatedJavaMethodArgs(entity.idFields, qualified)
 }

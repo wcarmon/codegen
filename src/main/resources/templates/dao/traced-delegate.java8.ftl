@@ -65,7 +65,7 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
     final ${request.jvmView.unqualifiedContextClass} childContext = context.withCurrentSpan(span);
     wrapDAOCall(
         span,
-        () -> realDAO.delete(childContext, ${entity.rdbmsView.commaSeparatedPrimaryKeyIdentifiers}));
+        () -> realDAO.delete(childContext, ${entity.jvmView.commaSeparatedIDFieldNames}));
   }
 
   @Override
@@ -85,7 +85,7 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
       final ${request.jvmView.unqualifiedContextClass} childContext = context.withCurrentSpan(span);
       return wrapDAOCall(
         span,
-        () -> realDAO.exists(childContext, ${entity.rdbmsView.commaSeparatedPrimaryKeyIdentifiers}));
+        () -> realDAO.exists(childContext, ${entity.jvmView.commaSeparatedIDFieldNames}));
   }
 
   @Override
@@ -105,7 +105,7 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
       final ${request.jvmView.unqualifiedContextClass} childContext = context.withCurrentSpan(span);
       return wrapDAOCall(
         span,
-        () -> realDAO.findById(childContext, ${entity.rdbmsView.commaSeparatedPrimaryKeyIdentifiers}));
+        () -> realDAO.findById(childContext, ${entity.jvmView.commaSeparatedIDFieldNames}));
   }
 </#if>
   @Override
@@ -204,7 +204,7 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
         span,
         () -> realDAO.set${field.name.upperCamel}(
             context.withCurrentSpan(span),
-            ${entity.rdbmsView.commaSeparatedPrimaryKeyIdentifiers},
+            ${entity.jvmView.commaSeparatedIDFieldNames},
             ${field.name.lowerCamel}));
   }
 
