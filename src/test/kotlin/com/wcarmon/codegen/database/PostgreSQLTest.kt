@@ -17,7 +17,7 @@ internal class PostgreSQLTest {
 
     /** Uses ClassLoader::getResource */
     private const val INIT_SCRIPT_URI = "db-init-scripts/init.postgresql.sql"
-    private const val DB_IMAGE_VERSION = "12.8"
+    private const val IMAGE_VERSION = "12.8"
 
     private lateinit var container: JdbcDatabaseContainer<*>
     private lateinit var jdbcTemplate: JdbcTemplate
@@ -27,7 +27,7 @@ internal class PostgreSQLTest {
     fun beforeClass() {
 
       container = PostgreSQLContainerProvider()
-        .newInstance(DB_IMAGE_VERSION)
+        .newInstance(IMAGE_VERSION)
         .withInitScript(INIT_SCRIPT_URI)
       container.start()
 

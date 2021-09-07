@@ -8,6 +8,7 @@
     "com.wcarmon.chrono.dao30.*",
     "com.wcarmon.chrono.model30.*",
     "io.opentracing.Tracer",
+    "javax.servlet.http.HttpServletRequest",
     "org.springframework.web.bind.annotation.DeleteMapping",
     "org.springframework.web.bind.annotation.GetMapping",
     "org.springframework.web.bind.annotation.PatchMapping",

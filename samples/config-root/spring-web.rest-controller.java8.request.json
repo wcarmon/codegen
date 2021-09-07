@@ -11,6 +11,7 @@
     "java.util.List",
     "java.util.Objects",
     "java.util.Set",
+    "javax.servlet.http.HttpServletRequest",
     "org.springframework.web.bind.annotation.DeleteMapping",
     "org.springframework.web.bind.annotation.GetMapping",
     "org.springframework.web.bind.annotation.PatchMapping",

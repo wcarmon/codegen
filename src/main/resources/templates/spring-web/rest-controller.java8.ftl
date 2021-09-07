@@ -28,7 +28,9 @@ public final class ${entity.name.upperCamel}Controller {
   }
 
 <#if entity.canDelete>
-  public void delete(${entity.java8View.methodArgsForIdFields(false)}) {
+  public void delete(
+    HttpServletRequest request,
+    ${entity.java8View.methodArgsForIdFields(false)}) {
 
     ${request.jvmView.unqualifiedContextClass} context = null;
 
@@ -40,7 +42,9 @@ public final class ${entity.name.upperCamel}Controller {
 </#if>
 <#if entity.canCheckForExistence>
   @GetMapping("/todo-fix")
-  public boolean exists(${entity.java8View.methodArgsForIdFields(false)}) {
+  public boolean exists(
+    HttpServletRequest request,
+    ${entity.java8View.methodArgsForIdFields(false)}) {
     throw new RuntimeException("TODO: implement me");
   }
 
@@ -48,6 +52,7 @@ public final class ${entity.name.upperCamel}Controller {
 <#if entity.canFindById>
   @GetMapping("/todo-fix")
   public ${entity.name.upperCamel} findById(
+    HttpServletRequest request,
    // TODO: prefix each with @PathVariable
     ${entity.java8View.methodArgsForIdFields(false)}
 ) {
@@ -61,7 +66,9 @@ public final class ${entity.name.upperCamel}Controller {
 </#if>
 <#if entity.canCreate>
   @PostMapping("/todo-fix")
-  public void create(${entity.name.upperCamel} entity) {
+  public void create(
+    HttpServletRequest request,
+    ${entity.name.upperCamel} entity) {
     ${request.jvmView.unqualifiedContextClass} context = null;
 
     throw new RuntimeException("TODO: implement me");
@@ -79,21 +86,24 @@ public final class ${entity.name.upperCamel}Controller {
 </#if>
 <#if entity.canUpdate>
   @PutMapping("/todo-fix")
-  public void update() {
+  public void update(
+    HttpServletRequest request) {
     //TODO: Update
   }
 
   <#list entity.patchableFields as field>
   @PutMapping("/todo-fix")
-  public void set${field.name.upperCamel}() {
+  public void set${field.name.upperCamel}(
+    HttpServletRequest request
+    ) {
     //TODO: Patch
   }
 
   </#list>
 </#if>
 //TODO: add tracing
-//TODO: tracing header parsing belongs in interceptor
-//TODO: @ResponseBody
+//TODO: tracing: header parsing belongs in interceptor
+//TODO: tracing: start tracing from the interceptor
 //TODO: @ResponseBody
 //TODO: #Foo(produces = "application/json")
 }

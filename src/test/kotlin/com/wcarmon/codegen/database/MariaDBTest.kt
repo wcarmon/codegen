@@ -16,7 +16,7 @@ internal class MariaDBTest {
 
     /** Uses ClassLoader::getResource */
     private const val INIT_SCRIPT_URI = "db-init-scripts/init.mariadb.sql"
-    private const val DB_IMAGE_VERSION = "10.5.12"
+    private const val IMAGE_VERSION = "10.5.12"
 
     private lateinit var container: JdbcDatabaseContainer<*>
     private lateinit var jdbcTemplate: JdbcTemplate
@@ -26,7 +26,7 @@ internal class MariaDBTest {
     fun beforeClass() {
 
       container = MariaDBContainerProvider()
-        .newInstance(DB_IMAGE_VERSION)
+        .newInstance(IMAGE_VERSION)
         .withInitScript(INIT_SCRIPT_URI)
       container.start()
 
