@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Configuration status="WARN">
+
+  <Appenders>
+
+    <Console name="console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+    </Console>
+
+    <RollingFile name="rollingFile"
+                 fileName="codegen.log"
+                 filePattern="logs/codegen.%d{yyyy-MM-dd}-%i.log.gz">
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+
+      <Policies>
+        <OnStartupTriggeringPolicy/>
+        <TimeBasedTriggeringPolicy
+            interval="1"/>
+        <SizeBasedTriggeringPolicy size="50 MB"/>
+      </Policies>
+
+      <DefaultRolloverStrategy max="5"/>
+    </RollingFile>
+
+    <Async name="asyncAppender">
+      <AppenderRef ref="console"/>
+      <AppenderRef ref="rollingFile"/>
+    </Async>
+
+  </Appenders>
+
+  <Loggers>
+
+    <Logger name="com.wcarmon" level="debug" additivity="false">
+      <AppenderRef ref="asyncAppender"/>
+    </Logger>
+
+    <Logger name="org.springframework" level="debug" additivity="false">
+      <AppenderRef ref="asyncAppender"/>
+    </Logger>
+
+    <Logger name="org.springframework.beans" level="info" additivity="false">
+      <AppenderRef ref="asyncAppender"/>
+    </Logger>
+
+    <Logger name="org.springframework.boot" level="info" additivity="false">
+      <AppenderRef ref="asyncAppender"/>
+    </Logger>
+
+    <Logger name="org.springframework.boot.autoconfigure" level="warn" additivity="false">
+      <AppenderRef ref="asyncAppender"/>
+    </Logger>
+
+    <Logger name="org.springframework.core" level="info" additivity="false">
+      <AppenderRef ref="asyncAppender"/>
+    </Logger>
+
+    <Logger name="org.springframework.context" level="info" additivity="false">
+      <AppenderRef ref="asyncAppender"/>
+    </Logger>
+
+    <Logger name="org.springframework.jdbc" level="info" additivity="false">
+      <AppenderRef ref="asyncAppender"/>
+    </Logger>
+
+    <Logger name="org.springframework.test" level="info" additivity="false">
+      <AppenderRef ref="asyncAppender"/>
+    </Logger>
+
+    <logger name="org.apache.velocity.loader" level="info" additivity="false">
+      <AppenderRef ref="asyncAppender"/>
+    </logger>
+
+    <logger name="org.apache.velocity.macro" level="info" additivity="false">
+      <AppenderRef ref="asyncAppender"/>
+    </logger>
+
+    <logger name="org.apache.velocity" level="warn" additivity="false">
+      <AppenderRef ref="asyncAppender"/>
+    </logger>
+
+    <logger name="org.testcontainers.containers.output" level="info" additivity="false">
+      <AppenderRef ref="asyncAppender"/>
+    </logger>
+
+    <logger name="org.testcontainers.utility" level="info" additivity="false">
+      <AppenderRef ref="asyncAppender"/>
+    </logger>
+
+    <logger name="org.testcontainers.images" level="info" additivity="false">
+      <AppenderRef ref="asyncAppender"/>
+    </logger>
+
+    <logger name="com.github.dockerjava.api" level="info" additivity="false">
+      <AppenderRef ref="asyncAppender"/>
+    </logger>
+
+    <logger name="org.testcontainers.shaded.com.github.dockerjava" level="info" additivity="false">
+      <AppenderRef ref="asyncAppender"/>
+    </logger>
+
+    <!--  TODO: add freemarker -->
+
+    <Root level="debug">
+      <AppenderRef ref="asyncAppender"/>
+    </Root>
+  </Loggers>
+
+</Configuration>
