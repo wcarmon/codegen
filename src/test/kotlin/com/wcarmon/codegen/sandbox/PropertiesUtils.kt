@@ -1,5 +1,6 @@
 package com.wcarmon.codegen.sandbox
 
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
 import kotlin.io.path.absolute
@@ -28,13 +29,13 @@ fun parseProperties(
 ) =
   SandboxConfig(
     gradleConfig = GradleConfig(
-      fullyQualifiedMainClass = p.getProperty("gradle.main-class.fully-qualified").trim(),
-      gradleBinary = Paths.get(p.getProperty("gradle.binary").trim()).normalize().absolute(),
-      gradleVersion = p.getProperty("gradle.version").trim(),
-      includeProto = p.getProperty("gradle.include.proto").trim().lowercase() == "true",
-      includeSQLDelight = p.getProperty("gradle.include.sqldelight").trim().lowercase() == "true",
-      projectGroup = p.getProperty("gradle.project.group").trim(),
-      projectName = p.getProperty("gradle.project.name").trim(),
+      fullyQualifiedMainClass = p.parseRequiredString("gradle.main-class.fully-qualified"),
+      gradleBinary = p.parseRequiredPath("gradle.binary"),
+      gradleVersion = p.parseRequiredString("gradle.version"),
+      includeProto = p.parseOptionalBoolean("gradle.include.proto", true),
+      includeSQLDelight = p.parseOptionalBoolean("gradle.include.sqldelight", true),
+      projectGroup = p.parseRequiredString("gradle.project.group"),
+      projectName = p.parseRequiredString("gradle.project.name"),
       projectRoot = Paths.get(p.getProperty("gradle.project.root").trim()).normalize().absolute(),
       projectVersion = p.getProperty("gradle.project.version").trim(),
     ),
@@ -45,3 +46,64 @@ fun parseProperties(
       projectVersion = p.getProperty("node.project.version").trim(),
     ),
   )
+
+private fun Properties.parseOptionalString(
+  propertyName: String,
+  defaultIfBlank: String,
+): String {
+  val value = getProperty(propertyName, "").trim()
+
+  if (value.isNotBlank()) {
+    return defaultIfBlank
+  }
+
+  return value
+}
+
+private fun Properties.parseRequiredString(
+  propertyName: String,
+): String {
+  val value = getProperty(propertyName, "").trim()
+  require(value.isNotBlank()) { "missing required property: $propertyName" }
+
+  return value
+}
+
+private fun Properties.parseRequiredPath(
+  propertyName: String,
+): Path {
+  val value = getProperty(propertyName, "").trim()
+  require(value.isNotBlank()) { "missing required path property: $propertyName" }
+
+  return Paths.get(value)
+}
+
+private fun Properties.parseRequiredBoolean(
+  propertyName: String,
+): Boolean {
+
+  val value = getProperty(propertyName, "").trim().lowercase()
+
+  check(value == "true" || value == "false") {
+    "invalid boolean property: $propertyName"
+  }
+
+  return value == "true"
+}
+
+private fun Properties.parseOptionalBoolean(
+  propertyName: String,
+  defaultIfMissing: Boolean = false,
+): Boolean {
+  val value = getProperty(propertyName, "").trim().lowercase()
+
+  if (value.isNotBlank()) {
+    check(value == "true" || value == "false") {
+      "invalid boolean property: $propertyName"
+    }
+
+    return value == "true"
+  }
+
+  return defaultIfMissing
+}
