@@ -3,16 +3,23 @@ package com.wcarmon.codegen.sandbox
 import freemarker.cache.ClassTemplateLoader
 import freemarker.template.Configuration
 import freemarker.template.TemplateExceptionHandler
-import org.apache.logging.log4j.LogManager
-
-
-private val LOG = LogManager.getLogger("CodegenSandboxUtils");
-
+import java.time.Duration
+import java.util.concurrent.ThreadLocalRandom
 
 //TODO: delete me
 fun main() {
 
-  val root = buildGradleSandbox()
+  val gradleConfig = DEFAULT_GRADLE_CONFIG.copy(
+    projectName = "sandbox-" + ThreadLocalRandom.current().nextInt(100)
+  )
+
+  buildGradleSandbox(gradleConfig)
+
+  gradleTest(gradleConfig,
+    maxWait = Duration.ofSeconds(30))
+
+  gradleRun(gradleConfig,
+    maxWait = Duration.ofSeconds(30))
 }
 
 

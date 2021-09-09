@@ -6,39 +6,80 @@ import org.apache.logging.log4j.LogManager
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import kotlin.io.path.absolute
+import java.time.Duration
 
 
-private val LOG = LogManager.getLogger("GradleUtils");
+private val LOG = LogManager.getLogger("GradleUtils")
 
 val DEFAULT_GRADLE_CONFIG = GradleConfig(
   projectName = "sandbox-001",
 )
 
+fun gradleRun(
+  gradleConfig: GradleConfig = DEFAULT_GRADLE_CONFIG,
+  maxWait: Duration = Duration.ofMinutes(5),
+) {
+  require(!maxWait.isNegative)
+  require(Files.exists(gradleConfig.cleanProjectRoot))
+
+  LOG.info("Executing: `gradle run` ...")
+  executeCommand(
+    command = listOf(
+      "./gradlew",
+      "build",
+      "--exclude-task=distZip",
+      "--exclude-task=shadowJar",
+      "--exclude-task=test",
+      "run",  //TODO: is "bootRun" better?
+      "--quiet",
+    ),
+    maxWait = maxWait,
+    rawWorkingDir = gradleConfig.cleanProjectRoot,
+  )
+}
+
+fun gradleTest(
+  gradleConfig: GradleConfig = DEFAULT_GRADLE_CONFIG,
+  maxWait: Duration = Duration.ofMinutes(5),
+) {
+  require(!maxWait.isNegative)
+  require(Files.exists(gradleConfig.cleanProjectRoot))
+
+  LOG.info("Executing: `gradle test` ...")
+  executeCommand(
+    command = listOf(
+      "./gradlew",
+      "clean",
+      "test",
+      "--exclude-task=distZip",
+      "--exclude-task=shadowJar",
+      "--quiet",
+    ),
+    maxWait = maxWait,
+    rawWorkingDir = gradleConfig.cleanProjectRoot,
+  )
+}
+
 /**
  * @return normalized root path for new project
  */
 fun buildGradleSandbox(
+  gradleConfig: GradleConfig,
   freemarkerConfig: Configuration = getFreemarkerConfig(),
-  gradleConfig: GradleConfig = DEFAULT_GRADLE_CONFIG,
-  rootDir: Path = Files.createTempDirectory("codegen-sandbox-"),
-): Path {
+) {
 
-  val cleanRootDir = rootDir.normalize().absolute()
-
-  LOG.info("Creating sandbox directory: path=$cleanRootDir")
-  Files.createDirectories(cleanRootDir)
+  LOG.info("Creating sandbox directory: path=${gradleConfig.cleanProjectRoot}")
+  Files.createDirectories(gradleConfig.cleanProjectRoot)
 
   RELATIVE_PATHS_FOR_GRADLE_PROJECT
     .forEach { relativePath ->
       Files.createDirectories(
-        Paths.get(cleanRootDir.toString(), relativePath))
+        Paths.get(gradleConfig.cleanProjectRoot.toString(), relativePath))
     }
 
   val dataForTemplate = mapOf(
     "gradleConfig" to gradleConfig
   )
-
 
   // -- Generate files
   TEMPLATE_TO_RELATIVE_OUTPUT_PATH_MAPPING
@@ -46,20 +87,42 @@ fun buildGradleSandbox(
 
       createFileFromTemplate(
         dataForTemplate = dataForTemplate,
-        dest = Paths.get(cleanRootDir.toString(), relativeOutputPath).normalize(),
+        dest = Paths.get(gradleConfig.cleanProjectRoot.toString(), relativeOutputPath).normalize(),
         template = freemarkerConfig.getTemplate(templatePath),
       )
     }
 
   // -- protobuf.gradle
-  copyProtoGradleFile(cleanRootDir)
+  copyProtoGradleFile(gradleConfig.cleanProjectRoot)
 
+  addGradleWrapper(
+    gradleConfig = gradleConfig,
+  )
+}
 
-  //TODO: build.gradle.kts template contents
-  //TODO: gradle wrapper
-  //TODO: gradle init
+/**
+ * Execute `gradle wrapper`
+ */
+private fun addGradleWrapper(
+  gradleConfig: GradleConfig,
+  maxWait: Duration = Duration.ofSeconds(30),
+) {
+  check(Files.exists(gradleConfig.cleanProjectRoot))
+  check(Files.isDirectory(gradleConfig.cleanProjectRoot))
 
-  return cleanRootDir
+  executeCommand(
+    command = listOf(
+      gradleConfig.gradleBinary.toString(),
+      "wrapper",
+      "--distribution-type=all",
+      "--gradle-version=${gradleConfig.gradleVersion}",
+      "--quiet",
+    ),
+    maxWait = maxWait,
+    rawWorkingDir = gradleConfig.cleanProjectRoot,
+  )
+
+  LOG.info("Added gradle wrapper to ${gradleConfig.cleanProjectRoot}")
 }
 
 private fun createFileFromTemplate(
@@ -82,12 +145,13 @@ private fun createFileFromTemplate(
 private fun copyProtoGradleFile(
   rootDir: Path,
 ) {
-  val protoGradleDest = Paths.get(rootDir.toString(), "protobuf.gradle")
+  val dest = Paths.get(rootDir.toString(), "protobuf.gradle")
+  check(!Files.exists(dest))
 
   Files.copy(
     GradleConfig::class.java.getResourceAsStream(TemplatePaths.GRADLE_PROTO_FILE)!!,
-    protoGradleDest,
+    dest,
   )
 
-  LOG.info("Wrote file: path=$protoGradleDest")
+  LOG.info("Wrote file: path=$dest")
 }
