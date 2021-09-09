@@ -94,5 +94,7 @@ internal class OkHttpClientTest {
     val recordedReq = recorded[0] as HttpRequest
     //TODO: something like this
 //    assertEquals("""{"a": 123}""", recordedReq.body)
+
+    //TODO: clear things on the mock server (or run tests one at a time or make multiple servers)
   }
 }

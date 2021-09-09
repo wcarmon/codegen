@@ -6,6 +6,7 @@ import org.testcontainers.utility.DockerImageName
 
 // See https://www.mock-server.com/where/docker.html
 // See https://www.testcontainers.org/modules/mockserver/
+// See dashboard at   http://localhost:<port>/mockserver/dashboard
 
 const val MOCK_SERVER_IMAGE_VERSION = "5.11.2"
 
