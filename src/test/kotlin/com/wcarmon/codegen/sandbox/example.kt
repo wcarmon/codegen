@@ -6,19 +6,30 @@ import java.util.concurrent.ThreadLocalRandom
 
 fun main() {
 
-  val gradleConfig =
-    GradleConfig(
-      fullyQualifiedMainClass = "SandboxMain",
-      gradleBinary = DEFAULT_GRADLE_BINARY,
-      gradleVersion = "7.2",
-      includeProto = true,
-      includeSQLDelight = true,
-      projectGroup = "io.wc.codegen.sandbox",
+  val parsedConfig = loadConfigFromProperties("/sandbox.properties")
+
+  val gradleConfig = parsedConfig.gradleConfig
+    .copy(
       projectName = "sandbox-" + ThreadLocalRandom.current().nextInt(20),
-      projectRoot = Files.createTempDirectory("codegen-sandbox-"),
-      projectVersion = "1.0.0-SNAPSHOT",
+      projectRoot = Files.createTempDirectory("codegen-gradle-sandbox-"),
     )
 
+  val nodeConfig = parsedConfig.nodeConfig
+
+  doNodeStuff(nodeConfig)
+  doGradleStuff(gradleConfig)
+}
+
+fun doNodeStuff(nodeConfig: NodeConfig) {
+  buildNodeSandbox(nodeConfig)
+
+  //TODO: run tests
+  //TODO: run app (local webserver?)
+
+  TODO("Not yet implemented")
+}
+
+fun doGradleStuff(gradleConfig: GradleConfig) {
   buildGradleSandbox(gradleConfig)
 
   // -- Confirm the generated tests pass

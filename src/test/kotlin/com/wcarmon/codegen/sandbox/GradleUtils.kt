@@ -71,17 +71,20 @@ fun buildGradleSandbox(
   freemarkerConfig: Configuration = getFreemarkerConfig(),
 ) {
 
-  LOG.info("Creating sandbox directory: path=${gradleConfig.cleanProjectRoot}")
-  Files.createDirectories(gradleConfig.cleanProjectRoot)
+  LOG.info("Creating gradle sandbox directory: path=${gradleConfig.cleanProjectRoot}")
+  Files.createDirectories(
+    gradleConfig.cleanProjectRoot)
 
-  RELATIVE_PATHS_FOR_GRADLE_PROJECT
+  val rootAsString = gradleConfig.cleanProjectRoot.toString()
+
+  RELATIVE_DIRS_FOR_GRADLE_PROJECT
     .forEach { relativePath ->
       Files.createDirectories(
-        Paths.get(gradleConfig.cleanProjectRoot.toString(), relativePath))
+        Paths.get(rootAsString, relativePath))
     }
 
   val dataForTemplate = mapOf(
-    "gradleConfig" to gradleConfig
+    "gradleConfig" to gradleConfig,
   )
 
   // -- Generate files
@@ -90,7 +93,7 @@ fun buildGradleSandbox(
 
       generateFileFromTemplate(
         dataForTemplate = dataForTemplate,
-        dest = Paths.get(gradleConfig.cleanProjectRoot.toString(), relativeOutputPath).normalize(),
+        dest = Paths.get(rootAsString, relativeOutputPath).normalize(),
         template = freemarkerConfig.getTemplate(templatePath),
       )
     }
@@ -154,7 +157,8 @@ private fun copyProtoGradleFile(
   check(!Files.exists(dest))
 
   Files.copy(
-    GradleConfig::class.java.getResourceAsStream(TemplatePaths.GRADLE_PROTO_FILE)!!,
+    GradleConfig::class.java.getResourceAsStream(
+      TemplatePaths.GRADLE_PROTO_FILE)!!,
     dest,
   )
 

@@ -9,14 +9,14 @@ import kotlin.io.path.absolute
  */
 data class GradleConfig(
   val projectName: String,
+  val gradleBinary: Path,
 
   val fullyQualifiedMainClass: String = "SandboxMain",
-  val gradleBinary: Path = DEFAULT_GRADLE_BINARY,
   val gradleVersion: String = "7.2",
   val includeProto: Boolean = true,
   val includeSQLDelight: Boolean = true,
   val projectGroup: String = "io.wc.codegen.sandbox",
-  val projectRoot: Path = Files.createTempDirectory("codegen-sandbox-"),
+  val projectRoot: Path = Files.createTempDirectory("codegen-gradle-sandbox-"),
   val projectVersion: String = "1.0.0-SNAPSHOT",
 ) {
 
