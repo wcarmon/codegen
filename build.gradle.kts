@@ -281,6 +281,7 @@ configurations.all {
     "org.koin:koin-android:2.2.0-rc-4",
     "org.koin:koin-core:2.2.0-rc-4",
     "org.mariadb.jdbc:mariadb-java-client:2.7.4",
+    "org.mock-server:mockserver-client-java:5.11.2",
     "org.mockito:mockito-inline:3.6.0",
     "org.mongodb:mongo-java-driver:3.12.10",
     "org.mongodb:mongodb-driver-core:4.3.1",
@@ -324,6 +325,7 @@ configurations.all {
     "org.testcontainers:junit-jupiter:1.16.0",
     "org.testcontainers:kafka:1.16.0",
     "org.testcontainers:mariadb:1.16.0",
+    "org.testcontainers:mockserver:1.16.0",
     "org.testcontainers:mongodb:1.16.0",
     "org.testcontainers:mysql:1.16.0",
     "org.testcontainers:mysql:1.16.0",
@@ -394,6 +396,7 @@ dependencies {
   testImplementation("org.junit.jupiter:junit-jupiter-engine")
   testImplementation("org.junit.jupiter:junit-jupiter-params")
   testImplementation("org.mariadb.jdbc:mariadb-java-client")
+  testImplementation("org.mock-server:mockserver-client-java")
   testImplementation("org.mockito:mockito-inline")
   testImplementation("org.postgresql:postgresql")
   testImplementation("org.springframework:spring-beans")
@@ -404,6 +407,7 @@ dependencies {
   testImplementation("org.testcontainers:junit-jupiter")
   testImplementation("org.testcontainers:kafka")
   testImplementation("org.testcontainers:mariadb")
+  testImplementation("org.testcontainers:mockserver")
   testImplementation("org.testcontainers:mongodb")
   testImplementation("org.testcontainers:mysql")
   testImplementation("org.testcontainers:oracle-xe")

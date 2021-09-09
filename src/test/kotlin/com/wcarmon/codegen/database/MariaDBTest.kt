@@ -34,6 +34,7 @@ internal class MariaDBTest {
     }
 
     @AfterAll
+    @JvmStatic
     fun afterClass() = container.stop()
   }
 

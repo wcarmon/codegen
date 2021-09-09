@@ -35,6 +35,7 @@ internal class PostgreSQLTest {
     }
 
     @AfterAll
+    @JvmStatic
     fun afterClass() = container.stop()
   }
 

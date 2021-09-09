@@ -13,12 +13,12 @@ private val DEFAULT_PROPS = mapOf(
   ConsumerConfig.CLIENT_ID_CONFIG to "test-consumer-id-for-streams",
   ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG to false,
   ConsumerConfig.GROUP_ID_CONFIG to "group-" + ThreadLocalRandom.current().nextInt(100),
-  ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java.getName(),
-  ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java.getName(),
+  ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java.name,
+  ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java.name,
 
   ProducerConfig.CLIENT_ID_CONFIG to "test-producer-id-for-streams",
-  ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java.getName(),
-  ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java.getName(),
+  ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java.name,
+  ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java.name,
 )
 
 fun buildKafkaProducer(

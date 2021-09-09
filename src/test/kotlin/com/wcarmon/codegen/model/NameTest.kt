@@ -1,6 +1,6 @@
 package com.wcarmon.codegen.model
 
-internal class NameTest{
+internal class NameTest {
 
   //TODO: more here
 }

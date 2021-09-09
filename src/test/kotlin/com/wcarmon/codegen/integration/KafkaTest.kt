@@ -42,6 +42,7 @@ internal class KafkaTest {
     }
 
     @AfterAll
+    @JvmStatic
     fun afterClass() = container.stop()
   }
 
