@@ -2,13 +2,14 @@ package com.wcarmon.codegen.sandbox
 
 import java.nio.file.Paths
 
-val DEFAULT_GRADLE_BINARY = Paths.get("/home/wcarmon/.sdkman/candidates/gradle/current/bin/gradle")
+val DEFAULT_GRADLE_BINARY: Path =
+  Paths.get("/home/wcarmon/.sdkman/candidates/gradle/current/bin/gradle")
 
 //TODO: consider the docker gradle image
 // https://hub.docker.com/_/gradle
 // docker run --rm -u gradle -v "$PWD":/home/gradle/project -w /home/gradle/project gradle gradle <gradle-task>
 // See https://www.baeldung.com/docker-java-api
-val DOCKER_BINARY = Paths.get("/usr/bin/docker")
+val DOCKER_BINARY: Path = Paths.get("/usr/bin/docker")
 
 object TemplatePaths {
   const val GRADLE_BUILD_FILE = "/sandbox/templates/gradle/build.gradle.kts.ftl"

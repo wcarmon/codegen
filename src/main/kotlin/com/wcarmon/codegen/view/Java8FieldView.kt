@@ -14,7 +14,7 @@ import com.wcarmon.codegen.util.*
  * Pre-rendered [Expression]s
  */
 class Java8FieldView(
-  private val debugMode: Boolean,
+  debugMode: Boolean,
   private val field: Field,
   private val jvmView: JVMFieldView,
   private val rdbmsView: RDBMSColumnView,
@@ -130,7 +130,7 @@ class Java8FieldView(
 
     val serdes = effectiveProtoSerdesForTypeParameters(field)
     check(serdes.size > typeParameterNumber) {
-      "serde count: ${serdes.size}, requested index: ${typeParameterNumber}"
+      "serde count: ${serdes.size}, requested index: $typeParameterNumber"
     }
 
     return serdes[typeParameterNumber]
@@ -146,7 +146,7 @@ class Java8FieldView(
 
     val serdes = effectiveProtoSerdesForTypeParameters(field)
     check(serdes.size > typeParameterNumber) {
-      "serde count: ${serdes.size}, requested index: ${typeParameterNumber}"
+      "serde count: ${serdes.size}, requested index: $typeParameterNumber"
     }
 
     return serdes[typeParameterNumber]

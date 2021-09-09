@@ -4,6 +4,9 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.absolute
 
+/**
+ * Properties required to generate a gradle project
+ */
 data class GradleConfig(
   val projectName: String,
 

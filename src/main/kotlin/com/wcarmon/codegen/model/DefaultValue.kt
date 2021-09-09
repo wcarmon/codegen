@@ -36,8 +36,8 @@ data class DefaultValue(
   companion object {
 
     val NO_DEFAULT = DefaultValue(null)
-    private val PROEPRTY_NAME_FOR_WRAPPER = "defaultValue"
-    private val PROPERTY_NAME_FOR_VALUE = "value"
+    private const val PROEPRTY_NAME_FOR_WRAPPER = "defaultValue"
+    private const val PROPERTY_NAME_FOR_VALUE = "value"
 
     @JsonCreator
     @JvmStatic
@@ -52,8 +52,7 @@ data class DefaultValue(
       val jsonObj: Map<*, *> = raw
       if (jsonObj.isEmpty()) return NO_DEFAULT
 
-      val wrapperObj = jsonObj[PROEPRTY_NAME_FOR_WRAPPER]
-      if (wrapperObj == null) return NO_DEFAULT
+      val wrapperObj = jsonObj[PROEPRTY_NAME_FOR_WRAPPER] ?: return NO_DEFAULT
 
       check(wrapperObj is Map<*, *>) {
         "Invalid JSON for default value (must be an object): json=$jsonObj"
@@ -86,8 +85,7 @@ data class DefaultValue(
       "only read when hasValue==true"
     }
 
-    wrappedValue != null &&
-        wrappedValue.value != null &&
+    wrappedValue?.value != null &&
         wrappedValue.value is String &&
         wrappedValue.value.isEmpty()
   }
@@ -97,8 +95,7 @@ data class DefaultValue(
       "only read when hasValue==true"
     }
 
-    wrappedValue != null &&
-        wrappedValue.value != null &&
+    wrappedValue?.value != null &&
         wrappedValue.value is String &&
         wrappedValue.value.isBlank()
   }

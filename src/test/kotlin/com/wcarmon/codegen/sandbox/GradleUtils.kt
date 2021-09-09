@@ -11,19 +11,19 @@ import java.time.Duration
 
 private val LOG = LogManager.getLogger("GradleUtils")
 
-val DEFAULT_GRADLE_CONFIG = GradleConfig(
-  projectName = "sandbox-001",
-)
 
+/**
+ * Execute `gradle run`
+ */
 fun gradleRun(
-  gradleConfig: GradleConfig = DEFAULT_GRADLE_CONFIG,
+  gradleConfig: GradleConfig,
   maxWait: Duration = Duration.ofMinutes(5),
-) {
+): ProcessOutput {
   require(!maxWait.isNegative)
   require(Files.exists(gradleConfig.cleanProjectRoot))
 
   LOG.info("Executing: `gradle run` ...")
-  executeCommand(
+  return executeCommand(
     command = listOf(
       "./gradlew",
       "build",
@@ -38,15 +38,18 @@ fun gradleRun(
   )
 }
 
+/**
+ * Execute `gradle test`
+ */
 fun gradleTest(
-  gradleConfig: GradleConfig = DEFAULT_GRADLE_CONFIG,
+  gradleConfig: GradleConfig,
   maxWait: Duration = Duration.ofMinutes(5),
-) {
+): ProcessOutput {
   require(!maxWait.isNegative)
   require(Files.exists(gradleConfig.cleanProjectRoot))
 
   LOG.info("Executing: `gradle test` ...")
-  executeCommand(
+  return executeCommand(
     command = listOf(
       "./gradlew",
       "clean",
@@ -83,9 +86,9 @@ fun buildGradleSandbox(
 
   // -- Generate files
   TEMPLATE_TO_RELATIVE_OUTPUT_PATH_MAPPING
-    .forEach { templatePath: String, relativeOutputPath: String ->
+    .forEach { (templatePath: String, relativeOutputPath: String) ->
 
-      createFileFromTemplate(
+      generateFileFromTemplate(
         dataForTemplate = dataForTemplate,
         dest = Paths.get(gradleConfig.cleanProjectRoot.toString(), relativeOutputPath).normalize(),
         template = freemarkerConfig.getTemplate(templatePath),
@@ -125,7 +128,7 @@ private fun addGradleWrapper(
   LOG.info("Added gradle wrapper to ${gradleConfig.cleanProjectRoot}")
 }
 
-private fun createFileFromTemplate(
+private fun generateFileFromTemplate(
   dataForTemplate: Map<String, Any>,
   dest: Path,
   template: Template,
@@ -142,6 +145,8 @@ private fun createFileFromTemplate(
   LOG.info("Wrote file: path=$dest")
 }
 
+//Only required because I cannot figure out
+// how to convert the plugins section of protobuf.gradle to *.kts format
 private fun copyProtoGradleFile(
   rootDir: Path,
 ) {

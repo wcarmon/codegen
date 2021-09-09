@@ -3,11 +3,17 @@ package com.wcarmon.codegen.sandbox
 import org.apache.logging.log4j.LogManager
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.Paths
 import java.time.Duration
 import java.util.concurrent.TimeUnit
 import kotlin.io.path.absolute
 
 private val LOG = LogManager.getLogger("ProcessUtils")
+
+data class ProcessOutput(
+  val stdErr: Path,
+  val stdOut: Path,
+)
 
 
 /**
@@ -19,7 +25,7 @@ fun executeCommand(
   command: List<String>,
   maxWait: Duration = Duration.ofSeconds(45),
   rawWorkingDir: Path,
-) {
+): ProcessOutput {
   require(command.isNotEmpty()) { "command cannot be empty" }
   require(!maxWait.isNegative) { "maxWait must be positive" }
 
@@ -34,24 +40,25 @@ fun executeCommand(
       "maxWait=$maxWait"
   )
 
+  val tempDir = Files.createTempDirectory("spawned-command.")
+  val stdErr = Files.createFile(Paths.get(tempDir.toString(), "stdErr.log"))
+  val stdOut = Files.createFile(Paths.get(tempDir.toString(), "stdOut.log"))
+  LOG.debug("See process output: stdOut=$stdOut, stdErr=$stdErr")
+
   val process = ProcessBuilder(command)
-    .inheritIO()
+    //.inheritIO()  // Streams nicely, but you cannot return output/error
     .directory(workingDir.toFile())
+    .redirectError(stdErr.toFile())
+    .redirectOutput(stdOut.toFile())
     .start()
 
-  //TODO: stream stdOut to current logger
   val processTerminated = process.waitFor(
     maxWait.seconds, TimeUnit.SECONDS)
-
-//  val strErr = String(process.errorStream.readAllBytes())
-//  val strOut = String(process.inputStream.readAllBytes())
 
   check(processTerminated) {
     "Process timed out: " +
         "workingDir=$workingDir, " +
         "command=$command"
-//        "strErr=$strErr, " +
-//        "strOut=$strOut"
   }
 
   check(process.exitValue() == 0) {
@@ -59,15 +66,10 @@ fun executeCommand(
         "workingDir=$workingDir, " +
         "command=$command, " +
         "exitValue=$process.exitValue(), "
-//        "strErr=$strErr, " +
-//        "strOut=$strOut"
   }
 
-//  if (strOut.isNotBlank()) {
-//    LOG.debug("stdOut=$strOut")
-//  }
-//
-//  if (strErr.isNotBlank()) {
-//    LOG.debug("strErr=$strErr")
-//  }
+  return ProcessOutput(
+    stdErr = stdErr,
+    stdOut = stdOut
+  )
 }

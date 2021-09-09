@@ -102,7 +102,7 @@ class KotlinFieldView(
 
     val serdes = effectiveProtoSerdesForTypeParameters(field)
     check(serdes.size > typeParameterNumber) {
-      "serde count: ${serdes.size}, requested index: ${typeParameterNumber}"
+      "serde count: ${serdes.size}, requested index: $typeParameterNumber"
     }
 
     return serdes[typeParameterNumber]
@@ -118,7 +118,7 @@ class KotlinFieldView(
 
     val serdes = effectiveProtoSerdesForTypeParameters(field)
     check(serdes.size > typeParameterNumber) {
-      "serde count: ${serdes.size}, requested index: ${typeParameterNumber}"
+      "serde count: ${serdes.size}, requested index: $typeParameterNumber"
     }
 
     return serdes[typeParameterNumber]

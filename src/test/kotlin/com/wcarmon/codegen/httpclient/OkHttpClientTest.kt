@@ -36,7 +36,6 @@ internal class OkHttpClientTest {
 
   @BeforeEach
   fun setUp() {
-    checkNotNull(container)
 
     val objectMapper = ObjectMapper()
     val okhttpClient = OkHttpClient()
@@ -58,7 +57,7 @@ internal class OkHttpClientTest {
     val mockConfig = getMockConfig(container)
     mockConfig
       .`when`(
-        HttpRequest.request()
+        request()
 //        .withBody("""{"entity":7}""")
           .withMethod("POST")
           .withPath(uri)

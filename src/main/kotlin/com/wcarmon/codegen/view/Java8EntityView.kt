@@ -205,14 +205,14 @@ class Java8EntityView(
         val lines = mutableListOf<String>()
 
         lines += "public static final String PATCH__${entity.name.upperSnake}__${field.name.upperSnake} ="
-        lines += """${indentation}"UPDATE \"${entity.name.lowerSnake}\" " +"""
-        lines += """${indentation}"SET ${field.name.lowerSnake}=? " + """
+        lines += """$indentation"UPDATE \"${entity.name.lowerSnake}\" " +"""
+        lines += """$indentation"SET ${field.name.lowerSnake}=? " + """
 
         if (entity.updatedTimestampFieldName != null && !field.isUpdatedTimestamp) {
-          lines += """${indentation}"AND ${entity.updatedTimestampFieldName.lowerSnake}=? " + """
+          lines += """$indentation"AND ${entity.updatedTimestampFieldName.lowerSnake}=? " + """
         }
 
-        lines += """${indentation}"WHERE ${entity.rdbmsView.primaryKeyWhereClause}";"""
+        lines += """$indentation"WHERE ${entity.rdbmsView.primaryKeyWhereClause}";"""
 
         lines.joinToString(
           separator = "\n"

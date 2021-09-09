@@ -1,5 +1,7 @@
 @file:JvmName("SandboxMain")
 
 fun main(args: Array<String>) {
-  println("hi from the template")
+
+  println("TODO: Replace this with code that exercises generated code")
+
 }

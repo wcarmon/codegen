@@ -20,7 +20,7 @@ class DefaultValueTest {
 
   // Assume: String
   // Non-null literals
-  private val TEST_CASE_DATA = listOf(
+  private val testCaseData = listOf(
 
     // Assume: no default
     D("""{  }""", false, "zzz"),
@@ -56,7 +56,7 @@ class DefaultValueTest {
 
   @Test
   fun testHasValue() {
-    TEST_CASE_DATA.forEachIndexed { index, testData ->
+    testCaseData.forEachIndexed { index, testData ->
 
       val parsed = objectMapper.readValue(
         testData.fieldJSON,
@@ -70,7 +70,7 @@ class DefaultValueTest {
 
   @Test
   fun testIsNull() {
-    TEST_CASE_DATA.forEachIndexed { index, testData ->
+    testCaseData.forEachIndexed { index, testData ->
 
       val parsed = objectMapper.readValue(
         testData.fieldJSON,
@@ -91,7 +91,7 @@ class DefaultValueTest {
 
   @Test
   fun testValueRead() {
-    TEST_CASE_DATA.forEachIndexed { index, testData ->
+    testCaseData.forEachIndexed { index, testData ->
 
       val parsed = objectMapper.readValue(
         testData.fieldJSON,
