@@ -1,0 +1,8 @@
+protobuf {
+
+  plugins {
+    grpc {
+      artifact = "io.grpc:protoc-gen-grpc-java:1.40.1"
+    }
+  }
+}
