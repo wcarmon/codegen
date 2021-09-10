@@ -12,7 +12,10 @@ enum class BaseFieldType {
 
   // -- Characters
   CHAR, // 16-bit Unicode character
+  COLOR,
+  EMAIL,
   PATH,
+  PHONE_NUMBER,
   STRING,
   URI,
   URL,
@@ -30,17 +33,19 @@ enum class BaseFieldType {
   INT_BIG,
 
   // -- Temporal
-  DURATION,           // measured in seconds & nanos
-  MONTH_DAY,          // eg. birthdays
-  PERIOD,             // measured in years, months (day agnostic) or days (time agnostic)
-  UTC_INSTANT,        // seconds + nanos since jan 1 1970
-  UTC_TIME,           // eg. daily meeting time, market opening time (y/m/d agnostic)
+  DURATION,               // measured in seconds & nanos
+  MONTH_DAY,              // eg. birthdays
+  PERIOD,                 // measured in years, months (day agnostic) or days (time agnostic)
+  UTC_INSTANT,            // seconds + nanos since jan 1 1970
+  UTC_TIME,               // eg. daily meeting time, market opening time (y/m/d agnostic)
+  WEEK_OF_YEAR,
   YEAR,
-  YEAR_MONTH,         // eg. credit card expiration
-  ZONE_AGNOSTIC_DATE, // eg. birthdate (tz agnostic)
-  ZONE_AGNOSTIC_TIME, // eg. store closing time (tz agnostic)
-  ZONE_OFFSET,        // seconds (with upper bound)
-  ZONED_DATE_TIME,    // Instant + offset + tz rules
+  YEAR_MONTH,             // eg. credit card expiration
+  ZONE_AGNOSTIC_DATE,     // eg. birthdate (tz agnostic)
+  ZONE_AGNOSTIC_DATE_TIME, // eg. birthdate (tz agnostic)
+  ZONE_AGNOSTIC_TIME,     // eg. store closing time (tz agnostic)
+  ZONE_OFFSET,            // seconds (with upper bound)
+  ZONED_DATE_TIME,        // Instant + offset + tz rules
 
   // -- Collections
   ARRAY,
@@ -63,6 +68,7 @@ enum class BaseFieldType {
 //        ?: throw IllegalArgumentException("Failed to parse baseType for value='$value'")
 
     private val MAPPINGS = mapOf(
+      "android.graphics.Color" to COLOR,
       "golang.bool" to BOOLEAN,
       "golang.byte" to INT_8,
       "golang.float32" to FLOAT_32,
@@ -105,6 +111,7 @@ enum class BaseFieldType {
       "java.time.Duration" to DURATION,
       "java.time.Instant" to UTC_INSTANT,
       "java.time.LocalDate" to ZONE_AGNOSTIC_DATE,
+      "java.time.LocalDateTime" to ZONE_AGNOSTIC_DATE_TIME,
       "java.time.LocalTime" to ZONE_AGNOSTIC_TIME,
       "java.time.MonthDay" to MONTH_DAY,
       "java.time.OffsetTime" to UTC_TIME,
@@ -118,6 +125,7 @@ enum class BaseFieldType {
       "java.util.Map" to MAP,
       "java.util.Set" to SET,
       "java.util.UUID" to UUID,
+      "javafx.scene.paint.Color" to COLOR,
       "kotlin.Byte" to INT_8,
       "kotlin.collections.List" to LIST,
       "kotlin.collections.Map" to MAP,
@@ -182,8 +190,11 @@ enum class BaseFieldType {
       "bool" to BOOLEAN,
       "boolean" to BOOLEAN,
       "character" to CHAR,
+      "color" to COLOR,
+      "datetime-local" to ZONE_AGNOSTIC_DATE_TIME,
       "dictionary" to MAP,
       "duration" to DURATION,
+      "email" to EMAIL,
       "file" to PATH,
       "float32" to FLOAT_32,
       "float64" to FLOAT_64,
@@ -196,13 +207,17 @@ enum class BaseFieldType {
       "list" to LIST,
       "map" to MAP,
       "path" to PATH,
+      "phoneNumber" to PHONE_NUMBER,
       "set" to SET,
       "string" to STRING,
+      "tel" to PHONE_NUMBER,
       "uint16" to INT_16,
       "uint32" to INT_32,
       "uint64" to INT_64,
+      "uri" to URI,
       "url" to URL,
       "uuid" to UUID,
+      "weekOfYear" to WEEK_OF_YEAR,
 
 
       // -- Not supported

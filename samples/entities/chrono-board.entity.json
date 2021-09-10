@@ -182,29 +182,9 @@
       "defaultValue": {
         "value": null
       },
-      "jvm": {
-        "overrideSerde": {
-          "deserializeTemplate": "com.wcarmon.chrono.model.ChronoColor.parse(%s)",
-          "serializeTemplate": "%s.toString()"
-        }
-      },
       "name": "themeColor",
       "nullable": true,
-      "protobuf": {
-        "overrideSerde": {
-          "deserializeTemplate": "com.wcarmon.chrono.model.ChronoColor.parse(%s)",
-          "serializeTemplate": "%s.toString()"
-        },
-        "overrideTypeLiteral": "string"
-      },
-      "rdbms": {
-        "overrideSerde": {
-          "deserializeTemplate": "com.wcarmon.chrono.model.ChronoColor.parse(%s)",
-          "serializeTemplate": "%s.toString()"
-        },
-        "varcharLength": 24
-      },
-      "type": "com.wcarmon.chrono.model.ChronoColor"
+      "type": "color"
     }
   ],
   "indexes": [

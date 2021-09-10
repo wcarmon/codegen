@@ -8,6 +8,8 @@ import java.time.Instant
  * See src/main/resources/json-schema/field-validation.schema.json
  *
  * assigning null disables a validation
+ *
+ * See https://developer.mozilla.org/en-US/docs/Learn/Forms/Form_validation#using_built-in_form_validation
  */
 data class FieldValidation(
 

@@ -169,7 +169,9 @@ private fun fullyQualifiedJavaTypeLiteral(
   ARRAY -> type.typeParameters.first() + "[]"
   BOOLEAN -> if (type.nullable) "Boolean" else "boolean"
   CHAR -> if (type.nullable) "Character" else "char"
+  COLOR -> "String"
   DURATION -> "java.time.Duration"
+  EMAIL -> "String"
   FLOAT_32 -> if (type.nullable) "Float" else "float"
   FLOAT_64 -> if (type.nullable) "Double" else "double"
   FLOAT_BIG -> "java.math.BigDecimal"
@@ -184,6 +186,7 @@ private fun fullyQualifiedJavaTypeLiteral(
   MONTH_DAY -> "java.time.MonthDay"
   PATH -> "java.nio.file.Path"
   PERIOD -> "java.time.Period"
+  PHONE_NUMBER -> "String"
   SET -> "java.util.Set<${type.typeParameters[0]}>"
   STRING -> "String"
   URI -> "java.net.URI"
@@ -194,9 +197,12 @@ private fun fullyQualifiedJavaTypeLiteral(
   YEAR -> "java.time.Year"
   YEAR_MONTH -> "java.time.YearMonth"
   ZONE_AGNOSTIC_DATE -> "java.time.LocalDate"
+  ZONE_AGNOSTIC_DATE_TIME -> "java.time.LocalDateTime"
   ZONE_AGNOSTIC_TIME -> "java.time.LocalTime"
   ZONE_OFFSET -> "java.time.ZoneOffset"
   ZONED_DATE_TIME -> "java.time.ZonedDateTime"
+
+  WEEK_OF_YEAR -> TODO()
 
   //TODO: need to convert when raw is specified in json as non-jvm
   USER_DEFINED -> type.rawTypeLiteral

@@ -38,7 +38,9 @@ fun getFullyQualifiedKotlinTypeLiteral(
   ARRAY -> getKotlinArrayType(type.base, type.typeParameters)
   BOOLEAN -> "Boolean"
   CHAR -> "Char"
+  COLOR -> "String"
   DURATION -> "kotlin.time.Duration"
+  EMAIL -> "String"
   FLOAT_32 -> "Float"
   FLOAT_64 -> "Double"
   FLOAT_BIG -> "java.math.BigDecimal"
@@ -53,6 +55,7 @@ fun getFullyQualifiedKotlinTypeLiteral(
   MONTH_DAY -> "java.time.MonthDay"
   PATH -> "java.nio.file.Path"
   PERIOD -> "java.time.Period"
+  PHONE_NUMBER -> "String"
   SET -> "Set<${type.typeParameters[0]}>"
   STRING -> "String"
   URI -> "java.net.URI"
@@ -63,11 +66,13 @@ fun getFullyQualifiedKotlinTypeLiteral(
   YEAR -> "java.time.Year"
   YEAR_MONTH -> "java.time.YearMonth"
   ZONE_AGNOSTIC_DATE -> "java.time.LocalDate"
+  ZONE_AGNOSTIC_DATE_TIME -> "java.time.LocalDateTime"
   ZONE_AGNOSTIC_TIME -> "java.time.LocalTime"
   ZONE_OFFSET -> "java.time.ZoneOffset"
   ZONED_DATE_TIME -> "java.time.ZonedDateTime"
-  USER_DEFINED -> type.rawTypeLiteral //TODO: might need to convert if specified in non-jvm
 
+  USER_DEFINED -> type.rawTypeLiteral //TODO: might need to convert if specified in non-jvm
+  WEEK_OF_YEAR -> TODO()
 }.let {
   if (type.nullable) "$it?" else it
 }

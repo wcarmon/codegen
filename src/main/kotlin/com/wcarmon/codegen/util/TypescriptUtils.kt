@@ -11,10 +11,13 @@ fun LogicalFieldType.asTS(): String = when (base) {
   UTC_INSTANT -> "Date"
 
   CHAR,
+  COLOR,
   DURATION,
+  EMAIL,
   MONTH_DAY,
   PATH,
   PERIOD,
+  PHONE_NUMBER,
   STRING,
   URI,
   URL,
@@ -22,6 +25,7 @@ fun LogicalFieldType.asTS(): String = when (base) {
   UUID,
   YEAR_MONTH,
   ZONE_AGNOSTIC_DATE,
+  ZONE_AGNOSTIC_DATE_TIME,
   ZONE_AGNOSTIC_TIME,
   ZONED_DATE_TIME,
   -> "string"
@@ -47,4 +51,5 @@ fun LogicalFieldType.asTS(): String = when (base) {
   YEAR -> TODO("handle year")
 
   USER_DEFINED -> TODO("convert $rawTypeLiteral")
+  WEEK_OF_YEAR -> TODO()
 }

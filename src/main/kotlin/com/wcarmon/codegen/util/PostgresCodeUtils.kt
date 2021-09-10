@@ -20,7 +20,7 @@ private const val CHARS_FOR_NULLABLE_CLAUSE = 9
  */
 fun getPostgresTypeLiteral(field: Field): String {
 
-  if (field.rdbmsConfig != null && field.rdbmsConfig.overridesType) {
+  if (field.rdbmsConfig.overridesType) {
     return field.rdbmsConfig.overrideTypeLiteral
   }
 
@@ -75,9 +75,13 @@ fun getPostgresTypeLiteral(field: Field): String {
       "NUMERIC(${field.type.precision}, ${field.type.scale})"
     }
 
+    COLOR -> "VARCHAR(7)"
+
     ARRAY,
+    EMAIL,
     LIST,
     MAP,
+    PHONE_NUMBER,
     SET,
     STRING,
     URI,
@@ -93,6 +97,8 @@ fun getPostgresTypeLiteral(field: Field): String {
 
       "VARCHAR(${field.rdbmsConfig.varcharLength})"
     }
+    WEEK_OF_YEAR -> TODO()
+    ZONE_AGNOSTIC_DATE_TIME -> TODO()
   }
 }
 

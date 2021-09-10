@@ -43,12 +43,15 @@ private fun sqlDelightTypeLiteral(baseType: BaseFieldType): String = when (baseT
   ZONE_OFFSET -> "INTEGER"
 
   ARRAY,
+  COLOR,
   DURATION,
+  EMAIL,
   LIST,
   MAP,
   MONTH_DAY,
   PATH,
   PERIOD,
+  PHONE_NUMBER,
   SET,
   STRING,
   URI,
