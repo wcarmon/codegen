@@ -1,5 +1,13 @@
 package com.wcarmon.codegen.sandbox
 
+import java.nio.file.Paths
+
+val CODEGEN_TEMP_DIR =
+  Paths.get(
+    System.getProperty("java.io.tmpdir"),
+    "codegen",
+  )
+
 object TemplatePaths {
   // -- Gradle
   const val GRADLE_BUILD_FILE = "/sandbox/templates/gradle/build.gradle.kts.ftl"
@@ -30,7 +38,14 @@ object TemplatePaths {
   //TODO: tsconfig.worker.json
 }
 
-val TEMPLATE_TO_RELATIVE_OUTPUT_PATH_MAPPING = mapOf(
+val NODE_TEMPLATE_TO_RELATIVE_OUTPUT_PATH_MAPPING = mapOf(
+  TemplatePaths.PACKAGE_JSON_FILE to "package.json",
+)
+
+/**
+ * Map<TemplateFileClasspath, PathRelativeToNewSandbox>
+ */
+val GRADLE_TEMPLATE_TO_RELATIVE_OUTPUT_PATH_MAPPING = mapOf(
   TemplatePaths.GRADLE_BUILD_FILE to "build.gradle.kts",
   TemplatePaths.GRADLE_PROPERTIES_FILE to "gradle.properties",
   TemplatePaths.GRADLE_SETTINGS_FILE to "settings.gradle.kts",
@@ -57,7 +72,7 @@ val RELATIVE_DIRS_FOR_GRADLE_PROJECT = listOf(
   "src/test/resources",
 )
 
-val RELATIVE_DIRS_FOR_NPM_PROJECT = listOf(
+val RELATIVE_DIRS_FOR_NODE_PROJECT = listOf(
   "src",
   "scripts",
 )

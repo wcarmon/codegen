@@ -10,11 +10,6 @@ import kotlin.io.path.absolute
 
 private val LOG = LogManager.getLogger("ProcessUtils")
 
-data class ProcessOutput(
-  val stdErr: Path,
-  val stdOut: Path,
-)
-
 
 /**
  * A simpler API over java ProcessAPI
@@ -45,6 +40,11 @@ fun executeCommand(
   val stdOut = Files.createFile(Paths.get(tempDir.toString(), "stdOut.log"))
   LOG.debug("See process output: stdOut=$stdOut, stdErr=$stdErr")
 
+  val returnMe = ProcessOutput(
+    stdErr = stdErr,
+    stdOut = stdOut
+  )
+
   val process = ProcessBuilder(command)
     //.inheritIO()  // Streams nicely, but you cannot return output/error
     .directory(workingDir.toFile())
@@ -55,21 +55,29 @@ fun executeCommand(
   val processTerminated = process.waitFor(
     maxWait.seconds, TimeUnit.SECONDS)
 
-  check(processTerminated) {
-    "Process timed out: " +
-        "workingDir=$workingDir, " +
-        "command=$command"
+  if (!processTerminated) {
+    returnMe.printStdOut()
+    returnMe.printStdErr()
+
+    throw IllegalStateException(
+      "Process timed out: " +
+          "workingDir=$workingDir, " +
+          "command=$command"
+    )
   }
 
-  check(process.exitValue() == 0) {
-    "gradle wrapper command failed: " +
-        "workingDir=$workingDir, " +
-        "command=$command, " +
-        "exitValue=$process.exitValue(), "
+
+  if (process.exitValue() != 0) {
+    returnMe.printStdOut()
+    returnMe.printStdErr()
+
+    throw IllegalStateException(
+      "command failed: " +
+          "workingDir=$workingDir, " +
+          "command=$command, " +
+          "exitValue=$process.exitValue(), "
+    )
   }
 
-  return ProcessOutput(
-    stdErr = stdErr,
-    stdOut = stdOut
-  )
+  return returnMe
 }

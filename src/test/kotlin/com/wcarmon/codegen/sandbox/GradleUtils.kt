@@ -1,7 +1,6 @@
 package com.wcarmon.codegen.sandbox
 
 import freemarker.template.Configuration
-import freemarker.template.Template
 import org.apache.logging.log4j.LogManager
 import java.nio.file.Files
 import java.nio.file.Path
@@ -63,32 +62,38 @@ fun gradleTest(
   )
 }
 
-/**
- * @return normalized root path for new project
- */
 fun buildGradleSandbox(
   gradleConfig: GradleConfig,
   freemarkerConfig: Configuration = getFreemarkerConfig(),
+
+  /** Relative to sandbox root */
+  directoriesToCreate: List<String> = RELATIVE_DIRS_FOR_GRADLE_PROJECT,
+
+  /** Map<TemplateFileClasspath, PathRelativeToNewSandboxRoot> */
+  templateMappings: Map<String, String> = GRADLE_TEMPLATE_TO_RELATIVE_OUTPUT_PATH_MAPPING,
 ) {
 
-  LOG.info("Creating gradle sandbox directory: path=${gradleConfig.cleanProjectRoot}")
+  LOG.info("Creating Gradle sandbox directory: path=${gradleConfig.cleanProjectRoot}")
+
+  // -- Create dirs
   Files.createDirectories(
     gradleConfig.cleanProjectRoot)
 
   val rootAsString = gradleConfig.cleanProjectRoot.toString()
 
-  RELATIVE_DIRS_FOR_GRADLE_PROJECT
+  directoriesToCreate
     .forEach { relativePath ->
       Files.createDirectories(
         Paths.get(rootAsString, relativePath))
     }
 
+
+  // -- Generate files
   val dataForTemplate = mapOf(
     "gradleConfig" to gradleConfig,
   )
 
-  // -- Generate files
-  TEMPLATE_TO_RELATIVE_OUTPUT_PATH_MAPPING
+  templateMappings
     .forEach { (templatePath: String, relativeOutputPath: String) ->
 
       generateFileFromTemplate(
@@ -131,22 +136,6 @@ private fun addGradleWrapper(
   LOG.info("Added gradle wrapper to ${gradleConfig.cleanProjectRoot}")
 }
 
-private fun generateFileFromTemplate(
-  dataForTemplate: Map<String, Any>,
-  dest: Path,
-  template: Template,
-) {
-  check(!Files.exists(dest)) {
-    "Failure: file already exists at $dest"
-  }
-
-  Files.newBufferedWriter(dest)
-    .use { writer ->
-      template.process(dataForTemplate, writer)
-    }
-
-  LOG.info("Wrote file: path=$dest")
-}
 
 //Only required because I cannot figure out
 // how to convert the plugins section of protobuf.gradle to *.kts format

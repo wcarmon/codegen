@@ -5,49 +5,8 @@ import java.nio.file.Paths
 import java.util.*
 import kotlin.io.path.absolute
 
-fun loadConfigFromProperties(
-  classpath: String = "/sandbox.properties",
-): SandboxConfig {
-  require(classpath.isNotBlank())
 
-  SandboxConfig::class.java
-    .getResourceAsStream(classpath)
-    .use { inStream ->
-      checkNotNull(inStream) { "Failed to load properties.  classpath=$classpath" }
-
-      val props = Properties().also {
-        it.load(inStream)
-      }
-
-      return parseProperties(props)
-    }
-}
-
-
-fun parseProperties(
-  p: Properties,
-) =
-  SandboxConfig(
-    gradleConfig = GradleConfig(
-      fullyQualifiedMainClass = p.parseRequiredString("gradle.main-class.fully-qualified"),
-      gradleBinary = p.parseRequiredPath("gradle.binary"),
-      gradleVersion = p.parseRequiredString("gradle.version"),
-      includeProto = p.parseOptionalBoolean("gradle.include.proto", true),
-      includeSQLDelight = p.parseOptionalBoolean("gradle.include.sqldelight", true),
-      projectGroup = p.parseRequiredString("gradle.project.group"),
-      projectName = p.parseRequiredString("gradle.project.name"),
-      projectRoot = Paths.get(p.getProperty("gradle.project.root").trim()).normalize().absolute(),
-      projectVersion = p.getProperty("gradle.project.version").trim(),
-    ),
-    nodeConfig = NodeConfig(
-      nodeBinary = Paths.get(p.getProperty("node.binary").trim()),
-      npmBinary = Paths.get(p.getProperty("npm.binary").trim()),
-      npxBinary = Paths.get(p.getProperty("npx.binary").trim()),
-      projectVersion = p.getProperty("node.project.version").trim(),
-    ),
-  )
-
-private fun Properties.parseOptionalString(
+fun Properties.parseOptionalString(
   propertyName: String,
   defaultIfBlank: String,
 ): String {
@@ -60,7 +19,7 @@ private fun Properties.parseOptionalString(
   return value
 }
 
-private fun Properties.parseRequiredString(
+fun Properties.parseRequiredString(
   propertyName: String,
 ): String {
   val value = getProperty(propertyName, "").trim()
@@ -69,16 +28,16 @@ private fun Properties.parseRequiredString(
   return value
 }
 
-private fun Properties.parseRequiredPath(
+fun Properties.parseRequiredPath(
   propertyName: String,
 ): Path {
   val value = getProperty(propertyName, "").trim()
-  require(value.isNotBlank()) { "missing required path property: $propertyName" }
+  require(value.isNotBlank()) { "missing required Path property: $propertyName" }
 
-  return Paths.get(value)
+  return Paths.get(value).normalize().absolute()
 }
 
-private fun Properties.parseRequiredBoolean(
+fun Properties.parseRequiredBoolean(
   propertyName: String,
 ): Boolean {
 
@@ -91,7 +50,7 @@ private fun Properties.parseRequiredBoolean(
   return value == "true"
 }
 
-private fun Properties.parseOptionalBoolean(
+fun Properties.parseOptionalBoolean(
   propertyName: String,
   defaultIfMissing: Boolean = false,
 ): Boolean {

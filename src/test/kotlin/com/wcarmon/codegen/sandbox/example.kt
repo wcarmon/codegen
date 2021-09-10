@@ -6,27 +6,33 @@ import java.util.concurrent.ThreadLocalRandom
 
 fun main() {
 
-  val parsedConfig = loadConfigFromProperties("/sandbox.properties")
+  Files.createDirectories(CODEGEN_TEMP_DIR)
 
-  val gradleConfig = parsedConfig.gradleConfig
+  val sandboxConfig = SandboxConfig.fromProperties("/sandbox.properties")
+
+  val gradleConfig = sandboxConfig.gradleConfig
     .copy(
-      projectName = "sandbox-" + ThreadLocalRandom.current().nextInt(20),
-      projectRoot = Files.createTempDirectory("codegen-gradle-sandbox-"),
+      projectName = "sandbox-${ThreadLocalRandom.current().nextInt(20)}",
+      projectRoot = Files.createTempDirectory(CODEGEN_TEMP_DIR, "gradle-sandbox-"),
     )
 
-  val nodeConfig = parsedConfig.nodeConfig
+  val nodeConfig = sandboxConfig.nodeConfig
+    .copy(
+      //GOTCHA: node doesn't allow hyphens in project name
+      projectName = "sandbox${ThreadLocalRandom.current().nextInt(20)}",
+      projectRoot = Files.createTempDirectory(CODEGEN_TEMP_DIR, "node-sandbox-"),
+    )
 
   doNodeStuff(nodeConfig)
-  doGradleStuff(gradleConfig)
+//  doGradleStuff(gradleConfig)
 }
 
 fun doNodeStuff(nodeConfig: NodeConfig) {
   buildNodeSandbox(nodeConfig)
 
-  //TODO: run tests
-  //TODO: run app (local webserver?)
+  runNodeUnitTests(nodeConfig)
 
-  TODO("Not yet implemented")
+  ngServe(nodeConfig)
 }
 
 fun doGradleStuff(gradleConfig: GradleConfig) {
