@@ -31,7 +31,7 @@ data class ConditionalExpression(
     KOTLIN_JVM_1_4,
     -> cStyle(config.unterminated)
 
-    GOLANG_1_7,
+    GOLANG_1_8,
     RUST_1_54,
     SWIFT_5,
     -> noParens(config.unterminated)

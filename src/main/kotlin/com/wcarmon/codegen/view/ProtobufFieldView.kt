@@ -8,7 +8,7 @@ import com.wcarmon.codegen.util.effectiveProtobufType
 /**
  * Protobuf related convenience methods for a [Field]
  *
- * See [com.wcarmon.codegen.model.ProtocolBufferFieldConfig]
+ * See [com.wcarmon.codegen.model.ProtoBufFieldConfig]
  */
 class ProtobufFieldView(
   debugMode: Boolean,

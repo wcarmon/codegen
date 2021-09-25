@@ -4,11 +4,10 @@ import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import com.wcarmon.codegen.CREATED_TS_FIELD_NAMES
 import com.wcarmon.codegen.DEBUG_MODE
-import com.wcarmon.codegen.UPDATED_TS_FIELD_NAMES
-import com.wcarmon.codegen.model.BaseFieldType.STRING
+import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.TargetLanguage.*
+import com.wcarmon.codegen.util.getPostgresTypeLiteral
 import com.wcarmon.codegen.view.*
 
 /**
@@ -35,6 +34,9 @@ import com.wcarmon.codegen.view.*
 data class Field(
   val name: Name,
 
+  /**
+   * Might be (logically) overriden by tech specific config below
+   */
   val type: LogicalFieldType,
 
   /**
@@ -56,12 +58,15 @@ data class Field(
    * ...
    */
   val positionInId: Int? = null,
+  val validationConfig: FieldValidation = FieldValidation(),
 
   // -- Technology specific config
-  val jvmConfig: JVMFieldConfig = JVMFieldConfig(),
-  val protobufConfig: ProtocolBufferFieldConfig = ProtocolBufferFieldConfig(),
+  private val golangConfig: GolangFieldConfig = GolangFieldConfig(),
+  private val jvmConfig: JVMFieldConfig = JVMFieldConfig(),
+  private val protobufConfig: ProtoBufFieldConfig = ProtoBufFieldConfig(),
+
+  //TODO: mark private
   val rdbmsConfig: RDBMSColumnConfig = RDBMSColumnConfig(),
-  val validationConfig: FieldValidation = FieldValidation(),
 ) {
 
   companion object {
@@ -74,17 +79,17 @@ data class Field(
       @JsonProperty("defaultValue") defaultValue: DefaultValue?,
       @JsonProperty("documentation") documentation: Iterable<String>?,
       @JsonProperty("enumType") enumType: Boolean?,
+      @JsonProperty("golang") golangConfig: GolangFieldConfig?,
       @JsonProperty("jvm") jvmFieldConfig: JVMFieldConfig?,
       @JsonProperty("name") name: Name,
       @JsonProperty("nullable") nullable: Boolean?,
       @JsonProperty("positionInId") positionInId: Int?,
       @JsonProperty("precision") precision: Int?,
-      @JsonProperty("protobuf") protobufConfig: ProtocolBufferFieldConfig?,
+      @JsonProperty("protobuf") protobufConfig: ProtoBufFieldConfig?,
       @JsonProperty("rdbms") rdbmsConfig: RDBMSColumnConfig?,
       @JsonProperty("scale") scale: Int?,
       @JsonProperty("signed") signed: Boolean?,
       @JsonProperty("type") typeLiteral: String?,
-      @JsonProperty("typeParameters") typeParameters: List<String>?,
       @JsonProperty("validation") validationConfig: FieldValidation?,
     ): Field {
 
@@ -102,7 +107,6 @@ data class Field(
         rawTypeLiteral = typeLiteral ?: "",
         scale = scale ?: 0,
         signed = signed ?: true,
-        typeParameters = typeParameters ?: listOf(),
       )
 
       return Field(
@@ -110,10 +114,11 @@ data class Field(
         canUpdate = canUpdate ?: true,
         defaultValue = defaultValue ?: DefaultValue(),
         documentation = documentation?.toList() ?: listOf(),
+        golangConfig = golangConfig ?: GolangFieldConfig(),
         jvmConfig = jvmFieldConfig ?: JVMFieldConfig(),
         name = name,
         positionInId = positionInId,
-        protobufConfig = protobufConfig ?: ProtocolBufferFieldConfig(),
+        protobufConfig = protobufConfig ?: ProtoBufFieldConfig(),
         rdbmsConfig = rdbmsConfig ?: RDBMSColumnConfig(),
         type = logicalType,
         validationConfig = validationConfig ?: FieldValidation(),
@@ -137,6 +142,11 @@ data class Field(
         "positionInId must be non-negative: $positionInId, this=$this"
       }
     }
+
+    assertTypeParametersValid(GOLANG_1_8)
+    assertTypeParametersValid(JAVA_08)
+    assertTypeParametersValid(KOTLIN_JVM_1_4)
+    assertTypeParametersValid(PROTOCOL_BUFFERS_3)
   }
 
   val java8View by lazy {
@@ -158,6 +168,16 @@ data class Field(
       targetLanguage = KOTLIN_JVM_1_4,
     )
   }
+
+  val golangView by lazy {
+    GolangFieldView(
+      debugMode = DEBUG_MODE,
+      field = this,
+      rdbmsView = rdbmsView,
+      targetLanguage = GOLANG_1_8,
+    )
+  }
+
 
   val rdbmsView by lazy {
     RDBMSColumnView(
@@ -196,38 +216,134 @@ data class Field(
       debugMode = DEBUG_MODE)
   }
 
-  // -- Language & Framework specific convenience methods
+  fun effectiveBaseType(targetLanguage: TargetLanguage): BaseFieldType =
+    when (targetLanguage) {
+      GOLANG_1_8 -> golangConfig.overrideBaseType ?: type.base
 
-  /**
-   * Defaults to a reasonable RDBMS equivalent
-   * Allows override via [RDBMSColumnConfig.overrideTypeLiteral]
-   */
-  //TODO: is this appropriate for JVM or only RDBMS?
-  val effectiveBaseType by lazy {
-    if (rdbmsConfig.overrideTypeLiteral.isNotBlank()) {
-      BaseFieldType.parse(rdbmsConfig.overrideTypeLiteral)
+      JAVA_08,
+      JAVA_11,
+      JAVA_17,
+      -> type.base
 
-    } else {
-      type.base
+      KOTLIN_JVM_1_4 -> type.base
+
+      PROTOCOL_BUFFERS_3 -> protobufConfig.overrideBaseType ?: type.base
+
+      SQL_DB2,
+      SQL_H2,
+      SQL_MARIA,
+      SQL_MYSQL,
+      SQL_ORACLE,
+      SQL_POSTGRESQL,
+      SQL_SQLITE,
+      -> rdbmsConfig.overrideBaseType ?: type.base
+
+      SQL_DELIGHT -> rdbmsConfig.overrideBaseType ?: type.base
+
+      else -> TODO("Get effective base type for field=$this, targetLanguage=$targetLanguage")
+    }
+
+  fun typeParameters(targetLanguage: TargetLanguage): List<String> = when (targetLanguage) {
+    //TODO: more here
+    else -> TODO("get type params for field=$this, targetLanguage=$targetLanguage")
+  }
+
+  /** true for String, Collections, Enums, Arrays */
+  fun isParameterized(targetLanguage: TargetLanguage) =
+    when (effectiveBaseType(targetLanguage)) {
+      ARRAY,
+      LIST,
+      MAP,
+      SET,
+      -> true
+
+      USER_DEFINED -> typeParameters(targetLanguage).isNotEmpty()
+
+      else -> false
+    }
+
+
+  fun overrideDefaultValue(targetLanguage: TargetLanguage): DefaultValue =
+    when (targetLanguage) {
+      //TODO: more here
+      else -> TODO("get overrideDefaultValue for field=$this, targetLanguage=$targetLanguage")
+    }
+
+
+  fun typeLiteral(targetLanguage: TargetLanguage): String = when (targetLanguage) {
+    //TODO: move logic from views to here
+
+    PROTOCOL_BUFFERS_3 -> protobufConfig.typeLiteral(type)
+
+    SQL_POSTGRESQL -> rdbmsConfig.overrideTypeLiteral ?: getPostgresTypeLiteral(this)
+
+    //TODO: more here
+    else -> TODO("get typeLiteral for field=$this, targetLanguage=$targetLanguage")
+  }
+
+  fun effectiveRDBMSSerde(targetLanguage: TargetLanguage): Serde {
+    when (targetLanguage) {
+      JAVA_08,
+      JAVA_11,
+      JAVA_17,
+      -> TODO()
+
+      KOTLIN_JVM_1_4 -> TODO()
+
+      GOLANG_1_8 -> TODO()
+
+      SQL_DB2,
+      SQL_DELIGHT,
+      SQL_H2,
+      SQL_MARIA,
+      SQL_MYSQL,
+      SQL_ORACLE,
+      SQL_POSTGRESQL,
+      SQL_SQLITE,
+      -> throw UnsupportedOperationException()
+
+      else -> TODO("get effectiveSerde for field=$this, targetLanguage=$targetLanguage")
     }
   }
 
-  val isCollection: Boolean = effectiveBaseType.isCollection
+  fun effectiveProtoSerde(targetLanguage: TargetLanguage): Serde {
 
-  val shouldQuoteInString = when (effectiveBaseType) {
-    STRING -> true
-    else -> false
+    when (targetLanguage) {
+      JAVA_08,
+      JAVA_11,
+      JAVA_17,
+      -> TODO()
+
+      KOTLIN_JVM_1_4 -> TODO()
+
+      GOLANG_1_8 -> TODO()
+
+      PROTOCOL_BUFFERS_3 -> throw UnsupportedOperationException()
+      else -> TODO("get effectiveSerde for field=$this, targetLanguage=$targetLanguage")
+    }
   }
 
-  val usesNumericValidation = effectiveBaseType.isNumeric
+  /**
+   * Parametric polymorphism
+   */
+  private fun assertTypeParametersValid(targetLanguage: TargetLanguage) {
 
-  val usesStringValidation = effectiveBaseType == STRING
+    val typeParameters = typeParameters(targetLanguage)
 
-  val isCreatedTimestamp =
-    effectiveBaseType.isTemporal &&
-        CREATED_TS_FIELD_NAMES.any { name.lowerCamel.equals(it, true) }
+    when (val n = effectiveBaseType(targetLanguage).requiredTypeParameterCount) {
+      0 -> require(typeParameters.isEmpty()) {
+        "type parameter not allowed: field=$this"
+      }
 
-  val isUpdatedTimestamp =
-    effectiveBaseType.isTemporal &&
-        UPDATED_TS_FIELD_NAMES.any { name.lowerCamel.equals(it, true) }
+      1 -> require(typeParameters.size == n) {
+        "exactly 1-type parameter required (add 'typeParameters' to Field): field=$this"
+      }
+
+      else -> require(typeParameters.size == n) {
+        "type parameters required (add 'typeParameters' to Field): " +
+            "requiredCount=$n, actualCount=${typeParameters.size}, this=$this"
+      }
+    }
+  }
+
 }

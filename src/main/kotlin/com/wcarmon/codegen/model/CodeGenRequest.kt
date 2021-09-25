@@ -9,6 +9,8 @@ import com.wcarmon.codegen.DEBUG_MODE
 import com.wcarmon.codegen.TEMPLATE_SUFFIX
 import com.wcarmon.codegen.model.OutputMode.FILE_PER_ENTITY
 import com.wcarmon.codegen.model.OutputMode.SINGLE_FILE
+import com.wcarmon.codegen.model.TargetLanguage.JAVA_08
+import com.wcarmon.codegen.view.GolangRequestView
 import com.wcarmon.codegen.view.JVMRequestView
 import com.wcarmon.codegen.view.Java8RequestView
 import com.wcarmon.codegen.view.KotlinRequestView
@@ -51,6 +53,8 @@ data class CodeGenRequest(
    * fully qualified classes/enums/interfaces to import
    */
   val extraJVMImports: Set<String> = setOf(),
+
+  val extraGolangImports: Set<String> = setOf(),
 
   val extraProtobufImports: Set<String> = setOf(),
 
@@ -179,6 +183,13 @@ data class CodeGenRequest(
     )
   }
 
+  val golangView by lazy {
+    GolangRequestView(
+      debugMode = DEBUG_MODE,
+      request = this,
+    )
+  }
+
   /**
    * @return CollectionFields, with the owning Entity
    */
@@ -194,7 +205,8 @@ data class CodeGenRequest(
 
       // -- Only retain collection fields
       .filter { pair ->
-        pair.field.isCollection
+        //TODO: confim this is fine for golang, proto, ...
+        pair.field.effectiveBaseType(JAVA_08).isCollection
       }
       .sortedBy { pair ->
         pair.field.name.lowerCamel

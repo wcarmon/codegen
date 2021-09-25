@@ -64,7 +64,7 @@ class ProtobufEntityView(
           deprecated = false,
           field = field,
           number = ProtoFieldNumber(index + firstIndex),
-          repeated = field.isCollection,
+          repeated = field.protobufConfig.effectiveBaseType.isCollection,
         ).render(renderConfig.indented)
       }
       .joinToString(

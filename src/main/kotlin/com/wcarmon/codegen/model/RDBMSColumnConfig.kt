@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 
 private const val MAX_TYPE_LITERAL_LENGTH = 64
 
+
 /**
  * [Field] attributes specific to relational database column
  *
@@ -11,6 +12,7 @@ private const val MAX_TYPE_LITERAL_LENGTH = 64
  */
 @JsonPropertyOrder(alphabetic = true)
 data class RDBMSColumnConfig(
+
   val autoIncrement: Boolean = false,
 
   val varcharLength: Int? = null,
@@ -49,5 +51,10 @@ data class RDBMSColumnConfig(
     //TODO: warn in situations where varcharLength will be ignored
   }
 
-  val overridesType = overrideTypeLiteral.isNotBlank()
+  val overrideBaseType: BaseFieldType? =
+    if (overrideTypeLiteral.isNotBlank()) {
+      BaseFieldType.parse(overrideTypeLiteral)
+    } else {
+      null
+    }
 }

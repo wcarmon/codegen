@@ -22,7 +22,7 @@ data class DefaultValueExpression(
 
     return when (config.targetLanguage) {
 
-      GOLANG_1_7,
+      GOLANG_1_8,
       -> handleGolang(config)
 
       JAVA_08,

@@ -87,9 +87,8 @@ class KotlinEntityView(
           //TODO: suffix "ID/Primary key" when `field.idField`
           defaultValue = defaultValueExpression,
           documentation = DocumentationExpression(field.documentation),
+          field = field,
           finalityModifier = FinalityModifier.FINAL,
-          name = field.name,
-          type = field.type,
           visibilityModifier = VisibilityModifier.PRIVATE,
         )
           .render(
@@ -100,12 +99,11 @@ class KotlinEntityView(
   val typeReferenceDeclarations: String by lazy {
     val indentation = "  "
 
-    entity
-      .collectionFields
+    jvmView.collectionFields
       .joinToString("\n") { field ->
         val output = StringBuilder(512)
 
-        val collectionLiteral = when (field.type.base) {
+        val collectionLiteral = when (field.jvmConfig.effectiveBaseType) {
           SET -> "Set"
           LIST -> "List"
           else -> TODO("Add typeref support for field=$field, entity=$entity")
@@ -113,10 +111,10 @@ class KotlinEntityView(
 
         //TODO: should I use field.jvmView.jacksonTypeRef
         output.append("val ${entity.name.upperSnake}__${field.name.upperSnake}_TYPE_REF")
-        output.append(": TypeReference<$collectionLiteral<${field.type.typeParameters.first()}>> ")
+        output.append(": TypeReference<$collectionLiteral<${field.jvmConfig.typeParameters.first()}>> ")
         output.append("=\n")
         output.append(indentation)
-        output.append("object : TypeReference<$collectionLiteral<${field.type.typeParameters.first()}>>() {}")
+        output.append("object : TypeReference<$collectionLiteral<${field.jvmConfig.typeParameters.first()}>>() {}")
 
         output.toString()
       }
@@ -194,8 +192,7 @@ class KotlinEntityView(
 
     validatedFields.map { field ->
       FieldValidationExpressions(
-        fieldName = field.name,
-        type = field.type,
+        field = field,
         validationConfig = field.validationConfig,
         validationSeparator = "\n"
       )
@@ -227,7 +224,7 @@ class KotlinEntityView(
         lines += """$indentation"UPDATE \"${entity.name.lowerSnake}\" " +"""
         lines += """$indentation"SET ${field.name.lowerSnake}=? " + """
 
-        if (entity.updatedTimestampFieldName != null && !field.isUpdatedTimestamp) {
+        if (entity.updatedTimestampFieldName != null && !field.jvmView.isUpdatedTimestamp) {
           lines += """$indentation"AND ${entity.updatedTimestampFieldName.lowerSnake}=? " + """
         }
 

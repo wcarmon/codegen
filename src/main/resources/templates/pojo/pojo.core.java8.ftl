@@ -19,7 +19,7 @@ ${entity.java8View.fieldDeclarations}
   private ${entity.name.upperCamel} (${entity.name.upperCamel}Builder builder) {
     <#list entity.sortedFields as field>
       <#-- TODO: use [FieldReadExpression] on the right side of assignment -->
-      <#if field.collection>
+      <#if field.jvmConfig.effectiveBaseType.collection>
       this.${field.name.lowerCamel} = ${field.java8View.unmodifiableCollectionMethod}(builder.${field.name.lowerCamel});
       <#else>
       this.${field.name.lowerCamel} = builder.${field.name.lowerCamel};
@@ -67,7 +67,7 @@ ${entity.java8View.fieldDeclarations}
   public String toString() {
     return new StringJoiner(", ", ${entity.name.upperCamel}.class.getSimpleName() + "[", "]")
     <#list entity.sortedFields as field>
-      <#if field.shouldQuoteInString>
+      <#if field.jvmView.shouldQuoteInString>
       .add("${field.name.lowerCamel}='" + ${field.name.lowerCamel} + "'")
       <#else>
       .add("${field.name.lowerCamel}=" + ${field.name.lowerCamel})
@@ -96,7 +96,7 @@ ${entity.java8View.fieldDeclarations}
       return this;
     }
 
-      <#if field.collection>
+      <#if field.jvmConfig.effectiveBaseType.collection>
 
         public ${entity.name.upperCamel}Builder ${field.name.lowerCamel}(${field.type.typeParameters[0]} value) {
           if (this.${field.name.lowerCamel} == null) {

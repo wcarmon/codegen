@@ -87,9 +87,8 @@ class Java8EntityView(
         FieldDeclarationExpression(
           //TODO: suffix "ID/Primary key" when `field.idField`
           documentation = DocumentationExpression(field.documentation),
+          field = field,
           finalityModifier = FinalityModifier.FINAL,
-          name = field.name,
-          type = field.type,
           visibilityModifier = VisibilityModifier.PRIVATE,
 //      defaultValue = TODO()  TODO: fix this
         ).render(renderConfig.indented)
@@ -147,22 +146,22 @@ class Java8EntityView(
       }
   }
 
+
   val typeReferenceDeclarations: String by lazy {
     val indentation = "  "
 
-    entity
-      .collectionFields
+    jvmView.collectionFields
       .joinToString("\n") { field ->
         val output = StringBuilder(512)
 
-        val collectionLiteral = when (field.type.base) {
+        val collectionLiteral = when (field.jvmConfig.effectiveBaseType) {
           BaseFieldType.SET -> "Set"
           BaseFieldType.LIST -> "List"
           else -> TODO("Add typeref support for field=$field, entity=$entity")
         }
 
         //TODO: should I use field.jvmView.jacksonTypeRef
-        output.append("public static final TypeReference<$collectionLiteral<${field.type.typeParameters.first()}>> ")
+        output.append("public static final TypeReference<$collectionLiteral<${field.jvmConfig.typeParameters.first()}>> ")
         output.append("${entity.name.upperSnake}__${field.name.upperSnake}_TYPE_REF ")
         output.append("=\n")
         output.append(indentation)
@@ -184,8 +183,7 @@ class Java8EntityView(
 
     validatedFields.map { field ->
       FieldValidationExpressions(
-        fieldName = field.name,
-        type = field.type,
+        field = field,
         validationConfig = field.validationConfig,
         validationSeparator = "\n"
       )
@@ -218,7 +216,7 @@ class Java8EntityView(
         lines += """$indentation"UPDATE \"${entity.name.lowerSnake}\" " +"""
         lines += """$indentation"SET ${field.name.lowerSnake}=? " + """
 
-        if (entity.updatedTimestampFieldName != null && !field.isUpdatedTimestamp) {
+        if (entity.updatedTimestampFieldName != null && !field.jvmView.isUpdatedTimestamp) {
           lines += """$indentation"AND ${entity.updatedTimestampFieldName.lowerSnake}=? " + """
         }
 
@@ -268,10 +266,9 @@ class Java8EntityView(
     ) { field ->
       MethodParameterExpression(
         annotations = annotations,
+        field = field,
         finalityModifier = FinalityModifier.FINAL,
-        name = field.name,
         qualified = qualified,
-        type = field.type,
       )
         .render(renderConfig)
     }

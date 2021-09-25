@@ -1,11 +1,17 @@
 {
-  "$id": "https://wcarmon.com/schemas/codegen/jvm-field.schema.json",
+  "$id": "https://wcarmon.com/schemas/codegen/golang-field.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
-  "description": "extra config for JVM fields",
+  "description": "extra config for golang fields",
   "properties": {
     "overrideSerde": {
       "$ref": "serde.schema.json"
+    },
+    "overrideTypeLiteral": {
+      "description": "Allows custom golang type, replaces auto-derived type",
+      "maxLength": 64,
+      "minLength": 1,
+      "type": "string"
     },
     "typeParameters": {
       "items": {
@@ -21,6 +27,6 @@
     "pattern": "^[$]?[A-Za-z_][A-Za-z0-9]*$"
   },
   "required": [],
-  "title": "JVM Field config",
+  "title": "Golang Field config",
   "type": "object"
 }

@@ -3,12 +3,10 @@
 /** Utilities common to all RDBMS */
 package com.wcarmon.codegen.util
 
-import com.wcarmon.codegen.model.BaseFieldType
+import com.wcarmon.codegen.model.*
 import com.wcarmon.codegen.model.BaseFieldType.*
-import com.wcarmon.codegen.model.Entity
-import com.wcarmon.codegen.model.Field
-import com.wcarmon.codegen.model.QuoteType
 import com.wcarmon.codegen.model.QuoteType.*
+import com.wcarmon.codegen.model.TargetLanguage.SQL_POSTGRESQL
 
 /**
  * @return comma separated column names, PK fields first
@@ -119,6 +117,6 @@ fun rdbmsDefaultValueLiteral(field: Field): String {
     return "NULL"
   }
 
-  return quoteTypeForRDBMSLiteral(field.effectiveBaseType)
+  return quoteTypeForRDBMSLiteral(field.effectiveBaseType(SQL_POSTGRESQL))
     .wrap(field.defaultValue.literal.toString())
 }

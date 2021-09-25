@@ -9,5 +9,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
  */
 @JsonPropertyOrder(alphabetic = true)
 data class JVMFieldConfig(
+
   val overrideSerde: Serde = Serde.INLINE,
+
+  // -- Only for Collections & Generic types (Parametric polymorphism)
+  val typeParameters: List<String> = listOf(),
 )

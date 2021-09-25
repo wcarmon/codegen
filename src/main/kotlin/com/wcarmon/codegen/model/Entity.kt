@@ -159,6 +159,15 @@ data class Entity(
     )
   }
 
+  val golangView by lazy {
+    GolangEntityView(
+      debugMode = DEBUG_MODE,
+      entity = this,
+      rdbmsView = rdbmsView,
+      targetLanguage = GOLANG_1_8,
+    )
+  }
+
   val jvmView by lazy {
     JVMEntityView(
       debugMode = DEBUG_MODE,
@@ -209,10 +218,6 @@ data class Entity(
   val hasIdFields: Boolean = idFields.isNotEmpty()
 
   val hasNonIdFields: Boolean = nonIdFields.isNotEmpty()
-
-  val collectionFields = fields
-    .filter { it.effectiveBaseType.isCollection }
-    .sortedBy { it.name.lowerCamel }
 
   val sortedFields = fields.sortedBy { it.name.lowerCamel }
 

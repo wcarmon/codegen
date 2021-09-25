@@ -6,6 +6,7 @@ import com.wcarmon.codegen.ast.*
 import com.wcarmon.codegen.model.*
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.SerdeMode.SERIALIZE
+import com.wcarmon.codegen.model.TargetLanguage.SQL_POSTGRESQL
 import java.sql.JDBCType
 
 
@@ -61,14 +62,16 @@ fun buildPreparedStatementSetter(
     wrapped = fieldReadExpression,
   )
 
+  val baseType = field.effectiveBaseType(SQL_POSTGRESQL)
+
   return PreparedStatementSetExpression(
     columnIndex = columnIndex,
-    columnType = jdbcType(field.effectiveBaseType),
+    columnType = jdbcType(baseType),
     fieldReadExpression = wrappedFieldRead,
     field = field,
     nullTestExpression = nullTestExpression,
     preparedStatementIdentifierExpression = psConfig.preparedStatementIdentifierExpression,
-    setterMethod = defaultPreparedStatementSetterMethod(field.effectiveBaseType),
+    setterMethod = defaultPreparedStatementSetterMethod(baseType),
   )
 }
 
@@ -92,11 +95,14 @@ fun effectiveJDBCSerde(field: Field): Serde =
 /**
  * @return true when Type is not trivially mapped to JDBC getter/setter
  */
-private fun requiresJDBCSerde(field: Field): Boolean =
-  field.effectiveBaseType in setOf(PATH, URI, URL)
-      || field.effectiveBaseType.isTemporal
-      || field.isCollection
-      || field.type.enumType
+private fun requiresJDBCSerde(field: Field): Boolean {
+  val baseType = field.effectiveBaseType(SQL_POSTGRESQL)
+
+  return (baseType in setOf(PATH, URI, URL)
+      || baseType.isTemporal
+      || baseType.isCollection
+      || field.type.enumType)
+}
 
 
 /**

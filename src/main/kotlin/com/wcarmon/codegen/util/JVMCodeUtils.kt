@@ -4,9 +4,13 @@
 package com.wcarmon.codegen.util
 
 import com.google.common.base.Preconditions.checkState
-import com.wcarmon.codegen.model.*
+import com.wcarmon.codegen.model.BaseFieldType
 import com.wcarmon.codegen.model.BaseFieldType.*
+import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.QuoteType.*
+import com.wcarmon.codegen.model.Serde
+import com.wcarmon.codegen.model.StringFormatTemplate
+import com.wcarmon.codegen.model.TargetLanguage.JAVA_08
 
 /**
  * Output only applicable to JVM languages (eg. Java, Kotlin, groovy...)
@@ -59,8 +63,8 @@ fun defaultValueLiteralForJVM(field: Field): String {
 //TODO: document me
 fun defaultJVMSerde(field: Field): Serde =
   Serde(
-    deserializeTemplate = defaultJVMDeserializeTemplate(field.type),
-    serializeTemplate = defaultJVMSerializeTemplate(field.type),
+    deserializeTemplate = defaultJVMDeserializeTemplate(field),
+    serializeTemplate = defaultJVMSerializeTemplate(field),
   )
 
 
@@ -101,18 +105,19 @@ fun consolidateImports(
 
 
 //TODO: document me
-private fun defaultJVMSerializeTemplate(type: LogicalFieldType) = when (type.base) {
+private fun defaultJVMSerializeTemplate(field: Field) =
+  when (field.effectiveBaseType(JAVA_08)) {
 
-  // TODO: JSON serialized via Jackson
-  ARRAY,
-  LIST,
-  MAP,
-  SET,
-  -> TODO("fix jackson serializer for $type")
+    // TODO: JSON serialized via Jackson
+    ARRAY,
+    LIST,
+    MAP,
+    SET,
+    -> TODO("fix jackson serializer for field=$field")
 
-  //TODO: more branches here
-  else -> StringFormatTemplate("%s.toString()")
-}
+    //TODO: more branches here
+    else -> StringFormatTemplate("%s.toString()")
+  }
 
 
 /**
@@ -122,19 +127,19 @@ private fun defaultJVMSerializeTemplate(type: LogicalFieldType) = when (type.bas
  *
  * @returns jvm expression, uses %s as placeholder for field value
  */
-private fun defaultJVMDeserializeTemplate(type: LogicalFieldType) =
+private fun defaultJVMDeserializeTemplate(field: Field) =
   StringFormatTemplate(
-    when (type.base) {
+    when (field.effectiveBaseType(JAVA_08)) {
 
       INT_16 -> "Short.parseShort(%s)"
       INT_32 -> "Integer.parseInt(%s)"
       INT_64 -> "Long.parseLong(%s)"
       INT_8 -> "Byte.parseByte(%s)"
-      PATH -> "${javaTypeLiteral(type)}.of(%s)"
+      PATH -> "${javaTypeLiteral(field)}.of(%s)"
       STRING -> "String.valueOf(%s)"
-      URI -> "${javaTypeLiteral(type)}.create(%s)"
-      URL -> "new ${javaTypeLiteral(type)}(%s)"
-      UUID -> "${javaTypeLiteral(type)}.fromString(%s)"
+      URI -> "${javaTypeLiteral(field)}.create(%s)"
+      URL -> "new ${javaTypeLiteral(field)}(%s)"
+      UUID -> "${javaTypeLiteral(field)}.fromString(%s)"
 
       DURATION,
       MONTH_DAY,
@@ -147,14 +152,14 @@ private fun defaultJVMDeserializeTemplate(type: LogicalFieldType) =
       ZONE_AGNOSTIC_DATE,
       ZONE_AGNOSTIC_TIME,
       ZONED_DATE_TIME,
-      -> "${javaTypeLiteral(type)}.parse(%s)"
+      -> "${javaTypeLiteral(field)}.parse(%s)"
 
       // TODO: JSON serialized via Jackson?
       ARRAY,
       LIST,
       MAP,
       SET,
-      -> TODO("Fix string deserializer for $type")
+      -> TODO("Fix string deserializer for field=$field")
 
       else -> "%s"
     })

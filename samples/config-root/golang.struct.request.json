@@ -1,0 +1,16 @@
+{
+  "$schema": "https://wcarmon.com/schemas/codegen/request.schema.json",
+  "allowOverride": true,
+  "entityConfigDirs": [
+    "file:///home/wcarmon/git-repos/codegen/samples/entities"
+  ],
+  "extraGolangImports": [
+    "net/url",
+    "time"
+  ],
+  "outputDirectory": "file:///home/wcarmon/git-repos/go/chrono-html/model",
+  "outputFilenameTemplate": "entities.go",
+  "outputMode": "single",
+  "package": "model",
+  "templateURI": "classpath:/templates/golang/structs.ftl"
+}

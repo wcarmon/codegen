@@ -125,6 +125,11 @@
     },
     {
       "name": "tags",
+      "golang": {
+        "typeParameters": [
+          "ChronoTag"
+        ]
+      },
       "protobuf": {
         "overrideRepeatedItemSerde": {
           "deserializeTemplate": "com.wcarmon.chrono.model.ChronoTag.fromString(%s)",
@@ -144,9 +149,11 @@
         "varcharLength": 512
       },
       "type": "Set",
-      "typeParameters": [
-        "com.wcarmon.chrono.model.ChronoTag"
-      ]
+      "jvm": {
+        "typeParameters": [
+          "com.wcarmon.chrono.model.ChronoTag"
+        ]
+      }
     },
     {
       "defaultValue": {

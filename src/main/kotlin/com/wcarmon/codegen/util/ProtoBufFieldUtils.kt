@@ -5,13 +5,14 @@ package com.wcarmon.codegen.util
 import com.wcarmon.codegen.model.*
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.Serde.Companion.INLINE
+import com.wcarmon.codegen.model.TargetLanguage.PROTOCOL_BUFFERS_3
 
 
 /**
  * @return Name of setter method on builder
  */
 fun protoSetterMethodName(field: Field): Name =
-  if (field.isCollection) {
+  if (field.effectiveBaseType(PROTOCOL_BUFFERS_3).isCollection) {
     "addAll"
   } else {
     "set"
@@ -25,7 +26,7 @@ fun protoSetterMethodName(field: Field): Name =
  * Method name on a proto to retrieve a field
  */
 fun protoGetterMethodName(field: Field): Name =
-  if (field.isCollection) {
+  if (field.effectiveBaseType(PROTOCOL_BUFFERS_3).isCollection) {
     "List"
   } else {
     ""
@@ -35,14 +36,8 @@ fun protoGetterMethodName(field: Field): Name =
     }
 
 
-fun effectiveProtobufType(field: Field): String {
-
-  if (field.protobufConfig.overrideTypeLiteral.isNotBlank()) {
-    return field.protobufConfig.overrideTypeLiteral
-  }
-
-  return protobufTypeLiteral(field.type)
-}
+//TODO: replace with field::typeLiteral
+//fun effectiveProtobufType(field: Field): String {
 
 
 fun effectiveProtoSerde(field: Field): Serde =
@@ -50,7 +45,7 @@ fun effectiveProtoSerde(field: Field): Serde =
     // -- User override is highest priority
     field.protobufConfig.overrideSerde
 
-  } else if (field.isCollection) {
+  } else if (field.effectiveBaseType(PROTOCOL_BUFFERS_3).isCollection) {
     defaultSerdeForCollection(field)
 
   } else if (requiresProtoSerde(field)) {
@@ -66,7 +61,7 @@ fun effectiveProtoSerdesForTypeParameters(
   field: Field,
 ): List<Serde> =
   field
-    .type
+    .protobufConfig
     .typeParameters
     .map {
       field.protobufConfig.overrideRepeatedItemSerde ?: INLINE
@@ -77,7 +72,7 @@ fun effectiveProtoSerdesForTypeParameters(
  * Assumes we generate serde methods in the template
  */
 private fun defaultSerdeForCollection(field: Field): Serde =
-  when (field.effectiveBaseType) {
+  when (field.effectiveBaseType(PROTOCOL_BUFFERS_3)) {
     LIST -> Serde(
       // List<String> -> List<Entity>
       deserializeTemplate = StringFormatTemplate("stringsTo${field.name.upperCamel}List(%s)"),
@@ -103,16 +98,20 @@ private fun defaultSerdeForCollection(field: Field): Serde =
 /**
  * @return true when Type is not trivially mapped to Proto field type
  */
-private fun requiresProtoSerde(field: Field): Boolean =
-  field.effectiveBaseType in setOf(PATH, URI, URL)
-      || field.effectiveBaseType.isTemporal
-      || field.isCollection
-      || field.type.enumType
+private fun requiresProtoSerde(field: Field): Boolean {
+
+  val baseType = field.effectiveBaseType(PROTOCOL_BUFFERS_3)
+
+  return (baseType in setOf(PATH, URI, URL)
+      || baseType.isTemporal
+      || baseType.isCollection
+      || field.type.enumType)
+}
 
 /**
  * See https://developers.google.com/protocol-buffers/docs/proto3#scalar
  */
-private fun protobufTypeLiteral(
+fun protobufTypeLiteral(
   type: LogicalFieldType,
 ): String = when (type.base) {
 

@@ -7,6 +7,7 @@ import com.wcarmon.codegen.ast.MethodParameterExpression
 import com.wcarmon.codegen.model.*
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.BaseFieldType.UUID
+import com.wcarmon.codegen.model.TargetLanguage.JAVA_08
 import java.util.*
 
 //TODO: return Expressions
@@ -18,13 +19,12 @@ fun buildJavaPreconditionStatements(fields: Collection<Field>): Set<String> {
   val output = mutableSetOf<String>()
 
   fields.forEach { field ->
-
-    if (!field.usesStringValidation && !field.type.nullable) {
+    if (field.effectiveBaseType(JAVA_08) != STRING && !field.type.nullable) {
       output +=
         "Objects.requireNonNull(${field.name.lowerCamel}, \"${field.name.lowerCamel} is required and null.\");"
     }
 
-    if (field.usesStringValidation) {
+    if (field.effectiveBaseType(JAVA_08) == STRING) {
       output +=
         "Preconditions.checkArgument(StringUtils.isNotBlank(${field.name.lowerCamel}), \"${field.name.lowerCamel} is required and blank.\")"
     }
@@ -80,20 +80,20 @@ fun commaSeparatedJavaMethodParams(
 fun javaImportsForFields(entity: Entity): SortedSet<String> {
 
   val typesOnFields = entity.fields
-    .filter { it.effectiveBaseType == USER_DEFINED || !it.type.isParameterized }
-    .map { javaTypeLiteral(it.type) }
+    .filter { it.effectiveBaseType(JAVA_08) == USER_DEFINED || !it.isParameterized(JAVA_08) }
+    .map { javaTypeLiteral(it) }
 
   val typesOnGenerics = entity.fields
-    .filter { it.type.isParameterized }
-    .flatMap { it.type.typeParameters }
+    .filter { it.isParameterized(JAVA_08) }
+    .flatMap { it.typeParameters(JAVA_08) }
 
   return (typesOnFields + typesOnGenerics)
     .filter { javaTypeRequiresImport(it) }
     .toSortedSet()
 }
 
-fun isPrimitive(type: LogicalFieldType): Boolean {
-  val tmp = javaTypeLiteral(type, false)
+fun isPrimitive(field: Field): Boolean {
+  val tmp = javaTypeLiteral(field, false)
   return tmp.lowercase() == tmp
 }
 
@@ -104,17 +104,17 @@ fun isPrimitive(type: LogicalFieldType): Boolean {
  */
 @Suppress("ReturnCount")
 fun javaTypeLiteral(
-  type: LogicalFieldType,
+  field: Field,
   qualified: Boolean = true,
 ): String {
 
-  val output = fullyQualifiedJavaTypeLiteral(type)
+  val output = fullyQualifiedJavaTypeLiteral(field)
 
   if (qualified) {
     return output
   }
 
-  if (!type.isParameterized) {
+  if (!field.isParameterized(JAVA_08)) {
     return output.substringAfterLast(".")
   }
 
@@ -162,49 +162,55 @@ fun unmodifiableJavaCollectionMethod(base: BaseFieldType): String {
 
 @Suppress("ComplexMethod")
 private fun fullyQualifiedJavaTypeLiteral(
-  type: LogicalFieldType,
-): String = when (type.base) {
+  field: Field,
+): String {
 
-  ARRAY -> type.typeParameters.first() + "[]"
-  BOOLEAN -> if (type.nullable) "Boolean" else "boolean"
-  CHAR -> if (type.nullable) "Character" else "char"
-  COLOR -> "String"
-  DURATION -> "java.time.Duration"
-  EMAIL -> "String"
-  FLOAT_32 -> if (type.nullable) "Float" else "float"
-  FLOAT_64 -> if (type.nullable) "Double" else "double"
-  FLOAT_BIG -> "java.math.BigDecimal"
-  INT_128 -> "java.math.BigInteger"
-  INT_16 -> if (type.nullable) "Short" else "short"
-  INT_32 -> if (type.nullable) "Integer" else "int"
-  INT_64 -> if (type.nullable) "Long" else "long"
-  INT_8 -> if (type.nullable) "Byte" else "byte"
-  INT_BIG -> "java.math.BigInteger"
-  LIST -> "java.util.List<${type.typeParameters[0]}>"
-  MAP -> "java.util.Map<${type.typeParameters[0]}, ${type.typeParameters[1]}>"
-  MONTH_DAY -> "java.time.MonthDay"
-  PATH -> "java.nio.file.Path"
-  PERIOD -> "java.time.Period"
-  PHONE_NUMBER -> "String"
-  SET -> "java.util.Set<${type.typeParameters[0]}>"
-  STRING -> "String"
-  URI -> "java.net.URI"
-  URL -> "java.net.URL"
-  UTC_INSTANT -> "java.time.Instant"
-  UTC_TIME -> "java.time.OffsetTime"
-  UUID -> "java.util.UUID"
-  YEAR -> "java.time.Year"
-  YEAR_MONTH -> "java.time.YearMonth"
-  ZONE_AGNOSTIC_DATE -> "java.time.LocalDate"
-  ZONE_AGNOSTIC_DATE_TIME -> "java.time.LocalDateTime"
-  ZONE_AGNOSTIC_TIME -> "java.time.LocalTime"
-  ZONE_OFFSET -> "java.time.ZoneOffset"
-  ZONED_DATE_TIME -> "java.time.ZonedDateTime"
+  val baseType = field.effectiveBaseType(JAVA_08)
+  val typeParameters = field.typeParameters(JAVA_08)
 
-  WEEK_OF_YEAR -> TODO()
+  return when (baseType) {
 
-  //TODO: need to convert when raw is specified in json as non-jvm
-  USER_DEFINED -> type.rawTypeLiteral
+    ARRAY -> typeParameters.first() + "[]"
+    BOOLEAN -> if (field.type.nullable) "Boolean" else "boolean"
+    CHAR -> if (field.type.nullable) "Character" else "char"
+    COLOR -> "String"
+    DURATION -> "java.time.Duration"
+    EMAIL -> "String"
+    FLOAT_32 -> if (field.type.nullable) "Float" else "float"
+    FLOAT_64 -> if (field.type.nullable) "Double" else "double"
+    FLOAT_BIG -> "java.math.BigDecimal"
+    INT_128 -> "java.math.BigInteger"
+    INT_16 -> if (field.type.nullable) "Short" else "short"
+    INT_32 -> if (field.type.nullable) "Integer" else "int"
+    INT_64 -> if (field.type.nullable) "Long" else "long"
+    INT_8 -> if (field.type.nullable) "Byte" else "byte"
+    INT_BIG -> "java.math.BigInteger"
+    LIST -> "java.util.List<${typeParameters[0]}>"
+    MAP -> "java.util.Map<${typeParameters[0]}, ${typeParameters[1]}>"
+    MONTH_DAY -> "java.time.MonthDay"
+    PATH -> "java.nio.file.Path"
+    PERIOD -> "java.time.Period"
+    PHONE_NUMBER -> "String"
+    SET -> "java.util.Set<${typeParameters[0]}>"
+    STRING -> "String"
+    URI -> "java.net.URI"
+    URL -> "java.net.URL"
+    UTC_INSTANT -> "java.time.Instant"
+    UTC_TIME -> "java.time.OffsetTime"
+    UUID -> "java.util.UUID"
+    YEAR -> "java.time.Year"
+    YEAR_MONTH -> "java.time.YearMonth"
+    ZONE_AGNOSTIC_DATE -> "java.time.LocalDate"
+    ZONE_AGNOSTIC_DATE_TIME -> "java.time.LocalDateTime"
+    ZONE_AGNOSTIC_TIME -> "java.time.LocalTime"
+    ZONE_OFFSET -> "java.time.ZoneOffset"
+    ZONED_DATE_TIME -> "java.time.ZonedDateTime"
+
+    WEEK_OF_YEAR -> TODO()
+
+    //TODO: need to convert when raw is specified in json as non-jvm
+    USER_DEFINED -> field.type.rawTypeLiteral
+  }
 }
 
 /**

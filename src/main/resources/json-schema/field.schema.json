@@ -32,6 +32,9 @@
     "enumType": {
       "type": "boolean"
     },
+    "golang": {
+      "$ref": "golang-field.schema.json"
+    },
     "jvm": {
       "$ref": "jvm-field.schema.json"
     },
@@ -73,15 +76,6 @@
     "type": {
       "maxLength": 64,
       "type": "string"
-    },
-    "typeParameters": {
-      "items": {
-        "type": "string"
-      },
-      "maxItems": 6,
-      "minItems": 0,
-      "type": "array",
-      "uniqueItems": false
     },
     "validation": {
       "$ref": "field-validation.schema.json"

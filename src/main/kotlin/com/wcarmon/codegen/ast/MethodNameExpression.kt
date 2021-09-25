@@ -12,7 +12,7 @@ data class MethodNameExpression(
   override fun renderWithoutDebugComments(
     config: RenderConfig,
   ) = when (config.targetLanguage) {
-    GOLANG_1_7,
+    GOLANG_1_8,
     JAVA_08,
     JAVA_11,
     JAVA_17,

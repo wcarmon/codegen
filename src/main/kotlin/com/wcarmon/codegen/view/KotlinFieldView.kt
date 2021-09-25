@@ -36,7 +36,7 @@ class KotlinFieldView(
     val wrapped =
       ResultSetReadExpression(
         fieldName = field.name,
-        getterMethod = defaultResultSetGetterMethod(field.effectiveBaseType),
+        getterMethod = defaultResultSetGetterMethod(field.jvmConfig.effectiveBaseType),
         resultSetIdentifierExpression = RawLiteralExpression("rs"),
       )
 
@@ -48,10 +48,10 @@ class KotlinFieldView(
       .render(renderConfig.unindented)
   }
 
-  val typeLiteral: String = kotlinTypeLiteral(field.type, true)
+  val typeLiteral: String = kotlinTypeLiteral(field, true)
 
   //TODO: test this on types that are already unqualified
-  val unqualifiedType = kotlinTypeLiteral(field.type, false)
+  val unqualifiedType = kotlinTypeLiteral(field, false)
 
   fun readFromProtoExpression(protoId: String = "proto") =
     ProtoFieldReadExpression(

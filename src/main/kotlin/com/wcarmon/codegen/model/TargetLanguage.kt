@@ -9,7 +9,7 @@ enum class TargetLanguage {
   CPP_17,
   CPP_20,
   DART_2,
-  GOLANG_1_7,
+  GOLANG_1_8,
   JAVA_08,
   JAVA_11,
   JAVA_17,
@@ -104,7 +104,7 @@ enum class TargetLanguage {
       -> true
 
       KOTLIN_JVM_1_4,
-      GOLANG_1_7,
+      GOLANG_1_8,
       PYTHON_3,
       -> false
 
@@ -136,7 +136,7 @@ enum class TargetLanguage {
         PYTHON_3 -> "\n"
 
         // -- semicolon inserted by compiler
-        GOLANG_1_7,
+        GOLANG_1_8,
         KOTLIN_JVM_1_4,
         SWIFT_5,
         -> ""
@@ -148,7 +148,7 @@ enum class TargetLanguage {
   val usesGetters by lazy {
     when (this) {
       C_17,
-      GOLANG_1_7,
+      GOLANG_1_8,
       KOTLIN_JVM_1_4,
       SQL_DB2,
       SQL_H2,

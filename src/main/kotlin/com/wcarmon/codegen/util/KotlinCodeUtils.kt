@@ -7,23 +7,23 @@ import com.wcarmon.codegen.model.BaseFieldType
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.Entity
 import com.wcarmon.codegen.model.Field
-import com.wcarmon.codegen.model.LogicalFieldType
+import com.wcarmon.codegen.model.TargetLanguage.KOTLIN_JVM_1_4
 
 //TODO: make most of these private
 
 @Suppress("ReturnCount")
 fun kotlinTypeLiteral(
-  type: LogicalFieldType,
+  field: Field,
   qualified: Boolean = true,
 ): String {
 
-  val output = getFullyQualifiedKotlinTypeLiteral(type)
+  val output = getFullyQualifiedKotlinTypeLiteral(field)
 
   if (qualified) {
     return output
   }
 
-  if (!type.isParameterized) {
+  if (!field.isParameterized(KOTLIN_JVM_1_4)) {
     return output.substringAfterLast(".")
   }
 
@@ -32,56 +32,64 @@ fun kotlinTypeLiteral(
 
 
 //TODO: handle unsigned types
-fun getFullyQualifiedKotlinTypeLiteral(
-  type: LogicalFieldType,
-) = when (type.base) {
-  ARRAY -> getKotlinArrayType(type.base, type.typeParameters)
-  BOOLEAN -> "Boolean"
-  CHAR -> "Char"
-  COLOR -> "String"
-  DURATION -> "kotlin.time.Duration"
-  EMAIL -> "String"
-  FLOAT_32 -> "Float"
-  FLOAT_64 -> "Double"
-  FLOAT_BIG -> "java.math.BigDecimal"
-  INT_128 -> "java.math.BigInteger"
-  INT_16 -> "Short"
-  INT_32 -> "Int"
-  INT_64 -> "Long"
-  INT_8 -> "Byte"
-  INT_BIG -> "java.math.BigInteger"
-  LIST -> "List<${type.typeParameters[0]}>"
-  MAP -> "Map<${type.typeParameters[0]}, ${type.typeParameters[1]}>"
-  MONTH_DAY -> "java.time.MonthDay"
-  PATH -> "java.nio.file.Path"
-  PERIOD -> "java.time.Period"
-  PHONE_NUMBER -> "String"
-  SET -> "Set<${type.typeParameters[0]}>"
-  STRING -> "String"
-  URI -> "java.net.URI"
-  URL -> "java.net.URL"
-  UTC_INSTANT -> "java.time.Instant"
-  UTC_TIME -> "java.time.OffsetTime"
-  UUID -> "java.util.UUID"
-  YEAR -> "java.time.Year"
-  YEAR_MONTH -> "java.time.YearMonth"
-  ZONE_AGNOSTIC_DATE -> "java.time.LocalDate"
-  ZONE_AGNOSTIC_DATE_TIME -> "java.time.LocalDateTime"
-  ZONE_AGNOSTIC_TIME -> "java.time.LocalTime"
-  ZONE_OFFSET -> "java.time.ZoneOffset"
-  ZONED_DATE_TIME -> "java.time.ZonedDateTime"
+private fun getFullyQualifiedKotlinTypeLiteral(
+  field: Field,
+): String {
+  val baseType = field.effectiveBaseType(KOTLIN_JVM_1_4)
+  val typeParameters = field.typeParameters(KOTLIN_JVM_1_4)
 
-  USER_DEFINED -> type.rawTypeLiteral //TODO: might need to convert if specified in non-jvm
-  WEEK_OF_YEAR -> TODO()
-}.let {
-  if (type.nullable) "$it?" else it
+  return when (baseType) {
+    ARRAY -> getKotlinArrayType(baseType, typeParameters)
+    BOOLEAN -> "Boolean"
+    CHAR -> "Char"
+    COLOR -> "String"
+    DURATION -> "kotlin.time.Duration"
+    EMAIL -> "String"
+    FLOAT_32 -> "Float"
+    FLOAT_64 -> "Double"
+    FLOAT_BIG -> "java.math.BigDecimal"
+    INT_128 -> "java.math.BigInteger"
+    INT_16 -> "Short"
+    INT_32 -> "Int"
+    INT_64 -> "Long"
+    INT_8 -> "Byte"
+    INT_BIG -> "java.math.BigInteger"
+    LIST -> "List<${typeParameters[0]}>"
+    MAP -> "Map<${typeParameters[0]}, ${typeParameters[1]}>"
+    MONTH_DAY -> "java.time.MonthDay"
+    PATH -> "java.nio.file.Path"
+    PERIOD -> "java.time.Period"
+    PHONE_NUMBER -> "String"
+    SET -> "Set<${typeParameters[0]}>"
+    STRING -> "String"
+    URI -> "java.net.URI"
+    URL -> "java.net.URL"
+    UTC_INSTANT -> "java.time.Instant"
+    UTC_TIME -> "java.time.OffsetTime"
+    UUID -> "java.util.UUID"
+    YEAR -> "java.time.Year"
+    YEAR_MONTH -> "java.time.YearMonth"
+    ZONE_AGNOSTIC_DATE -> "java.time.LocalDate"
+    ZONE_AGNOSTIC_DATE_TIME -> "java.time.LocalDateTime"
+    ZONE_AGNOSTIC_TIME -> "java.time.LocalTime"
+    ZONE_OFFSET -> "java.time.ZoneOffset"
+    ZONED_DATE_TIME -> "java.time.ZonedDateTime"
+
+    //TODO: might need to convert if specified in non-jvm
+    USER_DEFINED -> field.type.rawTypeLiteral
+    WEEK_OF_YEAR -> TODO()
+  }.let {
+    if (field.type.nullable) "$it?" else it
+  }
 }
 
 fun getKotlinImportsForFields(entity: Entity) =
   entity.fields
     .asSequence()
-    .filter { it.effectiveBaseType == USER_DEFINED || !it.type.isParameterized }
-    .map { kotlinTypeLiteral(it.type) }
+    .filter {
+      it.effectiveBaseType(KOTLIN_JVM_1_4) == USER_DEFINED || !it.isParameterized(KOTLIN_JVM_1_4)
+    }
+    .map { kotlinTypeLiteral(it) }
     .map { it.removeSuffix("?") }
     .filter { kotlinTypeRequiresImport(it) }
     .toSortedSet()
@@ -118,7 +126,7 @@ fun kotlinMethodArgsForFields(
   qualified: Boolean,
 ) =
   fields.joinToString(", ") {
-    "${it.name.lowerCamel}: ${kotlinTypeLiteral(it.type, qualified)}"
+    "${it.name.lowerCamel}: ${kotlinTypeLiteral(it, qualified)}"
   }
 
 

@@ -40,6 +40,16 @@
       "type": "array",
       "uniqueItems": true
     },
+    "extraGolangImports": {
+      "description": "fully qualified types to import, no semicolons",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 96,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
     "extraProtobufImports": {
       "description": "fully qualified classes/enums/interfaces to import, no semicolons",
       "items": {

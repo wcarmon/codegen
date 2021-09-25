@@ -5,6 +5,8 @@ package com.wcarmon.codegen.util
 
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.Field
+import com.wcarmon.codegen.model.LogicalFieldType
+import com.wcarmon.codegen.model.RDBMSColumnConfig
 
 // For aligning columns
 private const val CHARS_FOR_COLUMN_NAME = 20
@@ -18,14 +20,13 @@ private const val CHARS_FOR_NULLABLE_CLAUSE = 9
  *
  * @return Literal for PostgreSQL type
  */
-fun getPostgresTypeLiteral(field: Field): String {
-
-  if (field.rdbmsConfig.overridesType) {
-    return field.rdbmsConfig.overrideTypeLiteral
-  }
+fun getPostgresTypeLiteral(
+  logicalFieldType: LogicalFieldType,
+  rdbmsConfig: RDBMSColumnConfig,
+): String {
 
   // -- Derive the correct type
-  return when (field.type.base) {
+  return when (logicalFieldType.base) {
     BOOLEAN -> "BOOLEAN"
     CHAR -> "VARCHAR(4)"
     DURATION -> "VARCHAR(40)"         // only need 37
@@ -52,27 +53,27 @@ fun getPostgresTypeLiteral(field: Field): String {
     -> "INTEGER"                        // INT4 == NUMERIC(5,0)
 
     INT_BIG -> {
-      requireNotNull(field.rdbmsConfig) {
+      requireNotNull(rdbmsConfig) {
         "field.rdbms is required: field=$field"
       }
 
-      requireNotNull(field.type.precision) {
+      requireNotNull(logicalFieldType.precision) {
         "Positive field.precision is required: field=$field"
       }
 
-      "NUMERIC(${field.type.precision}, 0)"
+      "NUMERIC(${logicalFieldType.precision}, 0)"
     }
 
     FLOAT_BIG -> {
-      requireNotNull(field.rdbmsConfig) {
+      requireNotNull(rdbmsConfig) {
         "field.rdbms is required: field=$field"
       }
 
-      require(field.type.scale > 0) {
+      require(logicalFieldType.scale > 0) {
         "Positive field.scale is required for float types: field=$field"
       }
 
-      "NUMERIC(${field.type.precision}, ${field.type.scale})"
+      "NUMERIC(${logicalFieldType.precision}, ${logicalFieldType.scale})"
     }
 
     COLOR -> "VARCHAR(7)"
@@ -87,15 +88,15 @@ fun getPostgresTypeLiteral(field: Field): String {
     URI,
     USER_DEFINED,
     -> {
-      requireNotNull(field.rdbmsConfig) {
+      requireNotNull(rdbmsConfig) {
         "field.rdbms is required: field=${field}"
       }
 
-      requireNotNull(field.rdbmsConfig.varcharLength) {
+      requireNotNull(rdbmsConfig.varcharLength) {
         "field.rdbms.varcharLength (or field.rdbms.overrideTypeLiteral) is required: field=${field}"
       }
 
-      "VARCHAR(${field.rdbmsConfig.varcharLength})"
+      "VARCHAR(${rdbmsConfig.varcharLength})"
     }
     WEEK_OF_YEAR -> TODO()
     ZONE_AGNOSTIC_DATE_TIME -> TODO()
@@ -119,6 +120,7 @@ fun postgresColumnDefinition(field: Field): String {
   parts += "\"${field.name.lowerSnake}\""
     .padEnd(CHARS_FOR_COLUMN_NAME, ' ')
 
+  //TODO: use effective PG type
   parts += getPostgresTypeLiteral(field)
     .padEnd(CHARS_FOR_COLUMN_TYPE, ' ')
 

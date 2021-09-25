@@ -2,6 +2,7 @@ package com.wcarmon.codegen.ast
 
 import com.wcarmon.codegen.model.BaseFieldType.BOOLEAN
 import com.wcarmon.codegen.model.Field
+import com.wcarmon.codegen.model.TargetLanguage.SQL_DELIGHT
 import com.wcarmon.codegen.util.effectiveSQLDelightTypeLiteral
 import com.wcarmon.codegen.util.quoteTypeForSQLDelightLiteral
 import org.apache.logging.log4j.LogManager
@@ -52,7 +53,7 @@ class SQLDelightColumnDeclarationExpression(
 
     var defaultValueLiteral: String? = null
 
-    if (BOOLEAN == field.type.base) {
+    if (BOOLEAN == field.effectiveBaseType(SQL_DELIGHT)) {
       defaultValueLiteral = "0"
     }
 
@@ -72,7 +73,7 @@ class SQLDelightColumnDeclarationExpression(
 //      }
     }
 
-    if (field.rdbmsConfig.overrideDefaultValue.isPresent) {
+    if (field.overrideDefaultValue(SQL_DELIGHT).isPresent) {
       LOG.warn("Handle the rdbms override default here")
     }
 
@@ -80,7 +81,7 @@ class SQLDelightColumnDeclarationExpression(
       return ""
     }
 
-    val q = quoteTypeForSQLDelightLiteral(field.type.base)
+    val q = quoteTypeForSQLDelightLiteral(field.effectiveBaseType(SQL_DELIGHT))
 
     val output = q.wrap(defaultValueLiteral)
     if (output.uppercase() == "\"NULL\"") {

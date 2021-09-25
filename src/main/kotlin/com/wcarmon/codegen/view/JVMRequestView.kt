@@ -2,6 +2,7 @@ package com.wcarmon.codegen.view
 
 import com.wcarmon.codegen.model.CodeGenRequest
 
+
 /**
  * Convenience methods/properties applicable across JVM languages
  */

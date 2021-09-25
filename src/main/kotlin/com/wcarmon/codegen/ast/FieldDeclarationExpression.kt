@@ -2,8 +2,7 @@ package com.wcarmon.codegen.ast
 
 import com.wcarmon.codegen.ast.FinalityModifier.FINAL
 import com.wcarmon.codegen.ast.VisibilityModifier.PRIVATE
-import com.wcarmon.codegen.model.LogicalFieldType
-import com.wcarmon.codegen.model.Name
+import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.TargetLanguage.*
 import com.wcarmon.codegen.util.javaTypeLiteral
 import com.wcarmon.codegen.util.kotlinTypeLiteral
@@ -12,8 +11,7 @@ import com.wcarmon.codegen.util.kotlinTypeLiteral
  * Declares 1-field
  */
 data class FieldDeclarationExpression(
-  private val name: Name,
-  private val type: LogicalFieldType,
+  private val field: Field,
 
   private val annotations: Set<AnnotationExpression> = setOf(),
   private val defaultValue: Expression = EmptyExpression,
@@ -62,9 +60,9 @@ data class FieldDeclarationExpression(
         modifiers.joinToString(" ", postfix = " "))
     }
 
-    output.append(javaTypeLiteral(type, false))
+    output.append(javaTypeLiteral(field, false))
     output.append(" ")
-    output.append(name.lowerCamel)
+    output.append(field.name.lowerCamel)
 
     val dflt = defaultValue.render(config)
     if (dflt.isNotBlank()) {
@@ -82,7 +80,7 @@ data class FieldDeclarationExpression(
 
     val doc = documentation.render(config.unterminated)
     val dValue = defaultValue.render(config.unterminated)
-    val typeLiteral = kotlinTypeLiteral(type, false)
+    val typeLiteral = kotlinTypeLiteral(field, false)
     val variableKeyword = if (finalityModifier == FINAL) "val " else "var "
 
     val defaultValueFragment = if (dValue.isNotBlank()) " = $dValue" else ""
@@ -94,7 +92,7 @@ data class FieldDeclarationExpression(
         config.lineIndentation +
         visibilityFragment +
         variableKeyword +
-        name.lowerCamel +
+        field.name.lowerCamel +
         ":" +
         typeLiteral +
         defaultValueFragment

@@ -31,9 +31,6 @@ data class LogicalFieldType(
    * Use syntax for java, kotlin, golang, rust, typescript, or postgres
    * */
   val rawTypeLiteral: String,
-
-  // -- Only for Collections & Generic types (Parametric polymorphism)
-  val typeParameters: List<String> = listOf(),
 ) {
 
   init {
@@ -64,38 +61,5 @@ data class LogicalFieldType(
     }
 
     require(scale >= 0) { "Scale must be non-negative: $scale, this=$this" }
-
-
-    // -- Parametric polymorphism
-    when (val n = base.requiredTypeParameterCount) {
-      //TODO: missing context
-      0 -> require(typeParameters.isEmpty()) {
-        "type parameter not allowed: this=$this"
-      }
-
-      1 -> require(typeParameters.size == n) {
-        "exactly 1-type parameter required (add 'typeParameters' to Field): this=$this"
-      }
-
-      else -> require(typeParameters.size == n) {
-        "type parameters required (add 'typeParameters' to Field): " +
-            "requiredCount=$n, actualCount=${typeParameters.size}, this=$this"
-      }
-    }
-  }
-
-  /** true for String, Collections, Enums, Arrays */
-  val isParameterized by lazy {
-    when (base) {
-      ARRAY,
-      LIST,
-      MAP,
-      SET,
-      -> true
-
-      USER_DEFINED -> typeParameters.isNotEmpty()
-
-      else -> false
-    }
   }
 }

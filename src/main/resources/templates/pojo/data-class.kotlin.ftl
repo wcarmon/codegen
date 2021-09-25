@@ -12,7 +12,7 @@ ${entity.kotlinView.documentation("Immutable POJO")}
 data class ${entity.name.upperCamel}(
   <#-- TODO: use expressions for these declarations -->
   <#list entity.idFields as field>
-      /** PK field */
+      /** ID field(s) */
       val ${field.name.lowerCamel}: ${field.kotlinView.typeLiteral},
 
   </#list>

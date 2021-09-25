@@ -38,7 +38,7 @@ class Java8FieldView(
     val wrapped =
       ResultSetReadExpression(
         fieldName = field.name,
-        getterMethod = defaultResultSetGetterMethod(field.effectiveBaseType),
+        getterMethod = defaultResultSetGetterMethod(field.jvmConfig.effectiveBaseType),
         resultSetIdentifierExpression = RawLiteralExpression("rs"),
       )
 
@@ -50,10 +50,10 @@ class Java8FieldView(
       .render(renderConfig.unterminated.unindented)
   }
 
-  val typeLiteral: String = javaTypeLiteral(field.type, true)
+  val typeLiteral: String = javaTypeLiteral(field, true)
 
   //TODO: test this on types that are already unqualified
-  val unqualifiedType: String = javaTypeLiteral(field.type, false)
+  val unqualifiedType: String = javaTypeLiteral(field, false)
 
   //TODO: rename me
   val protoSerializeExpressionForTypeParameters: String by lazy {
@@ -71,7 +71,7 @@ class Java8FieldView(
   //    accept template placeholder replacement here
   //    rename
   val unmodifiableCollectionMethod: String by lazy {
-    unmodifiableJavaCollectionMethod(field.effectiveBaseType)
+    unmodifiableJavaCollectionMethod(field.jvmConfig.effectiveBaseType)
   }
 
   fun equalityExpression(
