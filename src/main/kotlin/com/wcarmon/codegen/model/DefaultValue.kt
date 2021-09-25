@@ -37,7 +37,8 @@ data class DefaultValue(
 
   companion object {
 
-    val NO_DEFAULT = DefaultValue(null)
+    val DEFAULT_NOT_PRESENT = DefaultValue(wrapper = null, presentAndNull = false)
+
     private const val PROEPRTY_NAME_FOR_WRAPPER = "defaultValue"
     private const val PROPERTY_NAME_FOR_VALUE = "value"
 
@@ -45,7 +46,7 @@ data class DefaultValue(
     @JvmStatic
     fun build(raw: Any?): DefaultValue {
       if (raw == null) {
-        return NO_DEFAULT
+        return DEFAULT_NOT_PRESENT
       }
 
       check(raw is Map<*, *>) {
@@ -55,14 +56,17 @@ data class DefaultValue(
 
       val jsonObj: Map<*, *> = raw
       if (jsonObj.isEmpty()) {
-        return NO_DEFAULT
+        return DEFAULT_NOT_PRESENT
       }
 
-//      val hasValue = jsonObj.containsKey(PROEPRTY_NAME_FOR_WRAPPER)
-      val realDefault = jsonObj[PROEPRTY_NAME_FOR_WRAPPER] ?: return NO_DEFAULT
+      //Invariant: default value present
+
+      val theDefault: Any? = jsonObj[PROPERTY_NAME_FOR_VALUE]
 
       return DefaultValue(
-        ValueWrapper(realDefault))
+        wrapper = ValueWrapper(theDefault),
+        presentAndNull = theDefault == null,
+      )
 
 //      check(wrapperObj is Map<*, *>) {
 //        "Invalid JSON for default value (must be an object): json=$jsonObj"

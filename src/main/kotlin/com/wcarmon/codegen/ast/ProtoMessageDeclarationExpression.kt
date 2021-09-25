@@ -21,8 +21,14 @@ data class ProtoMessageDeclarationExpression(
   init {
 
     val fieldNumbers = fields.map { it.number }
-    require(fieldNumbers.toSet().size == fieldNumbers.size) {
-      "fieldNumbers must be unique: $fields"
+
+    val duplicateFieldNumbers =
+      fieldNumbers
+        .groupBy { it }
+        .filter { it.value.size > 1 }
+        .map { it.key }
+    require(duplicateFieldNumbers.isEmpty()) {
+      "fieldNumbers must be unique: $fields, duplicates=$duplicateFieldNumbers"
     }
   }
 

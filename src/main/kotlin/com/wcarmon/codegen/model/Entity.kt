@@ -96,13 +96,25 @@ data class Entity(
       .filter { it.positionInId != null }
       .map { it.positionInId!! }
 
-    require(idPositions.size == idPositions.toSet().size) {
-      "All Id/PrimaryKey field positions must be unique"
+    val duplicateIdPositions =
+      idPositions
+        .groupBy { it }
+        .filter { it.value.size > 1 }
+        .map { it.key }
+
+    require(duplicateIdPositions.isEmpty()) {
+      "All Id/PrimaryKey field positions must be unique: ${idPositions.sortedBy { it }}, duplicates=${duplicateIdPositions}"
     }
 
     // -- Validate extraImplements
-    require(extraImplements.size == extraImplements.toSet().size) {
-      "remove duplicate extraImplements values: $extraImplements"
+    val duplicateExtraImplements =
+      extraImplements
+        .groupBy { it }
+        .filter { it.value.size > 1 }
+        .map { it.key }
+
+    require(duplicateExtraImplements.isEmpty()) {
+      "remove duplicate extraImplements values: $extraImplements, duplicates=${duplicateExtraImplements}"
     }
 
     // -- Validate indexes

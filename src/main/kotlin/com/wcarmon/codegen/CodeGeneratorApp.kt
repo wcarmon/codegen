@@ -60,8 +60,14 @@ class CodeGeneratorApp(
 
         // -- Enforce unique entity names
         val entityNames = entities.map { it.name.lowerCamel }
-        require(entityNames.size == entityNames.toSet().size) {
-          "Entity names must be unique: entityNames=${entityNames.sortedBy { it }}"
+        val duplicateEntityNames =
+          entityNames
+            .groupBy { it }
+            .filter { it.value.size > 1 }
+            .map { it.key }
+
+        require(duplicateEntityNames.isEmpty()) {
+          "Entity names must be unique: duplicates=${duplicateEntityNames}"
         }
 
         handleCodeGenRequest(codeGenRequest, entities)
