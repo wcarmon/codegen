@@ -94,6 +94,17 @@ data class Field(
 
       //TODO: signed should override whatever is specified on type literal
 
+      val logicalType = LogicalFieldType(
+        base = BaseFieldType.parse(typeLiteral ?: ""),
+        enumType = enumType ?: false,
+        nullable = nullable ?: false,
+        precision = precision,
+        rawTypeLiteral = typeLiteral ?: "",
+        scale = scale ?: 0,
+        signed = signed ?: true,
+        typeParameters = typeParameters ?: listOf(),
+      )
+
       return Field(
         canLog = canLog ?: true,
         canUpdate = canUpdate ?: true,
@@ -104,16 +115,7 @@ data class Field(
         positionInId = positionInId,
         protobufConfig = protobufConfig ?: ProtocolBufferFieldConfig(),
         rdbmsConfig = rdbmsConfig ?: RDBMSColumnConfig(),
-        type = LogicalFieldType(
-          base = BaseFieldType.parse(typeLiteral ?: ""),
-          enumType = enumType ?: false,
-          nullable = nullable ?: false,
-          precision = precision,
-          rawTypeLiteral = typeLiteral ?: "",
-          scale = scale ?: 0,
-          signed = signed ?: true,
-          typeParameters = typeParameters ?: listOf(),
-        ),
+        type = logicalType,
         validationConfig = validationConfig ?: FieldValidation(),
       )
     }

@@ -1,52 +1,15 @@
 {
   "$schema": "https://wcarmon.com/schemas/codegen/entity.schema.json",
   "createdTimestampFieldName": "created",
+  "extraImplements": [],
+  "fieldUris": [
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/closed.field.json",
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/created.field.json",
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/name.field.json",
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/updated.field.json",
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/uuid.field.json"
+  ],
   "fields": [
-    {
-      "name": "uuid",
-      "positionInId": 0,
-      "protobuf": {
-        "overrideSerde": {
-          "deserializeTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
-          "serializeTemplate": "%s.toString()"
-        },
-        "overrideTypeLiteral": "string"
-      },
-      "rdbms": {
-        "overrideSerde": {
-          "deserializeTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
-          "serializeTemplate": "%s.toString()"
-        },
-        "varcharLength": 36
-      },
-      "type": "com.wcarmon.ub.model.UBUuid"
-    },
-    {
-      "name": "name",
-      "rdbms": {
-        "varcharLength": 48
-      },
-      "type": "String",
-      "validation": {
-        "maxSize": 48,
-        "requireNotBlank": true
-      }
-    },
-    {
-      "defaultValue": {
-        "value": "false"
-      },
-      "name": "closed",
-      "type": "Boolean"
-    },
-    {
-      "name": "created",
-      "type": "Instant"
-    },
-    {
-      "name": "updated",
-      "type": "Instant"
-    },
     {
       "defaultValue": {
         "value": null
@@ -59,6 +22,9 @@
       "type": "java.net.URI"
     },
     {
+      "defaultValue": {
+        "value": ""
+      },
       "name": "details",
       "rdbms": {
         "varcharLength": 512
@@ -98,7 +64,9 @@
       "type": "com.wcarmon.chrono.model.ChronoHorizon"
     },
     {
-      "defaultValue": null,
+      "defaultValue": {
+        "value": ""
+      },
       "name": "iconCode",
       "rdbms": {
         "varcharLength": 48
@@ -125,7 +93,9 @@
       "type": "com.wcarmon.chrono.model.ChronoLevel"
     },
     {
-      "defaultValue": null,
+      "defaultValue": {
+        "value": ""
+      },
       "name": "keywords",
       "rdbms": {
         "varcharLength": 192

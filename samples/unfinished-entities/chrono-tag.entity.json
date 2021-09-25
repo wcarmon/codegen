@@ -1,0 +1,9 @@
+{
+  "$schema": "https://wcarmon.com/schemas/codegen/entity.schema.json",
+  "createdTimestampFieldName": "created",
+  "fields": [],
+  "indexes": [],
+  "name": "ChronoTag",
+  "pkg": "com.wcarmon.chrono.model",
+  "updatedTimestampFieldName": "updated"
+}

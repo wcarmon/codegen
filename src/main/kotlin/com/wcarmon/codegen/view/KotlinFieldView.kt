@@ -48,10 +48,10 @@ class KotlinFieldView(
       .render(renderConfig.unindented)
   }
 
-  val typeLiteral: String = getKotlinTypeLiteral(field.type, true)
+  val typeLiteral: String = kotlinTypeLiteral(field.type, true)
 
   //TODO: test this on types that are already unqualified
-  val unqualifiedType = getKotlinTypeLiteral(field.type, false)
+  val unqualifiedType = kotlinTypeLiteral(field.type, false)
 
   fun readFromProtoExpression(protoId: String = "proto") =
     ProtoFieldReadExpression(

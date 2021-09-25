@@ -1,0 +1,20 @@
+{
+  "$schema": "https://wcarmon.com/schemas/codegen/field.schema.json",
+  "name": "uuid",
+  "positionInId": 0,
+  "protobuf": {
+    "overrideSerde": {
+      "deserializeTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
+      "serializeTemplate": "%s.toString()"
+    },
+    "overrideTypeLiteral": "string"
+  },
+  "rdbms": {
+    "overrideSerde": {
+      "deserializeTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
+      "serializeTemplate": "%s.toString()"
+    },
+    "varcharLength": 36
+  },
+  "type": "com.wcarmon.ub.model.UBUuid"
+}

@@ -12,7 +12,7 @@ import com.wcarmon.codegen.model.LogicalFieldType
 //TODO: make most of these private
 
 @Suppress("ReturnCount")
-fun getKotlinTypeLiteral(
+fun kotlinTypeLiteral(
   type: LogicalFieldType,
   qualified: Boolean = true,
 ): String {
@@ -81,7 +81,7 @@ fun getKotlinImportsForFields(entity: Entity) =
   entity.fields
     .asSequence()
     .filter { it.effectiveBaseType == USER_DEFINED || !it.type.isParameterized }
-    .map { getKotlinTypeLiteral(it.type) }
+    .map { kotlinTypeLiteral(it.type) }
     .map { it.removeSuffix("?") }
     .filter { kotlinTypeRequiresImport(it) }
     .toSortedSet()
@@ -118,7 +118,7 @@ fun kotlinMethodArgsForFields(
   qualified: Boolean,
 ) =
   fields.joinToString(", ") {
-    "${it.name.lowerCamel}: ${getKotlinTypeLiteral(it.type, qualified)}"
+    "${it.name.lowerCamel}: ${kotlinTypeLiteral(it.type, qualified)}"
   }
 
 

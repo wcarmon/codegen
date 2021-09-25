@@ -13,10 +13,21 @@ class AnnotationExpression(
   /** can contain ":" or '[' as in "@get:Foo" or "@file:JvmName"*/
   private val name: String,
   private val params: List<Expression> = listOf(),
-) {
+) : Expression {
 
   init {
+
     require(name.isNotBlank()) { "annotation name is required" }
+    require(name.trim() == name) { "name must be trimmed: $name" }
+    require(!name.startsWith("@")) { "Remove leading @ from annotation: $name" }
+
+    //TODO: regex: [a-zA-z]([a-zA-z0-9:]*[a-zA-Z0-9])?
+  }
+
+  override val expressionName = AnnotationExpression::class.java.name
+
+  override fun renderWithoutDebugComments(config: RenderConfig): String {
+    TODO("Not yet implemented")
   }
 }
 

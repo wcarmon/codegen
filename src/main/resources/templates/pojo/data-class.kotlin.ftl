@@ -6,9 +6,7 @@ ${request.kotlinView.serializeImports(
   request.extraJVMImports,
   request.jvmContextClass)}
 
-/**
- * Immutable POJO
- */
+${entity.kotlinView.documentation("Immutable POJO")}
 <#--TODO: include class documentation when present-->
 @JsonPropertyOrder(alphabetic = true)
 data class ${entity.name.upperCamel}(

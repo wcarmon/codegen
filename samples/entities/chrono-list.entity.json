@@ -1,0 +1,40 @@
+{
+  "$schema": "https://wcarmon.com/schemas/codegen/entity.schema.json",
+  "createdTimestampFieldName": "created",
+  "documentation": [
+    "Implies a State for a ChronoTask",
+    "",
+    "A ChronoBoard has many ChronoLists",
+    "A ChronoList has many ChronoTasks"
+  ],
+  "fieldUris": [
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/closed.field.json",
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/created.field.json",
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/name.field.json",
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/updated.field.json",
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/uuid.field.json"
+  ],
+  "fields": [
+    {
+      "defaultValue": {
+        "value": 55
+      },
+      "name": "hardLimit",
+      "precision": 5,
+      "type": "Int"
+    },
+    {
+      "defaultValue": {
+        "value": 0
+      },
+      "name": "softLimit",
+      "precision": 5,
+      "type": "Int",
+      "validation": {}
+    }
+  ],
+  "indexes": [],
+  "name": "ChronoList",
+  "pkg": "com.wcarmon.chrono.model",
+  "updatedTimestampFieldName": "updated"
+}

@@ -11,12 +11,12 @@ request.jvmContextClass)}
  */
 @RestController
 @RequestMapping("/${entity.name.lowerKebab}")
-public final class ${entity.name.upperCamel}Controller {
+public final class ${entity.name.upperCamel}RESTController {
 
   private final ${entity.name.upperCamel}DAO ${entity.name.lowerCamel}DAO;
   private final Tracer tracer;
 
-  public ${entity.name.upperCamel}Controller(
+  public ${entity.name.upperCamel}RESTController(
     ${entity.name.upperCamel}DAO ${entity.name.lowerCamel}DAO,
     Tracer tracer
   ) {
@@ -28,6 +28,7 @@ public final class ${entity.name.upperCamel}Controller {
   }
 
 <#if entity.canDelete>
+  @DeleteMapping(value = "/todo-fix", produces = "application/json")
   public void delete(
     HttpServletRequest request,
     ${entity.java8View.methodArgsForIdFields(false)}) {
@@ -41,7 +42,7 @@ public final class ${entity.name.upperCamel}Controller {
 
 </#if>
 <#if entity.canCheckForExistence>
-  @GetMapping("/todo-fix")
+  @GetMapping(value = "/todo-fix", produces = "application/json")
   public boolean exists(
     HttpServletRequest request,
     ${entity.java8View.methodArgsForIdFields(false)}) {
@@ -50,7 +51,7 @@ public final class ${entity.name.upperCamel}Controller {
 
 </#if>
 <#if entity.canFindById>
-  @GetMapping("/todo-fix")
+  @GetMapping(value = "/todo-fix", produces = "application/json")
   public ${entity.name.upperCamel} findById(
     HttpServletRequest request,
    // TODO: prefix each with @PathVariable
@@ -59,13 +60,13 @@ public final class ${entity.name.upperCamel}Controller {
     ${request.jvmView.unqualifiedContextClass} context = null; //TODO: fix
     // ChronoContext context  <--- build in interceptor?
 
-    ${entity.name.lowerCamel}DAO.findById(context, ${entity.jvmView.commaSeparatedIDFieldNames});
     //TODO: build response
+    return ${entity.name.lowerCamel}DAO.findById(context, ${entity.jvmView.commaSeparatedIDFieldNames});
   }
 
 </#if>
 <#if entity.canCreate>
-  @PostMapping("/todo-fix")
+  @PostMapping(value = "/todo-fix", produces = "application/json")
   public void create(
     HttpServletRequest request,
     ${entity.name.upperCamel} entity) {
@@ -76,7 +77,7 @@ public final class ${entity.name.upperCamel}Controller {
 
 </#if>
 <#if entity.canList>
-  @GetMapping("/todo-fix")
+  @GetMapping(value = "/todo-fix", produces = "application/json")
   public List<${entity.name.upperCamel}> list() {
     ${request.jvmView.unqualifiedContextClass} context = null;
 
@@ -85,14 +86,14 @@ public final class ${entity.name.upperCamel}Controller {
 
 </#if>
 <#if entity.canUpdate>
-  @PutMapping("/todo-fix")
+  @PutMapping(value = "/todo-fix", produces = "application/json")
   public void update(
     HttpServletRequest request) {
     //TODO: Update
   }
 
   <#list entity.patchableFields as field>
-  @PutMapping("/todo-fix")
+  @PatchMapping(value = "/todo-fix", produces = "application/json")
   public void set${field.name.upperCamel}(
     HttpServletRequest request
     ) {
@@ -101,9 +102,9 @@ public final class ${entity.name.upperCamel}Controller {
 
   </#list>
 </#if>
+//TODO: @PathVariable (for id fields)  ${entity.idFields[0].name.lowerCamel}, ${entity.idFields[0].java8View.typeLiteral}
 //TODO: add tracing
 //TODO: tracing: header parsing belongs in interceptor
 //TODO: tracing: start tracing from the interceptor
 //TODO: @ResponseBody
-//TODO: #Foo(produces = "application/json")
 }

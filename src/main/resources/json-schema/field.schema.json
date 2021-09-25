@@ -4,6 +4,10 @@
   "additionalProperties": false,
   "description": "Field, Property, Column, ...",
   "properties": {
+    "$schema": {
+      "format": "uri",
+      "type": "string"
+    },
     "canLog": {
       "description": "for PII, set false",
       "type": "boolean"

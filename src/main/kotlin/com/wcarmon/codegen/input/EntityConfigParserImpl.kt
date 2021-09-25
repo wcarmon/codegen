@@ -22,7 +22,13 @@ class EntityConfigParserImpl(
 
     //TODO: Add linker for entity relationships
 
-    return entityConfigs.map { parse(it) }
+    return entityConfigs.map { path ->
+      try {
+        parse(path)
+      } catch (ex: Exception) {
+        throw RuntimeException("Failed to parse entity: path=$path", ex)
+      }
+    }
   }
 
   private fun parse(entityConfigFile: Path): Entity {

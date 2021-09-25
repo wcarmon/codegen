@@ -25,7 +25,9 @@ import com.fasterxml.jackson.annotation.JsonCreator
  *  See tests for more examples [DefaultValueTest]
  */
 data class DefaultValue(
-  private val wrappedValue: ValueWrapper? = null,
+  private val wrapper: ValueWrapper? = null,
+
+  private val presentAndNull: Boolean = false,
 ) {
 
   // Must wrap the value to distinguish absence from null
@@ -42,7 +44,9 @@ data class DefaultValue(
     @JsonCreator
     @JvmStatic
     fun build(raw: Any?): DefaultValue {
-      if (raw == null) return NO_DEFAULT
+      if (raw == null) {
+        return NO_DEFAULT
+      }
 
       check(raw is Map<*, *>) {
         "Invalid defaultValue, must be an object or null.  " +
@@ -50,23 +54,29 @@ data class DefaultValue(
       }
 
       val jsonObj: Map<*, *> = raw
-      if (jsonObj.isEmpty()) return NO_DEFAULT
-
-      val wrapperObj = jsonObj[PROEPRTY_NAME_FOR_WRAPPER] ?: return NO_DEFAULT
-
-      check(wrapperObj is Map<*, *>) {
-        "Invalid JSON for default value (must be an object): json=$jsonObj"
+      if (jsonObj.isEmpty()) {
+        return NO_DEFAULT
       }
 
-      if (wrapperObj.isEmpty()) return NO_DEFAULT
-      return DefaultValue(ValueWrapper(wrapperObj[PROPERTY_NAME_FOR_VALUE]))
+//      val hasValue = jsonObj.containsKey(PROEPRTY_NAME_FOR_WRAPPER)
+      val realDefault = jsonObj[PROEPRTY_NAME_FOR_WRAPPER] ?: return NO_DEFAULT
+
+      return DefaultValue(
+        ValueWrapper(realDefault))
+
+//      check(wrapperObj is Map<*, *>) {
+//        "Invalid JSON for default value (must be an object): json=$jsonObj"
+//      }
+//
+//      if (wrapperObj.isEmpty()) return NO_DEFAULT
+//      return DefaultValue(ValueWrapper(wrapperObj[PROPERTY_NAME_FOR_VALUE]))
     }
   }
 
   /** isPresent, isNotAbsent, wasSetByUser, isProvided, hasDefault, hasValue */
-  val isPresent: Boolean = wrappedValue != null
+  val isPresent: Boolean = wrapper != null
 
-  val isAbsent: Boolean = wrappedValue == null
+  val isAbsent: Boolean = wrapper == null
 
   /**
    * Only readable when [isPresent]
@@ -77,7 +87,7 @@ data class DefaultValue(
       "only read when hasValue==true"
     }
 
-    wrappedValue != null && wrappedValue.value == null
+    wrapper != null && wrapper.value == null
   }
 
   val isEmptyString: Boolean by lazy {
@@ -85,9 +95,9 @@ data class DefaultValue(
       "only read when hasValue==true"
     }
 
-    wrappedValue?.value != null &&
-        wrappedValue.value is String &&
-        wrappedValue.value.isEmpty()
+    wrapper?.value != null &&
+        wrapper.value is String &&
+        wrapper.value.isEmpty()
   }
 
   val isBlankString: Boolean by lazy {
@@ -95,17 +105,17 @@ data class DefaultValue(
       "only read when hasValue==true"
     }
 
-    wrappedValue?.value != null &&
-        wrappedValue.value is String &&
-        wrappedValue.value.isBlank()
+    wrapper?.value != null &&
+        wrapper.value is String &&
+        wrapper.value.isBlank()
   }
 
   /** Only readable when [isPresent] */
-  val literal: Any by lazy {
-    check(wrappedValue != null) {
-      "default value only readable when present (check with field.defaultValue.hasValue)"
+  val literal: Any? by lazy {
+    check(wrapper != null) {
+      "defaultValue only readable when present (check with field.defaultValue.isPresent)"
     }
 
-    wrappedValue.value!!
+    wrapper.value
   }
 }

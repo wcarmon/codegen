@@ -36,15 +36,32 @@
       "type": "string"
     },
     "documentation": {
-      "maxLength": 4096,
-      "minLength": 0,
-      "type": "string"
+      "items": {
+        "maxLength": 160,
+        "minLength": 0,
+        "type": "string"
+      },
+      "maxItems": 24,
+      "minItems": 0,
+      "type": "array"
     },
     "extraImplements": {
       "items": {
         "type": "string"
       },
       "maxItems": 10,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "fieldUris": {
+      "description": "referenced fields, file paths or classpaths",
+      "items": {
+        "maxLength": 255,
+        "minLength": 4,
+        "type": "uri"
+      },
+      "maxItems": 256,
       "minItems": 0,
       "type": "array",
       "uniqueItems": true
@@ -101,8 +118,7 @@
   },
   "required": [
     "name",
-    "$schema",
-    "fields"
+    "$schema"
   ],
   "title": "Entity",
   "type": "object"

@@ -1,0 +1,8 @@
+{
+  "$schema": "https://wcarmon.com/schemas/codegen/field.schema.json",
+  "defaultValue": {
+    "value": "false"
+  },
+  "name": "closed",
+  "type": "Boolean"
+}

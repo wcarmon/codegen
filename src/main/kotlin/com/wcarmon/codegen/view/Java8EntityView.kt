@@ -9,7 +9,10 @@ import com.wcarmon.codegen.model.JDBCColumnIndex.Companion.FIRST
 import com.wcarmon.codegen.model.PreparedStatementBuilderConfig
 import com.wcarmon.codegen.model.SerdeMode.SERIALIZE
 import com.wcarmon.codegen.model.TargetLanguage
-import com.wcarmon.codegen.util.*
+import com.wcarmon.codegen.util.buildJavaPreconditionStatements
+import com.wcarmon.codegen.util.buildPreparedStatementSetters
+import com.wcarmon.codegen.util.effectiveProtoSerde
+import com.wcarmon.codegen.util.javaImportsForFields
 
 /**
  * Java related convenience methods for a [Entity]
@@ -34,6 +37,13 @@ class Java8EntityView(
     targetLanguage = targetLanguage,
     terminate = true,
   )
+
+  fun documentation(
+    vararg prefix: String,
+  ) = DocumentationExpression(
+    parts = prefix.toList() + entity.documentation,
+  )
+    .render(config = renderConfig)
 
   val importsForFields: Set<String> = javaImportsForFields(entity)
 
@@ -227,7 +237,44 @@ class Java8EntityView(
       }
   }
 
-  //TODO: accept annotations
+  //For freemarker
   fun methodArgsForIdFields(qualified: Boolean) =
-    commaSeparatedJavaMethodArgs(entity.idFields, qualified)
+    methodArgsForIdFields(qualified, "")
+
+  fun methodArgsForIdFields(
+    qualified: Boolean,
+    annotationForArgument: String,
+  ): String {
+
+    require(annotationForArgument.trim() == annotationForArgument) {
+      "annotation must be trimmed: $annotationForArgument"
+    }
+
+    val annotations =
+      if (annotationForArgument.isBlank()) {
+        listOf()
+      } else {
+        val annotationExpression = AnnotationExpression(
+          name = annotationForArgument,
+        )
+
+        // Use same annotation for all
+        (1..entity.idFields.size)
+          .map { annotationExpression }
+      }
+
+    return entity.idFields.joinToString(
+      separator = ", "
+    ) { field ->
+      MethodParameterExpression(
+        annotations = annotations,
+        finalityModifier = FinalityModifier.FINAL,
+        name = field.name,
+        qualified = qualified,
+        type = field.type,
+      )
+        .render(renderConfig)
+    }
+  }
+
 }

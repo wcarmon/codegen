@@ -4,6 +4,7 @@ import com.wcarmon.codegen.model.BaseFieldType.BOOLEAN
 import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.util.effectiveSQLDelightTypeLiteral
 import com.wcarmon.codegen.util.quoteTypeForSQLDelightLiteral
+import org.apache.logging.log4j.LogManager
 
 //TODO: document me
 class SQLDelightColumnDeclarationExpression(
@@ -11,6 +12,9 @@ class SQLDelightColumnDeclarationExpression(
 ) : Expression {
 
   companion object {
+    @JvmStatic
+    private val LOG = LogManager.getLogger(SQLDelightColumnDeclarationExpression::class.java)
+
     private const val NAME_WIDTH = 20
     private const val NULLABLE_WIDTH = 9
     private const val TYPE_WIDTH = 19
@@ -59,7 +63,8 @@ class SQLDelightColumnDeclarationExpression(
     if (field.defaultValue.isPresent) {
 
       /* See [Field.defaultValueExpression] */
-      TODO("improve default value on sqlDelight column declaration: field=$field")
+      //TODO: fix
+      LOG.warn("improve default value on sqlDelight column declaration: field=$field")
 
 //      if (field.defaultValue.lowercase() != "null") {
 //        //TODO: use field.defaultValue here
@@ -68,7 +73,7 @@ class SQLDelightColumnDeclarationExpression(
     }
 
     if (field.rdbmsConfig.overrideDefaultValue.isPresent) {
-      TODO("Handle the rdbms override default here")
+      LOG.warn("Handle the rdbms override default here")
     }
 
     if (defaultValueLiteral == null) {

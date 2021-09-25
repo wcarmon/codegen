@@ -37,6 +37,14 @@ class KotlinEntityView(
     terminate = false
   )
 
+  //TODO: supporting suffix is hard from freemarker
+  fun documentation(
+    vararg prefix: String,
+  ) = DocumentationExpression(
+    parts = prefix.toList() + entity.documentation,
+  )
+    .render(config = renderConfig)
+
   val importsForFields: Set<String> = getKotlinImportsForFields(entity)
 
   val insertPreparedStatementSetterStatements by lazy {

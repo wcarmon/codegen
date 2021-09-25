@@ -5,8 +5,8 @@ import com.wcarmon.codegen.ast.VisibilityModifier.PRIVATE
 import com.wcarmon.codegen.model.LogicalFieldType
 import com.wcarmon.codegen.model.Name
 import com.wcarmon.codegen.model.TargetLanguage.*
-import com.wcarmon.codegen.util.getKotlinTypeLiteral
 import com.wcarmon.codegen.util.javaTypeLiteral
+import com.wcarmon.codegen.util.kotlinTypeLiteral
 
 /**
  * Declares 1-field
@@ -82,7 +82,7 @@ data class FieldDeclarationExpression(
 
     val doc = documentation.render(config.unterminated)
     val dValue = defaultValue.render(config.unterminated)
-    val typeLiteral = getKotlinTypeLiteral(type, false)
+    val typeLiteral = kotlinTypeLiteral(type, false)
     val variableKeyword = if (finalityModifier == FINAL) "val " else "var "
 
     val defaultValueFragment = if (dValue.isNotBlank()) " = $dValue" else ""

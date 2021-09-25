@@ -38,7 +38,7 @@ data class LogicalFieldType(
 
   init {
     if (base.requiresPrecision) {
-      requireNotNull(precision) { "precision is required" }
+      requireNotNull(precision) { "precision is required for type=$this" }
     }
 
     if (!base.canHavePrecision) {

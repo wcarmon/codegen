@@ -1,11 +1,12 @@
 package com.wcarmon.codegen.model
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.wcarmon.codegen.DEBUG_MODE
 import com.wcarmon.codegen.model.TargetLanguage.*
 import com.wcarmon.codegen.view.*
-
 
 /**
  * See src/main/resources/json-schema/entity.schema.json
@@ -49,7 +50,12 @@ data class Entity(
   // unique, order matters
   val extraImplements: List<String> = listOf(),
 
-  val fields: List<Field>,
+  @JsonProperty("fields")
+  private val ownFields: List<Field> = listOf(),
+
+  @JsonProperty("fieldUris")
+  @JsonDeserialize(using = FieldUriDeserializer::class)
+  private val referencedFields: List<Field> = listOf(),
 
   /**
    * ID fields are implicitly indexed
@@ -66,14 +72,24 @@ data class Entity(
   // TODO: list: pagination
 ) {
 
+  val fields: List<Field> = ownFields + referencedFields
+
   init {
-    require(fields.isNotEmpty()) { "At least one field required" }
+    require(fields.isNotEmpty()) { "At least one field required on Entity: name=$name" }
 
     // -- Validate field names are unique
     val fieldNames = fields.map { it.name }
-    require(fieldNames.size == fieldNames.toSet().size) {
-      "field names must be unique: entity=${name.lowerCamel}, fieldNames=$fieldNames"
+
+    val duplicateFieldNames =
+      fieldNames
+        .groupBy { it }
+        .filter { it.value.size > 1 }
+        .map { it.key }
+
+    require(duplicateFieldNames.isEmpty()) {
+      "field names must be unique: entity=${name.lowerCamel}, duplicates=${duplicateFieldNames}"
     }
+
 
     // -- Validate Id/PrimaryKey fields
     val idPositions = fields

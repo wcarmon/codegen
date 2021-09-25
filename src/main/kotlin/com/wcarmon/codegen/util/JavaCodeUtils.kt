@@ -3,6 +3,7 @@
 /** Utilities only useful for generating Java */
 package com.wcarmon.codegen.util
 
+import com.wcarmon.codegen.ast.MethodParameterExpression
 import com.wcarmon.codegen.model.*
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.BaseFieldType.UUID
@@ -39,16 +40,14 @@ fun commaSeparatedJavaFields(
 ) =
   fields.joinToString(", ") { it.name.lowerCamel }
 
-/**
- * @return comma separated method args clause
- */
-fun commaSeparatedJavaMethodArgs(
-  fields: Collection<Field>,
+
+@Deprecated("Use MethodParameterExpression instead")
+fun commaSeparatedJavaMethodParams(
+  paramExpressions: Collection<MethodParameterExpression>,
   qualified: Boolean,
-) =
-  fields.joinToString(", ") {
-    "${javaTypeLiteral(it.type, qualified)} ${it.name.lowerCamel}"
-  }
+): String {
+  TODO("replace with MethodParameterExpression")
+}
 
 
 /**

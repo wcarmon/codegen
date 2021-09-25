@@ -3,6 +3,7 @@
 /** Utilities common to all JVM languages */
 package com.wcarmon.codegen.util
 
+import com.google.common.base.Preconditions.checkState
 import com.wcarmon.codegen.model.*
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.QuoteType.*
@@ -41,10 +42,10 @@ fun quoteTypeForJVMLiterals(base: BaseFieldType) = when (base) {
  * @return the default value literal
  */
 @Suppress("ReturnCount")
-fun defaultValueLiteralForJVM(field: Field): String? {
+fun defaultValueLiteralForJVM(field: Field): String {
 
-  if (!field.defaultValue.isAbsent) {
-    return null
+  checkState(field.defaultValue.isPresent) {
+    "Method only applicable when default value present: field=$field"
   }
 
   if (field.defaultValue.isNullLiteral) {

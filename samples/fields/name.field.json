@@ -1,0 +1,12 @@
+{
+  "$schema": "https://wcarmon.com/schemas/codegen/field.schema.json",
+  "name": "name",
+  "rdbms": {
+    "varcharLength": 48
+  },
+  "type": "String",
+  "validation": {
+    "maxSize": 48,
+    "requireNotBlank": true
+  }
+}

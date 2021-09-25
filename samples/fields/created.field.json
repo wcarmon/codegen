@@ -1,0 +1,5 @@
+{
+  "$schema": "https://wcarmon.com/schemas/codegen/field.schema.json",
+  "name": "created",
+  "type": "Instant"
+}
