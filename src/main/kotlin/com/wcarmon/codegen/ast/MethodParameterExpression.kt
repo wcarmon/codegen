@@ -2,8 +2,6 @@ package com.wcarmon.codegen.ast
 
 import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.TargetLanguage.*
-import com.wcarmon.codegen.util.javaTypeLiteral
-import com.wcarmon.codegen.util.kotlinTypeLiteral
 
 /**
  * Parameters are declared
@@ -12,7 +10,7 @@ import com.wcarmon.codegen.util.kotlinTypeLiteral
 data class MethodParameterExpression(
   private val field: Field,
 
-  private val qualified: Boolean = true,
+  private val fullyQualified: Boolean = true,
   private val annotations: Collection<AnnotationExpression> = listOf(),
   private val finalityModifier: FinalityModifier = FinalityModifier.FINAL,
 ) : Expression {
@@ -29,6 +27,8 @@ data class MethodParameterExpression(
       -> handleJava(config)
 
       KOTLIN_JVM_1_4 -> handleKotlin(config)
+
+      GOLANG_1_8 -> handleGolang(config)
 
       else -> TODO()
     }
@@ -52,7 +52,7 @@ data class MethodParameterExpression(
       }
       .sorted()
 
-    parts += javaTypeLiteral(field, qualified)
+    parts += field.effectiveTypeLiteral(targetLanguage = config.targetLanguage, fullyQualified)
     parts += field.name.lowerCamel
 
     return parts.joinToString(
@@ -80,7 +80,18 @@ data class MethodParameterExpression(
       .sorted()
 
     parts += field.name.lowerCamel + ":"
-    parts += kotlinTypeLiteral(field, qualified)
+    parts += field.effectiveTypeLiteral(config.targetLanguage, fullyQualified = fullyQualified)
+
+    return parts.joinToString(
+      separator = " ",
+    )
+  }
+
+  private fun handleGolang(config: RenderConfig): String {
+    val parts = mutableListOf<String>()
+
+    parts += field.name.lowerCamel
+    parts += field.effectiveTypeLiteral(config.targetLanguage, fullyQualified = fullyQualified)
 
     return parts.joinToString(
       separator = " ",

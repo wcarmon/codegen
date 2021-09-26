@@ -242,7 +242,7 @@ class Java8EntityView(
     methodArgsForIdFields(qualified, "")
 
   fun methodArgsForIdFields(
-    qualified: Boolean,
+    fullyQualified: Boolean,
     annotationForArgument: String,
   ): String {
 
@@ -270,7 +270,7 @@ class Java8EntityView(
         annotations = annotations,
         field = field,
         finalityModifier = FinalityModifier.FINAL,
-        qualified = qualified,
+        fullyQualified = fullyQualified,
       )
         .render(renderConfig)
     }

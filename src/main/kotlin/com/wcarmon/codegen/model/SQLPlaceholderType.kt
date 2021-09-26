@@ -41,6 +41,24 @@ enum class SQLPlaceholderType {
    * MariaDB
    */
   QUESTION_MARK
+  ;
+
+  fun firstPlaceholder(): String = forIndex(1)
+
+  fun forIndex(
+    index: Int = 1,
+  ): String = when (this) {
+
+    NAMED_PARAMS -> throw UnsupportedOperationException("named params don't work by number/index")
+
+    NUMBERED_DOLLARS -> {
+      require(index >= 1) { "numbered Dollar placeholders start at 1" }
+
+      "\u0024${index}"
+    }
+
+    QUESTION_MARK -> "?"
+  }
 }
 
 // Golang: Couchbase:

@@ -5,10 +5,14 @@
     "file:///home/wcarmon/git-repos/codegen/samples/entities"
   ],
   "extraGolangImports": [
+    "context",
+    "database/sql",
+    "net/url",
+    "time"
   ],
-  "outputDirectory": "file:///home/wcarmon/git-repos/go/chrono-html/model/pg",
-  "outputFilenameTemplate": "sql.generated.go",
+  "outputDirectory": "file:///home/wcarmon/git-repos/go/chrono-html/model/maria",
+  "outputFilenameTemplate": "dao.generated.go",
   "outputMode": "single",
   "package": "model",
-  "templateURI": "classpath:/templates/golang/sql.queries.pg.ftl"
+  "templateURI": "classpath:/templates/golang/dao.impl.maria.ftl"
 }

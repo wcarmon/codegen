@@ -6,7 +6,6 @@ ${request.java8View.serializeImports(
   request.extraJVMImports,
   request.jvmContextClass)}
 
-
 /**
  * DAO Contract for {@link ${entity.pkg.value}.${entity.name.upperCamel}}
  * PK field count: ${entity.idFields?size}
