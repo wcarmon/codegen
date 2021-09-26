@@ -98,7 +98,7 @@ ${entity.java8View.fieldDeclarations}
 
       <#if field.java8View.collection>
 
-        public ${entity.name.upperCamel}Builder ${field.name.lowerCamel}(${field.type.typeParameters[0]} value) {
+        public ${entity.name.upperCamel}Builder ${field.name.lowerCamel}(${field.java8View.typeParameters[0]} value) {
           if (this.${field.name.lowerCamel} == null) {
             this.${field.name.lowerCamel} = new ${field.java8View.newCollectionExpression()};
           }

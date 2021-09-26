@@ -6,7 +6,6 @@ import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.SerdeMode.DESERIALIZE
 import com.wcarmon.codegen.model.SerdeMode.SERIALIZE
 import com.wcarmon.codegen.model.TargetLanguage
-import com.wcarmon.codegen.model.TargetLanguage.JAVA_08
 import com.wcarmon.codegen.util.defaultResultSetGetterMethod
 import com.wcarmon.codegen.util.javaTypeLiteral
 import com.wcarmon.codegen.util.newJavaCollectionExpression
@@ -38,7 +37,7 @@ class Java8FieldView(
   )
 
   val isCollection: Boolean by lazy {
-    field.effectiveBaseType(JAVA_08).isCollection
+    field.effectiveBaseType(targetLanguage).isCollection
   }
 
   val resultSetGetterExpression: String by lazy {
@@ -46,25 +45,25 @@ class Java8FieldView(
     val wrapped =
       ResultSetReadExpression(
         fieldName = field.name,
-        getterMethod = defaultResultSetGetterMethod(field.effectiveBaseType(JAVA_08)),
+        getterMethod = defaultResultSetGetterMethod(field.effectiveBaseType(targetLanguage)),
         resultSetIdentifierExpression = RawLiteralExpression("rs"),
       )
 
     WrapWithSerdeExpression(
-      serde = field.effectiveRDBMSSerde(JAVA_08),
+      serde = field.effectiveRDBMSSerde(targetLanguage),
       serdeMode = DESERIALIZE,
       wrapped = wrapped,
     )
       .render(renderConfig.unterminated.unindented)
   }
 
-  val typeLiteral: String = javaTypeLiteral(field, true)
+  val typeLiteral: String = field.effectiveTypeLiteral(targetLanguage, true)
 
   //TODO: test this on types that are already unqualified
   val unqualifiedType: String = javaTypeLiteral(field, false)
 
   //TODO: rename me
-  val protoSerializeExpressionForTypeParameters: String by lazy {
+  val protobufSerializeExpressionForTypeParameters: String by lazy {
     TODO("fix")
 //    protoReadExpressionForTypeParameters(
 //      field,
@@ -79,7 +78,7 @@ class Java8FieldView(
   //    accept template placeholder replacement here
   //    rename
   val unmodifiableCollectionMethod: String by lazy {
-    unmodifiableJavaCollectionMethod(field.effectiveBaseType(JAVA_08))
+    unmodifiableJavaCollectionMethod(field.effectiveBaseType(targetLanguage))
   }
 
   fun equalityExpression(
@@ -100,16 +99,19 @@ class Java8FieldView(
     .render(renderConfig.unterminated)
 
 
-  fun readFromProtoExpression(protoId: String = "proto") =
+  val typeParameters: List<String> =
+    field.typeParameters(targetLanguage)
+
+  fun readFromProtobufExpression(protobufId: String = "proto") =
     ProtobufFieldReadExpression(
       assertNonNull = false,
       field = field,
-      fieldOwner = RawLiteralExpression(protoId),
-      serde = field.effectiveProtobufSerde(JAVA_08),
+      fieldOwner = RawLiteralExpression(protobufId),
+      serde = field.effectiveProtobufSerde(targetLanguage),
     )
       .render(renderConfig.unterminated)
 
-  fun writeToProtoExpression(pojoId: String = "entity"): String {
+  fun writeToProtobufExpression(pojoId: String = "entity"): String {
 
     val pojoReadExpression = FieldReadExpression(
       assertNonNull = false,
@@ -119,7 +121,7 @@ class Java8FieldView(
     )
 
     val serdeExpression = WrapWithSerdeExpression(
-      serde = field.effectiveProtobufSerde(JAVA_08),
+      serde = field.effectiveProtobufSerde(targetLanguage),
       serdeMode = SERIALIZE,
       wrapped = pojoReadExpression,
     )
@@ -137,7 +139,7 @@ class Java8FieldView(
   ): String {
     require(typeParameterNumber >= 0)
 
-    val serdes = field.effectiveProtoSerdesForTypeParameters(JAVA_08)
+    val serdes = field.effectiveProtobufSerdesForTypeParameters(targetLanguage)
     check(serdes.size > typeParameterNumber) {
       "serde count: ${serdes.size}, requested index: $typeParameterNumber"
     }
@@ -153,7 +155,7 @@ class Java8FieldView(
   ): String {
     require(typeParameterNumber >= 0)
 
-    val serdes = field.effectiveProtoSerdesForTypeParameters(JAVA_08)
+    val serdes = field.effectiveProtobufSerdesForTypeParameters(targetLanguage)
     check(serdes.size > typeParameterNumber) {
       "serde count: ${serdes.size}, requested index: $typeParameterNumber"
     }

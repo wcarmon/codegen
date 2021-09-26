@@ -96,7 +96,7 @@ class Java8EntityView(
   }
 
 
-  val protoToEntitySetters: String by lazy {
+  val protobufToEntitySetters: String by lazy {
     entity.sortedFieldsWithIdsFirst
       .joinToString(
         separator = "\n",
@@ -118,7 +118,7 @@ class Java8EntityView(
   /**
    * setter methods on a Proto builder
    */
-  val entityToProtoSetters: String by lazy {
+  val entityToProtobufSetters: String by lazy {
 
     entity.sortedFieldsWithIdsFirst
       .joinToString(

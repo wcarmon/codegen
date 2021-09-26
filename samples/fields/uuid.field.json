@@ -8,7 +8,7 @@
       "deserializeTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
       "serializeTemplate": "%s.toString()"
     },
-    "overrideProtoBufSerde": {
+    "overrideProtobufSerde": {
       "deserializeTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
       "serializeTemplate": "%s.toString()"
     }

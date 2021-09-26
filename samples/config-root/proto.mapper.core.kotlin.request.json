@@ -8,9 +8,9 @@
     "com.wcarmon.chrono.grpc.*",
     "com.wcarmon.chrono.model30.*"
   ],
-  "outputDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/java/com/wcarmon/chrono/proto30",
-  "outputFilenameTemplate": "ProtoMappers.kt",
+  "outputDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/java/com/wcarmon/chrono/protobuf30",
+  "outputFilenameTemplate": "ProtobufMappers.kt",
   "outputMode": "single",
-  "package": "com.wcarmon.chrono.proto30",
-  "templateURI": "classpath:/templates/proto/proto-mapper.kotlin.ftl"
+  "package": "com.wcarmon.chrono.protobuf30",
+  "templateURI": "classpath:/templates/protobuf/proto-mapper.kotlin.ftl"
 }

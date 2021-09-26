@@ -8,5 +8,5 @@
   "outputFilenameTemplate": "entities.proto",
   "outputMode": "single",
   "package": "com.wcarmon.chrono.grpc",
-  "templateURI": "classpath:/templates/proto/entities.ftl"
+  "templateURI": "classpath:/templates/protobuf/entities.ftl"
 }

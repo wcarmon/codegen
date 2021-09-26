@@ -9,7 +9,7 @@
     "time"
   ],
   "outputDirectory": "file:///home/wcarmon/git-repos/go/chrono-html/model",
-  "outputFilenameTemplate": "entities.go",
+  "outputFilenameTemplate": "entities.generated.go",
   "outputMode": "single",
   "package": "model",
   "templateURI": "classpath:/templates/golang/structs.ftl"

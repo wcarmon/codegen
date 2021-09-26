@@ -13,7 +13,7 @@ data class ProtobufFieldNumber(
 
   init {
     require(value >= 1) {
-      "Proto field numbers start at 1: fieldNumber=$value"
+      "Protobuf field numbers start at 1: fieldNumber=$value"
     }
   }
 

@@ -6,7 +6,6 @@ import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.SerdeMode.DESERIALIZE
 import com.wcarmon.codegen.model.SerdeMode.SERIALIZE
 import com.wcarmon.codegen.model.TargetLanguage
-import com.wcarmon.codegen.model.TargetLanguage.KOTLIN_JVM_1_4
 import com.wcarmon.codegen.util.defaultResultSetGetterMethod
 import com.wcarmon.codegen.util.kotlinTypeLiteral
 
@@ -34,7 +33,7 @@ class KotlinFieldView(
   )
 
   val isCollection: Boolean by lazy {
-    field.effectiveBaseType(KOTLIN_JVM_1_4).isCollection
+    field.effectiveBaseType(targetLanguage).isCollection
   }
 
   val resultSetGetterExpression: String by lazy {
@@ -42,29 +41,32 @@ class KotlinFieldView(
     val wrapped =
       ResultSetReadExpression(
         fieldName = field.name,
-        getterMethod = defaultResultSetGetterMethod(field.effectiveBaseType(KOTLIN_JVM_1_4)),
+        getterMethod = defaultResultSetGetterMethod(field.effectiveBaseType(targetLanguage)),
         resultSetIdentifierExpression = RawLiteralExpression("rs"),
       )
 
     WrapWithSerdeExpression(
-      serde = field.effectiveRDBMSSerde(KOTLIN_JVM_1_4),
+      serde = field.effectiveRDBMSSerde(targetLanguage),
       serdeMode = DESERIALIZE,
       wrapped = wrapped,
     )
       .render(renderConfig.unindented)
   }
 
-  val typeLiteral: String = kotlinTypeLiteral(field, true)
+  val typeLiteral: String = field.effectiveTypeLiteral(targetLanguage, true)
 
   //TODO: test this on types that are already unqualified
   val unqualifiedType = kotlinTypeLiteral(field, false)
 
-  fun readFromProtoExpression(protoId: String = "proto") =
+  val typeParameters: List<String> =
+    field.typeParameters(targetLanguage)
+
+  fun readFromProtoExpression(protobufId: String = "proto") =
     ProtobufFieldReadExpression(
       assertNonNull = false,
       field = field,
-      fieldOwner = RawLiteralExpression(protoId),
-      serde = field.effectiveProtobufSerde(KOTLIN_JVM_1_4),
+      fieldOwner = RawLiteralExpression(protobufId),
+      serde = field.effectiveProtobufSerde(targetLanguage),
     )
       .render(renderConfig)
 
@@ -79,7 +81,7 @@ class KotlinFieldView(
     )
 
     val serdeExpression = WrapWithSerdeExpression(
-      serde = field.effectiveProtobufSerde(KOTLIN_JVM_1_4),
+      serde = field.effectiveProtobufSerde(targetLanguage),
       serdeMode = SERIALIZE,
       wrapped = pojoReadExpression,
     )
@@ -107,7 +109,7 @@ class KotlinFieldView(
   ): String {
     require(typeParameterNumber >= 0)
 
-    val serdes = field.effectiveProtoSerdesForTypeParameters(KOTLIN_JVM_1_4)
+    val serdes = field.effectiveProtobufSerdesForTypeParameters(targetLanguage)
     check(serdes.size > typeParameterNumber) {
       "serde count: ${serdes.size}, requested index: $typeParameterNumber"
     }
@@ -123,7 +125,7 @@ class KotlinFieldView(
   ): String {
     require(typeParameterNumber >= 0)
 
-    val serdes = field.effectiveProtoSerdesForTypeParameters(KOTLIN_JVM_1_4)
+    val serdes = field.effectiveProtobufSerdesForTypeParameters(targetLanguage)
     check(serdes.size > typeParameterNumber) {
       "serde count: ${serdes.size}, requested index: $typeParameterNumber"
     }

@@ -10,9 +10,9 @@ ${request.java8View.serializeImports(
  * Utils to convert to/from proto entities and domain POJOs
  * All methods are thread-safe, stateless, shareable
  */
-public final class ProtoMappers {
+public final class ProtobufMappers {
 
-  private ProtoMappers() {
+  private ProtobufMappers() {
   }
 
   <#list entities as entity>
@@ -26,7 +26,7 @@ public final class ProtoMappers {
     }
 
     return ${entity.name.upperCamel}Proto.newBuilder()
-      ${entity.java8View.entityToProtoSetters}
+      ${entity.java8View.entityToProtobufSetters}
         .build();
   }
 
@@ -41,7 +41,7 @@ public final class ProtoMappers {
     }
 
     return ${entity.name.upperCamel}.builder()
-     ${entity.java8View.protoToEntitySetters}
+     ${entity.java8View.protobufToEntitySetters}
         .build();
   }
 
@@ -58,7 +58,7 @@ public final class ProtoMappers {
    * @param items - ${entity.name.upperCamel}::${field.name.lowerCamel}
    * @return List<Serialized-${field.name.upperCamel}>, possibly empty, never null
    */
-  public static Collection<String> toStrings(Collection<${field.type.typeParameters[0]}> items) {
+  public static Collection<String> toStrings(Collection<${field.java8View.typeParameters[0]}> items) {
     if (items == null || items.isEmpty()) {
       return Collections.emptyList();
     }
@@ -72,11 +72,11 @@ public final class ProtoMappers {
   /**
    * From (serialized) Proto Collection to Set for ${entity.name.upperCamel}::${field.name.lowerCamel}
    *
-   * @param items - Serialized {@link ${field.type.typeParameters[0]}} instances
-   * @return Set<${field.type.typeParameters[0]}>, possibly empty, never null
+   * @param items - Serialized {@link ${field.java8View.typeParameters[0]}} instances
+   * @return Set<${field.java8View.typeParameters[0]}>, possibly empty, never null
    */
   //TODO: rename based on entity name
-  public static Set<${field.type.typeParameters[0]}> stringsTo${field.name.upperCamel}Set(Collection<String> items) {
+  public static Set<${field.java8View.typeParameters[0]}> stringsTo${field.name.upperCamel}Set(Collection<String> items) {
     if (items == null || items.isEmpty()) {
       return Collections.emptySet();
     }
@@ -89,11 +89,11 @@ public final class ProtoMappers {
   /**
    * From (serialized) Proto Collection to {@link List} for ${entity.name.upperCamel}::${field.name.lowerCamel}
    *
-   * @param items - Serialized {@link ${field.type.typeParameters[0]}} instances
-   * @return List<${field.type.typeParameters[0]}>, possibly empty, never null
+   * @param items - Serialized {@link ${field.java8View.typeParameters[0]}} instances
+   * @return List<${field.java8View.typeParameters[0]}>, possibly empty, never null
    */
   //TODO: rename based on entity name
-  public static List<${field.type.typeParameters[0]}> stringsTo${field.name.upperCamel}List(Collection<String> items) {
+  public static List<${field.java8View.typeParameters[0]}> stringsTo${field.name.upperCamel}List(Collection<String> items) {
     if (items == null || items.isEmpty()) {
       return Collections.emptyList();
     }

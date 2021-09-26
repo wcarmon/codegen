@@ -2,7 +2,6 @@ package com.wcarmon.codegen.view
 
 import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.TargetLanguage
-import com.wcarmon.codegen.util.golangTypeLiteral
 
 class GolangFieldView(
   private val debugMode: Boolean,
@@ -11,5 +10,9 @@ class GolangFieldView(
   private val targetLanguage: TargetLanguage,
 ) {
 
-  val typeLiteral: String = golangTypeLiteral(field)
+  init {
+    require(targetLanguage.isGolang)
+  }
+
+  val typeLiteral: String = field.effectiveTypeLiteral(targetLanguage)
 }

@@ -105,12 +105,12 @@ fun isPrimitive(field: Field): Boolean {
 @Suppress("ReturnCount")
 fun javaTypeLiteral(
   field: Field,
-  qualified: Boolean = true,
+  fullyQualified: Boolean = true,
 ): String {
 
   val output = fullyQualifiedJavaTypeLiteral(field)
 
-  if (qualified) {
+  if (fullyQualified) {
     return output
   }
 

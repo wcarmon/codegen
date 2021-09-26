@@ -7,10 +7,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.wcarmon.codegen.DEBUG_MODE
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.TargetLanguage.*
-import com.wcarmon.codegen.util.defaultSerdeForCollection
-import com.wcarmon.codegen.util.getPostgresTypeLiteral
-import com.wcarmon.codegen.util.requiresJDBCSerde
-import com.wcarmon.codegen.util.requiresProtobufSerde
+import com.wcarmon.codegen.util.*
 import com.wcarmon.codegen.view.*
 import org.apache.logging.log4j.LogManager
 
@@ -289,14 +286,40 @@ data class Field(
 
 
   fun overrideDefaultValue(targetLanguage: TargetLanguage): DefaultValue =
+    //TODO: improve this
     when (targetLanguage) {
+      JAVA_08,
+      JAVA_11,
+      JAVA_17,
+      KOTLIN_JVM_1_4,
+      -> defaultValue
+
+      GOLANG_1_8,
+      -> defaultValue
+
+      SQL_DELIGHT,
+      -> defaultValue
+
       //TODO: more here
-      else -> TODO("get overrideDefaultValue for field=$this, targetLanguage=$targetLanguage")
+      else -> TODO("get overrideDefaultValue: targetLanguage=$targetLanguage, field=$this")
     }
 
 
-  fun effectiveTypeLiteral(targetLanguage: TargetLanguage): String = when (targetLanguage) {
-    //TODO: move logic from views to here
+  fun effectiveTypeLiteral(
+    targetLanguage: TargetLanguage,
+    fullyQualified: Boolean = true,
+  ): String = when (targetLanguage) {
+
+    JAVA_08,
+    JAVA_11,
+    JAVA_17,
+    -> javaTypeLiteral(this, fullyQualified)
+
+    KOTLIN_JVM_1_4,
+    -> kotlinTypeLiteral(this, fullyQualified)
+
+    GOLANG_1_8,
+    -> golangConfig.overrideTypeLiteral ?: golangTypeLiteral(this, fullyQualified)
 
     PROTO_BUF_3 -> protobufConfig.typeLiteral(type)
 
@@ -307,8 +330,7 @@ data class Field(
       rdbmsConfig = rdbmsConfig,
     )
 
-    //TODO: more here
-    else -> TODO("get typeLiteral for field=$this, targetLanguage=$targetLanguage")
+    else -> TODO("get typeLiteral: targetLanguage=$targetLanguage, field=$this")
   }
 
   fun effectiveRDBMSSerde(targetLanguage: TargetLanguage): Serde =
@@ -352,7 +374,7 @@ data class Field(
       SQL_SQLITE,
       -> throw UnsupportedOperationException()
 
-      else -> TODO("get effectiveSerde for field=$this, targetLanguage=$targetLanguage")
+      else -> TODO("get effectiveSerde: targetLanguage=$targetLanguage, field=$this")
     }
 
   fun effectiveProtobufSerde(targetLanguage: TargetLanguage): Serde =
@@ -367,10 +389,10 @@ data class Field(
           jvmConfig.overrideProtobufSerde
 
         } else if (effectiveBaseType(targetLanguage).isCollection) {
-          defaultSerdeForCollection(this)
+          defaultSerdeForCollection(this, targetLanguage)
 
         } else if (requiresProtobufSerde(this)) {
-          LOG.warn("We recommend you override the proto Serde on $this")
+          LOG.warn("We recommend you override the protobuf Serde on $this")
           Serde.INLINE
 
         } else {
@@ -383,10 +405,10 @@ data class Field(
           golangConfig.overrideProtobufSerde
 
         } else if (effectiveBaseType(targetLanguage).isCollection) {
-          defaultSerdeForCollection(this)
+          defaultSerdeForCollection(this, targetLanguage)
 
         } else if (requiresProtobufSerde(this)) {
-          LOG.warn("We recommend you override the proto Serde on $this")
+          LOG.warn("We recommend you override the protobuf Serde on $this")
           Serde.INLINE
 
         } else {
@@ -395,15 +417,16 @@ data class Field(
 
       // PROTO cannot be mapped to itself
       PROTO_BUF_3 -> throw UnsupportedOperationException("Programming error ")
-      else -> TODO("get effectiveSerde for field=$this, targetLanguage=$targetLanguage")
+      else -> TODO("get effectiveSerde: targetLanguage=$targetLanguage, field=$this")
     }
 
-  fun effectiveProtoSerdesForTypeParameters(targetLanguage: TargetLanguage): List<Serde> {
-    TODO()
-//      typeParameters(PROTO_BUF_3)
-//      .map {
-//        field.protobufConfig.overrideRepeatedItemSerde ?: Serde.INLINE
-//      }
+  fun effectiveProtobufSerdesForTypeParameters(targetLanguage: TargetLanguage): List<Serde> {
+    return typeParameters(targetLanguage)
+      .map {
+        //TODO: improve this
+        //        protobufConfig.overrideRepeatedItemSerde ?: Serde.INLINE
+        Serde.INLINE
+      }
   }
 
   /**

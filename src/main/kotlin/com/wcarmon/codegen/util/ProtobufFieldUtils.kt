@@ -38,8 +38,8 @@ fun protobufGetterMethodName(field: Field): Name =
 /**
  * Assumes we generate serde methods in the template
  */
-fun defaultSerdeForCollection(field: Field): Serde =
-  when (field.effectiveBaseType(PROTO_BUF_3)) {
+fun defaultSerdeForCollection(field: Field, targetLanguage: TargetLanguage): Serde =
+  when (field.effectiveBaseType(targetLanguage)) {
     LIST -> Serde(
       // List<String> -> List<Entity>
       deserializeTemplate = StringFormatTemplate("stringsTo${field.name.upperCamel}List(%s)"),
@@ -58,7 +58,8 @@ fun defaultSerdeForCollection(field: Field): Serde =
 
     ARRAY -> TODO("handle default serde for Array")
     MAP -> TODO("handle default serde for Map")
-    else -> TODO("This method is only for collections")
+
+    else -> TODO("defaultSerdeForCollection method is only for collections: field=$field")
   }
 
 

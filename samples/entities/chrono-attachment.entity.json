@@ -1,0 +1,20 @@
+{
+  "$schema": "https://wcarmon.com/schemas/codegen/entity.schema.json",
+  "fieldUris": [
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/uuid.field.json",
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/created.field.json",
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/name.field.json",
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/updated.field.json"
+  ],
+  "fields": [
+    {
+      "name": "uri",
+      "rdbms": {
+        "varcharLength": 255
+      },
+      "type": "uri"
+    }
+  ],
+  "name": "ChronoAttachment",
+  "pkg": "com.wcarmon.chrono.model"
+}

@@ -1,4 +1,4 @@
-@file:JvmName("ProtoMappers")
+@file:JvmName("ProtobufMappers")
 
 package ${request.packageName.value}
 ${request.jvmView.templateDebugInfo}
@@ -21,7 +21,7 @@ request.jvmView.extraImports)}
  */
 fun toProto(entity: ${entity.name.upperCamel}): ${entity.name.upperCamel}Proto =
   ${entity.name.upperCamel}Proto.newBuilder()
-    ${entity.kotlinView.entityToProtoSetters}
+    ${entity.kotlinView.entityToProtobufSetters}
       .build()
 
 /**
@@ -30,7 +30,7 @@ fun toProto(entity: ${entity.name.upperCamel}): ${entity.name.upperCamel}Proto =
  */
 fun fromProto(proto: ${entity.name.upperCamel}Proto): ${entity.name.upperCamel} =
   ${entity.name.upperCamel}(
-    ${entity.kotlinView.protoToEntitySetters}
+    ${entity.kotlinView.protobufToEntitySetters}
   )
 
 </#list>
@@ -45,7 +45,7 @@ fun fromProto(proto: ${entity.name.upperCamel}Proto): ${entity.name.upperCamel} 
  * @param items - ${entity.name.upperCamel}::${field.name.lowerCamel}
  * @return List<Serialized-${field.name.upperCamel}>, possibly empty, never null
  */
-fun toStrings(items: Collection<${field.type.typeParameters[0]}>?): Collection<String> =
+fun toStrings(items: Collection<${field.kotlinView.typeParameters[0]}>?): Collection<String> =
   items
       ?.map{ ${field.kotlinView.serializerForTypeParameter(0, "it")} }
       ?.toList() ?: listOf()
@@ -53,11 +53,11 @@ fun toStrings(items: Collection<${field.type.typeParameters[0]}>?): Collection<S
 /**
  * From (serialized) Proto [Collection] to [Set] for ${entity.name.upperCamel}::${field.name.lowerCamel}
  *
- * @param items - Serialized {@link ${field.type.typeParameters[0]}} instances
- * @return [Set<${field.type.typeParameters[0]}>], possibly empty, never null
+ * @param items - Serialized {@link ${field.kotlinView.typeParameters[0]}} instances
+ * @return [Set<${field.kotlinView.typeParameters[0]}>], possibly empty, never null
  */
 //TODO: rename based on entity name
-fun stringsTo${field.name.upperCamel}Set(items: Collection<String>?): Set<${field.type.typeParameters[0]}> =
+fun stringsTo${field.name.upperCamel}Set(items: Collection<String>?): Set<${field.kotlinView.typeParameters[0]}> =
   items
       ?.map{ ${field.kotlinView.deserializerForTypeParameter(0, "it")} }
       ?.toSet() ?: setOf()
@@ -65,11 +65,11 @@ fun stringsTo${field.name.upperCamel}Set(items: Collection<String>?): Set<${fiel
 /**
  * From (serialized) Proto Collection to {@link List} for ${entity.name.upperCamel}::${field.name.lowerCamel}
  *
- * @param items - Serialized {@link ${field.type.typeParameters[0]}} instances
- * @return List<${field.type.typeParameters[0]}>, possibly empty, never null
+ * @param items - Serialized {@link ${field.kotlinView.typeParameters[0]}} instances
+ * @return List<${field.kotlinView.typeParameters[0]}>, possibly empty, never null
  */
 //TODO: rename based on entity name
-fun stringsTo${field.name.upperCamel}List(items: Collection<String>?): List<${field.type.typeParameters[0]}> =
+fun stringsTo${field.name.upperCamel}List(items: Collection<String>?): List<${field.kotlinView.typeParameters[0]}> =
   items
       ?.map{ ${field.kotlinView.deserializerForTypeParameter(0, "it")} }
       ?.toList() ?: listOf()

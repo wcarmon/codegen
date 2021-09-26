@@ -12,11 +12,13 @@ import com.wcarmon.codegen.model.TargetLanguage.GOLANG_1_8
 @Suppress("ReturnCount")
 fun golangTypeLiteral(
   field: Field,
+  qualified: Boolean,
 ): String {
 
   val output = getFullyQualifiedGolangTypeLiteral(field)
 
   //TODO: handle generics here
+  //TODO: use qualified here
 
   return output
 }

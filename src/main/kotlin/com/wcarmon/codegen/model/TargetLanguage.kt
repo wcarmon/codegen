@@ -55,6 +55,13 @@ enum class TargetLanguage {
     }
   }
 
+  val isGolang by lazy {
+    when (this) {
+      GOLANG_1_8 -> true
+      else -> false
+    }
+  }
+
   val isProtobuf by lazy {
     when (this) {
       PROTO_BUF_3 -> true

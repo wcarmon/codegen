@@ -36,7 +36,7 @@ class JVMFieldView(
     else -> false
   }
 
-  val protoTypeLiteral: String by lazy {
+  val protobufTypeLiteral: String by lazy {
     field.effectiveTypeLiteral(JAVA_08)
   }
 
