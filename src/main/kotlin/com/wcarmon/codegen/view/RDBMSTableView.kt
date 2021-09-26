@@ -5,6 +5,8 @@ import com.wcarmon.codegen.ast.RenderConfig
 import com.wcarmon.codegen.model.Entity
 import com.wcarmon.codegen.model.JDBCColumnIndex
 import com.wcarmon.codegen.model.PreparedStatementBuilderConfig
+import com.wcarmon.codegen.model.SQLPlaceholderType.NUMBERED_DOLLARS
+import com.wcarmon.codegen.model.SQLPlaceholderType.QUESTION_MARK
 import com.wcarmon.codegen.util.*
 import org.atteo.evo.inflector.English
 
@@ -29,13 +31,48 @@ data class RDBMSTableView(
     else "${entity.rdbmsConfig.schema}."
 
 
-  val primaryKeyWhereClause: String = commaSeparatedColumnAssignment(entity.idFields)
+  val primaryKeyWhereClause_questionMarks: String = commaSeparatedColumnAssignment(
+    fields = entity.idFields,
+    placeholderType = QUESTION_MARK,
+  )
+
+  fun primaryKeyWhereClause_numberedDollars(
+    firstIndex: Int = 1,
+  ): String {
+    require(firstIndex >= 1)
+
+    return commaSeparatedColumnAssignment(
+      fields = entity.idFields,
+      firstIndex = firstIndex,
+      placeholderType = NUMBERED_DOLLARS,
+    )
+  }
 
   val primaryKeyTableConstraint: String = primaryKeyTableConstraint(entity)
 
   val questionMarkStringForInsert: String = (1..entity.fields.size).joinToString { "?" }
 
-  val updateSetClause: String = commaSeparatedColumnAssignment(entity.nonIdFields)
+  fun numberedDollarStringForInsert(
+    firstIndex: Int = 1,
+  ): String {
+    require(firstIndex >= 1) { "numbered dollar indexes start at 1" }
+
+    return (1..entity.fields.size)
+      .mapIndexed { index, field ->
+        "\u0024${index + firstIndex}"
+      }
+      .joinToString(separator = ", ")
+  }
+
+  val updateSetClause_questionMarks: String = commaSeparatedColumnAssignment(
+    fields = entity.nonIdFields,
+    placeholderType = QUESTION_MARK,
+  )
+
+  val updateSetClause_numeredDollars: String = commaSeparatedColumnAssignment(
+    fields = entity.nonIdFields,
+    placeholderType = NUMBERED_DOLLARS,
+  )
 
   val jdbcSerializedPrimaryKeyFields by lazy {
     commaSeparatedJavaFields(entity.idFields)

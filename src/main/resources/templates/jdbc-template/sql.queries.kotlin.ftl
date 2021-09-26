@@ -24,7 +24,7 @@ ${request.jvmView.templateDebugInfo}
     """
     |SELECT ${entity.rdbmsView.commaSeparatedColumns}
     |FROM "${entity.name.lowerSnake}"
-    |WHERE ${entity.rdbmsView.primaryKeyWhereClause}"
+    |WHERE ${entity.rdbmsView.primaryKeyWhereClause_questionMarks}"
     """.trimMargin()
 
   /**
@@ -36,7 +36,7 @@ ${request.jvmView.templateDebugInfo}
     """
     |SELECT COUNT(*)
     |FROM "${entity.name.lowerSnake}"
-    |WHERE ${entity.rdbmsView.primaryKeyWhereClause}
+    |WHERE ${entity.rdbmsView.primaryKeyWhereClause_questionMarks}
     """.trimMargin()
 
   /**
@@ -49,8 +49,8 @@ ${request.jvmView.templateDebugInfo}
     """
     |UPDATE "${entity.name.lowerSnake}"
     |SET
-    |  ${entity.rdbmsView.updateSetClause}
-    |WHERE ${entity.rdbmsView.primaryKeyWhereClause}
+    |  ${entity.rdbmsView.updateSetClause_questionMarks}
+    |WHERE ${entity.rdbmsView.primaryKeyWhereClause_questionMarks}
     """.trimMargin()
 
   /**
@@ -61,7 +61,7 @@ ${request.jvmView.templateDebugInfo}
   val DELETE__${entity.name.upperSnake} =
     """
     |DELETE FROM "${entity.name.lowerSnake}"
-    |WHERE ${entity.rdbmsView.primaryKeyWhereClause}
+    |WHERE ${entity.rdbmsView.primaryKeyWhereClause_questionMarks}
     """.trimMargin()
   </#if>
 

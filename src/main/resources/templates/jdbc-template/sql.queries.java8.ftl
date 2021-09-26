@@ -21,7 +21,7 @@ public final class SQLQueries {
   public static final String SELECT_BY_PK__${entity.name.upperSnake} =
     "SELECT ${entity.rdbmsView.commaSeparatedColumns}"
     + " FROM \"${entity.name.lowerSnake}\""
-    + " WHERE ${entity.rdbmsView.primaryKeyWhereClause}";
+    + " WHERE ${entity.rdbmsView.primaryKeyWhereClause_questionMarks}";
 
   /**
    * Test for existence of 1-row
@@ -31,7 +31,7 @@ public final class SQLQueries {
   public static final String ROW_EXISTS__${entity.name.upperSnake} =
     "SELECT COUNT(*)"
     + " FROM \"${entity.name.lowerSnake}\""
-    + " WHERE ${entity.rdbmsView.primaryKeyWhereClause}";
+    + " WHERE ${entity.rdbmsView.primaryKeyWhereClause_questionMarks}";
 
   /**
    * Update 1-row
@@ -42,8 +42,8 @@ public final class SQLQueries {
   public static final String UPDATE__${entity.name.upperSnake} =
     "UPDATE \"${entity.name.lowerSnake}\""
     + " SET"
-    + " ${entity.rdbmsView.updateSetClause}"
-    + " WHERE ${entity.rdbmsView.primaryKeyWhereClause}";
+    + " ${entity.rdbmsView.updateSetClause_questionMarks}"
+    + " WHERE ${entity.rdbmsView.primaryKeyWhereClause_questionMarks}";
 
   /**
    * Delete 1-row
@@ -52,7 +52,7 @@ public final class SQLQueries {
    */
   public static final String DELETE__${entity.name.upperSnake} =
     "DELETE FROM \"${entity.name.lowerSnake}\""
-    + " WHERE ${entity.rdbmsView.primaryKeyWhereClause}";
+    + " WHERE ${entity.rdbmsView.primaryKeyWhereClause_questionMarks}";
   </#if>
 
   /**

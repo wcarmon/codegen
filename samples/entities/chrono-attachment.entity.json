@@ -1,5 +1,6 @@
 {
   "$schema": "https://wcarmon.com/schemas/codegen/entity.schema.json",
+  "createdTimestampFieldName": "created",
   "fieldUris": [
     "file:/home/wcarmon/git-repos/codegen/samples/fields/uuid.field.json",
     "file:/home/wcarmon/git-repos/codegen/samples/fields/created.field.json",
@@ -16,5 +17,6 @@
     }
   ],
   "name": "ChronoAttachment",
-  "pkg": "com.wcarmon.chrono.model"
+  "pkg": "com.wcarmon.chrono.model",
+  "updatedTimestampFieldName": "updated"
 }

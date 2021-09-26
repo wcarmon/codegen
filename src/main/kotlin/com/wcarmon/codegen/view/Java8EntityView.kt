@@ -214,7 +214,7 @@ class Java8EntityView(
           lines += """$indentation"AND ${entity.updatedTimestampFieldName.lowerSnake}=? " + """
         }
 
-        lines += """$indentation"WHERE ${entity.rdbmsView.primaryKeyWhereClause}";"""
+        lines += """$indentation"WHERE ${entity.rdbmsView.primaryKeyWhereClause_questionMarks}";"""
 
         lines.joinToString(
           separator = "\n"

@@ -6,6 +6,7 @@ package com.wcarmon.codegen.util
 import com.wcarmon.codegen.model.*
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.QuoteType.*
+import com.wcarmon.codegen.model.SQLPlaceholderType.*
 import com.wcarmon.codegen.model.TargetLanguage.SQL_POSTGRESQL
 
 /**
@@ -33,8 +34,31 @@ fun commaSeparatedColumns(entity: Entity): String {
  *
  * @return comma separated column assignment expressions (eg. "foo=?, bar=?")
  */
-fun commaSeparatedColumnAssignment(fields: List<Field>) =
-  fields.joinToString { "${it.name.lowerSnake}=?" }
+fun commaSeparatedColumnAssignment(
+  fields: List<Field>,
+  placeholderType: SQLPlaceholderType,
+
+  // Only for numbered
+  firstIndex: Int = 1,
+): String = when (placeholderType) {
+
+  QUESTION_MARK ->
+    fields.joinToString { "${it.name.lowerSnake}=?" }
+
+  NUMBERED_DOLLARS -> {
+    require(firstIndex >= 1) {
+      "dollar indexes start at 1: firstIndex=$firstIndex"
+    }
+
+    fields
+      .mapIndexed { index, field ->
+        "${field.name.lowerSnake}=\u0024${index + firstIndex}"
+      }
+      .joinToString(", ")
+  }
+
+  NAMED_PARAMS -> TODO()
+}
 
 
 /**

@@ -51,6 +51,8 @@ val CREATED_TS_FIELD_NAMES = setOf("created", "createdAt", "createdOn")
 /**
  * Names for timestamp field
  * Used to auto set a value on entity update
- * Uses camelCase
+ * Uses lower camelCase
  */
-val UPDATED_TS_FIELD_NAMES = setOf("updated", "updatedAt", "updatedOn")
+val UPDATED_TS_FIELD_NAMES = setOf(
+  "updated", "updatedAt", "updatedOn"
+)
