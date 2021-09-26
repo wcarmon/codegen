@@ -4,7 +4,20 @@
   "additionalProperties": false,
   "description": "extra config for JVM fields",
   "properties": {
-    "overrideSerde": {
+    "overrideElasticSearchSerde": {
+      "$ref": "serde.schema.json"
+    },
+    "overrideKafkaSerde": {
+      "$ref": "serde.schema.json"
+    },
+    "overrideProtobufRepeatedItemSerde": {
+      "$ref": "serde.schema.json",
+      "description": "only for collections"
+    },
+    "overrideProtobufSerde": {
+      "$ref": "serde.schema.json"
+    },
+    "overrideRDBMSSerde": {
       "$ref": "serde.schema.json"
     },
     "typeParameters": {

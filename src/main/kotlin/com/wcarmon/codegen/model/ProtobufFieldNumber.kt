@@ -3,12 +3,12 @@ package com.wcarmon.codegen.model
 /**
  * See https://developers.google.com/protocol-buffers/docs/proto3#assigning_field_numbers
  */
-data class ProtoFieldNumber(
+data class ProtobufFieldNumber(
   val value: Int,
-) : Comparable<ProtoFieldNumber> {
+) : Comparable<ProtobufFieldNumber> {
 
   companion object {
-    val FIRST: ProtoFieldNumber = ProtoFieldNumber(1)
+    val FIRST: ProtobufFieldNumber = ProtobufFieldNumber(1)
   }
 
   init {
@@ -17,5 +17,5 @@ data class ProtoFieldNumber(
     }
   }
 
-  override fun compareTo(other: ProtoFieldNumber) = this.value.compareTo(other.value)
+  override fun compareTo(other: ProtobufFieldNumber) = this.value.compareTo(other.value)
 }

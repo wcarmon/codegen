@@ -17,12 +17,10 @@ data class RDBMSColumnConfig(
 
   val varcharLength: Int? = null,
 
-  val overrideSerde: Serde = Serde.INLINE,
-
   /**
    * Replace the auto-derived type with this literal
    */
-  val overrideTypeLiteral: String = "",
+  val overrideTypeLiteral: String? = null,
 
   /**
    * For VARCHAR columns, wrap in single quotes
@@ -37,12 +35,16 @@ data class RDBMSColumnConfig(
       require(varcharLength > 0) { "varcharLength must be positive: this=$this" }
     }
 
-    require(overrideTypeLiteral.length < MAX_TYPE_LITERAL_LENGTH) {
-      "overrideTypeLiteral too long: $overrideTypeLiteral, this=$this"
-    }
 
-    // -- Incompatible pairs
-    if (overrideTypeLiteral.isNotBlank()) {
+    if (overrideTypeLiteral != null) {
+      require(overrideTypeLiteral.isNotBlank()) {
+        "overrideTypeLiteral must be null or non-blank"
+      }
+
+      require(overrideTypeLiteral.length < MAX_TYPE_LITERAL_LENGTH) {
+        "overrideTypeLiteral too long: $overrideTypeLiteral, this=$this"
+      }
+
       require(varcharLength == null) {
         "Cannot set varchar length when overriding type: this=$this"
       }
@@ -52,9 +54,5 @@ data class RDBMSColumnConfig(
   }
 
   val overrideBaseType: BaseFieldType? =
-    if (overrideTypeLiteral.isNotBlank()) {
-      BaseFieldType.parse(overrideTypeLiteral)
-    } else {
-      null
-    }
+    overrideTypeLiteral?.let { BaseFieldType.parse(it) }
 }

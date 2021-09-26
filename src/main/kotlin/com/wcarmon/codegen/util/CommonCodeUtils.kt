@@ -30,7 +30,7 @@ fun wrapWithExpressionTracingComments(
     JAVA_11,
     JAVA_17,
     KOTLIN_JVM_1_4,
-    PROTOCOL_BUFFERS_3,
+    PROTO_BUF_3,
     RUST_1_54,
     SQL_DB2,
     SQL_DELIGHT,

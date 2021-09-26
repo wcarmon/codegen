@@ -14,7 +14,7 @@ enum class TargetLanguage {
   JAVA_11,
   JAVA_17,
   KOTLIN_JVM_1_4,
-  PROTOCOL_BUFFERS_3,
+  PROTO_BUF_3,
   PYTHON_3,
   RUST_1_54,
   SQL_DB2,
@@ -57,7 +57,7 @@ enum class TargetLanguage {
 
   val isProtobuf by lazy {
     when (this) {
-      PROTOCOL_BUFFERS_3 -> true
+      PROTO_BUF_3 -> true
       else -> false
     }
   }
@@ -98,7 +98,7 @@ enum class TargetLanguage {
       JAVA_08,
       JAVA_11,
       JAVA_17,
-      PROTOCOL_BUFFERS_3,
+      PROTO_BUF_3,
       SQL_DELIGHT,
       TYPESCRIPT_4,
       -> true
@@ -145,7 +145,7 @@ enum class TargetLanguage {
       }
     }
 
-  val usesGetters by lazy {
+  private val usesGetters by lazy {
     when (this) {
       C_17,
       GOLANG_1_8,

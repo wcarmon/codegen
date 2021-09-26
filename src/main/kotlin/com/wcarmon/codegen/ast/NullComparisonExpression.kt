@@ -36,7 +36,7 @@ data class NullComparisonExpression(
       KOTLIN_JVM_1_4,
       -> "null == " + compareToMe.render(config.unterminated)
 
-      PROTOCOL_BUFFERS_3 -> TODO()
+      PROTO_BUF_3 -> TODO()
       PYTHON_3 -> TODO()  // foo is None
       RUST_1_54 -> TODO()
 

@@ -2,9 +2,22 @@
   "$id": "https://wcarmon.com/schemas/codegen/golang-field.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
-  "description": "extra config for golang fields",
+  "description": "extra config for Golang fields",
   "properties": {
-    "overrideSerde": {
+    "overrideElasticSearchSerde": {
+      "$ref": "serde.schema.json"
+    },
+    "overrideKafkaSerde": {
+      "$ref": "serde.schema.json"
+    },
+    "overrideProtobufRepeatedItemSerde": {
+      "$ref": "serde.schema.json",
+      "description": "only for collections"
+    },
+    "overrideProtobufSerde": {
+      "$ref": "serde.schema.json"
+    },
+    "overrideRDBMSSerde": {
       "$ref": "serde.schema.json"
     },
     "overrideTypeLiteral": {

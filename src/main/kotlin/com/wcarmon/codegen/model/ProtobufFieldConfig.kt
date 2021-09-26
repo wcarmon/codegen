@@ -5,7 +5,7 @@ import com.wcarmon.codegen.util.protobufTypeLiteral
 
 //TODO: document me
 @JsonPropertyOrder(alphabetic = true)
-data class ProtoBufFieldConfig(
+data class ProtobufFieldConfig(
 
   val deprecated: Boolean = false,
 
@@ -15,14 +15,7 @@ data class ProtoBufFieldConfig(
    */
   val overrideTypeLiteral: String? = null,
 
-  val overrideSerde: Serde? = null,
-
   val repeated: Boolean = false,
-
-  /**
-   * Only used for repeated fields
-   */
-  val overrideRepeatedItemSerde: Serde? = null,
 
 //TODO: support oneOf
 
@@ -33,8 +26,8 @@ data class ProtoBufFieldConfig(
 ) {
 
   init {
-    if (overrideTypeLiteral != null) {
-      require(overrideTypeLiteral.isNotBlank()) { "overrideTypeLiteral must be non-blank or null" }
+    require(overrideTypeLiteral == null || overrideTypeLiteral.isNotBlank()) {
+      "overrideTypeLiteral must be non-blank or null"
     }
   }
 

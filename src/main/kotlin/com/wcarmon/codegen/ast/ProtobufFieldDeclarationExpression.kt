@@ -1,26 +1,26 @@
 package com.wcarmon.codegen.ast
 
 import com.wcarmon.codegen.model.Field
-import com.wcarmon.codegen.model.ProtoFieldNumber
-import com.wcarmon.codegen.util.effectiveProtobufType
+import com.wcarmon.codegen.model.ProtobufFieldNumber
+import com.wcarmon.codegen.model.TargetLanguage.PROTO_BUF_3
 
 //TODO: document me
-data class ProtoFieldDeclarationExpression(
+data class ProtobufFieldDeclarationExpression(
   private val field: Field,
-  val number: ProtoFieldNumber,
+  val number: ProtobufFieldNumber,
 
   private val deprecated: Boolean = false,
   private val repeated: Boolean = false,
 
   //TODO: DocumentationExpression
-) : Expression, Comparable<ProtoFieldDeclarationExpression> {
+) : Expression, Comparable<ProtobufFieldDeclarationExpression> {
 
-  override val expressionName: String = ProtoFieldDeclarationExpression::class.java.simpleName
+  override val expressionName: String = ProtobufFieldDeclarationExpression::class.java.simpleName
 
   companion object {
 
     @JvmStatic
-    val NUMBER_COMPARATOR = Comparator<ProtoFieldDeclarationExpression> { x, y ->
+    val NUMBER_COMPARATOR = Comparator<ProtobufFieldDeclarationExpression> { x, y ->
       x.number.compareTo(y.number)
     }
   }
@@ -41,7 +41,7 @@ data class ProtoFieldDeclarationExpression(
 
     return config.lineIndentation +
         repeatedPrefix +
-        effectiveProtobufType(field) +
+        field.effectiveTypeLiteral(PROTO_BUF_3) +
         " " +
         field.name.lowerSnake +
         " = " +
@@ -50,6 +50,6 @@ data class ProtoFieldDeclarationExpression(
         ";"
   }
 
-  override fun compareTo(other: ProtoFieldDeclarationExpression) =
+  override fun compareTo(other: ProtobufFieldDeclarationExpression) =
     number.compareTo(other.number)
 }

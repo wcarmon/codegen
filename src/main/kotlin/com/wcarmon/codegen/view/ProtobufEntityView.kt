@@ -1,10 +1,10 @@
 package com.wcarmon.codegen.view
 
-import com.wcarmon.codegen.ast.ProtoFieldDeclarationExpression
+import com.wcarmon.codegen.ast.ProtobufFieldDeclarationExpression
 import com.wcarmon.codegen.ast.RenderConfig
 import com.wcarmon.codegen.model.Entity
 import com.wcarmon.codegen.model.Field
-import com.wcarmon.codegen.model.ProtoFieldNumber
+import com.wcarmon.codegen.model.ProtobufFieldNumber
 import com.wcarmon.codegen.model.TargetLanguage
 
 /**
@@ -60,11 +60,12 @@ class ProtobufEntityView(
     fields
       .mapIndexed { index, field ->
 
-        ProtoFieldDeclarationExpression(
+        ProtobufFieldDeclarationExpression(
           deprecated = false,
           field = field,
-          number = ProtoFieldNumber(index + firstIndex),
-          repeated = field.protobufConfig.effectiveBaseType.isCollection,
+          number = ProtobufFieldNumber(index + firstIndex),
+          //TODO: confirm this works on all the languages
+          repeated = field.effectiveBaseType(TargetLanguage.JAVA_08).isCollection,
         ).render(renderConfig.indented)
       }
       .joinToString(

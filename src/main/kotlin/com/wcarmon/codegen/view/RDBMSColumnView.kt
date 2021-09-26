@@ -3,6 +3,7 @@ package com.wcarmon.codegen.view
 import com.wcarmon.codegen.UPDATED_TS_FIELD_NAMES
 import com.wcarmon.codegen.ast.*
 import com.wcarmon.codegen.model.*
+import com.wcarmon.codegen.model.TargetLanguage.JAVA_08
 import com.wcarmon.codegen.model.TargetLanguage.SQL_POSTGRESQL
 import com.wcarmon.codegen.util.*
 
@@ -22,7 +23,7 @@ class RDBMSColumnView(
   )
 
   val isUpdatedTimestamp: Boolean =
-    field.rdbmsConfig.effectiveBaseType.isTemporal &&
+    field.effectiveBaseType(SQL_POSTGRESQL).isTemporal &&
         UPDATED_TS_FIELD_NAMES.any {
           field.name.lowerCamel.equals(it, true)
         }
@@ -71,7 +72,7 @@ class RDBMSColumnView(
     if (!isUpdatedTimestamp && fieldForUpdateTimestamp != null) {
 
       val wrappedFieldRead = WrapWithSerdeExpression(
-        serde = effectiveJDBCSerde(fieldForUpdateTimestamp),
+        serde = fieldForUpdateTimestamp.effectiveRDBMSSerde(targetLanguage),
         serdeMode = SerdeMode.SERIALIZE,
         wrapped = RawLiteralExpression("clock.instant()"),
       )
@@ -80,7 +81,7 @@ class RDBMSColumnView(
         columnIndex = currentColumnIndex,
         fieldReadExpression = wrappedFieldRead,
         setterMethod = defaultPreparedStatementSetterMethod(
-          fieldForUpdateTimestamp.rdbmsConfig.effectiveBaseType),
+          fieldForUpdateTimestamp.effectiveBaseType(JAVA_08)),
         preparedStatementIdentifierExpression = psConfig.preparedStatementIdentifierExpression,
         // TODO: termination
       )

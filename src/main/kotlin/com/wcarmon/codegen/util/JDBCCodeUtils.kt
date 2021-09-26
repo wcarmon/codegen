@@ -6,6 +6,7 @@ import com.wcarmon.codegen.ast.*
 import com.wcarmon.codegen.model.*
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.SerdeMode.SERIALIZE
+import com.wcarmon.codegen.model.TargetLanguage.JAVA_08
 import com.wcarmon.codegen.model.TargetLanguage.SQL_POSTGRESQL
 import java.sql.JDBCType
 
@@ -57,45 +58,29 @@ fun buildPreparedStatementSetter(
   )
 
   val wrappedFieldRead = WrapWithSerdeExpression(
-    serde = effectiveJDBCSerde(field),
+    serde = field.effectiveRDBMSSerde(JAVA_08),
     serdeMode = SERIALIZE,
     wrapped = fieldReadExpression,
   )
 
-  val baseType = field.effectiveBaseType(SQL_POSTGRESQL)
+  //TODO: this seems wrong
+  val jdbcBaseType = field.effectiveBaseType(SQL_POSTGRESQL)
 
   return PreparedStatementSetExpression(
     columnIndex = columnIndex,
-    columnType = jdbcType(baseType),
+    columnType = jdbcType(jdbcBaseType),
     fieldReadExpression = wrappedFieldRead,
     field = field,
     nullTestExpression = nullTestExpression,
     preparedStatementIdentifierExpression = psConfig.preparedStatementIdentifierExpression,
-    setterMethod = defaultPreparedStatementSetterMethod(baseType),
+    setterMethod = defaultPreparedStatementSetterMethod(jdbcBaseType),
   )
 }
 
 /**
- * @return the most appropriate Serde for JDBC
- */
-fun effectiveJDBCSerde(field: Field): Serde =
-  if (field.rdbmsConfig.overrideSerde != Serde.INLINE) {
-    // -- User override is highest priority
-    field.rdbmsConfig.overrideSerde
-
-  } else if (requiresJDBCSerde(field)) {
-    // -- Fallback to jvm serializer
-    defaultJVMSerde(field)
-
-  } else {
-    Serde.INLINE
-  }
-
-
-/**
  * @return true when Type is not trivially mapped to JDBC getter/setter
  */
-private fun requiresJDBCSerde(field: Field): Boolean {
+fun requiresJDBCSerde(field: Field): Boolean {
   val baseType = field.effectiveBaseType(SQL_POSTGRESQL)
 
   return (baseType in setOf(PATH, URI, URL)

@@ -19,11 +19,11 @@ class FieldUriDeserializer : JsonDeserializer<List<Field>>() {
     val jsonFactory = JsonFactory(parser.codec)
 
     return context.readValue(parser, Collection::class.java)
-      .map {
+      .map { path ->
         jsonFactory
-          .createParser(URL(it as String))
-          .use {
-            it.readValueAs(Field::class.java)
+          .createParser(URL(path as String))
+          .use { parser ->
+            parser.readValueAs(Field::class.java)
           }
       }
   }

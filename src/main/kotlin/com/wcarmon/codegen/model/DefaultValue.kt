@@ -37,7 +37,7 @@ data class DefaultValue(
 
   companion object {
 
-    val DEFAULT_NOT_PRESENT = DefaultValue(wrapper = null, presentAndNull = false)
+    private val DEFAULT_NOT_PRESENT = DefaultValue(wrapper = null, presentAndNull = false)
 
     private const val PROEPRTY_NAME_FOR_WRAPPER = "defaultValue"
     private const val PROPERTY_NAME_FOR_VALUE = "value"

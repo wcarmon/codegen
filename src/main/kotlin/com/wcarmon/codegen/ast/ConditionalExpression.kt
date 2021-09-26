@@ -38,7 +38,7 @@ data class ConditionalExpression(
 
     PYTHON_3 -> pythonStyle(config)
 
-    PROTOCOL_BUFFERS_3,
+    PROTO_BUF_3,
     -> TODO("Conditionals not supported on $config")
 
     else -> TODO("Conditionals not supported on $config")

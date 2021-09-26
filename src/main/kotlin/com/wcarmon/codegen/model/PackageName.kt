@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonValue
 /**
  * Represents ...
  * - REST: url-segment
- * - Protocol buffer: packages: https://developers.google.com/protocol-buffers/docs/proto#packages
+ * - Protocol buffers: packages: https://developers.google.com/protocol-buffers/docs/proto#packages
  * - RDBMS: schema
  *
  * - C#: namespace: https://docs.microsoft.com/en-us/dotnet/csharp/fundamentals/types/namespaces

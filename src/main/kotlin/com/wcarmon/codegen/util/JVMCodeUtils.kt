@@ -8,7 +8,6 @@ import com.wcarmon.codegen.model.BaseFieldType
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.QuoteType.*
-import com.wcarmon.codegen.model.Serde
 import com.wcarmon.codegen.model.StringFormatTemplate
 import com.wcarmon.codegen.model.TargetLanguage.JAVA_08
 
@@ -61,11 +60,11 @@ fun defaultValueLiteralForJVM(field: Field): String {
 }
 
 //TODO: document me
-fun defaultJVMSerde(field: Field): Serde =
-  Serde(
-    deserializeTemplate = defaultJVMDeserializeTemplate(field),
-    serializeTemplate = defaultJVMSerializeTemplate(field),
-  )
+//fun defaultJVMSerde(field: Field): Serde =
+//  Serde(
+//    deserializeTemplate = defaultJVMDeserializeTemplate(field),
+//    serializeTemplate = defaultJVMSerializeTemplate(field),
+//  )
 
 
 /**

@@ -40,25 +40,26 @@
     },
     {
       "enumType": true,
+      "golang": {},
       "jvm": {
-        "overrideSerde": {
+        "overrideKafkaSerde": {
           "deserializeTemplate": "com.wcarmon.chrono.model.ChronoHorizon.parse(%s)",
           "serializeTemplate": "%s.valueAsString()"
+        },
+        "overrideProtoBufSerde": {
+          "deserializeTemplate": "com.wcarmon.chrono.model.ChronoHorizon.fromValue(%s)",
+          "serializeTemplate": "%s.toProtoValue()"
+        },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "com.wcarmon.chrono.model.ChronoHorizon.fromDBValue(%s)",
+          "serializeTemplate": "%s.toDBValue()"
         }
       },
       "name": "horizon",
       "protobuf": {
-        "overrideSerde": {
-          "deserializeTemplate": "com.wcarmon.chrono.model.ChronoHorizon.fromValue(%s)",
-          "serializeTemplate": "%s.toProtoValue()"
-        },
         "overrideTypeLiteral": "int32"
       },
       "rdbms": {
-        "overrideSerde": {
-          "deserializeTemplate": "com.wcarmon.chrono.model.ChronoHorizon.fromDBValue(%s)",
-          "serializeTemplate": "%s.toDBValue()"
-        },
         "overrideTypeLiteral": "INTEGER"
       },
       "type": "com.wcarmon.chrono.model.ChronoHorizon"
@@ -75,19 +76,28 @@
     },
     {
       "enumType": true,
-      "name": "importance",
-      "protobuf": {
-        "overrideSerde": {
+      "golang": {
+        "overrideProtoBufSerde": {
+          "deserializeTemplate": "fix--%s",
+          "serializeTemplate": "fix--%s"
+        },
+        "overrideTypeLiteral": "ChronoLevel"
+      },
+      "jvm": {
+        "overrideProtoBufSerde": {
           "deserializeTemplate": "com.wcarmon.chrono.model.ChronoLevel.fromValue(%s)",
           "serializeTemplate": "%s.toProtoValue()"
         },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "com.wcarmon.chrono.model.ChronoLevel.fromDBValue(%s)",
+          "serializeTemplate": "%s.toDBValue()"
+        }
+      },
+      "name": "importance",
+      "protobuf": {
         "overrideTypeLiteral": "int32"
       },
       "rdbms": {
-        "overrideSerde": {
-          "deserializeTemplate": "com.wcarmon.chrono.model.ChronoLevel.fromDBValue(%s)",
-          "serializeTemplate": "%s.toDBValue()"
-        },
         "overrideTypeLiteral": "INTEGER"
       },
       "type": "com.wcarmon.chrono.model.ChronoLevel"
@@ -124,17 +134,34 @@
       }
     },
     {
-      "name": "tags",
       "golang": {
+        "overrideProtoBufRepeatedItemSerde": {
+          "deserializeTemplate": "FIX--%s",
+          "serializeTemplate": "FIX--%s"
+        },
+        "overrideProtoBufSerde": {
+          "deserializeTemplate": "FIX--%s",
+          "serializeTemplate": "FIX--%s"
+        },
         "typeParameters": [
           "ChronoTag"
         ]
       },
-      "protobuf": {
-        "overrideRepeatedItemSerde": {
+      "jvm": {
+        "overrideProtoBufRepeatedItemSerde": {
           "deserializeTemplate": "com.wcarmon.chrono.model.ChronoTag.fromString(%s)",
           "serializeTemplate": "%s.toString()"
         },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "toSet(%s, objectMapper, CHRONO_BOARD__TAGS_TYPE_REF)",
+          "serializeTemplate": "objectWriter.writeValueAsString(%s)"
+        },
+        "typeParameters": [
+          "com.wcarmon.chrono.model.ChronoTag"
+        ]
+      },
+      "name": "tags",
+      "protobuf": {
         "overrideTypeLiteral": "string",
         "repeated": true
       },
@@ -142,18 +169,9 @@
         "overrideDefaultValue": {
           "value": ""
         },
-        "overrideSerde": {
-          "deserializeTemplate": "toSet(%s, objectMapper, CHRONO_BOARD__TAGS_TYPE_REF)",
-          "serializeTemplate": "objectWriter.writeValueAsString(%s)"
-        },
         "varcharLength": 512
       },
-      "type": "Set",
-      "jvm": {
-        "typeParameters": [
-          "com.wcarmon.chrono.model.ChronoTag"
-        ]
-      }
+      "type": "Set"
     },
     {
       "defaultValue": {

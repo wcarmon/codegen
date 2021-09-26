@@ -1,22 +1,22 @@
 package com.wcarmon.codegen.ast
 
-import com.wcarmon.codegen.ast.ProtoFieldDeclarationExpression.Companion.NUMBER_COMPARATOR
+import com.wcarmon.codegen.ast.ProtobufFieldDeclarationExpression.Companion.NUMBER_COMPARATOR
 import com.wcarmon.codegen.model.Name
 
 /**
  * See https://developers.google.com/protocol-buffers/docs/proto3#simple
  */
-data class ProtoMessageDeclarationExpression(
+data class ProtobufMessageDeclarationExpression(
   private val name: Name,
 
-  private val enums: List<ProtoEnumDeclarationExpression> = listOf(),
-  private val fields: Collection<ProtoFieldDeclarationExpression> = listOf(),
+  private val enums: List<ProtobufEnumDeclarationExpression> = listOf(),
+  private val fields: Collection<ProtobufFieldDeclarationExpression> = listOf(),
 
   //TODO: support reserved fields
   // https://developers.google.com/protocol-buffers/docs/proto3#reserved
 ) : Expression {
 
-  override val expressionName: String = ProtoMessageDeclarationExpression::class.java.simpleName
+  override val expressionName: String = ProtobufMessageDeclarationExpression::class.java.simpleName
 
   init {
 
@@ -32,7 +32,7 @@ data class ProtoMessageDeclarationExpression(
     }
   }
 
-  private val sortedFieldExpressions: List<ProtoFieldDeclarationExpression> =
+  private val sortedFieldExpressions: List<ProtobufFieldDeclarationExpression> =
     fields.sortedWith(NUMBER_COMPARATOR)
 
   override fun renderWithoutDebugComments(

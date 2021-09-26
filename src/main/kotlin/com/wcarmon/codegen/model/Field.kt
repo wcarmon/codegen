@@ -7,15 +7,19 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.wcarmon.codegen.DEBUG_MODE
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.TargetLanguage.*
+import com.wcarmon.codegen.util.defaultSerdeForCollection
 import com.wcarmon.codegen.util.getPostgresTypeLiteral
+import com.wcarmon.codegen.util.requiresJDBCSerde
+import com.wcarmon.codegen.util.requiresProtobufSerde
 import com.wcarmon.codegen.view.*
+import org.apache.logging.log4j.LogManager
 
 /**
  * See src/main/resources/json-schema/field.schema.json
  *
  * Represents ...
  * - REST: resource property/attribute
- * - Protocol buffer: field
+ * - Protocol buffers: field
  * - RDBMS: column
  *
  * - C++: struct member, class data member
@@ -63,7 +67,7 @@ data class Field(
   // -- Technology specific config
   private val golangConfig: GolangFieldConfig = GolangFieldConfig(),
   private val jvmConfig: JVMFieldConfig = JVMFieldConfig(),
-  private val protobufConfig: ProtoBufFieldConfig = ProtoBufFieldConfig(),
+  private val protobufConfig: ProtobufFieldConfig = ProtobufFieldConfig(),
 
   //TODO: mark private
   val rdbmsConfig: RDBMSColumnConfig = RDBMSColumnConfig(),
@@ -71,6 +75,14 @@ data class Field(
 
   companion object {
 
+    @JvmStatic
+    private val LOG = LogManager.getLogger(Field::class.java)
+
+    /**
+     * Builder to handle the impedance mismatch between json and in-memory structures
+     *
+     * GOTCHA: have to manually keep this in sync with src/main/resources/json-schema/field.schema.json
+     */
     @JvmStatic
     @JsonCreator
     fun parse(
@@ -85,7 +97,7 @@ data class Field(
       @JsonProperty("nullable") nullable: Boolean?,
       @JsonProperty("positionInId") positionInId: Int?,
       @JsonProperty("precision") precision: Int?,
-      @JsonProperty("protobuf") protobufConfig: ProtoBufFieldConfig?,
+      @JsonProperty("protobuf") protobufConfig: ProtobufFieldConfig?,
       @JsonProperty("rdbms") rdbmsConfig: RDBMSColumnConfig?,
       @JsonProperty("scale") scale: Int?,
       @JsonProperty("signed") signed: Boolean?,
@@ -118,7 +130,7 @@ data class Field(
         jvmConfig = jvmFieldConfig ?: JVMFieldConfig(),
         name = name,
         positionInId = positionInId,
-        protobufConfig = protobufConfig ?: ProtoBufFieldConfig(),
+        protobufConfig = protobufConfig ?: ProtobufFieldConfig(),
         rdbmsConfig = rdbmsConfig ?: RDBMSColumnConfig(),
         type = logicalType,
         validationConfig = validationConfig ?: FieldValidation(),
@@ -146,7 +158,7 @@ data class Field(
     assertTypeParametersValid(GOLANG_1_8)
     assertTypeParametersValid(JAVA_08)
     assertTypeParametersValid(KOTLIN_JVM_1_4)
-    assertTypeParametersValid(PROTOCOL_BUFFERS_3)
+    assertTypeParametersValid(PROTO_BUF_3)
   }
 
   val java8View by lazy {
@@ -186,11 +198,11 @@ data class Field(
     )
   }
 
-  val protoBufView by lazy {
+  val protobufView by lazy {
     ProtobufFieldView(
       debugMode = DEBUG_MODE,
       field = this,
-      targetLanguage = PROTOCOL_BUFFERS_3,
+      targetLanguage = PROTO_BUF_3,
     )
   }
 
@@ -227,7 +239,7 @@ data class Field(
 
       KOTLIN_JVM_1_4 -> type.base
 
-      PROTOCOL_BUFFERS_3 -> protobufConfig.overrideBaseType ?: type.base
+      PROTO_BUF_3 -> protobufConfig.overrideBaseType ?: type.base
 
       SQL_DB2,
       SQL_H2,
@@ -243,10 +255,23 @@ data class Field(
       else -> TODO("Get effective base type for field=$this, targetLanguage=$targetLanguage")
     }
 
-  fun typeParameters(targetLanguage: TargetLanguage): List<String> = when (targetLanguage) {
-    //TODO: more here
-    else -> TODO("get type params for field=$this, targetLanguage=$targetLanguage")
-  }
+  fun typeParameters(targetLanguage: TargetLanguage): List<String> =
+    when (targetLanguage) {
+      GOLANG_1_8,
+      -> golangConfig.typeParameters
+
+      JAVA_08,
+      JAVA_11,
+      JAVA_17,
+      KOTLIN_JVM_1_4,
+      -> jvmConfig.typeParameters
+
+      PROTO_BUF_3,
+      -> listOf() //TODO: fix this when you support proto collections
+
+      //TODO: more here
+      else -> TODO("get type params for field=$this, targetLanguage=$targetLanguage")
+    }
 
   /** true for String, Collections, Enums, Arrays */
   fun isParameterized(targetLanguage: TargetLanguage) =
@@ -270,27 +295,52 @@ data class Field(
     }
 
 
-  fun typeLiteral(targetLanguage: TargetLanguage): String = when (targetLanguage) {
+  fun effectiveTypeLiteral(targetLanguage: TargetLanguage): String = when (targetLanguage) {
     //TODO: move logic from views to here
 
-    PROTOCOL_BUFFERS_3 -> protobufConfig.typeLiteral(type)
+    PROTO_BUF_3 -> protobufConfig.typeLiteral(type)
 
-    SQL_POSTGRESQL -> rdbmsConfig.overrideTypeLiteral ?: getPostgresTypeLiteral(this)
+    SQL_POSTGRESQL -> rdbmsConfig.overrideTypeLiteral ?: getPostgresTypeLiteral(
+      effectiveBaseType = effectiveBaseType(SQL_POSTGRESQL),
+      errorLoggingInfo = "field=$this",
+      logicalFieldType = type,
+      rdbmsConfig = rdbmsConfig,
+    )
 
     //TODO: more here
     else -> TODO("get typeLiteral for field=$this, targetLanguage=$targetLanguage")
   }
 
-  fun effectiveRDBMSSerde(targetLanguage: TargetLanguage): Serde {
+  fun effectiveRDBMSSerde(targetLanguage: TargetLanguage): Serde =
     when (targetLanguage) {
       JAVA_08,
       JAVA_11,
       JAVA_17,
-      -> TODO()
+      KOTLIN_JVM_1_4,
+      -> if (jvmConfig.overrideRDBMSSerde != null) {
+        // -- User override is highest priority
+        jvmConfig.overrideRDBMSSerde
 
-      KOTLIN_JVM_1_4 -> TODO()
+      } else if (requiresJDBCSerde(this)) {
+        LOG.warn("We recommend you override the rdbms Serde on $this")
+        Serde.INLINE
 
-      GOLANG_1_8 -> TODO()
+      } else {
+        Serde.INLINE
+      }
+
+      GOLANG_1_8,
+      -> if (golangConfig.overrideRDBMSSerde != null) {
+        // -- User override is highest priority
+        golangConfig.overrideRDBMSSerde
+
+//      } else if (requiresGolangSQLSerde(this)) {
+//        LOG.warn("We recommend you override the rdbms Serde on $this")
+//        Serde.INLINE
+
+      } else {
+        Serde.INLINE
+      }
 
       SQL_DB2,
       SQL_DELIGHT,
@@ -304,23 +354,56 @@ data class Field(
 
       else -> TODO("get effectiveSerde for field=$this, targetLanguage=$targetLanguage")
     }
-  }
 
-  fun effectiveProtoSerde(targetLanguage: TargetLanguage): Serde {
-
+  fun effectiveProtobufSerde(targetLanguage: TargetLanguage): Serde =
     when (targetLanguage) {
       JAVA_08,
       JAVA_11,
       JAVA_17,
-      -> TODO()
+      KOTLIN_JVM_1_4,
+      ->
+        if (jvmConfig.overrideProtobufSerde != null) {
+          // -- User override is highest priority
+          jvmConfig.overrideProtobufSerde
 
-      KOTLIN_JVM_1_4 -> TODO()
+        } else if (effectiveBaseType(targetLanguage).isCollection) {
+          defaultSerdeForCollection(this)
 
-      GOLANG_1_8 -> TODO()
+        } else if (requiresProtobufSerde(this)) {
+          LOG.warn("We recommend you override the proto Serde on $this")
+          Serde.INLINE
 
-      PROTOCOL_BUFFERS_3 -> throw UnsupportedOperationException()
+        } else {
+          Serde.INLINE
+        }
+
+      GOLANG_1_8 ->
+        if (golangConfig.overrideProtobufSerde != null) {
+          // -- User override is highest priority
+          golangConfig.overrideProtobufSerde
+
+        } else if (effectiveBaseType(targetLanguage).isCollection) {
+          defaultSerdeForCollection(this)
+
+        } else if (requiresProtobufSerde(this)) {
+          LOG.warn("We recommend you override the proto Serde on $this")
+          Serde.INLINE
+
+        } else {
+          Serde.INLINE
+        }
+
+      // PROTO cannot be mapped to itself
+      PROTO_BUF_3 -> throw UnsupportedOperationException("Programming error ")
       else -> TODO("get effectiveSerde for field=$this, targetLanguage=$targetLanguage")
     }
+
+  fun effectiveProtoSerdesForTypeParameters(targetLanguage: TargetLanguage): List<Serde> {
+    TODO()
+//      typeParameters(PROTO_BUF_3)
+//      .map {
+//        field.protobufConfig.overrideRepeatedItemSerde ?: Serde.INLINE
+//      }
   }
 
   /**

@@ -6,7 +6,9 @@ import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.SerdeMode.DESERIALIZE
 import com.wcarmon.codegen.model.SerdeMode.SERIALIZE
 import com.wcarmon.codegen.model.TargetLanguage
-import com.wcarmon.codegen.util.*
+import com.wcarmon.codegen.model.TargetLanguage.KOTLIN_JVM_1_4
+import com.wcarmon.codegen.util.defaultResultSetGetterMethod
+import com.wcarmon.codegen.util.kotlinTypeLiteral
 
 /**
  * Kotlin related convenience methods for a [Field]
@@ -31,17 +33,21 @@ class KotlinFieldView(
     terminate = false
   )
 
+  val isCollection: Boolean by lazy {
+    field.effectiveBaseType(KOTLIN_JVM_1_4).isCollection
+  }
+
   val resultSetGetterExpression: String by lazy {
 
     val wrapped =
       ResultSetReadExpression(
         fieldName = field.name,
-        getterMethod = defaultResultSetGetterMethod(field.jvmConfig.effectiveBaseType),
+        getterMethod = defaultResultSetGetterMethod(field.effectiveBaseType(KOTLIN_JVM_1_4)),
         resultSetIdentifierExpression = RawLiteralExpression("rs"),
       )
 
     WrapWithSerdeExpression(
-      serde = effectiveJDBCSerde(field),
+      serde = field.effectiveRDBMSSerde(KOTLIN_JVM_1_4),
       serdeMode = DESERIALIZE,
       wrapped = wrapped,
     )
@@ -54,10 +60,11 @@ class KotlinFieldView(
   val unqualifiedType = kotlinTypeLiteral(field, false)
 
   fun readFromProtoExpression(protoId: String = "proto") =
-    ProtoFieldReadExpression(
+    ProtobufFieldReadExpression(
       assertNonNull = false,
       field = field,
       fieldOwner = RawLiteralExpression(protoId),
+      serde = field.effectiveProtobufSerde(KOTLIN_JVM_1_4),
     )
       .render(renderConfig)
 
@@ -72,12 +79,12 @@ class KotlinFieldView(
     )
 
     val serdeExpression = WrapWithSerdeExpression(
-      serde = effectiveProtoSerde(field),
+      serde = field.effectiveProtobufSerde(KOTLIN_JVM_1_4),
       serdeMode = SERIALIZE,
       wrapped = pojoReadExpression,
     )
 
-    return ProtoFieldWriteExpression(
+    return ProtobufFieldWriteExpression(
       field = field,
       sourceReadExpression = serdeExpression,
     )
@@ -100,7 +107,7 @@ class KotlinFieldView(
   ): String {
     require(typeParameterNumber >= 0)
 
-    val serdes = effectiveProtoSerdesForTypeParameters(field)
+    val serdes = field.effectiveProtoSerdesForTypeParameters(KOTLIN_JVM_1_4)
     check(serdes.size > typeParameterNumber) {
       "serde count: ${serdes.size}, requested index: $typeParameterNumber"
     }
@@ -116,7 +123,7 @@ class KotlinFieldView(
   ): String {
     require(typeParameterNumber >= 0)
 
-    val serdes = effectiveProtoSerdesForTypeParameters(field)
+    val serdes = field.effectiveProtoSerdesForTypeParameters(KOTLIN_JVM_1_4)
     check(serdes.size > typeParameterNumber) {
       "serde count: ${serdes.size}, requested index: $typeParameterNumber"
     }

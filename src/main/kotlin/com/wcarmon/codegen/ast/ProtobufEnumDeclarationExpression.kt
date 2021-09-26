@@ -5,7 +5,7 @@ import com.wcarmon.codegen.model.Name
 /**
  * See https://developers.google.com/protocol-buffers/docs/proto3#enum
  */
-data class ProtoEnumDeclarationExpression(
+data class ProtobufEnumDeclarationExpression(
   private val items: List<String>,
   private val name: Name,
 
@@ -13,7 +13,7 @@ data class ProtoEnumDeclarationExpression(
   private val prependUndefinedElement: Boolean = true,
 ) : Expression {
 
-  override val expressionName: String = ProtoEnumDeclarationExpression::class.java.simpleName
+  override val expressionName: String = ProtobufEnumDeclarationExpression::class.java.simpleName
 
   companion object {
     const val UNDEFINED_ITEM: String = "UNDEFINED"

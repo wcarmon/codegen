@@ -11,9 +11,6 @@
       "description": "literal for default value, wrap strings in single quotes",
       "$ref": "default-value.schema.json"
     },
-    "overrideSerde": {
-      "$ref": "serde.schema.json"
-    },
     "overrideTypeLiteral": {
       "description": "Allows custom DB type, replaces auto-derived DB type (use Postgres types)",
       "maxLength": 64,

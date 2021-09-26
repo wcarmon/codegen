@@ -2,7 +2,7 @@
   "$id": "https://wcarmon.com/schemas/codegen/protobuf-field.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
-  "description": "configuration for protocol buffer 3 fields",
+  "description": "configuration for protocol buffers 3 fields",
   "properties": {
     "deprecated": {
       "type": "boolean"
@@ -15,14 +15,6 @@
     "repeated": {
       "type": "boolean"
     },
-    "overrideRepeatedItemSerde": {
-      "$ref": "serde.schema.json",
-      "description": "only for collections"
-    },
-    "overrideSerde": {
-      "$ref": "serde.schema.json",
-      "description": "for the field, might be a collection"
-    }
   },
   "propertyNames": {
     "pattern": "^[$]?[A-Za-z_][A-Za-z0-9]*$"

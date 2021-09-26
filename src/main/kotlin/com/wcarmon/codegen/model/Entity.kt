@@ -13,7 +13,7 @@ import com.wcarmon.codegen.view.*
  *
  * Represents ...
  * - REST: Resource
- * - Protocol buffer: Message
+ * - Protocol buffers: Message
  * - RDBMS: Table
  *
  * - Kotlin: data class, POJO class
@@ -137,6 +137,8 @@ data class Entity(
           "Remove unnecessary index for ID field: ${name.upperCamel}.${index.first.lowerCamel}"
         }
       }
+
+    //TODO: validate if you cannot find the update or created columns in this::fields
   }
 
   val java8View by lazy {
@@ -186,7 +188,7 @@ data class Entity(
     ProtobufEntityView(
       debugMode = DEBUG_MODE,
       entity = this,
-      targetLanguage = PROTOCOL_BUFFERS_3,
+      targetLanguage = PROTO_BUF_3,
     )
   }
 

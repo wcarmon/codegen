@@ -9,9 +9,9 @@ import com.wcarmon.codegen.model.JDBCColumnIndex.Companion.FIRST
 import com.wcarmon.codegen.model.PreparedStatementBuilderConfig
 import com.wcarmon.codegen.model.SerdeMode.SERIALIZE
 import com.wcarmon.codegen.model.TargetLanguage
+import com.wcarmon.codegen.model.TargetLanguage.JAVA_08
 import com.wcarmon.codegen.util.buildJavaPreconditionStatements
 import com.wcarmon.codegen.util.buildPreparedStatementSetters
-import com.wcarmon.codegen.util.effectiveProtoSerde
 import com.wcarmon.codegen.util.javaImportsForFields
 
 /**
@@ -22,7 +22,7 @@ class Java8EntityView(
   private val entity: Entity,
   private val jvmView: JVMEntityView,
   private val rdbmsView: RDBMSTableView,
-  targetLanguage: TargetLanguage = TargetLanguage.JAVA_08,
+  targetLanguage: TargetLanguage = JAVA_08,
 ) {
 
   init {
@@ -102,11 +102,11 @@ class Java8EntityView(
         separator = "\n",
       ) { field ->
 
-        val read = ProtoFieldReadExpression(
+        val read = ProtobufFieldReadExpression(
           assertNonNull = false,
           field = field,
           fieldOwner = RawLiteralExpression("proto"),
-          serde = effectiveProtoSerde(field),
+          serde = field.effectiveProtobufSerde(JAVA_08),
         )
 
         val renderedRead = read.render(renderConfig.unterminated)
@@ -133,12 +133,12 @@ class Java8EntityView(
         )
 
         val wrapper = WrapWithSerdeExpression(
-          serde = effectiveProtoSerde(field),
+          serde = field.effectiveProtobufSerde(JAVA_08),
           serdeMode = SERIALIZE,
           wrapped = read,
         )
 
-        ProtoFieldWriteExpression(
+        ProtobufFieldWriteExpression(
           field = field,
           sourceReadExpression = wrapper,
         )
@@ -154,14 +154,16 @@ class Java8EntityView(
       .joinToString("\n") { field ->
         val output = StringBuilder(512)
 
-        val collectionLiteral = when (field.jvmConfig.effectiveBaseType) {
+        val collectionLiteral = when (field.effectiveBaseType(JAVA_08)) {
           BaseFieldType.SET -> "Set"
           BaseFieldType.LIST -> "List"
           else -> TODO("Add typeref support for field=$field, entity=$entity")
         }
 
+        val typeParameters = field.typeParameters(JAVA_08)
+
         //TODO: should I use field.jvmView.jacksonTypeRef
-        output.append("public static final TypeReference<$collectionLiteral<${field.jvmConfig.typeParameters.first()}>> ")
+        output.append("public static final TypeReference<$collectionLiteral<${typeParameters.first()}>> ")
         output.append("${entity.name.upperSnake}__${field.name.upperSnake}_TYPE_REF ")
         output.append("=\n")
         output.append(indentation)
@@ -170,14 +172,6 @@ class Java8EntityView(
         output.toString()
       }
   }
-
-  val validatedFields =
-    entity.sortedFieldsWithIdsFirst
-      .filter {
-        it.validationConfig.hasValidation
-            // For Java we need validation to enforce null safety
-            || !it.type.nullable
-      }
 
   val validationExpressions: String by lazy {
 
@@ -234,6 +228,14 @@ class Java8EntityView(
         "$indentation$it"
       }
   }
+
+  private val validatedFields =
+    entity.sortedFieldsWithIdsFirst
+      .filter {
+        it.validationConfig.hasValidation
+            // For Java we need validation to enforce null safety
+            || !it.type.nullable
+      }
 
   //For freemarker
   fun methodArgsForIdFields(qualified: Boolean) =

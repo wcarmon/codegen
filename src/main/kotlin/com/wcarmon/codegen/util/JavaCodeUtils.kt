@@ -53,8 +53,8 @@ fun commaSeparatedJavaMethodParams(
 /**
  * Useful for Jackson, and json stores (eg. ElasticSearch, MongoDB, ...)
  *
- * See [com.wcarmon.codegen.model.Serde]
- * See [com.wcarmon.codegen.model.RDBMSColumnConfig#overrideSerde]
+ * See [Serde]
+ * See [RDBMSColumnConfig#overrideSerde]
  */
 //private fun getJavaDeserializeTemplate(field: Field): ExpressionTemplate =
 //  if (field.jvm.serde != null) {

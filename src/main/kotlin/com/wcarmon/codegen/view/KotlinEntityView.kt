@@ -9,8 +9,8 @@ import com.wcarmon.codegen.model.JDBCColumnIndex.Companion.FIRST
 import com.wcarmon.codegen.model.PreparedStatementBuilderConfig
 import com.wcarmon.codegen.model.SerdeMode
 import com.wcarmon.codegen.model.TargetLanguage
+import com.wcarmon.codegen.model.TargetLanguage.KOTLIN_JVM_1_4
 import com.wcarmon.codegen.util.buildPreparedStatementSetters
-import com.wcarmon.codegen.util.effectiveProtoSerde
 import com.wcarmon.codegen.util.getKotlinImportsForFields
 import com.wcarmon.codegen.util.kotlinMethodArgsForFields
 
@@ -103,18 +103,20 @@ class KotlinEntityView(
       .joinToString("\n") { field ->
         val output = StringBuilder(512)
 
-        val collectionLiteral = when (field.jvmConfig.effectiveBaseType) {
+        val collectionLiteral = when (field.effectiveBaseType(KOTLIN_JVM_1_4)) {
           SET -> "Set"
           LIST -> "List"
           else -> TODO("Add typeref support for field=$field, entity=$entity")
         }
 
+        val typeParameters = field.typeParameters(KOTLIN_JVM_1_4)
+
         //TODO: should I use field.jvmView.jacksonTypeRef
         output.append("val ${entity.name.upperSnake}__${field.name.upperSnake}_TYPE_REF")
-        output.append(": TypeReference<$collectionLiteral<${field.jvmConfig.typeParameters.first()}>> ")
+        output.append(": TypeReference<$collectionLiteral<${typeParameters.first()}>> ")
         output.append("=\n")
         output.append(indentation)
-        output.append("object : TypeReference<$collectionLiteral<${field.jvmConfig.typeParameters.first()}>>() {}")
+        output.append("object : TypeReference<$collectionLiteral<${typeParameters.first()}>>() {}")
 
         output.toString()
       }
@@ -151,12 +153,12 @@ class KotlinEntityView(
           }
 
         val wrapper = WrapWithSerdeExpression(
-          serde = effectiveProtoSerde(field),
+          serde = field.effectiveProtobufSerde(KOTLIN_JVM_1_4),
           serdeMode = SerdeMode.SERIALIZE,
           wrapped = wrapMe,
         )
 
-        ProtoFieldWriteExpression(
+        ProtobufFieldWriteExpression(
           field = field,
           sourceReadExpression = wrapper,
         )
@@ -170,11 +172,11 @@ class KotlinEntityView(
         separator = "\n",
       ) { field ->
 
-        val read = ProtoFieldReadExpression(
+        val read = ProtobufFieldReadExpression(
           assertNonNull = false,
           field = field,
           fieldOwner = RawLiteralExpression("proto"),
-          serde = effectiveProtoSerde(field),
+          serde = field.effectiveProtobufSerde(KOTLIN_JVM_1_4),
         )
 
         val renderedRead = read.render(renderConfig.unterminated)
@@ -182,7 +184,7 @@ class KotlinEntityView(
       }
   }
 
-  val validatedFields =
+  private val validatedFields =
     entity.sortedFieldsWithIdsFirst
       .filter {
         it.validationConfig.hasValidation

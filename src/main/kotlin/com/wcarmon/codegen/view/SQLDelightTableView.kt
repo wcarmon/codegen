@@ -8,8 +8,8 @@ import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.Index
 import com.wcarmon.codegen.model.SerdeMode.DESERIALIZE
 import com.wcarmon.codegen.model.SerdeMode.SERIALIZE
+import com.wcarmon.codegen.model.TargetLanguage.KOTLIN_JVM_1_4
 import com.wcarmon.codegen.model.TargetLanguage.SQL_DELIGHT
-import com.wcarmon.codegen.util.effectiveJDBCSerde
 
 class SQLDelightTableView(
   private val debugMode: Boolean,
@@ -187,7 +187,7 @@ class SQLDelightTableView(
         else "$recordId.${field.name.lowerSnake}"
 
       val serdeWrapped = WrapWithSerdeExpression(
-        serde = effectiveJDBCSerde(field),
+        serde = field.effectiveRDBMSSerde(KOTLIN_JVM_1_4),
         serdeMode = DESERIALIZE,
         wrapped = RawLiteralExpression(columnRead),
       ).render(renderConfig)
@@ -242,7 +242,7 @@ class SQLDelightTableView(
     entity.sortedFieldsWithIdsFirst.map { field ->
 
       val read = WrapWithSerdeExpression(
-        serde = effectiveJDBCSerde(field),
+        serde = field.effectiveRDBMSSerde(KOTLIN_JVM_1_4),
         serdeMode = SERIALIZE,
         wrapped = RawLiteralExpression("${entityId}.${field.name.lowerCamel}"),
       ).render(renderConfig)

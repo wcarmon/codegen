@@ -3,34 +3,33 @@ package com.wcarmon.codegen.ast
 import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.Serde
 import com.wcarmon.codegen.model.SerdeMode.DESERIALIZE
-import com.wcarmon.codegen.util.effectiveProtoSerde
-import com.wcarmon.codegen.util.protoGetterMethodName
+import com.wcarmon.codegen.util.protobufGetterMethodName
 
 /**
  * Useful when converting from Proto generated class to POJO
  *
  * Wraps in serde
  */
-class ProtoFieldReadExpression(
+class ProtobufFieldReadExpression(
   private val field: Field,
 
   private val assertNonNull: Boolean = false,
 
   private val fieldOwner: Expression = RawLiteralExpression("proto"),
 
-  private val serde: Serde = effectiveProtoSerde(field),
+  private val serde: Serde,
 
-  private val protoReadExpression: Expression = MethodInvokeExpression(
+  private val protobufReadExpression: Expression = MethodInvokeExpression(
     arguments = listOf(),
     assertNonNull = assertNonNull,
     fieldOwner = fieldOwner,
     methodName = MethodNameExpression(
-      name = protoGetterMethodName(field)
+      name = protobufGetterMethodName(field)
     )
   ),
 ) : Expression {
 
-  override val expressionName: String = ProtoFieldReadExpression::class.java.simpleName
+  override val expressionName: String = ProtobufFieldReadExpression::class.java.simpleName
 
 
   /**
@@ -48,7 +47,7 @@ class ProtoFieldReadExpression(
     val serdeExpression = WrapWithSerdeExpression(
       serde = serde,
       serdeMode = DESERIALIZE,
-      wrapped = protoReadExpression,
+      wrapped = protobufReadExpression,
     )
 
     return serdeExpression.render(config)

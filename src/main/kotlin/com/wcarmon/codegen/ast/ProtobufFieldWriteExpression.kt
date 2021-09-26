@@ -1,14 +1,14 @@
 package com.wcarmon.codegen.ast
 
 import com.wcarmon.codegen.model.Field
-import com.wcarmon.codegen.util.protoSetterMethodName
+import com.wcarmon.codegen.util.protobufSetterMethodName
 
 /**
  * Useful when converting from POJO to generated proto class (via builder)
  *
  * See examples below
  */
-data class ProtoFieldWriteExpression(
+data class ProtobufFieldWriteExpression(
   private val field: Field,
 
   /**
@@ -17,7 +17,7 @@ data class ProtoFieldWriteExpression(
   private val sourceReadExpression: Expression,
 ) : Expression {
 
-  override val expressionName: String = ProtoFieldWriteExpression::class.java.simpleName
+  override val expressionName: String = ProtobufFieldWriteExpression::class.java.simpleName
 
   /**
    * eg. addAllFoo( myCollectionSerializer(entity.foo) )
@@ -32,7 +32,7 @@ data class ProtoFieldWriteExpression(
   override fun renderWithoutDebugComments(config: RenderConfig) =
     config.lineIndentation +
         "." +
-        protoSetterMethodName(field).lowerCamel +
+        protobufSetterMethodName(field).lowerCamel +
         "(" +
         sourceReadExpression.render(config.unindented.unterminated) +
         ")" +

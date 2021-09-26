@@ -19,7 +19,7 @@ data class MethodNameExpression(
     KOTLIN_JVM_1_4,
     -> name.lowerCamel
 
-    PROTOCOL_BUFFERS_3 -> TODO()
+    PROTO_BUF_3 -> TODO()
     PYTHON_3 -> TODO()
     RUST_1_54 -> TODO()
     SWIFT_5 -> TODO()
