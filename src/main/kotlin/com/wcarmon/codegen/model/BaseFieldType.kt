@@ -331,6 +331,35 @@ enum class BaseFieldType {
     }
   }
 
+  /**
+   *
+   * @return null when no reasonable default exists
+   */
+  fun defaultPrecision(): Int? {
+    if (!canHavePrecision) {
+      return null
+    }
+
+    //TODO: does unsigned/signed make a difference?
+    return when (this) {
+      INT_128 -> 39 // == BigInteger("F".repeat(32), 16).toString(10).length  for unsigned
+      INT_16 -> Short.MAX_VALUE.toString(10).length
+      INT_32 -> Int.MAX_VALUE.toString(10).length
+
+      INT_64,
+      UTC_INSTANT,
+      YEAR,
+      ZONE_AGNOSTIC_DATE_TIME,
+      -> Long.MAX_VALUE.toString(10).length
+
+      INT_8,
+      WEEK_OF_YEAR,
+      -> Byte.MAX_VALUE.toString(10).length
+
+      else -> null
+    }
+  }
+
   val requiresPrecision by lazy {
     when (this) {
       FLOAT_32,

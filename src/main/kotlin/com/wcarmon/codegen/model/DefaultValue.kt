@@ -27,6 +27,8 @@ import com.fasterxml.jackson.annotation.JsonCreator
 data class DefaultValue(
   private val wrapper: ValueWrapper? = null,
 
+  private val emptyCollection: Boolean = false,
+
   private val presentAndNull: Boolean = false,
 ) {
 
@@ -39,7 +41,6 @@ data class DefaultValue(
 
     private val DEFAULT_NOT_PRESENT = DefaultValue(wrapper = null, presentAndNull = false)
 
-    private const val PROEPRTY_NAME_FOR_WRAPPER = "defaultValue"
     private const val PROPERTY_NAME_FOR_VALUE = "value"
 
     @JsonCreator
@@ -63,17 +64,20 @@ data class DefaultValue(
 
       val theDefault: Any? = jsonObj[PROPERTY_NAME_FOR_VALUE]
 
-      return DefaultValue(
-        wrapper = ValueWrapper(theDefault),
-        presentAndNull = theDefault == null,
-      )
+      val wrapper =
+        if (theDefault is Collection<*>) {
+          check(theDefault.isEmpty())
+          ValueWrapper(null)
 
-//      check(wrapperObj is Map<*, *>) {
-//        "Invalid JSON for default value (must be an object): json=$jsonObj"
-//      }
-//
-//      if (wrapperObj.isEmpty()) return NO_DEFAULT
-//      return DefaultValue(ValueWrapper(wrapperObj[PROPERTY_NAME_FOR_VALUE]))
+        } else {
+          ValueWrapper(theDefault)
+        }
+
+      return DefaultValue(
+        emptyCollection = theDefault is Collection<*>,
+        presentAndNull = theDefault == null,
+        wrapper = wrapper,
+      )
     }
   }
 
@@ -91,7 +95,9 @@ data class DefaultValue(
       "only read when hasValue==true"
     }
 
-    wrapper != null && wrapper.value == null
+    wrapper != null
+        && wrapper.value == null
+        && !emptyCollection
   }
 
   val isEmptyString: Boolean by lazy {
@@ -112,6 +118,10 @@ data class DefaultValue(
     wrapper?.value != null &&
         wrapper.value is String &&
         wrapper.value.isBlank()
+  }
+
+  val isEmptyCollection: Boolean by lazy {
+    emptyCollection
   }
 
   /** Only readable when [isPresent] */

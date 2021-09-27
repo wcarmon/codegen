@@ -7,6 +7,7 @@ import com.wcarmon.codegen.model.SerdeMode.DESERIALIZE
 import com.wcarmon.codegen.model.SerdeMode.SERIALIZE
 import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.util.defaultResultSetGetterMethod
+import com.wcarmon.codegen.util.defaultValueLiteralForKotlin
 import com.wcarmon.codegen.util.kotlinTypeLiteral
 
 /**
@@ -31,6 +32,10 @@ class KotlinFieldView(
     targetLanguage = targetLanguage,
     terminate = false
   )
+
+  val defaultValueLiteral: String by lazy {
+    defaultValueLiteralForKotlin(field)
+  }
 
   val isCollection: Boolean by lazy {
     field.effectiveBaseType(targetLanguage).isCollection

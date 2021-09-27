@@ -6,10 +6,7 @@ import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.SerdeMode.DESERIALIZE
 import com.wcarmon.codegen.model.SerdeMode.SERIALIZE
 import com.wcarmon.codegen.model.TargetLanguage
-import com.wcarmon.codegen.util.defaultResultSetGetterMethod
-import com.wcarmon.codegen.util.javaTypeLiteral
-import com.wcarmon.codegen.util.newJavaCollectionExpression
-import com.wcarmon.codegen.util.unmodifiableJavaCollectionMethod
+import com.wcarmon.codegen.util.*
 
 /**
  * Java related convenience methods for a [Field]
@@ -35,6 +32,10 @@ class Java8FieldView(
     targetLanguage = targetLanguage,
     terminate = false
   )
+
+  val defaultValueLiteral: String by lazy {
+    defaultValueLiteralForJava(field)
+  }
 
   val isCollection: Boolean by lazy {
     field.effectiveBaseType(targetLanguage).isCollection

@@ -3,7 +3,6 @@
 /** Utilities common to all JVM languages */
 package com.wcarmon.codegen.util
 
-import com.google.common.base.Preconditions.checkState
 import com.wcarmon.codegen.model.BaseFieldType
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.Field
@@ -38,33 +37,6 @@ fun quoteTypeForJVMLiterals(base: BaseFieldType) = when (base) {
 
   else -> DOUBLE
 }
-
-/**
- * Output only applicable to JVM languages (eg. Java, Kotlin, groovy...)
- *
- * @return the default value literal
- */
-@Suppress("ReturnCount")
-fun defaultValueLiteralForJVM(field: Field): String {
-
-  checkState(field.defaultValue.isPresent) {
-    "Method only applicable when default value present: field=$field"
-  }
-
-  if (field.defaultValue.isNullLiteral) {
-    return "null"
-  }
-
-  return quoteTypeForJVMLiterals(field.type.base)
-    .wrap(field.defaultValue.literal.toString())
-}
-
-//TODO: document me
-//fun defaultJVMSerde(field: Field): Serde =
-//  Serde(
-//    deserializeTemplate = defaultJVMDeserializeTemplate(field),
-//    serializeTemplate = defaultJVMSerializeTemplate(field),
-//  )
 
 
 /**

@@ -5,7 +5,6 @@ import com.wcarmon.codegen.UPDATED_TS_FIELD_NAMES
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.TargetLanguage.JAVA_08
-import com.wcarmon.codegen.util.defaultValueLiteralForJVM
 
 /**
  * Convenience methods/properties applicable across JVM languages
@@ -14,10 +13,6 @@ class JVMFieldView(
   private val debugMode: Boolean,
   private val field: Field,
 ) {
-
-  val defaultValueLiteral: String by lazy {
-    defaultValueLiteralForJVM(field)
-  }
 
   val isCreatedTimestamp: Boolean =
     field.effectiveBaseType(JAVA_08).isTemporal &&

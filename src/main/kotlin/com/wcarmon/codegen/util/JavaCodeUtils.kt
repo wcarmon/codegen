@@ -33,6 +33,34 @@ fun buildJavaPreconditionStatements(fields: Collection<Field>): Set<String> {
   return output.toSortedSet()
 }
 
+/**
+ * Output only applicable to JVM languages (eg. Java, Kotlin, groovy...)
+ *
+ * @return the default value literal
+ */
+@Suppress("ReturnCount")
+fun defaultValueLiteralForJava(field: Field): String {
+  check(field.defaultValue.isPresent) {
+    "Method only applicable when default value present: field=$field"
+  }
+
+  if (field.defaultValue.isEmptyCollection) {
+    return when (field.effectiveBaseType(JAVA_08)) {
+      LIST -> "Collections.emptyList()"
+      MAP -> "Collections.emptyMap()"
+      SET -> "Collections.emptySet()"
+      else -> TODO("Build Empty java collection for field=$field")
+    }
+  }
+
+  if (field.defaultValue.isNullLiteral) {
+    return "null"
+  }
+
+  //TODO: handle empty Set/List, ...
+  return quoteTypeForJVMLiterals(field.type.base)
+    .wrap(field.defaultValue.literal.toString())
+}
 
 //TODO: document me
 fun commaSeparatedJavaFields(

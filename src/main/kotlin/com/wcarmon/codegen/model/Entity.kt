@@ -78,14 +78,14 @@ data class Entity(
   init {
     require(fields.isNotEmpty()) { "At least one field required on Entity: name=$name" }
 
-    // -- Validate field names are unique
+    // -- Validate field names are unique/distinct
     val fieldNames = fields.map { it.name }
 
     val duplicateFieldNames =
       fieldNames
         .groupBy { it }
         .filter { it.value.size > 1 }
-        .map { it.key }
+        .map { it.key.lowerCamel }
 
     require(duplicateFieldNames.isEmpty()) {
       "field names must be unique: entity=${name.lowerCamel}, duplicates=${duplicateFieldNames}"
@@ -139,7 +139,31 @@ data class Entity(
         }
       }
 
-    //TODO: validate if you cannot find the update or created columns in this::fields
+    if (createdTimestampFieldName != null) {
+      val matches = (ownFields + referencedFields)
+        .filter { field ->
+          field.name == createdTimestampFieldName
+        }
+
+      require(!matches.isEmpty()) {
+        "Cannot find field matching createdTimestampFieldName=$createdTimestampFieldName"
+      }
+
+      //NOTE: duplicate field check above coveres the muti-match case
+    }
+
+    if (updatedTimestampFieldName != null) {
+      val matches = (ownFields + referencedFields)
+        .filter { field ->
+          field.name == updatedTimestampFieldName
+        }
+
+      require(!matches.isEmpty()) {
+        "Cannot find field matching updateTimestampFieldName=$updatedTimestampFieldName"
+      }
+
+      //NOTE: duplicate field check above coveres the muti-match case
+    }
   }
 
   val java8View by lazy {
@@ -239,4 +263,5 @@ data class Entity(
       }
       .firstOrNull()
   }
+
 }

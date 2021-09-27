@@ -1,0 +1,164 @@
+{
+  "$schema": "https://wcarmon.com/schemas/codegen/entity.schema.json",
+  "createdTimestampFieldName": "created",
+  "documentation": [
+    "Actionable or non-actionable"
+  ],
+  "extraImplements": [],
+  "fieldUris": [
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/closed.field.json",
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/created.field.json",
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/name.field.json",
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/updated.field.json",
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/uuid.field.json"
+  ],
+  "fields": [
+    {
+      "defaultValue": {
+        "value": null
+      },
+      "name": "deadline",
+      "nullable": true,
+      "type": "Instant"
+    },
+    {
+      "defaultValue": {
+        "value": ""
+      },
+      "name": "details",
+      "nullable": false,
+      "rdbms": {
+        "varcharLength": 8000
+      },
+      "type": "String"
+    },
+    {
+      "defaultValue": {
+        "value": true
+      },
+      "name": "enableSearch",
+      "type": "boolean"
+    },
+    {
+      "defaultValue": {
+        "value": null
+      },
+      "name": "estimate",
+      "nullable": true,
+      "type": "Duration"
+    },
+    {
+      "defaultValue": {
+        "value": 0
+      },
+      "name": "positionInList",
+      "nullable": false,
+      "type": "int32"
+    },
+    {
+      "defaultValue": {
+        "value": null
+      },
+      "name": "expiration",
+      "nullable": true,
+      "type": "Instant"
+    },
+    {
+      "golang": {
+        "overrideTypeLiteral": "string"
+      },
+      "jvm": {
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
+          "serializeTemplate": "%s.toString()"
+        },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
+          "serializeTemplate": "%s.toString()"
+        }
+      },
+      "name": "listUuid",
+      "protobuf": {
+        "overrideTypeLiteral": "string"
+      },
+      "rdbms": {
+        "varcharLength": 36
+      },
+      "type": "com.wcarmon.ub.model.UBUuid"
+    },
+    {
+      "defaultValue": {
+        "value": ""
+      },
+      "name": "keywords",
+      "nullable": false,
+      "rdbms": {
+        "varcharLength": 256
+      },
+      "type": "String"
+    },
+    {
+      "defaultValue": {
+        "value": "ChronoLevel.NONE"
+      },
+      "enumType": true,
+      "golang": {
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "fix--%s",
+          "serializeTemplate": "fix--%s"
+        },
+        "overrideTypeLiteral": "ChronoLevel"
+      },
+      "jvm": {
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "com.wcarmon.chrono.model.ChronoLevel.fromValue(%s)",
+          "serializeTemplate": "%s.toProtoValue()"
+        },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "com.wcarmon.chrono.model.ChronoLevel.fromDBValue(%s)",
+          "serializeTemplate": "%s.toDBValue()"
+        }
+      },
+      "name": "importance",
+      "nullable": false,
+      "protobuf": {
+        "overrideTypeLiteral": "int32"
+      },
+      "rdbms": {
+        "overrideTypeLiteral": "INTEGER"
+      },
+      "type": "com.wcarmon.chrono.model.ChronoLevel"
+    },
+    {
+      "defaultValue": {
+        "value": []
+      },
+      "name": "contexts",
+      "protobuf": {
+        "overrideTypeLiteral": "string",
+        "repeated": true
+      },
+      "rdbms": {
+        "varcharLength": 256
+      },
+      "jvm": {
+        "typeParameters": [
+          "String"
+        ]
+      },
+      "golang": {
+        "typeParameters": [
+          "String"
+        ]
+      },
+      "type": "Set"
+    }
+  ],
+  "indexes": [],
+  "name": "ChronoTask",
+  "pkg": "com.wcarmon.chrono.model",
+  "rdbms": {
+    "schema": "prod"
+  },
+  "updatedTimestampFieldName": "updated"
+}

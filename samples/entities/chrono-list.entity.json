@@ -17,7 +17,7 @@
   "fields": [
     {
       "defaultValue": {
-        "value": 55
+        "value": 100
       },
       "name": "hardLimit",
       "precision": 5,

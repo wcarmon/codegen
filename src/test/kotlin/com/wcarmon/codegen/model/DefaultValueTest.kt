@@ -24,6 +24,7 @@ internal class DefaultValueTest {
 
     val expectPresent: Boolean,
     val expectedDefaultValue: Any?,
+    val expectEmptyCollection: Boolean = false,
   )
 
   // Assume: String
@@ -31,30 +32,36 @@ internal class DefaultValueTest {
   private val testCaseData = listOf(
 
     // Assume: no default
-    D("""{  }""", false, "zzz"),
-    D("""{ "defaultValue": null }""", false, "zzz"),  //TODO: forbid since ambiguous
-    D("""{ "defaultValue": {} }""", false, null),
+//    D("""{  }""", false, "zzz"),
+//    D("""{ "defaultValue": null }""", false, "zzz"),  //TODO: forbid since ambiguous
+//    D("""{ "defaultValue": {} }""", false, null),
+//
+//    // Assume Present, Assume: null/nil/NULL
+//    D("""{ "defaultValue": {"value": null} }""", true, null),
+//
+//    // Assume Present: (non-null default value)
+//    D("""{ "defaultValue": {"value": " "} }""", true, " "),
+//    D("""{ "defaultValue": {"value": ""} }""", true, ""),
+//    D("""{ "defaultValue": {"value": "''"} }""", true, "''"),
+//    D("""{ "defaultValue": {"value": "7"} }""", true, "7"),
+//    D("""{ "defaultValue": {"value": "\"\""} }""", true, "\"\""),
+//    D("""{ "defaultValue": {"value": "\"null\""} }""", true, "\"null\""),
+//    D("""{ "defaultValue": {"value": "false"} }""", true, "false"),
+//    D("""{ "defaultValue": {"value": "foo"} }""", true, "foo"),
+//    D("""{ "defaultValue": {"value": "nil"} }""", true, "nil"),
+//    D("""{ "defaultValue": {"value": "null"} }""", true, "null"),
+//    D("""{ "defaultValue": {"value": "NULL"} }""", true, "NULL"),
+//    D("""{ "defaultValue": {"value": "true"} }""", true, "true"),
+//    D("""{ "defaultValue": {"value": 3.1} }""", true, 3.1),
+//    D("""{ "defaultValue": {"value": 7} }""", true, 7),
+//    D("""{ "defaultValue": {"value": false} }""", true, false),
+//    D("""{ "defaultValue": {"value": true} }""", true, true),
 
-    // Assume Present, Assume: null/nil/NULL
-    D("""{ "defaultValue": {"value": null} }""", true, null),
-
-    // Assume Present: )non-null default value)
-    D("""{ "defaultValue": {"value": " "} }""", true, " "),
-    D("""{ "defaultValue": {"value": ""} }""", true, ""),
-    D("""{ "defaultValue": {"value": "''"} }""", true, "''"),
-    D("""{ "defaultValue": {"value": "7"} }""", true, "7"),
-    D("""{ "defaultValue": {"value": "\"\""} }""", true, "\"\""),
-    D("""{ "defaultValue": {"value": "\"null\""} }""", true, "\"null\""),
-    D("""{ "defaultValue": {"value": "false"} }""", true, "false"),
-    D("""{ "defaultValue": {"value": "foo"} }""", true, "foo"),
-    D("""{ "defaultValue": {"value": "nil"} }""", true, "nil"),
-    D("""{ "defaultValue": {"value": "null"} }""", true, "null"),
-    D("""{ "defaultValue": {"value": "NULL"} }""", true, "NULL"),
-    D("""{ "defaultValue": {"value": "true"} }""", true, "true"),
-    D("""{ "defaultValue": {"value": 3.1} }""", true, 3.1),
-    D("""{ "defaultValue": {"value": 7} }""", true, 7),
-    D("""{ "defaultValue": {"value": false} }""", true, false),
-    D("""{ "defaultValue": {"value": true} }""", true, true),
+    // Assume Present: empty collection
+    D("""{ "defaultValue": {"value": []} }""",
+      expectPresent = true,
+      expectedDefaultValue = null,
+      expectEmptyCollection = true),
   )
 
   @BeforeEach
@@ -99,7 +106,7 @@ internal class DefaultValueTest {
   }
 
   @Test
-  fun testIsNull_whenPresent() {
+  fun testIsNullLiteral_whenPresent() {
     testCaseData
       .filter { it.expectPresent }
       .forEachIndexed { index, testData ->
@@ -107,17 +114,24 @@ internal class DefaultValueTest {
 
         val parsed = parseField(testData.fieldJSON)
 
-        assertNotNull(parsed.defaultValue)
+        assertNotNull(parsed.defaultValue, "Field should have a defaultValue")
 
-        assertEquals(testData.expectedDefaultValue == null,
-          parsed.defaultValue!!.isNullLiteral) {
-          "failed: index=$index, testData=$testData"
+        if (testData.expectEmptyCollection) {
+          assertFalse(parsed.defaultValue!!.isNullLiteral) {
+            "failed: index=$index, testData=$testData"
+          }
+
+        } else {
+          assertEquals(testData.expectedDefaultValue == null,
+            parsed.defaultValue!!.isNullLiteral) {
+            "failed: index=$index, testData=$testData"
+          }
         }
       }
   }
 
   @Test
-  fun testIsNull_whenAbsent() {
+  fun testIsNullLiteral_whenAbsent() {
     testCaseData
       .filter { !it.expectPresent }
       .forEachIndexed { index, testData ->
@@ -175,6 +189,29 @@ internal class DefaultValueTest {
       }
   }
 
+
+  @Test
+  fun testEmptyCollection() {
+
+    testCaseData.filter {
+      it.expectEmptyCollection
+    }
+      .forEach { testData ->
+        check(testData.expectPresent)
+
+        val parsed = parseField(testData.fieldJSON)
+
+        assertNotNull(parsed.defaultValue)
+        parsed.defaultValue!!
+
+        assertTrue(parsed.defaultValue.isPresent)
+        assertTrue(parsed.defaultValue.isEmptyCollection)
+        assertFalse(parsed.defaultValue.isAbsent)
+        assertFalse(parsed.defaultValue.isEmptyString)
+        assertFalse(parsed.defaultValue.isNullLiteral)
+        assertNull(parsed.defaultValue.literal)
+      }
+  }
 
   private fun parseField(json: String) = objectMapper
     .readerFor(FakeField::class.java)

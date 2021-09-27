@@ -20,7 +20,7 @@ data class ${entity.name.upperCamel}(
   <#list entity.nonIdFields as field>
 <#--   TODO: replace with [FieldDeclarationExpression]   -->
     <#if field.defaultValue.isPresent()>
-        val ${field.name.lowerCamel}: ${field.kotlinView.typeLiteral} = ${field.jvmView.defaultValueLiteral},
+        val ${field.name.lowerCamel}: ${field.kotlinView.typeLiteral} = ${field.kotlinView.defaultValueLiteral},
     <#else>
         val ${field.name.lowerCamel}: ${field.kotlinView.typeLiteral},
     </#if>

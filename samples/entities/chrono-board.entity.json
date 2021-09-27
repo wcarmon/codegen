@@ -96,6 +96,7 @@
         }
       },
       "name": "importance",
+      "nullable": false,
       "protobuf": {
         "overrideTypeLiteral": "int32"
       },

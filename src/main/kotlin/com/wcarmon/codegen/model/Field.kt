@@ -102,21 +102,38 @@ data class Field(
       @JsonProperty("validation") validationConfig: FieldValidation?,
     ): Field {
 
+      // -- validate typeLiteral
       require(typeLiteral?.isNotBlank() ?: false) {
         "Field.type is required: this=$this, name=$name"
       }
 
+      typeLiteral!!
+      val r = Regex("""^[^<>\[\]]+$""")
+      require(typeLiteral.matches(r)) {
+        "Field.type cannot have generics (parametric polymorphism), " +
+            "Use [jvm|golang].typeParameters array instead: typeLiteral=${typeLiteral}"
+      }
+
       //TODO: signed should override whatever is specified on type literal
 
-      val logicalType = LogicalFieldType(
-        base = BaseFieldType.parse(typeLiteral ?: ""),
-        enumType = enumType ?: false,
-        nullable = nullable ?: false,
-        precision = precision,
-        rawTypeLiteral = typeLiteral ?: "",
-        scale = scale ?: 0,
-        signed = signed ?: true,
-      )
+      // -- Build & validate logicalType
+      val logicalType =
+        try {
+          LogicalFieldType(
+            base = BaseFieldType.parse(typeLiteral),
+            enumType = enumType ?: false,
+            nullable = nullable ?: false,
+            rawPrecision = precision,
+            rawTypeLiteral = typeLiteral,
+            scale = scale ?: 0,
+            signed = signed ?: true,
+          )
+
+        } catch (ex: Exception) {
+          throw RuntimeException(
+            "Failed to build LogicalFieldType for field.name=${name.lowerCamel}",
+            ex)
+        }
 
       return Field(
         canLog = canLog ?: true,
@@ -440,16 +457,17 @@ data class Field(
 
     when (val n = effectiveBaseType(targetLanguage).requiredTypeParameterCount) {
       0 -> require(typeParameters.isEmpty()) {
-        "type parameter not allowed: field=$this"
+        "type parameter not allowed: targetLanguage=$targetLanguage, field=$this"
       }
 
       1 -> require(typeParameters.size == n) {
-        "exactly 1-type parameter required (add 'typeParameters' to Field): field=$this"
+        "Exactly 1-type parameter required (add 'typeParameters' to Field): targetLanguage=${targetLanguage}, field=$this"
       }
 
       else -> require(typeParameters.size == n) {
         "type parameters required (add 'typeParameters' to Field): " +
-            "requiredCount=$n, actualCount=${typeParameters.size}, this=$this"
+            "requiredCount=$n, actualCount=${typeParameters.size}, " +
+            "targetLanguage=$targetLanguage, this=$this"
       }
     }
   }
