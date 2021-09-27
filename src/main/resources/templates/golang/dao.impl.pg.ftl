@@ -13,10 +13,11 @@ ${request.golangView.serializeImports(request.extraGolangImports)}
 
 <#list entities as entity>
 type ${entity.name.upperCamel}PostgreSQLDAO struct {
-    db  *sql.DB
+    db    *sql.DB
+    now   func() time.Time
 }
 
-func (dao *${entity.name.upperCamel}PostgreSQLDAO) Delete${entity.name.upperCamel}(ctx context.Context, ${entity.golangView.methodArgsForIdFields()}) error {
+func (dao *${entity.name.upperCamel}PostgreSQLDAO) Delete${entity.name.upperCamel}(ctx context.Context, ${entity.golangView.methodArgsForIdFields()}) (deleted bool, err error) {
 <#--
 TODO: which is best?
   LevelReadUncommitted
@@ -30,40 +31,51 @@ TODO: which is best?
 
   tx, err := dao.db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
   if err != nil {
-    return err
+    return false, err
   }
   defer tx.Rollback()
 
   stmt, err := tx.PrepareContext(ctx, DELETE__${entity.name.upperSnake})
   if err != nil {
-    return err
+    return false, err
   }
   defer stmt.Close()
 
   res, err := stmt.ExecContext(ctx, ${entity.golangView.commaSeparatedIdFields})
   if err != nil {
-    return err
+    return false, err
   }
 
   rowCnt, err := res.RowsAffected()
   if err != nil {
-    return err
+    return false, err
   }
-  //TODO: add affected row count to trace
+  //TODO: add affected row count to trace (in ctx)
 
   err = tx.Commit()
   if err != nil {
-    return err
+    return false, err
   }
 
-  return nil
+  return rowCnt == 1, nil
 }
 
 func (dao *${entity.name.upperCamel}PostgreSQLDAO) ${entity.name.upperCamel}Exists(ctx context.Context, ${entity.golangView.methodArgsForIdFields()}) (bool, error) {
-  //TODO: more here
-  //TODO: use QueryRowContext
-  // 	err = stmt.QueryRowContext(ctx, ${entity.golangView.commaSeparatedIdFields}).
-  //  Scan(&username)
+  stmt, err := dao.db.PrepareContext(ctx, ROW_EXISTS__${entity.name.upperSnake})
+  if err != nil {
+    return false, err
+  }
+  defer stmt.Close()
+
+  var count int32
+  err = stmt.
+    QueryRowContext(ctx, ${entity.golangView.commaSeparatedIdFields}).
+    Scan(&count)
+  if err != nil {
+    return false, err
+  }
+
+  return count == 1, nil
 }
 
 func (dao *${entity.name.upperCamel}PostgreSQLDAO) FindById${entity.name.upperCamel}(ctx context.Context, ${entity.golangView.methodArgsForIdFields()}) (*${entity.name.upperCamel}, error) {
@@ -73,13 +85,12 @@ func (dao *${entity.name.upperCamel}PostgreSQLDAO) FindById${entity.name.upperCa
   }
   defer stmt.Close()
 
-  var output ${entity.name.upperCamel}
-
-  err = stmt.QueryRowContext(
-    ctx, ${entity.golangView.commaSeparatedIdFields}).
-  Scan(
-    //TODO: scan for each variable name
-    &output.foo,)
+  var entity ${entity.name.upperCamel}
+  err = stmt.
+    QueryRowContext(ctx, ${entity.golangView.commaSeparatedIdFields}).
+    Scan(
+      ${entity.golangView.commaSeparatedFieldsForQueryScan("entity")}
+    )
 
   switch {
   case err == sql.ErrNoRows:
@@ -89,36 +100,164 @@ func (dao *${entity.name.upperCamel}PostgreSQLDAO) FindById${entity.name.upperCa
     return nil, err
 
   default:
-    return &output, nil
+    return &entity, nil
   }
 }
 
 func (dao *${entity.name.upperCamel}PostgreSQLDAO) Create${entity.name.upperCamel}(ctx context.Context, entity ${entity.name.upperCamel}) error {
-  //TODO: more here
-  //TODO: use transaction
+  tx, err := dao.db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
+  if err != nil {
+    return err
+  }
+  defer tx.Rollback()
+
+  stmt, err := tx.PrepareContext(ctx, INSERT__${entity.name.upperSnake})
+  if err != nil {
+    return err
+  }
+  defer stmt.Close()
+
+  res, err := stmt.ExecContext(
+    ctx,
+    ${entity.golangView.commaSeparatedFieldReadsForInsert("entity")}
+  )
+  if err != nil {
+    return err
+  }
+
+  rowCnt, err := res.RowsAffected()
+  if err != nil {
+    return err
+  }
+  //TODO: add affected row count to trace (in ctx)
+
+  err = tx.Commit()
+  if err != nil {
+    return err
+  }
+
+  return nil
 }
 
 func (dao *${entity.name.upperCamel}PostgreSQLDAO) Update${entity.name.upperCamel}(ctx context.Context, entity ${entity.name.upperCamel}) error {
-  //TODO: more here
-  //TODO: use transaction
+  tx, err := dao.db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
+  if err != nil {
+    return err
+  }
+  defer tx.Rollback()
+
+  stmt, err := tx.PrepareContext(ctx, UPDATE__${entity.name.upperSnake})
+  if err != nil {
+    return err
+  }
+  defer stmt.Close()
+
+  res, err := stmt.ExecContext(
+    ctx,
+    ${entity.golangView.commaSeparatedFieldReadsForUpdate("entity")}
+  )
+  if err != nil {
+    return err
+  }
+
+  rowCnt, err := res.RowsAffected()
+  if err != nil {
+    return err
+  }
+  //TODO: add affected row count to trace (in ctx)
+
+  err = tx.Commit()
+  if err != nil {
+    return err
+  }
+
+  return nil
 }
 
 func (dao *${entity.name.upperCamel}PostgreSQLDAO) List${entity.name.upperCamel}(ctx context.Context) ([]${entity.name.upperCamel}, error) {
-  //TODO: more here
-  //TODO: use db.QueryContext (not QueryRowContext)
+  stmt, err := dao.db.PrepareContext(ctx, SELECT_ALL__${entity.name.upperSnake} )
+  if err != nil {
+    return nil, err
+  }
+  defer stmt.Close()
+
+  rows, err := stmt.QueryContext(ctx)
+  switch {
+  case err == sql.ErrNoRows:
+    return nil, nil
+  case err != nil:
+    return nil, err
+  }
+  defer rows.Close()
+
+  var entities []${entity.name.upperCamel}
 
   for rows.Next() {
-    // ... append(...) ...
+    var entity ${entity.name.upperCamel}
+    err = rows.Scan(
+      ${entity.golangView.commaSeparatedFieldsForQueryScan("entity")}
+    )
+    switch {
+    case err == sql.ErrNoRows:
+      return entities, nil
+    case err != nil:
+      return entities, err
+    }
+
+    entities = append(entities, entity)
   }
-  if err = rows.Err(); err != nil {
-    // handle the error here
+
+  err = rows.Close()
+  if err != nil {
+    return entities, err
   }
+
+  err = rows.Err()
+  if err != nil {
+    return entities, err
+  }
+
+  return entities, nil
 }
 
 <#list entity.nonIdFields as field>
 func (dao *${entity.name.upperCamel}PostgreSQLDAO) Set${field.name.upperCamel}(ctx context.Context, ${entity.golangView.methodArgsForIdFields()}, ${field.name.lowerCamel} ${field.golangView.typeLiteral}) error {
-  //TODO: more here
-  //TODO: use transaction
+  tx, err := dao.db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
+  if err != nil {
+    return err
+  }
+  defer tx.Rollback()
+
+  stmt, err := tx.PrepareContext(ctx, PATCH__${entity.name.upperSnake}__${field.name.upperSnake})
+  if err != nil {
+    return err
+  }
+  defer stmt.Close()
+
+  res, err := stmt.ExecContext(
+    ctx,
+    ${field.name.lowerCamel},
+    ${entity.golangView.renderUpdateTimestampField(
+      field,
+      "dao.now()"
+      ",\n")}<#--
+ -->${entity.golangView.commaSeparatedIdFields})
+  if err != nil {
+    return err
+  }
+
+  rowCnt, err := res.RowsAffected()
+  if err != nil {
+    return err
+  }
+  //TODO: add affected row count to trace (in ctx)
+
+  err = tx.Commit()
+  if err != nil {
+    return err
+  }
+
+  return nil
 }
 </#list>
 

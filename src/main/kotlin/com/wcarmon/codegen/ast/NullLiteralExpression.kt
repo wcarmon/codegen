@@ -1,6 +1,6 @@
 package com.wcarmon.codegen.ast
 
-import com.wcarmon.codegen.model.TargetLanguage.GOLANG_1_8
+import com.wcarmon.codegen.model.TargetLanguage.GOLANG_1_9
 import com.wcarmon.codegen.model.TargetLanguage.PYTHON_3
 
 /**
@@ -23,7 +23,7 @@ object NullLiteralExpression : Expression {
     config: RenderConfig,
   ) = config.lineIndentation +
       when (config.targetLanguage) {
-        GOLANG_1_8 -> "nil"
+        GOLANG_1_9 -> "nil"
         PYTHON_3 -> "None"
         else -> "null"
       } +

@@ -166,7 +166,7 @@ data class Entity(
       debugMode = DEBUG_MODE,
       entity = this,
       rdbmsView = rdbmsView,
-      targetLanguage = GOLANG_1_8,
+      targetLanguage = GOLANG_1_9,
     )
   }
 

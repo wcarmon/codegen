@@ -26,7 +26,7 @@ data class NullComparisonExpression(
       C_17,
       -> "NULL == " + compareToMe.render(config.unterminated)
 
-      GOLANG_1_8,
+      GOLANG_1_9,
       -> "nil == " + compareToMe.render(config.unterminated)
 
       DART_2,

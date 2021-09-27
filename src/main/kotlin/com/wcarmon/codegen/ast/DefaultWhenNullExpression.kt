@@ -26,7 +26,7 @@ data class DefaultWhenNullExpression(
     }
 
     return when (config.targetLanguage) {
-      GOLANG_1_8,
+      GOLANG_1_9,
       -> handleGolang(config)
 
       JAVA_08,

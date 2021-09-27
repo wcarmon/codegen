@@ -28,7 +28,7 @@ data class MethodParameterExpression(
 
       KOTLIN_JVM_1_4 -> handleKotlin(config)
 
-      GOLANG_1_8 -> handleGolang(config)
+      GOLANG_1_9 -> handleGolang(config)
 
       else -> TODO()
     }

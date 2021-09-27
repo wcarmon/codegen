@@ -46,6 +46,7 @@ const val TEMPLATE_SUFFIX = ".ftl"
  * Used to auto set a value on entity creation
  * Uses camelCase
  */
+@Deprecated("just compare entity::createdTimestampFieldName")
 val CREATED_TS_FIELD_NAMES = setOf("created", "createdAt", "createdOn")
 
 /**
@@ -53,6 +54,7 @@ val CREATED_TS_FIELD_NAMES = setOf("created", "createdAt", "createdOn")
  * Used to auto set a value on entity update
  * Uses lower camelCase
  */
+@Deprecated("just compare entity::updatedTimestampFieldName")
 val UPDATED_TS_FIELD_NAMES = setOf(
   "updated", "updatedAt", "updatedOn"
 )

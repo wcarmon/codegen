@@ -9,7 +9,7 @@ type ${entity.name.upperCamel}DAO interface {
 
   // Delete at-most-one existing ${entity.name.upperCamel} instance
   // NOOP if no matching entity exists
-  Delete${entity.name.upperCamel}(ctx context.Context, ${entity.golangView.methodArgsForIdFields()}) error
+  Delete${entity.name.upperCamel}(ctx context.Context, ${entity.golangView.methodArgsForIdFields()}) (deleted bool, err error)
 
   ${entity.name.upperCamel}Exists(ctx context.Context, ${entity.golangView.methodArgsForIdFields()}) (bool, error)
 

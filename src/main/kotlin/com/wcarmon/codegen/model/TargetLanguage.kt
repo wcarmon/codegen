@@ -9,7 +9,7 @@ enum class TargetLanguage {
   CPP_17,
   CPP_20,
   DART_2,
-  GOLANG_1_8,
+  GOLANG_1_9, // includes sql.Conn.QueryContext
   JAVA_08,
   JAVA_11,
   JAVA_17,
@@ -57,7 +57,7 @@ enum class TargetLanguage {
 
   val isGolang by lazy {
     when (this) {
-      GOLANG_1_8 -> true
+      GOLANG_1_9 -> true
       else -> false
     }
   }
@@ -111,7 +111,7 @@ enum class TargetLanguage {
       -> true
 
       KOTLIN_JVM_1_4,
-      GOLANG_1_8,
+      GOLANG_1_9,
       PYTHON_3,
       -> false
 
@@ -143,7 +143,7 @@ enum class TargetLanguage {
         PYTHON_3 -> "\n"
 
         // -- semicolon inserted by compiler
-        GOLANG_1_8,
+        GOLANG_1_9,
         KOTLIN_JVM_1_4,
         SWIFT_5,
         -> ""
@@ -155,7 +155,7 @@ enum class TargetLanguage {
   private val usesGetters by lazy {
     when (this) {
       C_17,
-      GOLANG_1_8,
+      GOLANG_1_9,
       KOTLIN_JVM_1_4,
       SQL_DB2,
       SQL_H2,

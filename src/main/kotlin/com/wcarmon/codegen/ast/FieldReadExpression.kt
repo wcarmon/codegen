@@ -73,7 +73,7 @@ data class FieldReadExpression(
 
   private fun getDirectFieldName(targetLanguage: TargetLanguage) =
     when (targetLanguage) {
-      GOLANG_1_8,
+      GOLANG_1_9,
       JAVA_08,
       JAVA_11,
       JAVA_17,
@@ -112,7 +112,7 @@ data class FieldReadExpression(
       CPP_14,
       CPP_17,
       CPP_20,
-      GOLANG_1_8,
+      GOLANG_1_9,
       KOTLIN_JVM_1_4,
       PROTO_BUF_3,
       PYTHON_3,

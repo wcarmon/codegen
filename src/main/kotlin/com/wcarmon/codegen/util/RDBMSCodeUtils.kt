@@ -13,18 +13,13 @@ import com.wcarmon.codegen.model.TargetLanguage.SQL_POSTGRESQL
  * @return comma separated column names, PK fields first
  */
 //TODO: decide when to quote
-fun commaSeparatedColumns(entity: Entity): String {
-
-  val pk = entity.idFields
-    .map { it.name.lowerSnake }
-
-  val nonPK = entity.fields
-    .filter { it.positionInId == null }
-    .map { it.name.lowerSnake }
-    .sorted()
-
-  return (pk + nonPK).joinToString()
-}
+fun commaSeparatedColumns(entity: Entity): String =
+  (entity.idFields + entity.nonIdFields)
+    .joinToString(
+      separator = ", "
+    ) {
+      it.name.lowerSnake
+    }
 
 /**
  * Compatible with [org.springframework.jdbc.core.JdbcTemplate]

@@ -4,6 +4,7 @@ import com.wcarmon.codegen.ast.FinalityModifier.FINAL
 import com.wcarmon.codegen.ast.MethodParameterExpression
 import com.wcarmon.codegen.ast.RenderConfig
 import com.wcarmon.codegen.model.Entity
+import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.SQLPlaceholderType
 import com.wcarmon.codegen.model.SQLPlaceholderType.*
 import com.wcarmon.codegen.model.TargetLanguage
@@ -21,6 +22,35 @@ class GolangEntityView(
     targetLanguage = targetLanguage,
     terminate = false,
   )
+
+  //TODO: consider FieldReadExpression
+  fun commaSeparatedFieldReadsForInsert(entityName: String): String =
+    (entity.idFields + entity.nonIdFields)
+      .joinToString(
+        separator = "\n"
+      ) {
+        "${entityName}.${it.name.upperCamel},"
+      }
+
+  fun commaSeparatedFieldReadsForUpdate(entityName: String): String =
+    (entity.nonIdFields + entity.idFields)
+      .joinToString(
+        separator = "\n"
+      ) {
+        "${entityName}.${it.name.upperCamel},"
+      }
+
+  fun commaSeparatedFieldsForQueryScan(
+    outputStructName: String,
+  ): String {
+
+    return (entity.idFields + entity.nonIdFields)
+      .joinToString(
+        separator = "\n"
+      ) { field ->
+        "&${outputStructName}.${field.name.upperCamel},"
+      }
+  }
 
   val commaSeparatedIdFields = entity
     .idFields
@@ -43,6 +73,26 @@ class GolangEntityView(
       )
         .render(renderConfig)
     }
+
+  /**
+   * Conditional
+   */
+  fun renderUpdateTimestampField(
+    field: Field,
+    clockReadExpression: String,
+    suffix: String,
+  ): String {
+
+    val n = entity.updatedTimestampFieldName
+    if (n == field.name || n == null) {
+      // Don't include update column when patching update column
+      return ""
+    }
+
+    // Include the update column when setting field
+    return clockReadExpression + suffix
+  }
+
 
   private fun patchQueries(placeholderType: SQLPlaceholderType): String {
     val indentation = "    "
@@ -69,7 +119,9 @@ class GolangEntityView(
 
         var pkIndexOffset = 2 // 1 for patched field
 
-        if (entity.updatedTimestampFieldName != null && !field.golangView.isUpdatedTimestamp) {
+        if (entity.updatedTimestampFieldName != field.name
+          && entity.updatedTimestampFieldName != null
+        ) {
           val placeholder = placeholderType.forIndex(2)
           lines += """${indentation}  AND ${entity.updatedTimestampFieldName.lowerSnake}=$placeholder"""
 

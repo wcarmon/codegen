@@ -152,7 +152,7 @@ data class Field(
       }
     }
 
-    assertTypeParametersValid(GOLANG_1_8)
+    assertTypeParametersValid(GOLANG_1_9)
     assertTypeParametersValid(JAVA_08)
     assertTypeParametersValid(KOTLIN_JVM_1_4)
     assertTypeParametersValid(PROTO_BUF_3)
@@ -183,7 +183,7 @@ data class Field(
       debugMode = DEBUG_MODE,
       field = this,
       rdbmsView = rdbmsView,
-      targetLanguage = GOLANG_1_8,
+      targetLanguage = GOLANG_1_9,
     )
   }
 
@@ -227,7 +227,7 @@ data class Field(
 
   fun effectiveBaseType(targetLanguage: TargetLanguage): BaseFieldType =
     when (targetLanguage) {
-      GOLANG_1_8 -> golangConfig.overrideBaseType ?: type.base
+      GOLANG_1_9 -> golangConfig.overrideBaseType ?: type.base
 
       JAVA_08,
       JAVA_11,
@@ -254,7 +254,7 @@ data class Field(
 
   fun typeParameters(targetLanguage: TargetLanguage): List<String> =
     when (targetLanguage) {
-      GOLANG_1_8,
+      GOLANG_1_9,
       -> golangConfig.typeParameters
 
       JAVA_08,
@@ -294,7 +294,7 @@ data class Field(
       KOTLIN_JVM_1_4,
       -> defaultValue
 
-      GOLANG_1_8,
+      GOLANG_1_9,
       -> defaultValue
 
       SQL_DELIGHT,
@@ -318,7 +318,7 @@ data class Field(
     KOTLIN_JVM_1_4,
     -> kotlinTypeLiteral(this, fullyQualified)
 
-    GOLANG_1_8,
+    GOLANG_1_9,
     -> golangConfig.overrideTypeLiteral ?: golangTypeLiteral(this, fullyQualified)
 
     PROTO_BUF_3 -> protobufConfig.typeLiteral(type)
@@ -344,6 +344,8 @@ data class Field(
         jvmConfig.overrideRDBMSSerde
 
       } else if (requiresJDBCSerde(this)) {
+        //TODO: use default serde for INSTANT
+        //TODO: use default serde for URI
         LOG.warn("We recommend you override the rdbms Serde on $this")
         Serde.INLINE
 
@@ -351,7 +353,7 @@ data class Field(
         Serde.INLINE
       }
 
-      GOLANG_1_8,
+      GOLANG_1_9,
       -> if (golangConfig.overrideRDBMSSerde != null) {
         // -- User override is highest priority
         golangConfig.overrideRDBMSSerde
@@ -399,7 +401,7 @@ data class Field(
           Serde.INLINE
         }
 
-      GOLANG_1_8 ->
+      GOLANG_1_9 ->
         if (golangConfig.overrideProtobufSerde != null) {
           // -- User override is highest priority
           golangConfig.overrideProtobufSerde

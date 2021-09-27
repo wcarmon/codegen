@@ -39,7 +39,7 @@ data class EqualityTestExpression(
     CPP_20 -> TODO()
     DART_2 -> TODO()
 
-    GOLANG_1_8 ->
+    GOLANG_1_9 ->
       handleGolang(config)
 
     JAVA_08,

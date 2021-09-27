@@ -4,7 +4,7 @@ package com.wcarmon.codegen.util
 
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.Field
-import com.wcarmon.codegen.model.TargetLanguage.GOLANG_1_8
+import com.wcarmon.codegen.model.TargetLanguage.GOLANG_1_9
 
 
 //TODO: Go: pointer mapping
@@ -27,9 +27,9 @@ fun golangTypeLiteral(
 private fun getFullyQualifiedGolangTypeLiteral(
   field: Field,
 ): String {
-  val typeParameters = field.typeParameters(GOLANG_1_8)
+  val typeParameters = field.typeParameters(GOLANG_1_9)
 
-  return when (field.effectiveBaseType(GOLANG_1_8)) {
+  return when (field.effectiveBaseType(GOLANG_1_9)) {
 //  ARRAY -> getKotlinArrayType(type.base, type.typeParameters)
     BOOLEAN -> "bool"
     CHAR -> "rune"

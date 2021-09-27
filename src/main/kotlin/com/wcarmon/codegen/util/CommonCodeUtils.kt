@@ -25,7 +25,7 @@ fun wrapWithExpressionTracingComments(
     CPP_17,
     CPP_20,
     DART_2,
-    GOLANG_1_8,
+    GOLANG_1_9,
     JAVA_08,
     JAVA_11,
     JAVA_17,
