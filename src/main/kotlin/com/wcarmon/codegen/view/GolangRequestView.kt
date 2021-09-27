@@ -20,12 +20,21 @@ class GolangRequestView(
     }
   }
 
-  fun serializeImports(vararg importables: Any): String =
-    consolidateImports(importables.toList())
+  fun serializeImports(vararg importables: Any): String {
+    val indentation = " ".repeat(4)
+
+    return consolidateImports(importables.toList())
       .joinToString(
         prefix = "import (\n",
         postfix = "\n)",
         separator = "\n") {
-        "    \"$it\""
+
+        indentation +
+            if (it.contains("\"")) {
+              it
+            } else {
+              "\"$it\""
+            }
       }
+  }
 }

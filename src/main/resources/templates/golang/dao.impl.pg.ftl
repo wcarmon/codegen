@@ -41,7 +41,7 @@ TODO: which is best?
   }
   defer stmt.Close()
 
-  res, err := stmt.ExecContext(ctx, ${entity.golangView.commaSeparatedIdFields})
+  res, err := stmt.ExecContext(ctx, ${entity.golangView.commaSeparatedIdFieldNames})
   if err != nil {
     return false, err
   }
@@ -69,7 +69,7 @@ func (dao *${entity.name.upperCamel}PostgreSQLDAO) ${entity.name.upperCamel}Exis
 
   var count int32
   err = stmt.
-    QueryRowContext(ctx, ${entity.golangView.commaSeparatedIdFields}).
+    QueryRowContext(ctx, ${entity.golangView.commaSeparatedIdFieldNames}).
     Scan(&count)
   if err != nil {
     return false, err
@@ -87,7 +87,7 @@ func (dao *${entity.name.upperCamel}PostgreSQLDAO) FindById${entity.name.upperCa
 
   var entity ${entity.name.upperCamel}
   err = stmt.
-    QueryRowContext(ctx, ${entity.golangView.commaSeparatedIdFields}).
+    QueryRowContext(ctx, ${entity.golangView.commaSeparatedIdFieldNames}).
     Scan(
       ${entity.golangView.commaSeparatedFieldsForQueryScan("entity")}
     )
@@ -241,7 +241,7 @@ func (dao *${entity.name.upperCamel}PostgreSQLDAO) Set${field.name.upperCamel}(c
       field,
       "dao.now()"
       ",\n")}<#--
- -->${entity.golangView.commaSeparatedIdFields})
+ -->${entity.golangView.commaSeparatedIdFieldNames})
   if err != nil {
     return err
   }

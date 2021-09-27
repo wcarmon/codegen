@@ -35,7 +35,7 @@ public final class ${entity.name.upperCamel}RESTController {
 
     ${request.jvmView.unqualifiedContextClass} context = null;
 
-    ${entity.name.lowerCamel}DAO.delete(context, ${entity.jvmView.commaSeparatedIDFieldNames});
+    ${entity.name.lowerCamel}DAO.delete(context, ${entity.jvmView.commaSeparatedIdFieldNames});
 
     //TODO: build response
   }
@@ -61,7 +61,7 @@ public final class ${entity.name.upperCamel}RESTController {
     // ChronoContext context  <--- build in interceptor?
 
     //TODO: build response
-    return ${entity.name.lowerCamel}DAO.findById(context, ${entity.jvmView.commaSeparatedIDFieldNames});
+    return ${entity.name.lowerCamel}DAO.findById(context, ${entity.jvmView.commaSeparatedIdFieldNames});
   }
 
 </#if>

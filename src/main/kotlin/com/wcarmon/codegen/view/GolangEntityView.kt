@@ -52,7 +52,7 @@ class GolangEntityView(
       }
   }
 
-  val commaSeparatedIdFields = entity
+  val commaSeparatedIdFieldNames = entity
     .idFields
     .joinToString(",") {
       it.name.lowerCamel
