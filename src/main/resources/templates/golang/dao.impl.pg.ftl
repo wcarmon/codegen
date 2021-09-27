@@ -13,23 +13,13 @@ ${request.golangView.serializeImports(request.extraGolangImports)}
 
 <#list entities as entity>
 type ${entity.name.upperCamel}PostgreSQLDAO struct {
-    db    *sql.DB
-    now   func() time.Time
+    db              *sql.DB
+    now             func() time.Time
+    isolationLevel  sql.IsolationLevel
 }
 
 func (dao *${entity.name.upperCamel}PostgreSQLDAO) Delete${entity.name.upperCamel}(ctx context.Context, ${entity.golangView.methodArgsForIdFields()}) (deleted bool, err error) {
-<#--
-TODO: which is best?
-  LevelReadUncommitted
-  LevelReadCommitted
-  LevelWriteCommitted
-  LevelRepeatableRead
-  LevelSnapshot
-  LevelSerializable
-  LevelLinearizable
--->
-
-  tx, err := dao.db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
+  tx, err := dao.db.BeginTx(ctx, &sql.TxOptions{Isolation: dao.isolationLevel})
   if err != nil {
     return false, err
   }
@@ -105,7 +95,7 @@ func (dao *${entity.name.upperCamel}PostgreSQLDAO) FindById${entity.name.upperCa
 }
 
 func (dao *${entity.name.upperCamel}PostgreSQLDAO) Create${entity.name.upperCamel}(ctx context.Context, entity ${entity.name.upperCamel}) error {
-  tx, err := dao.db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
+  tx, err := dao.db.BeginTx(ctx, &sql.TxOptions{Isolation: dao.isolationLevel})
   if err != nil {
     return err
   }
@@ -125,7 +115,7 @@ func (dao *${entity.name.upperCamel}PostgreSQLDAO) Create${entity.name.upperCame
     return err
   }
 
-  rowCnt, err := res.RowsAffected()
+  _, err = res.RowsAffected()  // row count should always be 1
   if err != nil {
     return err
   }
@@ -140,7 +130,7 @@ func (dao *${entity.name.upperCamel}PostgreSQLDAO) Create${entity.name.upperCame
 }
 
 func (dao *${entity.name.upperCamel}PostgreSQLDAO) Update${entity.name.upperCamel}(ctx context.Context, entity ${entity.name.upperCamel}) error {
-  tx, err := dao.db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
+  tx, err := dao.db.BeginTx(ctx, &sql.TxOptions{Isolation: dao.isolationLevel})
   if err != nil {
     return err
   }
@@ -160,11 +150,10 @@ func (dao *${entity.name.upperCamel}PostgreSQLDAO) Update${entity.name.upperCame
     return err
   }
 
-  rowCnt, err := res.RowsAffected()
+  _, err = res.RowsAffected()
   if err != nil {
     return err
   }
-  //TODO: add affected row count to trace (in ctx)
 
   err = tx.Commit()
   if err != nil {
@@ -222,7 +211,7 @@ func (dao *${entity.name.upperCamel}PostgreSQLDAO) List${entity.name.upperCamel}
 
 <#list entity.nonIdFields as field>
 func (dao *${entity.name.upperCamel}PostgreSQLDAO) Set${field.name.upperCamel}(ctx context.Context, ${entity.golangView.methodArgsForIdFields()}, ${field.name.lowerCamel} ${field.golangView.typeLiteral}) error {
-  tx, err := dao.db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
+  tx, err := dao.db.BeginTx(ctx, &sql.TxOptions{Isolation: dao.isolationLevel})
   if err != nil {
     return err
   }
@@ -246,7 +235,7 @@ func (dao *${entity.name.upperCamel}PostgreSQLDAO) Set${field.name.upperCamel}(c
     return err
   }
 
-  rowCnt, err := res.RowsAffected()
+  _, err = res.RowsAffected()
   if err != nil {
     return err
   }
