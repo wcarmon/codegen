@@ -10,7 +10,7 @@
     "net/url",
     "time"
   ],
-  "outputDirectory": "file:///home/wcarmon/git-repos/go/chrono-html/model/pg",
+  "outputDirectory": "file:///home/wcarmon/git-repos/go/chrono-html/model",
   "outputFilenameTemplate": "dao.generated.go",
   "outputMode": "single",
   "package": "model",

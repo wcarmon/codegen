@@ -36,5 +36,8 @@
   "indexes": [],
   "name": "ChronoList",
   "pkg": "com.wcarmon.chrono.model",
+  "rdbms": {
+    "schema": "prod"
+  },
   "updatedTimestampFieldName": "updated"
 }

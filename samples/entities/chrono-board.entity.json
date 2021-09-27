@@ -191,5 +191,8 @@
   ],
   "name": "ChronoBoard",
   "pkg": "com.wcarmon.chrono.model",
+  "rdbms": {
+    "schema": "prod"
+  },
   "updatedTimestampFieldName": "updated"
 }

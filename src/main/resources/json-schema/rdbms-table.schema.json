@@ -3,7 +3,13 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "description": "extra config for RDBMS Tables",
-  "properties": {},
+  "properties": {
+    "schema": {
+      "maxLength": 64,
+      "minLength": 1,
+      "type": "string"
+    }
+  },
   "propertyNames": {
     "pattern": "^[$]?[A-Za-z_][A-Za-z0-9]*$"
   },

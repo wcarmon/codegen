@@ -123,7 +123,16 @@ fun postgresColumnDefinition(field: Field): String {
   // -- default clause
   val defaultClause =
     if (field.rdbmsConfig.overrideDefaultValue.isPresent) {
-      "DEFAULT ${field.rdbmsConfig.overrideDefaultValue}"
+      val effectiveBaseType = field.effectiveBaseType(SQL_POSTGRESQL)
+      val quoteType = quoteTypeForRDBMSLiteral(effectiveBaseType)
+
+      val renderedDefaultValue = quoteType.wrap(
+        field.rdbmsConfig
+          .overrideDefaultValue
+          .literal
+          .toString())
+
+      "DEFAULT $renderedDefaultValue"
 
     } else if (field.defaultValue.isAbsent) {
       ""

@@ -6,7 +6,7 @@
   ],
   "extraGolangImports": [
   ],
-  "outputDirectory": "file:///home/wcarmon/git-repos/go/chrono-html/model/pg",
+  "outputDirectory": "file:///home/wcarmon/git-repos/go/chrono-html/model",
   "outputFilenameTemplate": "sql.generated.go",
   "outputMode": "single",
   "package": "model",

@@ -171,5 +171,6 @@ class CodeGeneratorApp(
     }
 
     return entityConfigParser.parse(entityConfigPaths)
+      .sortedBy { it.name.upperCamel }
   }
 }

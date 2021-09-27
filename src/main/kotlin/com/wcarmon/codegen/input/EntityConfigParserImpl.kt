@@ -28,7 +28,7 @@ class EntityConfigParserImpl(
       } catch (ex: Exception) {
         throw RuntimeException("Failed to parse entity: path=$path", ex)
       }
-    }
+    }.sortedBy { it.name.upperCamel }
   }
 
   private fun parse(entityConfigFile: Path): Entity {

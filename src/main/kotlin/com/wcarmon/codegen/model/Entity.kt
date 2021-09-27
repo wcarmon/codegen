@@ -62,6 +62,7 @@ data class Entity(
    */
   val indexes: Set<Index> = setOf(),
 
+  @JsonProperty("rdbms")
   val rdbmsConfig: RDBMSTableConfig = RDBMSTableConfig(),
 
   /**
