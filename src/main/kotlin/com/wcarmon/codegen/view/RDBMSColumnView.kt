@@ -7,6 +7,12 @@ import com.wcarmon.codegen.model.TargetLanguage.JAVA_08
 import com.wcarmon.codegen.model.TargetLanguage.SQL_POSTGRESQL
 import com.wcarmon.codegen.util.*
 
+// For aligning columns
+private const val CHARS_FOR_COLUMN_NAME = 20
+private const val CHARS_FOR_COLUMN_TYPE = 12
+private const val CHARS_FOR_DEFAULT_CLAUSE = 13
+private const val CHARS_FOR_NULLABLE_CLAUSE = 10
+
 /**
  * RDBMS related convenience methods for a [Field]
  * See [com.wcarmon.codegen.model.RDBMSColumnConfig]
@@ -27,12 +33,6 @@ class RDBMSColumnView(
         UPDATED_TS_FIELD_NAMES.any {
           field.name.lowerCamel.equals(it, true)
         }
-
-  /**
-   * Works on PostgreSQL, H2, Maria, MySQL, DB2
-   * (maybe oracle too, but they make it near impossible to test)
-   */
-  val postgresqlColumnDefinition = postgresColumnDefinition(field)
 
   /**
    * Works directly on SQLite (without using their affinity conversion layer)
@@ -104,5 +104,42 @@ class RDBMSColumnView(
             .copy(targetLanguage = targetLanguage)
             .terminated)
       }
+  }
+
+
+  /**
+   * Works on PostgreSQL, H2, Maria, MySQL, DB2
+   * (maybe oracle too, but they make it near impossible to test)
+   *
+   * Builds a complete column definition (For 1 column)
+   *
+   * Trailing commas must be handled by the caller (eg. [RDBMSTableView])
+   *
+   * See https://www.postgresql.org/docs/current/sql-createtable.html
+   *
+   * @return Sub-expression, part of `CREATE TABLE` statement
+   *   Something like "<field-name> <field-type> <nullability> <default value>"
+   */
+  val postgresqlColumnDefinition: String by lazy {
+    val parts = mutableListOf<String>()
+
+    parts += "\"${field.name.lowerSnake}\""
+      .padEnd(CHARS_FOR_COLUMN_NAME, ' ')
+
+    parts += field.effectiveTypeLiteral(SQL_POSTGRESQL)
+      .padEnd(CHARS_FOR_COLUMN_TYPE, ' ')
+
+    // -- nullable clause
+    val nullableClause =
+      if (!field.type.nullable) "NOT NULL"
+      else ""
+
+    parts += nullableClause.padEnd(CHARS_FOR_NULLABLE_CLAUSE, ' ')
+
+    // -- default clause
+    val defaultClause = DefaultValueExpression(field).render(renderConfig)
+    parts += defaultClause.padEnd(CHARS_FOR_DEFAULT_CLAUSE, ' ')
+
+    parts.joinToString(" ")
   }
 }

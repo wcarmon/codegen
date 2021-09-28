@@ -15,9 +15,6 @@
     "canUpdate": {
       "type": "boolean"
     },
-    "defaultValue": {
-      "$ref": "default-value.schema.json"
-    },
     "documentation": {
       "items": {
         "maxLength": 200,

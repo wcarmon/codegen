@@ -2,12 +2,13 @@ package com.wcarmon.codegen.view
 
 import com.wcarmon.codegen.ast.*
 import com.wcarmon.codegen.ast.FieldReadMode.DIRECT
+import com.wcarmon.codegen.ast.FinalityModifier.FINAL
+import com.wcarmon.codegen.ast.VisibilityModifier.PUBLIC
 import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.SerdeMode.DESERIALIZE
 import com.wcarmon.codegen.model.SerdeMode.SERIALIZE
 import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.util.defaultResultSetGetterMethod
-import com.wcarmon.codegen.util.defaultValueLiteralForKotlin
 import com.wcarmon.codegen.util.kotlinTypeLiteral
 
 /**
@@ -34,7 +35,19 @@ class KotlinFieldView(
   )
 
   val defaultValueLiteral: String by lazy {
-    defaultValueLiteralForKotlin(field)
+    DefaultValueExpression(field)
+      .render(renderConfig)
+  }
+
+  val fieldDeclaration: String by lazy {
+    FieldDeclarationExpression(
+      defaultValue = DefaultValueExpression(field),
+      documentation = DocumentationExpression(field.documentation),
+      field = field,
+      finalityModifier = FINAL,
+      visibilityModifier = PUBLIC,
+      //TODO: annotations
+    ).render(renderConfig)
   }
 
   val isCollection: Boolean by lazy {

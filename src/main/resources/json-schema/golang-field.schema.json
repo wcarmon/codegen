@@ -4,6 +4,9 @@
   "additionalProperties": false,
   "description": "extra config for Golang fields",
   "properties": {
+    "defaultValue": {
+      "$ref": "default-value.schema.json"
+    },
     "overrideElasticSearchSerde": {
       "$ref": "serde.schema.json"
     },

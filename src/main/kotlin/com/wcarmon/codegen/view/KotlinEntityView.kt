@@ -7,7 +7,7 @@ import com.wcarmon.codegen.model.BaseFieldType.SET
 import com.wcarmon.codegen.model.Entity
 import com.wcarmon.codegen.model.JDBCColumnIndex.Companion.FIRST
 import com.wcarmon.codegen.model.PreparedStatementBuilderConfig
-import com.wcarmon.codegen.model.SerdeMode
+import com.wcarmon.codegen.model.SerdeMode.SERIALIZE
 import com.wcarmon.codegen.model.TargetLanguage
 import com.wcarmon.codegen.model.TargetLanguage.KOTLIN_JVM_1_4
 import com.wcarmon.codegen.util.buildPreparedStatementSetters
@@ -77,22 +77,10 @@ class KotlinEntityView(
   val fieldDeclarations: String by lazy {
 
     entity.sortedFieldsWithIdsFirst
-      .joinToString("\n") { field ->
-
-        val defaultValueExpression = DefaultValueExpression(
-          defaultValue = field.defaultValue,
-        )
-
-        FieldDeclarationExpression(
-          //TODO: suffix "ID/Primary key" when `field.idField`
-          defaultValue = defaultValueExpression,
-          documentation = DocumentationExpression(field.documentation),
-          field = field,
-          finalityModifier = FinalityModifier.FINAL,
-          visibilityModifier = VisibilityModifier.PRIVATE,
-        )
-          .render(
-            renderConfig.copy(lineIndentation = "  "))
+      .joinToString(
+        separator = ",\n",
+      ) { field ->
+        field.kotlinView.fieldDeclaration
       }
   }
 
@@ -132,6 +120,8 @@ class KotlinEntityView(
         separator = "\n"
       ) { field ->
 
+        val effectiveDefaultValue = field.effectiveDefaultValue(targetLanguage)
+
         val read = FieldReadExpression(
           assertNonNull = false,
           fieldName = field.name,
@@ -140,21 +130,19 @@ class KotlinEntityView(
         )
 
         val wrapMe =
-          if (!field.type.nullable || field.defaultValue.isAbsent) {
+          if (!field.type.nullable || effectiveDefaultValue.isAbsent) {
             read
 
           } else {
             DefaultWhenNullExpression(
               primaryExpression = read,
-              defaultValueExpression = DefaultValueExpression(
-                defaultValue = field.defaultValue,
-              )
+              defaultValueExpression = DefaultValueExpression(field)
             )
           }
 
         val wrapper = WrapWithSerdeExpression(
-          serde = field.effectiveProtobufSerde(KOTLIN_JVM_1_4),
-          serdeMode = SerdeMode.SERIALIZE,
+          serde = field.effectiveProtobufSerde(targetLanguage),
+          serdeMode = SERIALIZE,
           wrapped = wrapMe,
         )
 

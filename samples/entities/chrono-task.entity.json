@@ -9,58 +9,129 @@
     "file:/home/wcarmon/git-repos/codegen/samples/fields/closed.field.json",
     "file:/home/wcarmon/git-repos/codegen/samples/fields/created.field.json",
     "file:/home/wcarmon/git-repos/codegen/samples/fields/name.field.json",
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/tags.field.json",
     "file:/home/wcarmon/git-repos/codegen/samples/fields/updated.field.json",
     "file:/home/wcarmon/git-repos/codegen/samples/fields/uuid.field.json"
   ],
   "fields": [
     {
-      "defaultValue": {
-        "value": null
+      "golang": {
+        "defaultValue": {
+          "value": null
+        }
+      },
+      "jvm": {
+        "defaultValue": {
+          "value": null
+        }
       },
       "name": "deadline",
       "nullable": true,
+      "rdbms": {
+        "defaultValue": {
+          "value": null
+        }
+      },
       "type": "Instant"
     },
     {
-      "defaultValue": {
-        "value": ""
+      "golang": {
+        "defaultValue": {
+          "value": ""
+        }
+      },
+      "jvm": {
+        "defaultValue": {
+          "value": ""
+        }
       },
       "name": "details",
       "nullable": false,
       "rdbms": {
+        "defaultValue": {
+          "value": ""
+        },
         "varcharLength": 8000
       },
       "type": "String"
     },
     {
-      "defaultValue": {
-        "value": true
+      "golang": {
+        "defaultValue": {
+          "value": true
+        }
+      },
+      "jvm": {
+        "defaultValue": {
+          "value": true
+        }
       },
       "name": "enableSearch",
+      "rdbms": {
+        "defaultValue": {
+          "value": true
+        }
+      },
       "type": "boolean"
     },
     {
-      "defaultValue": {
-        "value": null
+      "golang": {
+        "defaultValue": {
+          "value": null
+        }
+      },
+      "jvm": {
+        "defaultValue": {
+          "value": null
+        }
       },
       "name": "estimate",
       "nullable": true,
+      "rdbms": {
+        "defaultValue": {
+          "value": null
+        }
+      },
       "type": "Duration"
     },
     {
-      "defaultValue": {
-        "value": 0
+      "golang": {
+        "defaultValue": {
+          "value": 0
+        }
+      },
+      "jvm": {
+        "defaultValue": {
+          "value": 0
+        }
       },
       "name": "positionInList",
       "nullable": false,
+      "rdbms": {
+        "defaultValue": {
+          "value": 0
+        }
+      },
       "type": "int32"
     },
     {
-      "defaultValue": {
-        "value": null
+      "golang": {
+        "defaultValue": {
+          "value": null
+        }
+      },
+      "jvm": {
+        "defaultValue": {
+          "value": null
+        }
       },
       "name": "expiration",
       "nullable": true,
+      "rdbms": {
+        "defaultValue": {
+          "value": null
+        }
+      },
       "type": "Instant"
     },
     {
@@ -87,22 +158,33 @@
       "type": "com.wcarmon.ub.model.UBUuid"
     },
     {
-      "defaultValue": {
-        "value": ""
+      "golang": {
+        "defaultValue": {
+          "value": ""
+        }
+      },
+      "jvm": {
+        "defaultValue": {
+          "value": ""
+        }
       },
       "name": "keywords",
       "nullable": false,
       "rdbms": {
+        "defaultValue": {
+          "value": ""
+        },
         "varcharLength": 256
       },
       "type": "String"
     },
     {
-      "defaultValue": {
-        "value": "ChronoLevel.NONE"
-      },
       "enumType": true,
       "golang": {
+        "defaultValue": {
+          "quoteValue": false,
+          "value": "ChronoLevel.NONE"
+        },
         "overrideProtobufSerde": {
           "deserializeTemplate": "fix--%s",
           "serializeTemplate": "fix--%s"
@@ -110,6 +192,10 @@
         "overrideTypeLiteral": "ChronoLevel"
       },
       "jvm": {
+        "defaultValue": {
+          "quoteValue": false,
+          "value": "ChronoLevel.NONE"
+        },
         "overrideProtobufSerde": {
           "deserializeTemplate": "com.wcarmon.chrono.model.ChronoLevel.fromValue(%s)",
           "serializeTemplate": "%s.toProtoValue()"
@@ -130,8 +216,21 @@
       "type": "com.wcarmon.chrono.model.ChronoLevel"
     },
     {
-      "defaultValue": {
-        "value": []
+      "golang": {
+        "defaultValue": {
+          "value": []
+        },
+        "typeParameters": [
+          "String"
+        ]
+      },
+      "jvm": {
+        "defaultValue": {
+          "value": []
+        },
+        "typeParameters": [
+          "String"
+        ]
       },
       "name": "contexts",
       "protobuf": {
@@ -141,24 +240,64 @@
       "rdbms": {
         "varcharLength": 256
       },
-      "jvm": {
-        "typeParameters": [
-          "String"
-        ]
-      },
-      "golang": {
-        "typeParameters": [
-          "String"
-        ]
-      },
       "type": "Set"
+    },
+    {
+      "golang": {},
+      "jvm": {},
+      "name": "type",
+      "nullable": false,
+      "protobuf": {
+        "overrideTypeLiteral": "int32"
+      },
+      "rdbms": {
+        "overrideTypeLiteral": "SMALLINT"
+      },
+      "type": "com.wcarmon.chrono.model.ChronoTaskType"
+    },
+    {
+      "enumType": true,
+      "golang": {
+        "defaultValue": {
+          "quoteValue": false,
+          "value": "ChronoLevel.NONE"
+        },
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "fix--%s",
+          "serializeTemplate": "fix--%s"
+        },
+        "overrideTypeLiteral": "ChronoLevel"
+      },
+      "jvm": {
+        "defaultValue": {
+          "quoteValue": false,
+          "value": "ChronoLevel.NONE"
+        },
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "com.wcarmon.chrono.model.ChronoLevel.fromValue(%s)",
+          "serializeTemplate": "%s.toProtoValue()"
+        },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "com.wcarmon.chrono.model.ChronoLevel.fromDBValue(%s)",
+          "serializeTemplate": "%s.toDBValue()"
+        }
+      },
+      "name": "urgency",
+      "nullable": false,
+      "protobuf": {
+        "overrideTypeLiteral": "int32"
+      },
+      "rdbms": {
+        "overrideTypeLiteral": "INTEGER"
+      },
+      "type": "com.wcarmon.chrono.model.ChronoLevel"
     }
   ],
   "indexes": [],
   "name": "ChronoTask",
   "pkg": "com.wcarmon.chrono.model",
   "rdbms": {
-    "schema": "prod"
+    "schema": "test"
   },
   "updatedTimestampFieldName": "updated"
 }

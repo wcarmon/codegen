@@ -9,6 +9,10 @@
     {
       "additionalProperties": false,
       "properties": {
+        "quoteValue": {
+          "description": "Allows user to differentiate constants from string literals",
+          "type": "boolean"
+        },
         "value": {
           "anyOf": [
             {
@@ -25,8 +29,8 @@
               "type": "null"
             },
             {
-              "type": "array",
-              "maxItems": 0
+              "maxItems": 0,
+              "type": "array"
             }
           ]
         }

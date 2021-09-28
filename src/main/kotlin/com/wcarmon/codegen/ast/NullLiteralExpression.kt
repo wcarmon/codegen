@@ -1,7 +1,6 @@
 package com.wcarmon.codegen.ast
 
-import com.wcarmon.codegen.model.TargetLanguage.GOLANG_1_9
-import com.wcarmon.codegen.model.TargetLanguage.PYTHON_3
+import com.wcarmon.codegen.model.TargetLanguage.*
 
 /**
  * c:           NULL
@@ -25,6 +24,17 @@ object NullLiteralExpression : Expression {
       when (config.targetLanguage) {
         GOLANG_1_9 -> "nil"
         PYTHON_3 -> "None"
+
+        SQL_DB2,
+        SQL_DELIGHT,
+        SQL_H2,
+        SQL_MARIA,
+        SQL_MYSQL,
+        SQL_ORACLE,
+        SQL_POSTGRESQL,
+        SQL_SQLITE,
+        -> "NULL"
+
         else -> "null"
       } +
       config.statementTerminatorLiteral

@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 @JsonPropertyOrder(alphabetic = true)
 data class JVMFieldConfig(
 
+  val defaultValue: DefaultValue = DefaultValue(),
   val overrideElasticSearchSerde: Serde? = null,
   val overrideKafkaSerde: Serde? = null,
   val overrideProtobufRepeatedItemSerde: Serde? = null,

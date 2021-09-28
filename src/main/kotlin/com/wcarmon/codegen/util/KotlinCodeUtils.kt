@@ -43,7 +43,8 @@ private fun getFullyQualifiedKotlinTypeLiteral(
     BOOLEAN -> "Boolean"
     CHAR -> "Char"
     COLOR -> "String"
-    DURATION -> "kotlin.time.Duration"
+//    DURATION -> "kotlin.time.Duration"
+    DURATION -> "java.time.Duration"
     EMAIL -> "String"
     FLOAT_32 -> "Float"
     FLOAT_64 -> "Double"
@@ -81,30 +82,6 @@ private fun getFullyQualifiedKotlinTypeLiteral(
   }.let {
     if (field.type.nullable) "$it?" else it
   }
-}
-
-@Suppress("ReturnCount")
-fun defaultValueLiteralForKotlin(field: Field): String {
-  check(field.defaultValue.isPresent) {
-    "Method only applicable when default value present: field=$field"
-  }
-
-  if (field.defaultValue.isEmptyCollection) {
-    return when (field.effectiveBaseType(KOTLIN_JVM_1_4)) {
-      LIST -> "listOf()"
-      MAP -> "mapOf()"
-      SET -> "setOf()"
-      else -> TODO("Build Empty kotlin collection for field=$field")
-    }
-  }
-
-  if (field.defaultValue.isNullLiteral) {
-    return "null"
-  }
-
-  //TODO: handle empty Set/List, ...
-  return quoteTypeForJVMLiterals(field.type.base)
-    .wrap(field.defaultValue.literal.toString())
 }
 
 

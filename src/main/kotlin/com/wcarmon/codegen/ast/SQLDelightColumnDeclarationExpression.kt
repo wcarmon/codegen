@@ -49,11 +49,16 @@ class SQLDelightColumnDeclarationExpression(
 
 
   //TODO: revisit implementation after cleaning up default value handling
+  @Deprecated("use DefaultValueExpression")
   private fun buildDefaultValueSegment(field: Field): String {
 
+    val targetLanguage = SQL_DELIGHT
     var defaultValueLiteral: String? = null
+    val effectiveBaseType = field.effectiveBaseType(targetLanguage)
+    val effectiveDefaultValue = field.effectiveDefaultValue(targetLanguage)
 
-    if (BOOLEAN == field.effectiveBaseType(SQL_DELIGHT)) {
+    //TODO: move logic to DefaultValueExpression
+    if (BOOLEAN == effectiveBaseType) {
       defaultValueLiteral = "0"
     }
 
@@ -61,7 +66,7 @@ class SQLDelightColumnDeclarationExpression(
       defaultValueLiteral = "NULL"
     }
 
-    if (field.defaultValue.isPresent) {
+    if (effectiveDefaultValue.isPresent) {
 
       /* See [Field.defaultValueExpression] */
       //TODO: fix
@@ -73,9 +78,9 @@ class SQLDelightColumnDeclarationExpression(
 //      }
     }
 
-    if (field.overrideDefaultValue(SQL_DELIGHT).isPresent) {
-      LOG.warn("Handle the rdbms override default here")
-    }
+//    if (field.overrideDefaultValue(targetLanguage).isPresent) {
+//      LOG.warn("Handle the rdbms override default here")
+//    }
 
     if (defaultValueLiteral == null) {
       return ""

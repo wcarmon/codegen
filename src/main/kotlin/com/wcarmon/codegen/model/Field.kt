@@ -47,8 +47,6 @@ data class Field(
 
   val canLog: Boolean = true,
 
-  val defaultValue: DefaultValue = DefaultValue(),
-
   /** No leading comment markers (no leading slashes, no leading asterisk) */
   val documentation: List<String> = listOf(),
 
@@ -85,7 +83,6 @@ data class Field(
     fun parse(
       @JsonProperty("canLog") canLog: Boolean?,
       @JsonProperty("canUpdate") canUpdate: Boolean?,
-      @JsonProperty("defaultValue") defaultValue: DefaultValue?,
       @JsonProperty("documentation") documentation: Iterable<String>?,
       @JsonProperty("enumType") enumType: Boolean?,
       @JsonProperty("golang") golangConfig: GolangFieldConfig?,
@@ -104,7 +101,7 @@ data class Field(
 
       // -- validate typeLiteral
       require(typeLiteral?.isNotBlank() ?: false) {
-        "Field.type is required: this=$this, name=$name"
+        "Field.type is required: name=${name.lowerCamel}"
       }
 
       typeLiteral!!
@@ -138,7 +135,6 @@ data class Field(
       return Field(
         canLog = canLog ?: true,
         canUpdate = canUpdate ?: true,
-        defaultValue = defaultValue ?: DefaultValue(),
         documentation = documentation?.toList() ?: listOf(),
         golangConfig = golangConfig ?: GolangFieldConfig(),
         jvmConfig = jvmFieldConfig ?: JVMFieldConfig(),
@@ -302,25 +298,30 @@ data class Field(
     }
 
 
-  fun overrideDefaultValue(targetLanguage: TargetLanguage): DefaultValue =
-    //TODO: improve this
+  fun effectiveDefaultValue(targetLanguage: TargetLanguage): DefaultValue =
     when (targetLanguage) {
+
       JAVA_08,
       JAVA_11,
       JAVA_17,
       KOTLIN_JVM_1_4,
-      -> defaultValue
+      -> jvmConfig.defaultValue
 
       GOLANG_1_9,
-      -> defaultValue
+      -> golangConfig.defaultValue
 
+      SQL_DB2,
       SQL_DELIGHT,
-      -> defaultValue
+      SQL_H2,
+      SQL_MARIA,
+      SQL_MYSQL,
+      SQL_ORACLE,
+      SQL_POSTGRESQL,
+      SQL_SQLITE,
+      -> rdbmsConfig.defaultValue
 
-      //TODO: more here
-      else -> TODO("get overrideDefaultValue: targetLanguage=$targetLanguage, field=$this")
+      else -> TODO("get effectiveDefaultValue: targetLanguage=$targetLanguage, field=$this")
     }
-
 
   fun effectiveTypeLiteral(
     targetLanguage: TargetLanguage,

@@ -7,7 +7,6 @@ import com.wcarmon.codegen.model.*
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.QuoteType.*
 import com.wcarmon.codegen.model.SQLPlaceholderType.*
-import com.wcarmon.codegen.model.TargetLanguage.SQL_POSTGRESQL
 
 /**
  * @return comma separated column names, PK fields first
@@ -113,29 +112,3 @@ fun quoteTypeForRDBMSLiteral(base: BaseFieldType): QuoteType = when (base) {
   else -> SINGLE
 }
 
-/**
- * Db2:     TODO
- * H2:      TODO
- * Maria:   TODO
- * MySQL:   TODO
- * Oracle:  TODO
- * Postgres: https://www.postgresql.org/docs/current/sql-createtable.html
- * SQLite:  TODO
- *
- * Adds appropriate quotes when required
- *
- * @return literal for Default value (called "default_expr" in PostgreSQL AST)
- */
-fun rdbmsDefaultValueLiteral(field: Field): String {
-
-  if (field.defaultValue.isAbsent) {
-    return ""
-  }
-
-  if (field.defaultValue.isNullLiteral) {
-    return "NULL"
-  }
-
-  return quoteTypeForRDBMSLiteral(field.effectiveBaseType(SQL_POSTGRESQL))
-    .wrap(field.defaultValue.literal.toString())
-}

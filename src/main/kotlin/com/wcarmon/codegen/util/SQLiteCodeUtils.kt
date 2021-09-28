@@ -68,10 +68,11 @@ fun sqliteColumnDefinition(field: Field): String {
   parts += nullableClause.padEnd(CHARS_FOR_NULLABLE_CLAUSE, ' ')
 
   // -- default clause
-  val defaultClause =
-    if (field.defaultValue.isAbsent) ""
-    else if (field.defaultValue.isNullLiteral) "DEFAULT NULL"
-    else "DEFAULT ${rdbmsDefaultValueLiteral(field)}"
+  //TODO: move to DefaultValueExpression
+  val defaultClause = "TODO: fix-the-default-for sqlite"
+//    if (field.defaultValue.isAbsent) ""
+//    else if (field.defaultValue.isNullLiteral) "DEFAULT NULL"
+//    else "DEFAULT ${rdbmsDefaultValueLiteral(field)}"
 
   parts += defaultClause.padEnd(CHARS_FOR_DEFAULT_CLAUSE, ' ')
 

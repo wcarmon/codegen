@@ -4,32 +4,13 @@ import com.fasterxml.jackson.annotation.JsonCreator
 
 
 /**
- * In JSON config...
- *
- * No default (Absent):
- *   1. (omit Field.defaultValue)
- *   2. ..., "default": null, ...
- *   3. ..., "default": {}, ...
- *
- * Default to null:
- *   1. ..., "defaultValue": {"value": null}, ...
- *
- * Non-null default value:
- *   1. ..., "default": {"value": "foo"}, ...
- *   2. ..., "default": {"value": 3.14}, ...
- *   3. ..., "default": {"value": 7}, ...
- *   4. ..., "default": {"value": false}, ...
- *   5. ..., "default": {"value": true}, ...
- *   6. ..., "default": {"value": ""}, ...
- *
- *  See tests for more examples [DefaultValueTest]
+ *  See Unit tests for more examples [DefaultValueTest]
  */
 data class DefaultValue(
-  private val wrapper: ValueWrapper? = null,
-
   private val emptyCollection: Boolean = false,
-
   private val presentAndNull: Boolean = false,
+  private val quoteValue: Boolean = true,
+  private val wrapper: ValueWrapper? = null,
 ) {
 
   // Must wrap the value to distinguish absence from null
@@ -39,8 +20,13 @@ data class DefaultValue(
 
   companion object {
 
-    private val DEFAULT_NOT_PRESENT = DefaultValue(wrapper = null, presentAndNull = false)
+    private val DEFAULT_NOT_PRESENT = DefaultValue(
+      presentAndNull = false,
+      quoteValue = false,
+      wrapper = null,
+    )
 
+    private const val PROPERTY_NAME_FOR_QUOTING = "quoteValue"
     private const val PROPERTY_NAME_FOR_VALUE = "value"
 
     @JsonCreator
@@ -64,8 +50,10 @@ data class DefaultValue(
 
       val theDefault: Any? = jsonObj[PROPERTY_NAME_FOR_VALUE]
 
+      val quoteForStringField = jsonObj[PROPERTY_NAME_FOR_QUOTING] as? Boolean ?: true
+
       val wrapper =
-        if (theDefault is Collection<*>) {
+        if (theDefault is List<*>) {
           check(theDefault.isEmpty())
           ValueWrapper(null)
 
@@ -74,8 +62,9 @@ data class DefaultValue(
         }
 
       return DefaultValue(
-        emptyCollection = theDefault is Collection<*>,
+        emptyCollection = theDefault is List<*>,
         presentAndNull = theDefault == null,
+        quoteValue = quoteForStringField,
         wrapper = wrapper,
       )
     }
@@ -86,50 +75,30 @@ data class DefaultValue(
 
   val isAbsent: Boolean = wrapper == null
 
+  fun isEmptyCollection(): Boolean = emptyCollection
+
   /**
    * Only readable when [isPresent]
    * User wants an explicit default to null/nil/NULL
    */
-  val isNullLiteral: Boolean by lazy {
+  fun isNullLiteral(): Boolean {
     check(isPresent) {
-      "only read when hasValue==true"
+      "Only read when isPresent"
     }
 
-    wrapper != null
+    //TODO: quoting matters here
+    return wrapper != null
         && wrapper.value == null
         && !emptyCollection
   }
 
-  val isEmptyString: Boolean by lazy {
-    check(isPresent) {
-      "only read when hasValue==true"
-    }
 
-    wrapper?.value != null &&
-        wrapper.value is String &&
-        wrapper.value.isEmpty()
-  }
+  /**
+   * WARNING: use with caution
+   *
+   * Callers are responsible for value interpretation
+   */
+  val uninterpreted: Any? = wrapper?.value
 
-  val isBlankString: Boolean by lazy {
-    check(isPresent) {
-      "only read when hasValue==true"
-    }
-
-    wrapper?.value != null &&
-        wrapper.value is String &&
-        wrapper.value.isBlank()
-  }
-
-  val isEmptyCollection: Boolean by lazy {
-    emptyCollection
-  }
-
-  /** Only readable when [isPresent] */
-  val literal: Any? by lazy {
-    check(wrapper != null) {
-      "defaultValue only readable when present (check with field.defaultValue.isPresent)"
-    }
-
-    wrapper.value
-  }
+  val shouldQuote = quoteValue
 }

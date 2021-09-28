@@ -5,16 +5,8 @@ package com.wcarmon.codegen.util
 
 import com.wcarmon.codegen.model.BaseFieldType
 import com.wcarmon.codegen.model.BaseFieldType.*
-import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.LogicalFieldType
 import com.wcarmon.codegen.model.RDBMSColumnConfig
-import com.wcarmon.codegen.model.TargetLanguage.SQL_POSTGRESQL
-
-// For aligning columns
-private const val CHARS_FOR_COLUMN_NAME = 20
-private const val CHARS_FOR_COLUMN_TYPE = 12
-private const val CHARS_FOR_DEFAULT_CLAUSE = 13
-private const val CHARS_FOR_NULLABLE_CLAUSE = 9
 
 
 /**
@@ -91,60 +83,4 @@ fun getPostgresTypeLiteral(
   }
   WEEK_OF_YEAR -> TODO()
   ZONE_AGNOSTIC_DATE_TIME -> TODO()
-}
-
-
-/**
- * Builds a complete column definition (For 1 column)
- *
- * Trailing commas must be handled by the caller
- *
- * See https://www.postgresql.org/docs/current/sql-createtable.html
- *
- * @return Sub-expression, part of `CREATE TABLE` statement
- *   Something like "<field-name> <field-type> <nullability> <default value>"
- */
-fun postgresColumnDefinition(field: Field): String {
-  val parts = mutableListOf<String>()
-
-  parts += "\"${field.name.lowerSnake}\""
-    .padEnd(CHARS_FOR_COLUMN_NAME, ' ')
-
-  parts += field.effectiveTypeLiteral(SQL_POSTGRESQL)
-    .padEnd(CHARS_FOR_COLUMN_TYPE, ' ')
-
-  // -- nullable clause
-  val nullableClause =
-    if (!field.type.nullable) "NOT NULL"
-    else ""
-
-  parts += nullableClause.padEnd(CHARS_FOR_NULLABLE_CLAUSE, ' ')
-
-  // -- default clause
-  val defaultClause =
-    if (field.rdbmsConfig.overrideDefaultValue.isPresent) {
-      val effectiveBaseType = field.effectiveBaseType(SQL_POSTGRESQL)
-      val quoteType = quoteTypeForRDBMSLiteral(effectiveBaseType)
-
-      val renderedDefaultValue = quoteType.wrap(
-        field.rdbmsConfig
-          .overrideDefaultValue
-          .literal
-          .toString())
-
-      "DEFAULT $renderedDefaultValue"
-
-    } else if (field.defaultValue.isAbsent) {
-      ""
-
-    } else if (field.defaultValue.isNullLiteral) {
-      "DEFAULT NULL"
-
-    } else {
-      "DEFAULT ${rdbmsDefaultValueLiteral(field)}"
-    }
-
-  parts += defaultClause.padEnd(CHARS_FOR_DEFAULT_CLAUSE, ' ')
-
-  return parts.joinToString(" ")
 }

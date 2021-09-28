@@ -7,9 +7,9 @@
     "autoIncrement": {
       "type": "boolean"
     },
-    "overrideDefaultValue": {
-      "description": "literal for default value, wrap strings in single quotes",
-      "$ref": "default-value.schema.json"
+    "defaultValue": {
+      "$ref": "default-value.schema.json",
+      "description": "literal for default value, wrap strings in single quotes"
     },
     "overrideTypeLiteral": {
       "description": "Allows custom DB type, replaces auto-derived DB type (use Postgres types)",

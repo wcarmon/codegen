@@ -6,36 +6,69 @@
     "file:/home/wcarmon/git-repos/codegen/samples/fields/closed.field.json",
     "file:/home/wcarmon/git-repos/codegen/samples/fields/created.field.json",
     "file:/home/wcarmon/git-repos/codegen/samples/fields/name.field.json",
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/tags.field.json",
     "file:/home/wcarmon/git-repos/codegen/samples/fields/updated.field.json",
     "file:/home/wcarmon/git-repos/codegen/samples/fields/uuid.field.json"
   ],
   "fields": [
     {
-      "defaultValue": {
-        "value": null
+      "golang": {
+        "defaultValue": {
+          "value": null
+        }
+      },
+      "jvm": {
+        "defaultValue": {
+          "value": null
+        }
       },
       "name": "backgroundImage",
       "nullable": true,
       "rdbms": {
+        "defaultValue": {
+          "value": null
+        },
         "varcharLength": 1024
       },
       "type": "java.net.URI"
     },
     {
-      "defaultValue": {
-        "value": ""
+      "golang": {
+        "defaultValue": {
+          "value": ""
+        }
+      },
+      "jvm": {
+        "defaultValue": {
+          "value": ""
+        }
       },
       "name": "details",
       "rdbms": {
+        "defaultValue": {
+          "value": ""
+        },
         "varcharLength": 512
       },
       "type": "String"
     },
     {
-      "defaultValue": {
-        "value": "true"
+      "golang": {
+        "defaultValue": {
+          "value": "true"
+        }
+      },
+      "jvm": {
+        "defaultValue": {
+          "value": "true"
+        }
       },
       "name": "enableSearch",
+      "rdbms": {
+        "defaultValue": {
+          "value": "true"
+        }
+      },
       "type": "Boolean"
     },
     {
@@ -67,11 +100,21 @@
       "type": "com.wcarmon.chrono.model.ChronoHorizon"
     },
     {
-      "defaultValue": {
-        "value": ""
+      "golang": {
+        "defaultValue": {
+          "value": ""
+        }
+      },
+      "jvm": {
+        "defaultValue": {
+          "value": ""
+        }
       },
       "name": "iconCode",
       "rdbms": {
+        "defaultValue": {
+          "value": ""
+        },
         "varcharLength": 48
       },
       "type": "String"
@@ -106,11 +149,21 @@
       "type": "com.wcarmon.chrono.model.ChronoLevel"
     },
     {
-      "defaultValue": {
-        "value": ""
+      "golang": {
+        "defaultValue": {
+          "value": ""
+        }
+      },
+      "jvm": {
+        "defaultValue": {
+          "value": ""
+        }
       },
       "name": "keywords",
       "rdbms": {
+        "defaultValue": {
+          "value": ""
+        },
         "varcharLength": 192
       },
       "type": "String",
@@ -119,17 +172,29 @@
       }
     },
     {
-      "defaultValue": {
-        "value": -1
-      },
       "documentation": [
         "Non-negative.  Zero is the first pinned item",
         "Non-consecutive is ok",
         "Negative numbers indicate unpinned"
       ],
+      "golang": {
+        "defaultValue": {
+          "value": -1
+        }
+      },
+      "jvm": {
+        "defaultValue": {
+          "value": -1
+        }
+      },
       "name": "pinnedPosition",
       "nullable": false,
       "precision": 6,
+      "rdbms": {
+        "defaultValue": {
+          "value": -1
+        }
+      },
       "scale": 0,
       "type": "java.lang.Integer",
       "validation": {
@@ -138,50 +203,22 @@
     },
     {
       "golang": {
-        "overrideProtobufRepeatedItemSerde": {
-          "deserializeTemplate": "FIX--%s",
-          "serializeTemplate": "FIX--%s"
-        },
-        "overrideProtobufSerde": {
-          "deserializeTemplate": "FIX--%s",
-          "serializeTemplate": "FIX--%s"
-        },
-        "typeParameters": [
-          "ChronoTag"
-        ]
+        "defaultValue": {
+          "value": null
+        }
       },
       "jvm": {
-        "overrideProtobufRepeatedItemSerde": {
-          "deserializeTemplate": "com.wcarmon.chrono.model.ChronoTag.fromString(%s)",
-          "serializeTemplate": "%s.toString()"
-        },
-        "overrideRDBMSSerde": {
-          "deserializeTemplate": "toSet(%s, objectMapper, CHRONO_BOARD__TAGS_TYPE_REF)",
-          "serializeTemplate": "objectWriter.writeValueAsString(%s)"
-        },
-        "typeParameters": [
-          "com.wcarmon.chrono.model.ChronoTag"
-        ]
-      },
-      "name": "tags",
-      "protobuf": {
-        "overrideTypeLiteral": "string",
-        "repeated": true
-      },
-      "rdbms": {
-        "overrideDefaultValue": {
-          "value": ""
-        },
-        "varcharLength": 512
-      },
-      "type": "Set"
-    },
-    {
-      "defaultValue": {
-        "value": null
+        "defaultValue": {
+          "value": null
+        }
       },
       "name": "themeColor",
       "nullable": true,
+      "rdbms": {
+        "defaultValue": {
+          "value": null
+        }
+      },
       "type": "color"
     }
   ],
@@ -193,7 +230,7 @@
   "name": "ChronoBoard",
   "pkg": "com.wcarmon.chrono.model",
   "rdbms": {
-    "schema": "prod"
+    "schema": "test"
   },
   "updatedTimestampFieldName": "updated"
 }

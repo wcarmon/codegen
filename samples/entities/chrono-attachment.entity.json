@@ -19,7 +19,7 @@
   "name": "ChronoAttachment",
   "pkg": "com.wcarmon.chrono.model",
   "rdbms": {
-    "schema": "prod"
+    "schema": "test"
   },
   "updatedTimestampFieldName": "updated"
 }

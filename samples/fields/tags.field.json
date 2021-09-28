@@ -1,0 +1,47 @@
+{
+  "$schema": "https://wcarmon.com/schemas/codegen/field.schema.json",
+  "golang": {
+    "defaultValue": {
+      "value": []
+    },
+    "overrideProtobufRepeatedItemSerde": {
+      "deserializeTemplate": "FIX--%s",
+      "serializeTemplate": "FIX--%s"
+    },
+    "overrideProtobufSerde": {
+      "deserializeTemplate": "FIX--%s",
+      "serializeTemplate": "FIX--%s"
+    },
+    "typeParameters": [
+      "ChronoTag"
+    ]
+  },
+  "jvm": {
+    "defaultValue": {
+      "value": []
+    },
+    "overrideProtobufRepeatedItemSerde": {
+      "deserializeTemplate": "com.wcarmon.chrono.model.ChronoTag.fromString(%s)",
+      "serializeTemplate": "%s.toString()"
+    },
+    "overrideRDBMSSerde": {
+      "deserializeTemplate": "toSet(%s, objectMapper, CHRONO_BOARD__TAGS_TYPE_REF)",
+      "serializeTemplate": "objectWriter.writeValueAsString(%s)"
+    },
+    "typeParameters": [
+      "com.wcarmon.chrono.model.ChronoTag"
+    ]
+  },
+  "name": "tags",
+  "protobuf": {
+    "overrideTypeLiteral": "string",
+    "repeated": true
+  },
+  "rdbms": {
+    "defaultValue": {
+      "value": ""
+    },
+    "varcharLength": 512
+  },
+  "type": "Set"
+}

@@ -10,6 +10,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 @JsonPropertyOrder(alphabetic = true)
 data class GolangFieldConfig(
 
+  val defaultValue: DefaultValue = DefaultValue(),
+
   /**
    * Replace the auto-derived type with this literal
    */

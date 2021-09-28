@@ -390,4 +390,51 @@ enum class BaseFieldType {
   val canHavePrecision by lazy {
     requiresPrecision || this == USER_DEFINED
   }
+
+  val canAssignStringLiteral by lazy {
+    when (this) {
+      BOOLEAN,
+      CHAR,
+      FLOAT_32,
+      FLOAT_64,
+      FLOAT_BIG,
+      INT_128,
+      INT_16,
+      INT_32,
+      INT_64,
+      INT_8,
+      INT_BIG,
+      LIST,
+      MAP,
+      SET,
+      YEAR,
+      -> false
+
+      COLOR,
+      EMAIL,
+      PATH,
+      PHONE_NUMBER,
+      STRING,
+      URI,
+      URL,
+      USER_DEFINED,
+      UUID,
+      -> true
+
+      ARRAY,
+      DURATION,
+      MONTH_DAY,
+      PERIOD,
+      UTC_INSTANT,
+      UTC_TIME,
+      WEEK_OF_YEAR,
+      YEAR_MONTH,
+      ZONE_AGNOSTIC_DATE,
+      ZONE_AGNOSTIC_DATE_TIME,
+      ZONE_AGNOSTIC_TIME,
+      ZONE_OFFSET,
+      ZONED_DATE_TIME,
+      -> TODO("Decide if base type can receive string literal: $this")
+    }
+  }
 }
