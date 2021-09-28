@@ -3,8 +3,7 @@ package com.wcarmon.codegen.view
 import com.wcarmon.codegen.UPDATED_TS_FIELD_NAMES
 import com.wcarmon.codegen.ast.*
 import com.wcarmon.codegen.model.*
-import com.wcarmon.codegen.model.TargetLanguage.JAVA_08
-import com.wcarmon.codegen.model.TargetLanguage.SQL_POSTGRESQL
+import com.wcarmon.codegen.model.TargetLanguage.*
 import com.wcarmon.codegen.util.*
 
 // For aligning columns
@@ -12,6 +11,7 @@ private const val CHARS_FOR_COLUMN_NAME = 20
 private const val CHARS_FOR_COLUMN_TYPE = 12
 private const val CHARS_FOR_DEFAULT_CLAUSE = 13
 private const val CHARS_FOR_NULLABLE_CLAUSE = 10
+
 
 /**
  * RDBMS related convenience methods for a [Field]
@@ -33,11 +33,6 @@ class RDBMSColumnView(
         UPDATED_TS_FIELD_NAMES.any {
           field.name.lowerCamel.equals(it, true)
         }
-
-  /**
-   * Works directly on SQLite (without using their affinity conversion layer)
-   */
-  val sqliteColumnDefinition = sqliteColumnDefinition(field)
 
   /**
    * Build & Render [PreparedStatement] setters for updating 1 field
@@ -81,7 +76,8 @@ class RDBMSColumnView(
         columnIndex = currentColumnIndex,
         fieldReadExpression = wrappedFieldRead,
         setterMethod = defaultPreparedStatementSetterMethod(
-          fieldForUpdateTimestamp.effectiveBaseType(JAVA_08)),
+          fieldForUpdateTimestamp.effectiveBaseType(JAVA_08)
+        ),
         preparedStatementIdentifierExpression = psConfig.preparedStatementIdentifierExpression,
         // TODO: termination
       )
@@ -102,10 +98,10 @@ class RDBMSColumnView(
         it.render(
           renderConfig
             .copy(targetLanguage = targetLanguage)
-            .terminated)
+            .terminated
+        )
       }
   }
-
 
   /**
    * Works on PostgreSQL, H2, Maria, MySQL, DB2
@@ -121,12 +117,28 @@ class RDBMSColumnView(
    *   Something like "<field-name> <field-type> <nullability> <default value>"
    */
   val postgresqlColumnDefinition: String by lazy {
+    buildColumnDefinition(SQL_POSTGRESQL)
+  }
+
+  /**
+   * Works directly on SQLite (without using their affinity conversion layer)
+   *
+   * See https://www.sqlite.org/lang_createtable.html
+   * See https://www.sqlite.org/lang_createtable.html#tablecoldef
+   */
+  val sqliteColumnDefinition: String by lazy {
+    buildColumnDefinition(SQL_SQLITE)
+  }
+
+  private fun buildColumnDefinition(dbLanguage: TargetLanguage): String {
+    check(dbLanguage.isSQL)
+
     val parts = mutableListOf<String>()
 
     parts += "\"${field.name.lowerSnake}\""
       .padEnd(CHARS_FOR_COLUMN_NAME, ' ')
 
-    parts += field.effectiveTypeLiteral(SQL_POSTGRESQL)
+    parts += field.effectiveTypeLiteral(dbLanguage)
       .padEnd(CHARS_FOR_COLUMN_TYPE, ' ')
 
     // -- nullable clause
@@ -140,6 +152,6 @@ class RDBMSColumnView(
     val defaultClause = DefaultValueExpression(field).render(renderConfig)
     parts += defaultClause.padEnd(CHARS_FOR_DEFAULT_CLAUSE, ' ')
 
-    parts.joinToString(" ")
+    return parts.joinToString(" ")
   }
 }

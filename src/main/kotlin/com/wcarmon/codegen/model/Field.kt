@@ -129,7 +129,8 @@ data class Field(
         } catch (ex: Exception) {
           throw RuntimeException(
             "Failed to build LogicalFieldType for field.name=${name.lowerCamel}",
-            ex)
+            ex
+          )
         }
 
       return Field(
@@ -235,7 +236,8 @@ data class Field(
   val jvmView by lazy {
     JVMFieldView(
       field = this,
-      debugMode = DEBUG_MODE)
+      debugMode = DEBUG_MODE
+    )
   }
 
   fun effectiveBaseType(targetLanguage: TargetLanguage): BaseFieldType =
@@ -342,10 +344,14 @@ data class Field(
     PROTO_BUF_3 -> protobufConfig.typeLiteral(type)
 
     SQL_POSTGRESQL -> rdbmsConfig.overrideTypeLiteral ?: getPostgresTypeLiteral(
-      effectiveBaseType = effectiveBaseType(SQL_POSTGRESQL),
+      effectiveBaseType = effectiveBaseType(targetLanguage),
       errorLoggingInfo = "field=$this",
       logicalFieldType = type,
       rdbmsConfig = rdbmsConfig,
+    )
+
+    SQL_SQLITE -> rdbmsConfig.overrideTypeLiteral ?: getSQLiteTypeLiteral(
+      type,
     )
 
     else -> TODO("get typeLiteral: targetLanguage=$targetLanguage, field=$this")

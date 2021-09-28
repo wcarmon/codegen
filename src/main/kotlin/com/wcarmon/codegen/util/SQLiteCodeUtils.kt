@@ -3,15 +3,8 @@
 package com.wcarmon.codegen.util
 
 import com.wcarmon.codegen.model.BaseFieldType.*
-import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.LogicalFieldType
 
-
-// For aligning columns
-private const val CHARS_FOR_COLUMN_NAME = 20
-private const val CHARS_FOR_COLUMN_TYPE = 7
-private const val CHARS_FOR_DEFAULT_CLAUSE = 13
-private const val CHARS_FOR_NULLABLE_CLAUSE = 9
 
 /**
  * See https://www.sqlite.org/datatype3.html
@@ -45,36 +38,3 @@ fun getSQLiteTypeLiteral(type: LogicalFieldType) =
 
     else -> "TEXT"
   }
-
-
-/**
- * See https://www.sqlite.org/lang_createtable.html
- * See https://www.sqlite.org/lang_createtable.html#tablecoldef
- */
-fun sqliteColumnDefinition(field: Field): String {
-  val parts = mutableListOf<String>()
-
-  parts += "\"${field.name.lowerSnake}\""
-    .padEnd(CHARS_FOR_COLUMN_NAME, ' ')
-
-  parts += getSQLiteTypeLiteral(field.type)
-    .padEnd(CHARS_FOR_COLUMN_TYPE, ' ')
-
-  // -- nullable clause
-  val nullableClause =
-    if (!field.type.nullable) "NOT NULL"
-    else ""
-
-  parts += nullableClause.padEnd(CHARS_FOR_NULLABLE_CLAUSE, ' ')
-
-  // -- default clause
-  //TODO: move to DefaultValueExpression
-  val defaultClause = "TODO: fix-the-default-for sqlite"
-//    if (field.defaultValue.isAbsent) ""
-//    else if (field.defaultValue.isNullLiteral) "DEFAULT NULL"
-//    else "DEFAULT ${rdbmsDefaultValueLiteral(field)}"
-
-  parts += defaultClause.padEnd(CHARS_FOR_DEFAULT_CLAUSE, ' ')
-
-  return parts.joinToString(" ")
-}
