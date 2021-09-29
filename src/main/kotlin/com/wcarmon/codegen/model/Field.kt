@@ -61,8 +61,9 @@ data class Field(
 
   // -- Technology specific config
   private val golangConfig: GolangFieldConfig = GolangFieldConfig(),
-  private val jvmConfig: JVMFieldConfig = JVMFieldConfig(),
   private val protobufConfig: ProtobufFieldConfig = ProtobufFieldConfig(),
+  //used by tests
+  internal val jvmConfig: JVMFieldConfig = JVMFieldConfig(),
 
   //TODO: mark private
   val rdbmsConfig: RDBMSColumnConfig = RDBMSColumnConfig(),
@@ -81,30 +82,29 @@ data class Field(
     @JvmStatic
     @JsonCreator
     fun parse(
-      @JsonProperty("canLog") canLog: Boolean?,
-      @JsonProperty("canUpdate") canUpdate: Boolean?,
-      @JsonProperty("documentation") documentation: Iterable<String>?,
-      @JsonProperty("enumType") enumType: Boolean?,
-      @JsonProperty("golang") golangConfig: GolangFieldConfig?,
-      @JsonProperty("jvm") jvmFieldConfig: JVMFieldConfig?,
+      @JsonProperty("canLog") canLog: Boolean = true,
+      @JsonProperty("canUpdate") canUpdate: Boolean = true,
+      @JsonProperty("documentation") documentation: Iterable<String> = listOf(),
+      @JsonProperty("enumType") enumType: Boolean = false,
+      @JsonProperty("golang") golangConfig: GolangFieldConfig = GolangFieldConfig(),
+      @JsonProperty("jvm") jvmFieldConfig: JVMFieldConfig = JVMFieldConfig(),
       @JsonProperty("name") name: Name,
-      @JsonProperty("nullable") nullable: Boolean?,
-      @JsonProperty("positionInId") positionInId: Int?,
+      @JsonProperty("nullable") nullable: Boolean = false,
+      @JsonProperty("positionInId") positionInId: Int? = null,
       @JsonProperty("precision") precision: Int?,
-      @JsonProperty("protobuf") protobufConfig: ProtobufFieldConfig?,
-      @JsonProperty("rdbms") rdbmsConfig: RDBMSColumnConfig?,
-      @JsonProperty("scale") scale: Int?,
-      @JsonProperty("signed") signed: Boolean?,
-      @JsonProperty("type") typeLiteral: String?,
-      @JsonProperty("validation") validationConfig: FieldValidation?,
+      @JsonProperty("protobuf") protobufConfig: ProtobufFieldConfig = ProtobufFieldConfig(),
+      @JsonProperty("rdbms") rdbmsConfig: RDBMSColumnConfig = RDBMSColumnConfig(),
+      @JsonProperty("scale") scale: Int = 0,
+      @JsonProperty("signed") signed: Boolean = true,
+      @JsonProperty("type") typeLiteral: String = "",
+      @JsonProperty("validation") validationConfig: FieldValidation = FieldValidation(),
     ): Field {
 
       // -- validate typeLiteral
-      require(typeLiteral?.isNotBlank() ?: false) {
+      require(typeLiteral.isNotBlank()) {
         "Field.type is required: name=${name.lowerCamel}"
       }
 
-      typeLiteral!!
       val r = Regex("""^[^<>\[\]]+$""")
       require(typeLiteral.matches(r)) {
         "Field.type cannot have generics (parametric polymorphism), " +
@@ -118,12 +118,12 @@ data class Field(
         try {
           LogicalFieldType(
             base = BaseFieldType.parse(typeLiteral),
-            enumType = enumType ?: false,
-            nullable = nullable ?: false,
+            enumType = enumType,
+            nullable = nullable,
             rawPrecision = precision,
             rawTypeLiteral = typeLiteral,
-            scale = scale ?: 0,
-            signed = signed ?: true,
+            scale = scale,
+            signed = signed,
           )
 
         } catch (ex: Exception) {
@@ -134,17 +134,17 @@ data class Field(
         }
 
       return Field(
-        canLog = canLog ?: true,
-        canUpdate = canUpdate ?: true,
-        documentation = documentation?.toList() ?: listOf(),
-        golangConfig = golangConfig ?: GolangFieldConfig(),
-        jvmConfig = jvmFieldConfig ?: JVMFieldConfig(),
+        canLog = canLog,
+        canUpdate = canUpdate,
+        documentation = documentation.toList(),
+        golangConfig = golangConfig,
+        jvmConfig = jvmFieldConfig,
         name = name,
         positionInId = positionInId,
-        protobufConfig = protobufConfig ?: ProtobufFieldConfig(),
-        rdbmsConfig = rdbmsConfig ?: RDBMSColumnConfig(),
+        protobufConfig = protobufConfig,
+        rdbmsConfig = rdbmsConfig,
         type = logicalType,
-        validationConfig = validationConfig ?: FieldValidation(),
+        validationConfig = validationConfig,
       )
     }
   }

@@ -1,15 +1,15 @@
 package com.wcarmon.codegen.model
 
 import com.fasterxml.jackson.annotation.JsonCreator
+import com.wcarmon.codegen.model.DefaultValue.Mode.*
 
 
 /**
  *  See Unit tests for more examples [DefaultValueTest]
  */
 data class DefaultValue(
-  private val emptyCollection: Boolean = false,
-  private val presentAndNull: Boolean = false,
-  private val quoteValue: Boolean = true,
+  private val mode: Mode = ABSENT,
+
   private val wrapper: ValueWrapper? = null,
 ) {
 
@@ -18,13 +18,14 @@ data class DefaultValue(
     val value: Any?,
   )
 
-  companion object {
+  enum class Mode {
+    ABSENT,
+    PRESENT__EMPTY_COLLECTION,
+    PRESENT__NULL_LITERAL,
+    PRESENT__OTHER,
+  }
 
-    private val DEFAULT_NOT_PRESENT = DefaultValue(
-      presentAndNull = false,
-      quoteValue = false,
-      wrapper = null,
-    )
+  companion object {
 
     private const val PROPERTY_NAME_FOR_QUOTING = "quoteValue"
     private const val PROPERTY_NAME_FOR_VALUE = "value"
@@ -33,7 +34,10 @@ data class DefaultValue(
     @JvmStatic
     fun build(raw: Any?): DefaultValue {
       if (raw == null) {
-        return DEFAULT_NOT_PRESENT
+        return DefaultValue(
+          mode = ABSENT,
+          wrapper = null,
+        )
       }
 
       check(raw is Map<*, *>) {
@@ -42,56 +46,91 @@ data class DefaultValue(
       }
 
       val jsonObj: Map<*, *> = raw
+
+      val quoteValue = jsonObj[PROPERTY_NAME_FOR_QUOTING] as? Boolean ?: true
+
       if (jsonObj.isEmpty()) {
-        return DEFAULT_NOT_PRESENT
+        return DefaultValue(
+          mode = ABSENT,
+          wrapper = null,
+        )
       }
 
-      //Invariant: default value present
+      if (!jsonObj.containsKey(PROPERTY_NAME_FOR_VALUE)) {
+        return DefaultValue(
+          mode = ABSENT,
+          wrapper = null,
+        )
+      }
+
+      // Invariant: default value present
 
       val theDefault: Any? = jsonObj[PROPERTY_NAME_FOR_VALUE]
 
-      val quoteForStringField = jsonObj[PROPERTY_NAME_FOR_QUOTING] as? Boolean ?: true
+      val emptyCollection =
+        !quoteValue && theDefault is Collection<*> && theDefault.isEmpty() ||
+            !quoteValue && theDefault is Map<*, *> && theDefault.isEmpty()
 
-      val wrapper =
-        if (theDefault is List<*>) {
-          check(theDefault.isEmpty())
-          ValueWrapper(null)
 
+      val presentAndNull =
+        if (quoteValue) {
+          theDefault == null
         } else {
-          ValueWrapper(theDefault)
+          theDefault == null ||
+              setOf("null", "nil").contains(theDefault.toString().lowercase())
         }
 
+      val mode =
+        if (presentAndNull) {
+          PRESENT__NULL_LITERAL
+
+        } else if (emptyCollection) {
+          PRESENT__EMPTY_COLLECTION
+
+        } else {
+          PRESENT__OTHER
+        }
+
+      val wrapper = when (mode) {
+        ABSENT -> null
+
+        PRESENT__EMPTY_COLLECTION,
+        PRESENT__NULL_LITERAL,
+        -> ValueWrapper(null)
+
+        PRESENT__OTHER -> ValueWrapper(
+          if (quoteValue) {
+            "$theDefault"
+          } else {
+            theDefault
+          }
+        )
+      }
+
+      if (quoteValue == false && theDefault is CharSequence) {
+        //TODO: log.warn
+        println("Case is illogical: quoteValue==false and default is a string: '${theDefault}'")
+      }
+
       return DefaultValue(
-        emptyCollection = theDefault is List<*>,
-        presentAndNull = theDefault == null,
-        quoteValue = quoteForStringField,
+        mode = mode,
         wrapper = wrapper,
       )
     }
   }
 
   /** isPresent, isNotAbsent, wasSetByUser, isProvided, hasDefault, hasValue */
-  val isPresent: Boolean = wrapper != null
+  val isPresent: Boolean = mode != ABSENT
 
-  val isAbsent: Boolean = wrapper == null
+  val isAbsent: Boolean = mode == ABSENT
 
-  fun isEmptyCollection(): Boolean = emptyCollection
+  fun isEmptyCollection(): Boolean = mode == PRESENT__EMPTY_COLLECTION
 
   /**
    * Only readable when [isPresent]
    * User wants an explicit default to null/nil/NULL
    */
-  fun isNullLiteral(): Boolean {
-    check(isPresent) {
-      "Only read when isPresent"
-    }
-
-    //TODO: quoting matters here
-    return wrapper != null
-        && wrapper.value == null
-        && !emptyCollection
-  }
-
+  fun isNullLiteral(): Boolean = mode == PRESENT__NULL_LITERAL
 
   /**
    * WARNING: use with caution
@@ -100,5 +139,5 @@ data class DefaultValue(
    */
   val uninterpreted: Any? = wrapper?.value
 
-  val shouldQuote = quoteValue
+  val shouldQuote: Boolean = wrapper?.value is CharSequence
 }

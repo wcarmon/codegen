@@ -12,10 +12,18 @@ class JSONBeans {
 
   @Bean
   fun objectMapper() = ObjectMapper()
+    .configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, false)
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
     .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
     .registerModule(JavaTimeModule())
-    .registerModule(KotlinModule())
+    .registerModule(
+      KotlinModule(
+        nullToEmptyCollection = true,
+        nullToEmptyMap = true,
+        // use my default values when null in json
+        nullIsSameAsDefault = true,
+      )
+    )
     .setSerializationInclusion(JsonInclude.Include.NON_NULL)!!
 
   @Bean
