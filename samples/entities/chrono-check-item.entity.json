@@ -1,0 +1,42 @@
+{
+  "$schema": "https://wcarmon.com/schemas/codegen/entity.schema.json",
+  "createdTimestampFieldName": "created",
+  "fieldUris": [
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/closed.field.json",
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/created.field.json",
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/deadline.field.json",
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/name.field.json",
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/position-in-list.field.json",
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/updated.field.json",
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/uuid.field.json"
+  ],
+  "fields": [
+    {
+      "golang": {
+        "overrideTypeLiteral": "string"
+      },
+      "jvm": {
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
+          "serializeTemplate": "%s.toString()"
+        },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
+          "serializeTemplate": "%s.toString()"
+        }
+      },
+      "name": "checklistUuid",
+      "protobuf": {
+        "overrideTypeLiteral": "string"
+      },
+      "rdbms": {
+        "varcharLength": 36
+      },
+      "type": "com.wcarmon.ub.model.UBUuid"
+    }
+  ],
+  "indexes": [],
+  "name": "ChronoCheckItem",
+  "pkg": "com.wcarmon.chrono.model",
+  "updatedTimestampFieldName": "updated"
+}

@@ -8,32 +8,14 @@
   "fieldUris": [
     "file:/home/wcarmon/git-repos/codegen/samples/fields/closed.field.json",
     "file:/home/wcarmon/git-repos/codegen/samples/fields/created.field.json",
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/deadline.field.json",
     "file:/home/wcarmon/git-repos/codegen/samples/fields/name.field.json",
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/position-in-list.field.json",
     "file:/home/wcarmon/git-repos/codegen/samples/fields/tags.field.json",
     "file:/home/wcarmon/git-repos/codegen/samples/fields/updated.field.json",
     "file:/home/wcarmon/git-repos/codegen/samples/fields/uuid.field.json"
   ],
   "fields": [
-    {
-      "golang": {
-        "defaultValue": {
-          "value": null
-        }
-      },
-      "jvm": {
-        "defaultValue": {
-          "value": null
-        }
-      },
-      "name": "deadline",
-      "nullable": true,
-      "rdbms": {
-        "defaultValue": {
-          "value": null
-        }
-      },
-      "type": "Instant"
-    },
     {
       "golang": {
         "defaultValue": {
@@ -93,26 +75,6 @@
         }
       },
       "type": "Duration"
-    },
-    {
-      "golang": {
-        "defaultValue": {
-          "value": 0
-        }
-      },
-      "jvm": {
-        "defaultValue": {
-          "value": 0
-        }
-      },
-      "name": "positionInList",
-      "nullable": false,
-      "rdbms": {
-        "defaultValue": {
-          "value": 0
-        }
-      },
-      "type": "int32"
     },
     {
       "golang": {

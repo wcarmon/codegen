@@ -2,6 +2,7 @@ package com.wcarmon.codegen.model
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.wcarmon.codegen.model.DefaultValue.Mode.*
+import org.apache.logging.log4j.LogManager
 
 
 /**
@@ -10,6 +11,7 @@ import com.wcarmon.codegen.model.DefaultValue.Mode.*
 data class DefaultValue(
   private val mode: Mode = ABSENT,
 
+  private val allowQuoting: Boolean = true,
   private val wrapper: ValueWrapper? = null,
 ) {
 
@@ -27,9 +29,13 @@ data class DefaultValue(
 
   companion object {
 
-    private const val PROPERTY_NAME_FOR_QUOTING = "quoteValue"
-    private const val PROPERTY_NAME_FOR_VALUE = "value"
+    private const val QUOTING_PROPERTY_NAME = "quoteValue"
+    private const val VALUE_PROPERTY_NAME = "value"
 
+    @JvmStatic
+    private val LOG = LogManager.getLogger(DefaultValue::class.java)
+
+    //TODO: attempt to simplify this
     @JsonCreator
     @JvmStatic
     fun build(raw: Any?): DefaultValue {
@@ -45,43 +51,46 @@ data class DefaultValue(
             "See DefaultValue documentation: value=$raw"
       }
 
-      val jsonObj: Map<*, *> = raw
+      val defaultValueJsonObject: Map<*, *> = raw
 
-      val quoteValue = jsonObj[PROPERTY_NAME_FOR_QUOTING] as? Boolean ?: true
-
-      if (jsonObj.isEmpty()) {
+      if (defaultValueJsonObject.isEmpty()) {
         return DefaultValue(
           mode = ABSENT,
           wrapper = null,
         )
       }
 
-      if (!jsonObj.containsKey(PROPERTY_NAME_FOR_VALUE)) {
+      if (!defaultValueJsonObject.containsKey(VALUE_PROPERTY_NAME)) {
         return DefaultValue(
           mode = ABSENT,
           wrapper = null,
         )
       }
 
-      // Invariant: default value present
+      // Invariant: value present
 
-      val theDefault: Any? = jsonObj[PROPERTY_NAME_FOR_VALUE]
+      val theDefault: Any? = defaultValueJsonObject[VALUE_PROPERTY_NAME]
+
+      // For null/nil we require an explicit quoteValue==false
+      val nullLiteral =
+        if (defaultValueJsonObject[QUOTING_PROPERTY_NAME] as? Boolean ?: true) {
+          theDefault == null
+
+        } else {
+          // When quoteValue==false, we treat some strings as null
+          theDefault == null ||
+              setOf("null", "nil")
+                .contains(theDefault.toString().lowercase())
+        }
+
+      val quoteValue = defaultValueJsonObject[QUOTING_PROPERTY_NAME] as? Boolean ?: false
 
       val emptyCollection =
         !quoteValue && theDefault is Collection<*> && theDefault.isEmpty() ||
             !quoteValue && theDefault is Map<*, *> && theDefault.isEmpty()
 
-
-      val presentAndNull =
-        if (quoteValue) {
-          theDefault == null
-        } else {
-          theDefault == null ||
-              setOf("null", "nil").contains(theDefault.toString().lowercase())
-        }
-
       val mode =
-        if (presentAndNull) {
+        if (nullLiteral) {
           PRESENT__NULL_LITERAL
 
         } else if (emptyCollection) {
@@ -101,22 +110,53 @@ data class DefaultValue(
         PRESENT__OTHER -> ValueWrapper(
           if (quoteValue) {
             "$theDefault"
+
           } else {
+            if (theDefault == "true" || theDefault == "false") {
+              val debugContext = mapOf<String, Any?>(
+                "mode" to mode,
+                "quoteValue" to quoteValue,
+                "raw" to raw,
+                "theDefault" to theDefault,
+                "theDefault::class" to (theDefault.javaClass.name ?: "<null>"),
+              )
+
+              LOG.warn("JSON config error: unnecessary quotes on boolean: context=$debugContext")
+            }
+
+            //TODO: warn about unnecessary quotes on numbers
+
             theDefault
           }
         )
       }
 
-      if (quoteValue == false && theDefault is CharSequence) {
-        //TODO: log.warn
-        println("Case is illogical: quoteValue==false and default is a string: '${theDefault}'")
+      val allowQuoting =
+        defaultValueJsonObject[QUOTING_PROPERTY_NAME] as? Boolean ?: true
+
+      if (!allowQuoting
+        && mode == PRESENT__OTHER
+        && isBlankCharSequence(theDefault)
+      ) {
+        val debugContext = mapOf<String, Any?>(
+          "mode" to mode,
+          "quoteValue" to quoteValue,
+          "raw" to raw,
+          "theDefault" to theDefault,
+          "theDefault::class" to (theDefault?.javaClass?.name ?: "<null>"),
+        )
+
+        LOG.warn("JSON config error: blank strings must be quoted: context=$debugContext")
       }
 
       return DefaultValue(
+        allowQuoting = allowQuoting || isBlankCharSequence(theDefault),
         mode = mode,
         wrapper = wrapper,
       )
     }
+
+    private fun isBlankCharSequence(o: Any?): Boolean = o is CharSequence && o.isBlank()
   }
 
   /** isPresent, isNotAbsent, wasSetByUser, isProvided, hasDefault, hasValue */
@@ -139,5 +179,5 @@ data class DefaultValue(
    */
   val uninterpreted: Any? = wrapper?.value
 
-  val shouldQuote: Boolean = wrapper?.value is CharSequence
+  val shouldQuote: Boolean = wrapper?.value is CharSequence && allowQuoting
 }

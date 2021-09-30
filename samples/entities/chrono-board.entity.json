@@ -55,18 +55,18 @@
     {
       "golang": {
         "defaultValue": {
-          "value": "true"
+          "value": true
         }
       },
       "jvm": {
         "defaultValue": {
-          "value": "true"
+          "value": true
         }
       },
       "name": "enableSearch",
       "rdbms": {
         "defaultValue": {
-          "value": "true"
+          "value": true
         }
       },
       "type": "Boolean"

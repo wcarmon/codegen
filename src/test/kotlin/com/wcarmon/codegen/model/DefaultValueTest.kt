@@ -26,9 +26,13 @@ internal class DefaultValueTest {
 
       check(
         testCase.expectedUninterpetedValue is String ==
-        parsed.jvmConfig.defaultValue.uninterpreted is String,
+            parsed.jvmConfig.defaultValue.uninterpreted is String,
       ) {
-        "Failed: wrong type on uninterpreted: $testCase"
+        "Failed: wrong type on uninterpreted: $testCase" +
+            "\ntestCase.expectedUninterpetedValue: " +
+            (testCase.expectedUninterpetedValue?.javaClass?.name ?: "<null>") +
+            "\nparsed.jvmConfig.defaultValue.uninterpreted: " +
+            (parsed.jvmConfig.defaultValue.uninterpreted?.javaClass?.name ?: "<null>")
       }
 
       // -- Assert

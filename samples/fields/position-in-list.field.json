@@ -2,19 +2,20 @@
   "$schema": "https://wcarmon.com/schemas/codegen/field.schema.json",
   "golang": {
     "defaultValue": {
-      "value": false
+      "value": 0
     }
   },
   "jvm": {
     "defaultValue": {
-      "value": false
+      "value": 0
     }
   },
-  "name": "closed",
+  "name": "positionInList",
+  "nullable": false,
   "rdbms": {
     "defaultValue": {
-      "value": false
+      "value": 0
     }
   },
-  "type": "Boolean"
+  "type": "int32"
 }

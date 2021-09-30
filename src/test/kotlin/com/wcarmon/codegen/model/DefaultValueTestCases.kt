@@ -15,76 +15,86 @@ internal data class TC(
 
 internal val TEST_CASES_FOR_DEFAULT_VALUE = listOf(
 
-//  // ---------------------------------------------------
-//  // -- Assume Absent, no default
-//  TC(
-//    jvmConfigJSON = """{ }""",
-//    expectedUninterpetedValue = null,
-//    expectEmptyCollection = false,
-//    expectIsNullLiteral = false,
-//    expectPresent = false,
-//  expectShouldQuote = false,
-//  ),
-//  TC(
-//    jvmConfigJSON = """{"defaultValue": null}""",
-//    expectedUninterpetedValue = null,
-//    expectEmptyCollection = false,
-//    expectIsNullLiteral = false,
-//    expectPresent = false,
-  //  expectShouldQuote = false,
-//  ),
-//  TC(
-//    jvmConfigJSON = """{ "defaultValue": {"quoteValue": false} }""",
-//    expectedUninterpetedValue = null,
-//    expectEmptyCollection = false,
-//    expectIsNullLiteral = false,
-//    expectPresent = false,
-//    expectShouldQuote = false,
-//  ),
-//  TC(
-//    jvmConfigJSON = """{ "defaultValue": {"quoteValue": true} }""",
-//    expectedUninterpetedValue = null,
-//    expectEmptyCollection = false,
-//    expectIsNullLiteral = false,
-//    expectPresent = false,
-//    expectShouldQuote = false,
-//  ),
-//  TC(
-//    jvmConfigJSON = """{ "defaultValue": {} }""",
-//    expectedUninterpetedValue = null,
-//    expectEmptyCollection = false,
-//    expectIsNullLiteral = false,
-//    expectPresent = false,
-//    expectShouldQuote = false,
-//  ),
-//
-//
-//  // ---------------------------------------------------
-//  // -- Assume Present, Assume: null/nil/NULL literal
-//  TC(
-//    jvmConfigJSON = """{ "defaultValue": {"value": "null", "quoteValue": false} }""",
-//    expectedUninterpetedValue = null,
-//    expectEmptyCollection = false,
-//    expectIsNullLiteral = true,
-//    expectPresent = true,
-//    expectShouldQuote = false,
-//  ),
-//  TC(
-//    jvmConfigJSON = """{ "defaultValue": {"value": null, "quoteValue": false} }""",
-//    expectedUninterpetedValue = null,
-//    expectEmptyCollection = false,
-//    expectIsNullLiteral = true,
-//    expectPresent = true,
-//    expectShouldQuote = false,
-//  ),
-//  TC(
-//    jvmConfigJSON = """{ "defaultValue": {"value": null} }""",
-//    expectedUninterpetedValue = null,
-//    expectEmptyCollection = false,
-//    expectIsNullLiteral = true,
-//    expectPresent = true,
-//    expectShouldQuote = false,
-//  ),
+  // ---------------------------------------------------
+  // -- Assume Absent, no default
+  TC(
+    jvmConfigJSON = """{ }""",
+    expectedUninterpetedValue = null,
+    expectEmptyCollection = false,
+    expectIsNullLiteral = false,
+    expectPresent = false,
+    expectShouldQuote = false,
+  ),
+  TC(
+    jvmConfigJSON = """{"defaultValue": null}""",
+    expectedUninterpetedValue = null,
+    expectEmptyCollection = false,
+    expectIsNullLiteral = false,
+    expectPresent = false,
+    expectShouldQuote = false,
+  ),
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"quoteValue": false} }""",
+    expectedUninterpetedValue = null,
+    expectEmptyCollection = false,
+    expectIsNullLiteral = false,
+    expectPresent = false,
+    expectShouldQuote = false,
+  ),
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"quoteValue": true} }""",
+    expectedUninterpetedValue = null,
+    expectEmptyCollection = false,
+    expectIsNullLiteral = false,
+    expectPresent = false,
+    expectShouldQuote = false,
+  ),
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {} }""",
+    expectedUninterpetedValue = null,
+    expectEmptyCollection = false,
+    expectIsNullLiteral = false,
+    expectPresent = false,
+    expectShouldQuote = false,
+  ),
+
+
+  // ---------------------------------------------------
+  // -- Assume Present, Assume: null/nil/NULL literal
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"value": "null", "quoteValue": false} }""",
+    expectedUninterpetedValue = null,
+    expectEmptyCollection = false,
+    expectIsNullLiteral = true,
+    expectPresent = true,
+    expectShouldQuote = false,
+  ),
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"value": null, "quoteValue": false} }""",
+    expectedUninterpetedValue = null,
+    expectEmptyCollection = false,
+    expectIsNullLiteral = true,
+    expectPresent = true,
+    expectShouldQuote = false,
+  ),
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"value": null} }""",
+    expectedUninterpetedValue = null,
+    expectEmptyCollection = false,
+    expectIsNullLiteral = true,
+    expectPresent = true,
+    expectShouldQuote = false,
+  ),
+  // -=-=-
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"value": "NULL", "quoteValue": false} }""",
+    expectedUninterpetedValue = null,
+    expectEmptyCollection = false,
+    expectIsNullLiteral = true,
+    expectPresent = true,
+    expectShouldQuote = false,
+  ),
+  // -=-=-
   TC(
     jvmConfigJSON = """{ "defaultValue": {"value": "nil", "quoteValue": false} }""",
     expectedUninterpetedValue = null,
@@ -94,40 +104,40 @@ internal val TEST_CASES_FOR_DEFAULT_VALUE = listOf(
     expectShouldQuote = false,
   ),
 
-//  // ---------------------------------------------------
-//  // -- Assume Present: empty collection
-//  TC(
-//    jvmConfigJSON = """{ "defaultValue": {"value": []} }""",
-//    expectedUninterpetedValue = null,
-//    expectEmptyCollection = true,
-//    expectIsNullLiteral = false,
-//    expectPresent = true,
-//    expectShouldQuote = false,
-//  ),
-//  TC(
-//    jvmConfigJSON = """{ "defaultValue": {"value": [], "quoteValue": false} }""",
-//    expectedUninterpetedValue = null,
-//    expectEmptyCollection = true,
-//    expectIsNullLiteral = false,
-//    expectPresent = true,
-//    expectShouldQuote = false,
-//  ),
-//  TC(
-//    jvmConfigJSON = """{ "defaultValue": {"value": {}} }""",
-//    expectedUninterpetedValue = null,
-//    expectEmptyCollection = true,
-//    expectIsNullLiteral = false,
-//    expectPresent = true,
-//    expectShouldQuote = false,
-//  ),
-//  TC(
-//    jvmConfigJSON = """{ "defaultValue": {"value": {}, "quoteValue": false} }""",
-//    expectedUninterpetedValue = null,
-//    expectEmptyCollection = true,
-//    expectIsNullLiteral = false,
-//    expectPresent = true,
-//    expectShouldQuote = false,
-//  ),
+  // ---------------------------------------------------
+  // -- Assume Present: empty collection
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"value": []} }""",
+    expectedUninterpetedValue = null,
+    expectEmptyCollection = true,
+    expectIsNullLiteral = false,
+    expectPresent = true,
+    expectShouldQuote = false,
+  ),
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"value": [], "quoteValue": false} }""",
+    expectedUninterpetedValue = null,
+    expectEmptyCollection = true,
+    expectIsNullLiteral = false,
+    expectPresent = true,
+    expectShouldQuote = false,
+  ),
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"value": {}} }""",
+    expectedUninterpetedValue = null,
+    expectEmptyCollection = true,
+    expectIsNullLiteral = false,
+    expectPresent = true,
+    expectShouldQuote = false,
+  ),
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"value": {}, "quoteValue": false} }""",
+    expectedUninterpetedValue = null,
+    expectEmptyCollection = true,
+    expectIsNullLiteral = false,
+    expectPresent = true,
+    expectShouldQuote = false,
+  ),
 
 
   // ---------------------------------------------------
@@ -232,6 +242,31 @@ internal val TEST_CASES_FOR_DEFAULT_VALUE = listOf(
     expectPresent = true,
     expectShouldQuote = true,
   ),
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"value": "nil"}}""",
+    expectedUninterpetedValue = "nil",
+    expectEmptyCollection = false,
+    expectIsNullLiteral = false,
+    expectPresent = true,
+    expectShouldQuote = true,
+  ),
+  // -=-=-
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"value": "NULL", "quoteValue": true}}""",
+    expectedUninterpetedValue = "NULL",
+    expectEmptyCollection = false,
+    expectIsNullLiteral = false,
+    expectPresent = true,
+    expectShouldQuote = true,
+  ),
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"value": "NULL"}}""",
+    expectedUninterpetedValue = "NULL",
+    expectEmptyCollection = false,
+    expectIsNullLiteral = false,
+    expectPresent = true,
+    expectShouldQuote = true,
+  ),
   // -=-=-
   TC(
     jvmConfigJSON = """{ "defaultValue": {"value": "\"\"", "quoteValue": true} }""",
@@ -249,20 +284,189 @@ internal val TEST_CASES_FOR_DEFAULT_VALUE = listOf(
     expectPresent = true,
     expectShouldQuote = true,
   ),
-
-  //TODO: add quoteValue permutations
-//    D("""{ "defaultValue": {"value": "7"} }""", true, "7"),
-//    D("""{ "defaultValue": {"value": "\"\""} }""", true, "\"\""),
-//    D("""{ "defaultValue": {"value": "\"null\""} }""", true, "\"null\""),
-//    D("""{ "defaultValue": {"value": "false"} }""", true, "false"),
-//    D("""{ "defaultValue": {"value": "foo"} }""", true, "foo"),
-//    D("""{ "defaultValue": {"value": "nil"} }""", true, "nil"),
-//    D("""{ "defaultValue": {"value": "NULL"} }""", true, "NULL"),
-//    D("""{ "defaultValue": {"value": "true"} }""", true, "true"),
-//    D("""{ "defaultValue": {"value": 3.1} }""", true, 3.1),
-//    D("""{ "defaultValue": {"value": 7} }""", true, 7),
-//    D("""{ "defaultValue": {"value": false} }""", true, false),
-//  TC("""{ "defaultValue": {"value": null, "quoteValue": true} }""", true, "null"),
-//  TC("""{ "defaultValue": {"value": true} }""", true, true),
-//
+  // -=-=-
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"value": "\"null\""} }""",
+    expectedUninterpetedValue = "\"null\"",
+    expectEmptyCollection = false,
+    expectIsNullLiteral = false,
+    expectPresent = true,
+    expectShouldQuote = true,
+  ),
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"value": "\"null\"", "quoteValue": true} }""",
+    expectedUninterpetedValue = "\"null\"",
+    expectEmptyCollection = false,
+    expectIsNullLiteral = false,
+    expectPresent = true,
+    expectShouldQuote = true,
+  ),
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"value": "\"null\"", "quoteValue": false} }""",
+    expectedUninterpetedValue = "\"null\"",
+    expectEmptyCollection = false,
+    expectIsNullLiteral = false,
+    expectPresent = true,
+    expectShouldQuote = true,
+  ),
+  // -=-=-
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"value": true} }""",
+    expectedUninterpetedValue = true,
+    expectEmptyCollection = false,
+    expectIsNullLiteral = false,
+    expectPresent = true,
+    expectShouldQuote = false,
+  ),
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"value": true, "quoteValue": true} }""",
+    expectedUninterpetedValue = "true",
+    expectEmptyCollection = false,
+    expectIsNullLiteral = false,
+    expectPresent = true,
+    expectShouldQuote = true,
+  ),
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"value": true, "quoteValue": false} }""",
+    expectedUninterpetedValue = true,
+    expectEmptyCollection = false,
+    expectIsNullLiteral = false,
+    expectPresent = true,
+    expectShouldQuote = false,
+  ),
+  // -=-=-
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"value": false} }""",
+    expectedUninterpetedValue = false,
+    expectEmptyCollection = false,
+    expectIsNullLiteral = false,
+    expectPresent = true,
+    expectShouldQuote = false,
+  ),
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"value": false, "quoteValue": true} }""",
+    expectedUninterpetedValue = "false",
+    expectEmptyCollection = false,
+    expectIsNullLiteral = false,
+    expectPresent = true,
+    expectShouldQuote = true,
+  ),
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"value": false, "quoteValue": false} }""",
+    expectedUninterpetedValue = false,
+    expectEmptyCollection = false,
+    expectIsNullLiteral = false,
+    expectPresent = true,
+    expectShouldQuote = false,
+  ),
+  // -=-=-
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"value": "true"} }""",
+    expectedUninterpetedValue = "true",
+    expectEmptyCollection = false,
+    expectIsNullLiteral = false,
+    expectPresent = true,
+    expectShouldQuote = true,
+  ),
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"value": "true", "quoteValue": true} }""",
+    expectedUninterpetedValue = "true",
+    expectEmptyCollection = false,
+    expectIsNullLiteral = false,
+    expectPresent = true,
+    expectShouldQuote = true,
+  ),
+  //Too complex to support destringify
+//  TC(
+//    jvmConfigJSON = """{ "defaultValue": {"value": "true", "quoteValue": false} }""",
+//    expectedUninterpetedValue = true,
+//    expectEmptyCollection = false,
+//    expectIsNullLiteral = false,
+//    expectPresent = true,
+//    expectShouldQuote = false,
+//  ),
+  // -=-=-
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"value": "false"} }""",
+    expectedUninterpetedValue = "false",
+    expectEmptyCollection = false,
+    expectIsNullLiteral = false,
+    expectPresent = true,
+    expectShouldQuote = true,
+  ),
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"value": "false", "quoteValue": true} }""",
+    expectedUninterpetedValue = "false",
+    expectEmptyCollection = false,
+    expectIsNullLiteral = false,
+    expectPresent = true,
+    expectShouldQuote = true,
+  ),
+  //Too complex to support destringify
+//  TC(
+//    jvmConfigJSON = """{ "defaultValue": {"value": "false", "quoteValue": false} }""",
+//    expectedUninterpetedValue = false,
+//    expectEmptyCollection = false,
+//    expectIsNullLiteral = false,
+//    expectPresent = true,
+//    expectShouldQuote = false,
+//  ),
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"value": 7} }""",
+    expectedUninterpetedValue = 7,
+    expectEmptyCollection = false,
+    expectIsNullLiteral = false,
+    expectPresent = true,
+    expectShouldQuote = false,
+  ),
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"value": 7, "quoteValue": true} }""",
+    expectedUninterpetedValue = "7",
+    expectEmptyCollection = false,
+    expectIsNullLiteral = false,
+    expectPresent = true,
+    expectShouldQuote = true,
+  ),
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"value": 7, "quoteValue": false} }""",
+    expectedUninterpetedValue = 7,
+    expectEmptyCollection = false,
+    expectIsNullLiteral = false,
+    expectPresent = true,
+    expectShouldQuote = false,
+  ),
+  // -=-=-
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"value": "7"} }""",
+    expectedUninterpetedValue = "7",
+    expectEmptyCollection = false,
+    expectIsNullLiteral = false,
+    expectPresent = true,
+    expectShouldQuote = true,
+  ),
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"value": "7", "quoteValue": true} }""",
+    expectedUninterpetedValue = "7",
+    expectEmptyCollection = false,
+    expectIsNullLiteral = false,
+    expectPresent = true,
+    expectShouldQuote = true,
+  ),
+  //Too complex to support destringify
+//  TC(
+//    jvmConfigJSON = """{ "defaultValue": {"value": "7", "quoteValue": false} }""",
+//    expectedUninterpetedValue = "false",
+//    expectEmptyCollection = false,
+//    expectIsNullLiteral = false,
+//    expectPresent = true,
+//    expectShouldQuote = true,
+//  ),
+  TC(
+    jvmConfigJSON = """{ "defaultValue": {"value": "MyEnum.FOO", "quoteValue": false} }""",
+    expectedUninterpetedValue = "MyEnum.FOO",
+    expectEmptyCollection = false,
+    expectIsNullLiteral = false,
+    expectPresent = true,
+    expectShouldQuote = false,
+  ),
 )
