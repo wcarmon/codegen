@@ -105,7 +105,8 @@ data class CodeGenRequest(
       if (t.startsWith(CLASSPATH_URL_PREFIX)) {
         ClassPathResource(
           t.substringAfter(CLASSPATH_URL_PREFIX),
-          CodeGenRequest::class.java.classLoader)
+          CodeGenRequest::class.java.classLoader
+        )
 
       } else if (templateURI.toURL().protocol == "file") {
         PathResource(templateURI)

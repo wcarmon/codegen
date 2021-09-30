@@ -11,7 +11,7 @@
     "com.wcarmon.chrono.dao30.*",
     "com.wcarmon.chrono.model30.*"
   ],
-  "outputDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/java/com/wcarmon/chrono/model30",
+  "outputDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/kotlin/com/wcarmon/chrono/model30",
   "outputFilenameTemplate": "SQLDelightMappers.kt",
   "outputMode": "single",
   "package": "com.wcarmon.chrono.model30",

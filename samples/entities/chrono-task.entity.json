@@ -256,6 +256,13 @@
     }
   ],
   "indexes": [],
+  "interFieldValidations": [
+    {
+      "fieldName0": "updated",
+      "fieldName1": "created",
+      "type": "notBefore"
+    }
+  ],
   "name": "ChronoTask",
   "pkg": "com.wcarmon.chrono.model",
   "rdbms": {

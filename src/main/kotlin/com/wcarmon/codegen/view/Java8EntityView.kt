@@ -189,6 +189,20 @@ class Java8EntityView(
       )
   }
 
+  val interFieldValidationExpressions: String by lazy {
+    entity
+      .interFieldValidations
+      .joinToString(
+        separator = "\n\n"
+      ) { v ->
+        InterFieldValidationExpression(
+          entity = entity,
+          validationConfig = v,
+        )
+          .render(renderConfig)
+      }
+  }
+
   //TODO: indentation
   fun patchQueries(): String {
     val indentation = "  "

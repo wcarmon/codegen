@@ -15,6 +15,7 @@
     "java.util.HashSet",
     "java.util.List",
     "java.util.Objects",
+    "java.util.regex.Pattern",
     "java.util.Set",
     "java.util.StringJoiner",
     "java.util.TreeSet",

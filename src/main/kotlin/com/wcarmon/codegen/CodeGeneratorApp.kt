@@ -100,11 +100,13 @@ class CodeGeneratorApp(
 
     val fileNameBuilder = { entity: Entity ->
       val entityNameInFile = entity.name.forCaseFormat(
-        request.caseFormatForOutputFile)
+        request.caseFormatForOutputFile
+      )
 
       String.format(
         request.outputFilenameTemplate,
-        entityNameInFile)
+        entityNameInFile
+      )
     }
 
     generator.generateFilePerEntity(
@@ -135,15 +137,18 @@ class CodeGeneratorApp(
       "At least one Code Generate request file is required under $configRoot"
     }
 
-    LOG.info("Found Code Generate requests: count={}, files={}",
+    LOG.info(
+      "Found Code Generate requests: count={}, files={}",
       generatorRequestPaths.size,
-      StringUtils.truncate(generatorRequestPaths.toString(), 256))
+      StringUtils.truncate(generatorRequestPaths.toString(), 256)
+    )
 
     return generatorRequestPaths.map {
       //TODO: validate via json-schema here
       objectReader.readValue(
         it.toFile(),
-        CodeGenRequest::class.java)
+        CodeGenRequest::class.java
+      )
     }
   }
 

@@ -91,7 +91,8 @@ class Java8FieldView(
     thatId: String,
   ) = equalityExpression(
     RawLiteralExpression(thisId),
-    RawLiteralExpression(thatId))
+    RawLiteralExpression(thatId)
+  )
 
   private fun equalityExpression(
     expression0: Expression = RawLiteralExpression("this"),

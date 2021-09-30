@@ -27,7 +27,8 @@ class GolangRequestView(
       .joinToString(
         prefix = "import (\n",
         postfix = "\n)",
-        separator = "\n") {
+        separator = "\n"
+      ) {
 
         indentation +
             if (it.contains("\"")) {

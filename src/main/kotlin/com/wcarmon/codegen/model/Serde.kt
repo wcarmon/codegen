@@ -37,7 +37,8 @@ data class Serde(
     @JvmStatic
     val INLINE: Serde = Serde(
       StringFormatTemplate.INLINE,
-      StringFormatTemplate.INLINE)
+      StringFormatTemplate.INLINE
+    )
   }
 
   fun forMode(mode: SerdeMode) = when (mode) {

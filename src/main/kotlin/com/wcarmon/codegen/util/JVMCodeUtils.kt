@@ -133,4 +133,5 @@ private fun defaultJVMDeserializeTemplate(field: Field) =
       -> TODO("Fix string deserializer for field=$field")
 
       else -> "%s"
-    })
+    }
+  )

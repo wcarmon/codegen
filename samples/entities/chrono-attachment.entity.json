@@ -16,6 +16,13 @@
       "type": "uri"
     }
   ],
+  "interFieldValidations": [
+    {
+      "fieldName0": "updated",
+      "fieldName1": "created",
+      "type": "notBefore"
+    }
+  ],
   "name": "ChronoAttachment",
   "pkg": "com.wcarmon.chrono.model",
   "rdbms": {

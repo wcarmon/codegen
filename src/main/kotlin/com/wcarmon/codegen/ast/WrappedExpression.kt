@@ -24,5 +24,6 @@ data class WrappedExpression(
 
   override fun renderWithoutDebugComments(config: RenderConfig) =
     wrapperTemplate.expand(
-      wrapped.render(config.unterminated))
+      wrapped.render(config.unterminated)
+    )
 }

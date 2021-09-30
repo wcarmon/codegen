@@ -7,6 +7,7 @@
     "file:/home/wcarmon/git-repos/codegen/samples/fields/created.field.json",
     "file:/home/wcarmon/git-repos/codegen/samples/fields/name.field.json",
     "file:/home/wcarmon/git-repos/codegen/samples/fields/tags.field.json",
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/theme-color.field.json",
     "file:/home/wcarmon/git-repos/codegen/samples/fields/updated.field.json",
     "file:/home/wcarmon/git-repos/codegen/samples/fields/uuid.field.json"
   ],
@@ -200,32 +201,19 @@
       "validation": {
         "minValue": -1
       }
-    },
-    {
-      "golang": {
-        "defaultValue": {
-          "value": null
-        }
-      },
-      "jvm": {
-        "defaultValue": {
-          "value": null
-        }
-      },
-      "name": "themeColor",
-      "nullable": true,
-      "rdbms": {
-        "defaultValue": {
-          "value": null
-        }
-      },
-      "type": "color"
     }
   ],
   "indexes": [
     [
       "name"
     ]
+  ],
+  "interFieldValidations": [
+    {
+      "fieldName0": "updated",
+      "fieldName1": "created",
+      "type": "notBefore"
+    }
   ],
   "name": "ChronoBoard",
   "pkg": "com.wcarmon.chrono.model",

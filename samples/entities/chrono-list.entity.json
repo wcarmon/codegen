@@ -11,11 +11,58 @@
     "file:/home/wcarmon/git-repos/codegen/samples/fields/closed.field.json",
     "file:/home/wcarmon/git-repos/codegen/samples/fields/created.field.json",
     "file:/home/wcarmon/git-repos/codegen/samples/fields/name.field.json",
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/theme-color.field.json",
     "file:/home/wcarmon/git-repos/codegen/samples/fields/updated.field.json",
     "file:/home/wcarmon/git-repos/codegen/samples/fields/uuid.field.json"
   ],
   "fields": [
     {
+      "golang": {
+        "overrideTypeLiteral": "string"
+      },
+      "jvm": {
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
+          "serializeTemplate": "%s.toString()"
+        },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
+          "serializeTemplate": "%s.toString()"
+        }
+      },
+      "name": "boardUuid",
+      "protobuf": {
+        "overrideTypeLiteral": "string"
+      },
+      "rdbms": {
+        "varcharLength": 36
+      },
+      "type": "com.wcarmon.ub.model.UBUuid"
+    },
+    {
+      "golang": {
+        "defaultValue": {
+          "value": 0
+        }
+      },
+      "jvm": {
+        "defaultValue": {
+          "value": 0
+        }
+      },
+      "name": "positionInBoard",
+      "nullable": false,
+      "rdbms": {
+        "defaultValue": {
+          "value": 0
+        }
+      },
+      "type": "int32"
+    },
+    {
+      "documentation": [
+        "0 means no limit"
+      ],
       "golang": {
         "defaultValue": {
           "value": 100
@@ -33,7 +80,30 @@
           "value": 100
         }
       },
-      "type": "Int"
+      "type": "Int",
+      "validation": {
+        "minValue": 0
+      }
+    },
+    {
+      "golang": {
+        "defaultValue": {
+          "value": ""
+        }
+      },
+      "jvm": {
+        "defaultValue": {
+          "value": ""
+        }
+      },
+      "name": "iconCode",
+      "rdbms": {
+        "defaultValue": {
+          "value": ""
+        },
+        "varcharLength": 64
+      },
+      "type": "string"
     },
     {
       "golang": {
@@ -54,10 +124,24 @@
         }
       },
       "type": "Int",
-      "validation": {}
+      "validation": {
+        "minValue": 0
+      }
     }
   ],
   "indexes": [],
+  "interFieldValidations": [
+    {
+      "fieldName0": "updated",
+      "fieldName1": "created",
+      "type": "notBefore"
+    },
+    {
+      "fieldName0": "softLimit",
+      "fieldName1": "hardLimit",
+      "type": "lessOrEqualTo"
+    }
+  ],
   "name": "ChronoList",
   "pkg": "com.wcarmon.chrono.model",
   "rdbms": {

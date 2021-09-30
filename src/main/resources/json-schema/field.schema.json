@@ -36,10 +36,7 @@
       "$ref": "jvm-field.schema.json"
     },
     "name": {
-      "maxLength": 48,
-      "minLength": 1,
-      "pattern": "^[a-z][A-Za-z0-9]*$",
-      "type": "string"
+      "$ref": "field-name.schema.json"
     },
     "nullable": {
       "type": "boolean"

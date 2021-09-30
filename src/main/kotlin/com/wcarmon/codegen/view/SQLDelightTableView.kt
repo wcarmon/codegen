@@ -29,7 +29,8 @@ class SQLDelightTableView(
       }
       .joinToString(
         prefix = indentation,
-        separator = ",\n${indentation}") {
+        separator = ",\n${indentation}"
+      ) {
         it.trimEnd()
       }
 
@@ -37,7 +38,8 @@ class SQLDelightTableView(
 
     entity.idFields.joinToString(
       prefix = "WHERE ",
-      separator = " AND ") {
+      separator = " AND "
+    ) {
       "${it.name.lowerSnake}=?"
     }
   }

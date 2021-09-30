@@ -25,7 +25,8 @@ fun getPathsMatchingNamePattern(
 
   require(
     pathPattern.startsWith("glob:")
-        || pathPattern.startsWith("regex:")) {
+        || pathPattern.startsWith("regex:")
+  ) {
     "java.nio.file.FileSystems only supports 'glob:' or 'regex:', filePattern=$pathPattern"
   }
 

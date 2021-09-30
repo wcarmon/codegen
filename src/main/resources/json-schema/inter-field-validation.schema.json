@@ -1,0 +1,29 @@
+{
+  "$id": "https://wcarmon.com/schemas/codegen/inter-field-validation.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "configuration for enforced inter-field validation",
+  "properties": {
+    "fieldName0": {
+      "$ref": "field-name.schema.json"
+    },
+    "fieldName1": {
+      "$ref": "field-name.schema.json"
+    },
+    "type": {
+      "enum": [
+        "before",
+        "lessOrEqualTo",
+        "lessThan",
+        "notBefore",
+        "notEqual"
+      ]
+    }
+  },
+  "propertyNames": {
+    "pattern": "^[$]?[A-Za-z_][A-Za-z0-9]*$"
+  },
+  "required": [],
+  "title": "Inter Field validation config",
+  "type": "object"
+}

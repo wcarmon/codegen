@@ -21,14 +21,16 @@ class FreemarkerBeans {
   @Bean
   fun templateLoader(): TemplateLoader {
     val templatesInUserHome = Paths.get(
-      System.getProperty("user.home"), ".codegen", "templates")
+      System.getProperty("user.home"), ".codegen", "templates"
+    )
 
     // Spring does the class path -> Path resolution, so I don't need ClassTemplateLoader
     return MultiTemplateLoader(
       arrayOf(
         FileTemplateLoader(File("/")),
         //        FileTemplateLoader(templatesInUserHome.toFile()),
-      ))
+      )
+    )
   }
 
   @Bean

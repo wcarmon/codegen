@@ -93,6 +93,15 @@
       "type": "array",
       "uniqueItems": true
     },
+    "interFieldValidations": {
+      "items": {
+        "$ref": "inter-field-validation.schema.json"
+      },
+      "maxItems": 128,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
     "name": {
       "maxLength": 48,
       "minLength": 1,

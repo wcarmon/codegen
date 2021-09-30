@@ -70,9 +70,12 @@ data class Entity(
    */
   val updatedTimestampFieldName: Name? = null,
 
+  val interFieldValidations: Set<InterFieldValidation> = setOf()
+
   // TODO: list: pagination
 ) {
 
+  /* All fields, in idiomatic order */
   val fields: List<Field> = ownFields + referencedFields
 
   init {
@@ -174,6 +177,24 @@ data class Entity(
 
       //NOTE: duplicate field check above coveres the muti-match case
     }
+
+
+    // -- InterField validation
+    val allFields = (ownFields + referencedFields)
+    interFieldValidations.forEach { v ->
+
+      require(allFields.any { field ->
+        field.name == v.fieldName0
+      }) {
+        "Cannot find field matching interFieldValidation.fieldName0: ${v.fieldName0}, entity=${this}"
+      }
+
+      require(allFields.any { field ->
+        field.name == v.fieldName1
+      }) {
+        "Cannot find field matching interFieldValidation.fieldName1: ${v.fieldName1}, entity=${this}"
+      }
+    }
   }
 
   val java8View by lazy {
@@ -274,4 +295,8 @@ data class Entity(
       .firstOrNull()
   }
 
+  fun fieldForName(candidate: Name): Field? =
+    fields.firstOrNull { field ->
+      field.name == candidate
+    }
 }

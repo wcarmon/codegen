@@ -30,7 +30,8 @@ class ResultSetReadExpression(
         StringLiteralExpression(
           quoteType = DOUBLE,
           value = fieldName.lowerSnake,
-        )),
+        )
+      ),
       assertNonNull = false,
       fieldOwner = resultSetIdentifierExpression,
       methodName = MethodNameExpression(getterMethod),

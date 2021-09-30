@@ -35,6 +35,13 @@
     }
   ],
   "indexes": [],
+  "interFieldValidations": [
+    {
+      "fieldName0": "updated",
+      "fieldName1": "created",
+      "type": "notBefore"
+    }
+  ],
   "name": "ChronoSavedSearch",
   "pkg": "com.wcarmon.chrono.model",
   "rdbms": {

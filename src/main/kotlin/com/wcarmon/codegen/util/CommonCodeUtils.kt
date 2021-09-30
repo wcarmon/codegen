@@ -44,11 +44,13 @@ fun wrapWithExpressionTracingComments(
     TYPESCRIPT_4,
     -> handleCStyle(
       expressionName,
-      renderedCode)
+      renderedCode
+    )
 
     PYTHON_3 -> handlePython(
       expressionName,
-      renderedCode)
+      renderedCode
+    )
   }
 }
 

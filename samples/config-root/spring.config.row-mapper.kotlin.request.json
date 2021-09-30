@@ -12,7 +12,7 @@
     "org.springframework.context.annotation.Configuration",
     "org.springframework.jdbc.core.RowMapper"
   ],
-  "outputDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/java/com/wcarmon/chrono/config30",
+  "outputDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/kotlin/com/wcarmon/chrono/config30",
   "outputFilenameTemplate": "RowMapperBeans.kt",
   "outputMode": "single",
   "package": "com.wcarmon.chrono.config30",

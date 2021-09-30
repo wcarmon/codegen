@@ -44,6 +44,7 @@ class EntityConfigParserImpl(
 
     return objectReader.readValue(
       entityConfigFile.toFile(),
-      Entity::class.java)
+      Entity::class.java
+    )
   }
 }

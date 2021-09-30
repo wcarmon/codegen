@@ -6,10 +6,7 @@ ${request.java8View.serializeImports(
   request.extraJVMImports,
   request.jvmContextClass)}
 
-/**
- * Immutable POJO
- */
-<#-- TODO: include class documentation when present-->
+${entity.java8View.documentation("Immutable POJO")}
 @JsonPropertyOrder(alphabetic = true)
 @JsonDeserialize(builder = ${entity.name.upperCamel}.${entity.name.upperCamel}Builder.class)
 public final class ${entity.name.upperCamel} {
@@ -26,7 +23,9 @@ ${entity.java8View.fieldDeclarations}
       </#if>
     </#list>
 
+    // -- Validation
     ${entity.java8View.validationExpressions}
+    ${entity.java8View.interFieldValidationExpressions}
   }
 
   @Override

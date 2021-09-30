@@ -1,0 +1,10 @@
+{
+  "$id": "https://wcarmon.com/schemas/codegen/field-name.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Field name on an Entity",
+  "maxLength": 48,
+  "minLength": 1,
+  "pattern": "^[a-z][A-Za-z0-9]*$",
+  "type": "string"
+}

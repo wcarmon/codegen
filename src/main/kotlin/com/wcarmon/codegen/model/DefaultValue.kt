@@ -73,7 +73,7 @@ data class DefaultValue(
 
       // For null/nil we require an explicit quoteValue==false
       val nullLiteral =
-        if (defaultValueJsonObject[QUOTING_PROPERTY_NAME] as? Boolean ?: true) {
+        if (defaultValueJsonObject[QUOTING_PROPERTY_NAME] as? Boolean != false) {
           theDefault == null
 
         } else {

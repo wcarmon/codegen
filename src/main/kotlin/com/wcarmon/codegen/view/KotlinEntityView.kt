@@ -172,6 +172,21 @@ class KotlinEntityView(
       }
   }
 
+  val interFieldValidationExpressions: String by lazy {
+
+    entity
+      .interFieldValidations
+      .joinToString(
+        separator = "\n\n"
+      ) { v ->
+        InterFieldValidationExpression(
+          entity = entity,
+          validationConfig = v,
+        )
+          .render(renderConfig)
+      }
+  }
+
   private val validatedFields =
     entity.sortedFieldsWithIdsFirst
       .filter {

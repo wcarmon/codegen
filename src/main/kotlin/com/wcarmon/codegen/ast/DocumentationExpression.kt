@@ -44,6 +44,7 @@ data class DocumentationExpression(
     }
 
   //TODO: handle wrapping references in {@link ...}
+  //TODO: add the <p> on specific blank intermediate lines
   private fun handleJava(config: RenderConfig): String {
     if (isBlank) {
       return ""
