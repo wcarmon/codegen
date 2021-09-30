@@ -96,6 +96,7 @@ data class Entity(
     val idPositions = fields
       .filter { it.positionInId != null }
       .map { it.positionInId!! }
+      .sortedBy { it }
 
     val duplicateIdPositions =
       idPositions
@@ -105,6 +106,15 @@ data class Entity(
 
     require(duplicateIdPositions.isEmpty()) {
       "All Id/PrimaryKey field positions must be unique: ${idPositions.sortedBy { it }}, duplicates=${duplicateIdPositions}"
+    }
+
+    require(idPositions.minOf { it } == 0) {
+      "First index position must be 0, idPositions=${idPositions}"
+    }
+
+    val maxIndexPosition = idPositions.size - 1
+    require(idPositions.maxOf { it } == maxIndexPosition) {
+      "Last index position must be ${maxIndexPosition}, idPositions=${idPositions}"
     }
 
     // -- Validate extraImplements

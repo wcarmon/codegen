@@ -85,7 +85,7 @@ data class FieldDeclarationExpression(
     val variableKeyword = if (finalityModifier == FINAL) "val " else "var "
 
     val defaultValueFragment = if (dValue.isNotBlank()) " = $dValue" else ""
-    val docFragment = if (doc.isNotBlank()) doc + "\n" else ""
+    val docFragment = if (doc.isNotBlank()) "\n$doc\n" else ""
     val visibilityFragment = visibilityModifier.render(config.targetLanguage)
 
     //TODO: support annotations

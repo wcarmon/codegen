@@ -82,6 +82,7 @@ data class Field(
     @JvmStatic
     @JsonCreator
     fun parse(
+      //TODO: move fun to ~/git-repos/codegen/src/main/kotlin/com/wcarmon/codegen/model/FieldBuilder.kt
       @JsonProperty("canLog") canLog: Boolean = true,
       @JsonProperty("canUpdate") canUpdate: Boolean = true,
       @JsonProperty("documentation") documentation: Iterable<String> = listOf(),

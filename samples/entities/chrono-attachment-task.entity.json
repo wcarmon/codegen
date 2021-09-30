@@ -1,0 +1,63 @@
+{
+  "$schema": "https://wcarmon.com/schemas/codegen/entity.schema.json",
+  "fieldUris": [],
+  "fields": [
+    {
+      "golang": {
+        "overrideTypeLiteral": "string"
+      },
+      "jvm": {
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
+          "serializeTemplate": "%s.toString()"
+        },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
+          "serializeTemplate": "%s.toString()"
+        }
+      },
+      "name": "attachmentUuid",
+      "positionInId": 0,
+      "protobuf": {
+        "overrideTypeLiteral": "string"
+      },
+      "rdbms": {
+        "varcharLength": 36
+      },
+      "type": "com.wcarmon.ub.model.UBUuid"
+    },
+    {
+      "golang": {
+        "overrideTypeLiteral": "string"
+      },
+      "jvm": {
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
+          "serializeTemplate": "%s.toString()"
+        },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
+          "serializeTemplate": "%s.toString()"
+        }
+      },
+      "name": "taskUuid",
+      "positionInId": 1,
+      "protobuf": {
+        "overrideTypeLiteral": "string"
+      },
+      "rdbms": {
+        "varcharLength": 36
+      },
+      "type": "com.wcarmon.ub.model.UBUuid"
+    }
+  ],
+  "documentation": [
+    "Join ChronoAttachment and ChronoTask"
+  ],
+  "indexes": [],
+  "name": "ChronoAttachmentTask",
+  "pkg": "com.wcarmon.chrono.model",
+  "rdbms": {
+    "schema": "test"
+  }
+}

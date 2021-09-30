@@ -1,0 +1,44 @@
+{
+  "$schema": "https://wcarmon.com/schemas/codegen/entity.schema.json",
+  "createdTimestampFieldName": "created",
+  "fieldUris": [
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/created.field.json",
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/name.field.json",
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/updated.field.json",
+    "file:/home/wcarmon/git-repos/codegen/samples/fields/uuid.field.json"
+  ],
+  "fields": [
+    {
+      "documentation": [
+        "SQL: query",
+        "Browser: ?TODO?"
+      ],
+      "name": "query",
+      "rdbms": {
+        "varcharLength": 1024
+      },
+      "type": "String",
+      "validation": {
+        "requireNotBlank": true,
+        "requireTrimmed": true
+      }
+    },
+    {
+      "name": "platform",
+      "rdbms": {
+        "varcharLength": 16
+      },
+      "type": "String",
+      "validation": {
+        "requireTrimmed": true
+      }
+    }
+  ],
+  "indexes": [],
+  "name": "ChronoSavedSearch",
+  "pkg": "com.wcarmon.chrono.model",
+  "rdbms": {
+    "schema": "test"
+  },
+  "updatedTimestampFieldName": "updated"
+}

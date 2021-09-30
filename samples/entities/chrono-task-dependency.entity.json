@@ -1,0 +1,83 @@
+{
+  "$schema": "https://wcarmon.com/schemas/codegen/entity.schema.json",
+  "fieldUris": [],
+  "fields": [
+    {
+      "golang": {
+        "overrideTypeLiteral": "string"
+      },
+      "jvm": {
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
+          "serializeTemplate": "%s.toString()"
+        },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
+          "serializeTemplate": "%s.toString()"
+        }
+      },
+      "name": "fromTask",
+      "positionInId": 0,
+      "protobuf": {
+        "overrideTypeLiteral": "string"
+      },
+      "rdbms": {
+        "varcharLength": 36
+      },
+      "type": "com.wcarmon.ub.model.UBUuid"
+    },
+    {
+      "golang": {
+        "overrideTypeLiteral": "string"
+      },
+      "jvm": {
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
+          "serializeTemplate": "%s.toString()"
+        },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
+          "serializeTemplate": "%s.toString()"
+        }
+      },
+      "name": "toTask",
+      "positionInId": 1,
+      "protobuf": {
+        "overrideTypeLiteral": "string"
+      },
+      "rdbms": {
+        "varcharLength": 36
+      },
+      "type": "com.wcarmon.ub.model.UBUuid"
+    },
+    {
+      "golang": {
+        "overrideTypeLiteral": "ChronoTaskDependencyType"
+      },
+      "jvm": {
+        "defaultValue": {
+          "quoteValue": false,
+          "value": "ChronoTaskDependencyType.FinishStart"
+        },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "--fix--%s",
+          "serializeTemplate": "--fix--%s"
+        }
+      },
+      "name": "type",
+      "protobuf": {
+        "overrideTypeLiteral": "string"
+      },
+      "rdbms": {
+        "varcharLength": 2
+      },
+      "type": "com.wcarmon.chrono.model.ChronoTaskDependencyType"
+    }
+  ],
+  "indexes": [],
+  "name": "ChronoTaskDependency",
+  "pkg": "com.wcarmon.chrono.model",
+  "rdbms": {
+    "schema": "test"
+  }
+}

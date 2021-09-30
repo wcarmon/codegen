@@ -8,7 +8,7 @@
       "type": "boolean"
     },
     "overrideTypeLiteral": {
-      "description": "User defined type or standard protobuf type",
+      "description": "User defined type or standard protobuf type, see https://developers.google.com/protocol-buffers/docs/proto3#scalar",
       "maxLength": 64,
       "type": "string"
     },
