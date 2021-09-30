@@ -57,7 +57,8 @@ data class FieldDeclarationExpression(
     val modifiers = buildJavaModifierFragments()
     if (modifiers.isNotEmpty()) {
       output.append(
-        modifiers.joinToString(" ", postfix = " "))
+        modifiers.joinToString(" ", postfix = " ")
+      )
     }
 
     output.append(javaTypeLiteral(field, false))
