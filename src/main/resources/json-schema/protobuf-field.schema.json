@@ -15,6 +15,15 @@
     "repeated": {
       "type": "boolean"
     },
+    "typeParameters": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 6,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": false
+    }
   },
   "propertyNames": {
     "pattern": "^[$]?[A-Za-z_][A-Za-z0-9]*$"

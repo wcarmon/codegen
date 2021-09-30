@@ -4,13 +4,30 @@
   "fieldUris": [
     "file:/home/wcarmon/git-repos/codegen/samples/fields/closed.field.json",
     "file:/home/wcarmon/git-repos/codegen/samples/fields/created.field.json",
-    "file:/home/wcarmon/git-repos/codegen/samples/fields/deadline.field.json",
     "file:/home/wcarmon/git-repos/codegen/samples/fields/name.field.json",
-    "file:/home/wcarmon/git-repos/codegen/samples/fields/position-in-list.field.json",
     "file:/home/wcarmon/git-repos/codegen/samples/fields/updated.field.json",
     "file:/home/wcarmon/git-repos/codegen/samples/fields/uuid.field.json"
   ],
   "fields": [
+    {
+      "golang": {
+        "defaultValue": {
+          "value": true
+        }
+      },
+      "jvm": {
+        "defaultValue": {
+          "value": true
+        }
+      },
+      "name": "displayCollapsed",
+      "rdbms": {
+        "defaultValue": {
+          "value": true
+        }
+      },
+      "type": "boolean"
+    },
     {
       "golang": {
         "overrideTypeLiteral": "string"
@@ -25,7 +42,7 @@
           "serializeTemplate": "%s.toString()"
         }
       },
-      "name": "checklistUuid",
+      "name": "taskUuid",
       "protobuf": {
         "overrideTypeLiteral": "string"
       },
@@ -33,10 +50,30 @@
         "varcharLength": 36
       },
       "type": "com.wcarmon.ub.model.UBUuid"
+    },
+    {
+      "golang": {
+        "defaultValue": {
+          "value": 0
+        }
+      },
+      "jvm": {
+        "defaultValue": {
+          "value": 0
+        }
+      },
+      "name": "positionInTask",
+      "nullable": false,
+      "rdbms": {
+        "defaultValue": {
+          "value": 0
+        }
+      },
+      "type": "int32"
     }
   ],
   "indexes": [],
-  "name": "ChronoCheckItem",
+  "name": "ChronoCheckList",
   "pkg": "com.wcarmon.chrono.model",
   "rdbms": {
     "schema": "test"
