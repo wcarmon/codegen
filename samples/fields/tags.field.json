@@ -21,7 +21,7 @@
       "value": []
     },
     "overrideProtobufRepeatedItemSerde": {
-      "deserializeTemplate": "com.wcarmon.chrono.model.ChronoTag.fromString(%s)",
+      "deserializeTemplate": "ChronoTag.fromString(%s)",
       "serializeTemplate": "%s.toString()"
     },
     "overrideRDBMSSerde": {
@@ -29,7 +29,7 @@
       "serializeTemplate": "objectWriter.writeValueAsString(%s)"
     },
     "typeParameters": [
-      "com.wcarmon.chrono.model.ChronoTag"
+      "ChronoTag"
     ]
   },
   "name": "tags",

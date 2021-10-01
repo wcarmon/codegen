@@ -14,9 +14,6 @@ import com.wcarmon.codegen.util.buildPreparedStatementSetters
 import com.wcarmon.codegen.util.getKotlinImportsForFields
 import com.wcarmon.codegen.util.kotlinMethodArgsForFields
 
-private val String.escapeDoubleQuotes: String
-  get() = this.replace("\"", "\\\"")
-
 /**
  * Kotlin related convenience methods for a [Entity]
  */
@@ -229,7 +226,7 @@ class KotlinEntityView(
         val lines = mutableListOf<String>()
 
         lines += "const val PATCH__${entity.name.upperSnake}__${field.name.upperSnake} ="
-        lines += """$indentation"UPDATE ${entity.rdbmsView.qualifiedTableName.escapeDoubleQuotes} " +"""
+        lines += """$indentation"UPDATE ${entity.rdbmsView.qualifiedTableName_escaped} " +"""
         lines += """$indentation"SET ${field.name.lowerSnake}=? " + """
 
         if (entity.updatedTimestampFieldName != null && !field.jvmView.isUpdatedTimestamp) {

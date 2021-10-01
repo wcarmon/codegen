@@ -71,7 +71,7 @@
       "rdbms": {
         "varcharLength": 2
       },
-      "type": "com.wcarmon.chrono.model.ChronoTaskDependencyType"
+      "type": "ChronoTaskDependencyType"
     }
   ],
   "indexes": [],

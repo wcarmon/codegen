@@ -94,7 +94,7 @@ data class FieldDeclarationExpression(
         visibilityFragment +
         variableKeyword +
         field.name.lowerCamel +
-        ":" +
+        ": " +
         typeLiteral +
         defaultValueFragment
   }

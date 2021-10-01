@@ -226,7 +226,8 @@ class Java8EntityView(
         val lines = mutableListOf<String>()
 
         lines += "public static final String PATCH__${entity.name.upperSnake}__${field.name.upperSnake} ="
-        lines += """$indentation"UPDATE ${entity.rdbmsView.qualifiedTableName}" +"""
+        //NOTE: trailing space is important
+        lines += """$indentation"UPDATE ${entity.rdbmsView.qualifiedTableName_escaped} " +"""
         lines += """$indentation"SET ${field.name.lowerSnake}=? " + """
 
         if (entity.updatedTimestampFieldName != null && !field.jvmView.isUpdatedTimestamp) {

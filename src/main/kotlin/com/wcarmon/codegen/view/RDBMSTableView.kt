@@ -4,6 +4,7 @@ import com.wcarmon.codegen.ast.FieldValidationExpressions
 import com.wcarmon.codegen.ast.InterFieldValidationExpression
 import com.wcarmon.codegen.ast.RawLiteralExpression
 import com.wcarmon.codegen.ast.RenderConfig
+import com.wcarmon.codegen.extensions.escapeDoubleQuotes
 import com.wcarmon.codegen.model.Entity
 import com.wcarmon.codegen.model.JDBCColumnIndex
 import com.wcarmon.codegen.model.PreparedStatementBuilderConfig
@@ -35,6 +36,11 @@ data class RDBMSTableView(
   val qualifiedTableName: String by lazy {
     "$schemaPrefix\"${entity.name.lowerSnake}\""
   }
+
+  val qualifiedTableName_escaped: String by lazy {
+    "$schemaPrefix\"${entity.name.lowerSnake}\"".escapeDoubleQuotes
+  }
+
 
   val schemaPrefix: String =
     if (entity.rdbmsConfig.schema.isBlank()) ""

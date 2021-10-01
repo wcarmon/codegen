@@ -159,11 +159,11 @@
           "value": "ChronoLevel.NONE"
         },
         "overrideProtobufSerde": {
-          "deserializeTemplate": "com.wcarmon.chrono.model.ChronoLevel.fromValue(%s)",
+          "deserializeTemplate": "ChronoLevel.fromValue(%s)",
           "serializeTemplate": "%s.toProtoValue()"
         },
         "overrideRDBMSSerde": {
-          "deserializeTemplate": "com.wcarmon.chrono.model.ChronoLevel.fromDBValue(%s)",
+          "deserializeTemplate": "ChronoLevel.fromDBValue(%s)",
           "serializeTemplate": "%s.toDBValue()"
         }
       },
@@ -175,7 +175,7 @@
       "rdbms": {
         "overrideTypeLiteral": "INTEGER"
       },
-      "type": "com.wcarmon.chrono.model.ChronoLevel"
+      "type": "ChronoLevel"
     },
     {
       "golang": {
@@ -215,7 +215,7 @@
       "rdbms": {
         "overrideTypeLiteral": "SMALLINT"
       },
-      "type": "com.wcarmon.chrono.model.ChronoTaskType"
+      "type": "ChronoTaskType"
     },
     {
       "enumType": true,
@@ -236,11 +236,11 @@
           "value": "ChronoLevel.NONE"
         },
         "overrideProtobufSerde": {
-          "deserializeTemplate": "com.wcarmon.chrono.model.ChronoLevel.fromValue(%s)",
+          "deserializeTemplate": "ChronoLevel.fromValue(%s)",
           "serializeTemplate": "%s.toProtoValue()"
         },
         "overrideRDBMSSerde": {
-          "deserializeTemplate": "com.wcarmon.chrono.model.ChronoLevel.fromDBValue(%s)",
+          "deserializeTemplate": "ChronoLevel.fromDBValue(%s)",
           "serializeTemplate": "%s.toDBValue()"
         }
       },
@@ -252,7 +252,7 @@
       "rdbms": {
         "overrideTypeLiteral": "INTEGER"
       },
-      "type": "com.wcarmon.chrono.model.ChronoLevel"
+      "type": "ChronoLevel"
     }
   ],
   "indexes": [],

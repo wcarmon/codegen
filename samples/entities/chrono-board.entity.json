@@ -79,15 +79,15 @@
       },
       "jvm": {
         "overrideKafkaSerde": {
-          "deserializeTemplate": "com.wcarmon.chrono.model.ChronoHorizon.parse(%s)",
+          "deserializeTemplate": "ChronoHorizon.parse(%s)",
           "serializeTemplate": "%s.valueAsString()"
         },
         "overrideProtobufSerde": {
-          "deserializeTemplate": "com.wcarmon.chrono.model.ChronoHorizon.fromValue(%s)",
+          "deserializeTemplate": "ChronoHorizon.fromValue(%s)",
           "serializeTemplate": "%s.toProtoValue()"
         },
         "overrideRDBMSSerde": {
-          "deserializeTemplate": "com.wcarmon.chrono.model.ChronoHorizon.fromDBValue(%s)",
+          "deserializeTemplate": "ChronoHorizon.fromDBValue(%s)",
           "serializeTemplate": "%s.toDBValue()"
         }
       },
@@ -98,7 +98,7 @@
       "rdbms": {
         "overrideTypeLiteral": "INTEGER"
       },
-      "type": "com.wcarmon.chrono.model.ChronoHorizon"
+      "type": "ChronoHorizon"
     },
     {
       "golang": {
@@ -131,11 +131,11 @@
       },
       "jvm": {
         "overrideProtobufSerde": {
-          "deserializeTemplate": "com.wcarmon.chrono.model.ChronoLevel.fromValue(%s)",
+          "deserializeTemplate": "ChronoLevel.fromValue(%s)",
           "serializeTemplate": "%s.toProtoValue()"
         },
         "overrideRDBMSSerde": {
-          "deserializeTemplate": "com.wcarmon.chrono.model.ChronoLevel.fromDBValue(%s)",
+          "deserializeTemplate": "ChronoLevel.fromDBValue(%s)",
           "serializeTemplate": "%s.toDBValue()"
         }
       },
@@ -147,7 +147,7 @@
       "rdbms": {
         "overrideTypeLiteral": "INTEGER"
       },
-      "type": "com.wcarmon.chrono.model.ChronoLevel"
+      "type": "ChronoLevel"
     },
     {
       "golang": {
