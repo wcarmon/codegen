@@ -76,7 +76,7 @@ fun getPostgresTypeLiteral(
   USER_DEFINED,
   -> {
     requireNotNull(rdbmsConfig.varcharLength) {
-      "field.rdbms.varcharLength (or field.rdbms.overrideTypeLiteral) is required: $errorLoggingInfo"
+      "field.rdbms.varcharLength (or field.rdbms.overrideEffectiveType) is required: $errorLoggingInfo"
     }
 
     "VARCHAR(${rdbmsConfig.varcharLength})"

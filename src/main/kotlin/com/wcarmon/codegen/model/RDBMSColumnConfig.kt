@@ -20,7 +20,7 @@ data class RDBMSColumnConfig(
   /**
    * Replace the auto-derived type with this literal
    */
-  val overrideTypeLiteral: String? = null,
+  val overrideEffectiveType: String = "",
 
   /**
    * For VARCHAR columns, wrap in single quotes
@@ -36,23 +36,21 @@ data class RDBMSColumnConfig(
     }
 
 
-    if (overrideTypeLiteral != null) {
-      require(overrideTypeLiteral.isNotBlank()) {
-        "overrideTypeLiteral must be null or non-blank"
+    if (overrideEffectiveType.isNotBlank()) {
+      require(overrideEffectiveType.length < MAX_TYPE_LITERAL_LENGTH) {
+        "overrideEffectiveType too long: $overrideEffectiveType, this=$this"
       }
 
-      require(overrideTypeLiteral.length < MAX_TYPE_LITERAL_LENGTH) {
-        "overrideTypeLiteral too long: $overrideTypeLiteral, this=$this"
-      }
-
-      require(varcharLength == null) {
-        "Cannot set varchar length when overriding type: this=$this"
-      }
+      // yes you can ;-)
+//      require(varcharLength == null) {
+//        "Cannot set varchar length when overriding type: this=$this"
+//      }
     }
 
     //TODO: warn in situations where varcharLength will be ignored
   }
 
   val overrideBaseType: BaseFieldType? =
-    overrideTypeLiteral?.let { BaseFieldType.parse(it) }
+    if (overrideEffectiveType.isBlank()) null
+    else BaseFieldType.parse(overrideEffectiveType)
 }

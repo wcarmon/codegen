@@ -13,7 +13,7 @@
   "fields": [
     {
       "golang": {
-        "overrideTypeLiteral": "string"
+        "overrideEffectiveType": "string"
       },
       "jvm": {
         "overrideProtobufSerde": {
@@ -27,7 +27,7 @@
       },
       "name": "checklistUuid",
       "protobuf": {
-        "overrideTypeLiteral": "string"
+        "overrideEffectiveType": "string"
       },
       "rdbms": {
         "varcharLength": 36

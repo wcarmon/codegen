@@ -18,7 +18,7 @@
   "fields": [
     {
       "golang": {
-        "overrideTypeLiteral": "string"
+        "overrideEffectiveType": "string"
       },
       "jvm": {
         "overrideProtobufSerde": {
@@ -32,7 +32,7 @@
       },
       "name": "boardUuid",
       "protobuf": {
-        "overrideTypeLiteral": "string"
+        "overrideEffectiveType": "string"
       },
       "rdbms": {
         "varcharLength": 36

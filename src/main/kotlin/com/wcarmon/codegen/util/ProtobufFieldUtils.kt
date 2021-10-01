@@ -113,7 +113,7 @@ fun protobufTypeLiteral(
   YEAR,
   -> "int64"
 
-  USER_DEFINED -> TODO("Add a type override in field.protobuf.overrideTypeLiteral: $type")
+  USER_DEFINED -> TODO("Add a type override in field.protobuf.overrideEffectiveType: $type")
 
 //  ARRAY -> TODO()   //TODO: repeated
 //  FLOAT_BIG -> TODO()

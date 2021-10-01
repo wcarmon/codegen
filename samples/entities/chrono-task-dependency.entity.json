@@ -4,55 +4,55 @@
   "fields": [
     {
       "golang": {
-        "overrideTypeLiteral": "string"
+        "overrideEffectiveType": "string"
       },
       "jvm": {
         "overrideProtobufSerde": {
-          "deserializeTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
+          "deserializeTemplate": "UBUuid.parse(%s)",
           "serializeTemplate": "%s.toString()"
         },
         "overrideRDBMSSerde": {
-          "deserializeTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
+          "deserializeTemplate": "UBUuid.parse(%s)",
           "serializeTemplate": "%s.toString()"
         }
       },
       "name": "fromTask",
       "positionInId": 0,
       "protobuf": {
-        "overrideTypeLiteral": "string"
+        "overrideEffectiveType": "string"
       },
       "rdbms": {
         "varcharLength": 36
       },
-      "type": "com.wcarmon.ub.model.UBUuid"
+      "type": "UBUuid"
     },
     {
       "golang": {
-        "overrideTypeLiteral": "string"
+        "overrideEffectiveType": "string"
       },
       "jvm": {
         "overrideProtobufSerde": {
-          "deserializeTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
+          "deserializeTemplate": "UBUuid.parse(%s)",
           "serializeTemplate": "%s.toString()"
         },
         "overrideRDBMSSerde": {
-          "deserializeTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
+          "deserializeTemplate": "UBUuid.parse(%s)",
           "serializeTemplate": "%s.toString()"
         }
       },
       "name": "toTask",
       "positionInId": 1,
       "protobuf": {
-        "overrideTypeLiteral": "string"
+        "overrideEffectiveType": "string"
       },
       "rdbms": {
         "varcharLength": 36
       },
-      "type": "com.wcarmon.ub.model.UBUuid"
+      "type": "UBUuid"
     },
     {
       "golang": {
-        "overrideTypeLiteral": "ChronoTaskDependencyType"
+        "overrideEffectiveType": "ChronoTaskDependencyType"
       },
       "jvm": {
         "defaultValue": {
@@ -60,15 +60,16 @@
           "value": "ChronoTaskDependencyType.FinishStart"
         },
         "overrideRDBMSSerde": {
-          "deserializeTemplate": "--fix--%s",
-          "serializeTemplate": "--fix--%s"
+          "deserializeTemplate": "ChronoTaskDependencyType.fromDBValue(%s)",
+          "serializeTemplate": "%s.toDBValue()"
         }
       },
       "name": "type",
       "protobuf": {
-        "overrideTypeLiteral": "string"
+        "overrideEffectiveType": "string"
       },
       "rdbms": {
+        "overrideEffectiveType": "VARCHAR",
         "varcharLength": 2
       },
       "type": "ChronoTaskDependencyType"

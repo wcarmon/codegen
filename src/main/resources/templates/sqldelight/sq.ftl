@@ -3,9 +3,9 @@ NOTE:
 SQLDelight writes to build/generated/sqldelight/code/<DatabaseNameInBuildDotGradle>/com/foo/FooRecord.kt
 
 Generate:
-./gradlew :generateMain<DatabaseName>Interface
+./gradlew :sandbox:generateMain<DatabaseName>Interface
 ./gradlew :sandbox:generateMainSandboxDatabaseInterface
-./gradlew build -x test
+./gradlew :sandbox build -x test
 
 (TODO: intellij build doesn't generate *.sq -> kotlin)
 -->
@@ -42,12 +42,13 @@ SELECT *
 FROM ${entity.name.lowerCamel}Record;
 
 
+<#if entity.hasNonIdFields>
 update:
 UPDATE ${entity.name.lowerCamel}Record
 SET
 ${entity.sqlDelightView.placeholderColumnSetters("  ")}
 ${entity.sqlDelightView.whereClauseForIdFields};
-
+</#if>
 
 <#-- TODO: Allow other select queries in json -->
 

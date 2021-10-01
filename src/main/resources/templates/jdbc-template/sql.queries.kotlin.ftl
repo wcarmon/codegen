@@ -12,7 +12,6 @@ ${request.jvmView.templateDebugInfo}
  * -------------------------------------------------------------------
  */
 <#list entities as entity>
-
   <#if entity.hasIdFields>
   /**
    * Find-by-PK
@@ -39,6 +38,7 @@ ${request.jvmView.templateDebugInfo}
     |WHERE ${entity.rdbmsView.primaryKeyWhereClause_questionMarks}
     """.trimMargin()
 
+<#if entity.hasNonIdFields>
   /**
    * Update 1-row
    * Entity: {@link ${entity.pkg.value}.${entity.name.upperCamel}}
@@ -53,6 +53,7 @@ ${request.jvmView.templateDebugInfo}
     |WHERE ${entity.rdbmsView.primaryKeyWhereClause_questionMarks}
     """.trimMargin()
 
+</#if>
   /**
    * Delete 1-row
    * Entity: {@link ${entity.pkg.value}.${entity.name.upperCamel}}

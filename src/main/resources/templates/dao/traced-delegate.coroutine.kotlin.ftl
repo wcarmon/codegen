@@ -111,7 +111,7 @@ class ${entity.name.upperCamel}TracedDAO(
       realDAO.list()
     }
   }
-
+<#if entity.hasNonIdFields>
   override suspend fun update(entity: ${entity.name.upperCamel}) {
     val span = tracer.buildSpan("jdbc::update")
         .asChildOf(coroutineContext[SpanElement]?.span)
@@ -124,6 +124,7 @@ class ${entity.name.upperCamel}TracedDAO(
     }
   }
 
+</#if>
   override suspend fun upsert(entity: ${entity.name.upperCamel}) {
     val span = tracer.buildSpan("jdbc::upsert")
         .asChildOf(coroutineContext[SpanElement]?.span)
@@ -137,7 +138,7 @@ class ${entity.name.upperCamel}TracedDAO(
   }
 
   // -- Patch methods
-<#list entity.nonIdFields as field>
+<#list entity.patchableFields as field>
   override suspend fun set${field.name.upperCamel}(
     ${entity.kotlinView.methodArgsForIdFields(false)},
     ${field.name.lowerCamel}: ${field.kotlinView.unqualifiedType}) {

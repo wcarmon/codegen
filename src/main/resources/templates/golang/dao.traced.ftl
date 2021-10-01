@@ -98,6 +98,7 @@ func (dao *${entity.name.upperCamel}TracedDAO) Create${entity.name.upperCamel}(c
     return dao.realDao.Create${entity.name.upperCamel}(childCtx, entity)
 }
 
+<#if entity.hasNonIdFields>
 func (dao *${entity.name.upperCamel}TracedDAO) Update${entity.name.upperCamel}(ctx context.Context, entity ${entity.name.upperCamel}) error {
     var options []opentracing.StartSpanOption
     options = append(options, opentracing.Tag{Key: "entityType", Value: "${entity.name.upperCamel}"})
@@ -120,6 +121,7 @@ func (dao *${entity.name.upperCamel}TracedDAO) Update${entity.name.upperCamel}(c
     return dao.realDao.Update${entity.name.upperCamel}(childCtx, entity)
 }
 
+</#if>
 func (dao *${entity.name.upperCamel}TracedDAO) List${entity.name.upperCamel}(ctx context.Context) ([]${entity.name.upperCamel}, error) {
     var options []opentracing.StartSpanOption
     options = append(options, opentracing.Tag{Key: "entityType", Value: "${entity.name.upperCamel}"})
@@ -139,7 +141,7 @@ func (dao *${entity.name.upperCamel}TracedDAO) List${entity.name.upperCamel}(ctx
     return dao.realDao.List${entity.name.upperCamel}(childCtx)
 }
 
-<#list entity.nonIdFields as field>
+<#list entity.patchableFields as field>
 func (dao *${entity.name.upperCamel}TracedDAO) Set${field.name.upperCamel}(ctx context.Context, ${entity.golangView.methodArgsForIdFields()}, ${field.name.lowerCamel} ${field.golangView.typeLiteral}) error {
     var options []opentracing.StartSpanOption
     options = append(options, opentracing.Tag{Key: "entityType", Value: "${entity.name.upperCamel}"})

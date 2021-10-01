@@ -23,7 +23,7 @@
     "overrideRDBMSSerde": {
       "$ref": "serde.schema.json"
     },
-    "overrideTypeLiteral": {
+    "overrideEffectiveType": {
       "description": "Allows custom golang type, replaces auto-derived type",
       "maxLength": 64,
       "minLength": 1,

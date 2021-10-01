@@ -4,7 +4,7 @@
   "fields": [
     {
       "golang": {
-        "overrideTypeLiteral": "string"
+        "overrideEffectiveType": "string"
       },
       "jvm": {
         "overrideProtobufSerde": {
@@ -19,7 +19,7 @@
       "name": "attachmentUuid",
       "positionInId": 0,
       "protobuf": {
-        "overrideTypeLiteral": "string"
+        "overrideEffectiveType": "string"
       },
       "rdbms": {
         "varcharLength": 36
@@ -28,7 +28,7 @@
     },
     {
       "golang": {
-        "overrideTypeLiteral": "string"
+        "overrideEffectiveType": "string"
       },
       "jvm": {
         "overrideProtobufSerde": {
@@ -43,7 +43,7 @@
       "name": "taskUuid",
       "positionInId": 1,
       "protobuf": {
-        "overrideTypeLiteral": "string"
+        "overrideEffectiveType": "string"
       },
       "rdbms": {
         "varcharLength": 36

@@ -54,6 +54,7 @@ interface ${entity.name.upperCamel}DAO {
 <#-- TODO: Add @param to kotlindoc for context  -->
   fun list(context: ${request.jvmView.unqualifiedContextClass}): List<${entity.name.upperCamel}>
 
+<#if entity.hasNonIdFields>
   /**
   * Update all (non-PK) fields on one {@link ${entity.pkg.value}.${entity.name.upperCamel}} instance
   * (${entity.nonIdFields?size} non-PK fields)
@@ -61,6 +62,7 @@ interface ${entity.name.upperCamel}DAO {
 <#-- TODO: Add @param to kotlindoc for context  -->
   fun update(context: ${request.jvmView.unqualifiedContextClass}, entity: ${entity.name.upperCamel})
 
+</#if>
   /**
   * Upsert/Put {@link ${entity.pkg.value}.${entity.name.upperCamel}}
   *
@@ -73,7 +75,7 @@ interface ${entity.name.upperCamel}DAO {
 <#-- TODO: Add @param to kotlindoc for context  -->
   fun upsert(context: ${request.jvmView.unqualifiedContextClass}, entity: ${entity.name.upperCamel})
 
-<#list entity.nonIdFields as field>
+<#list entity.patchableFields as field>
  /**
   * Patch/Set
   *

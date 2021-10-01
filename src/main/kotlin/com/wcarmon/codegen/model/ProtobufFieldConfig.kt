@@ -13,7 +13,7 @@ data class ProtobufFieldConfig(
    * A standard type or fully-qualified, user-defined message type
    * See https://developers.google.com/protocol-buffers/docs/proto3#scalar
    */
-  val overrideTypeLiteral: String? = null,
+  val overrideEffectiveType: String? = null,
 
   val repeated: Boolean = false,
 
@@ -26,14 +26,14 @@ data class ProtobufFieldConfig(
 ) {
 
   init {
-    require(overrideTypeLiteral == null || overrideTypeLiteral.isNotBlank()) {
-      "overrideTypeLiteral must be non-blank or null"
+    require(overrideEffectiveType == null || overrideEffectiveType.isNotBlank()) {
+      "overrideEffectiveType must be non-blank or null"
     }
   }
 
   val overrideBaseType: BaseFieldType? =
-    overrideTypeLiteral?.let { BaseFieldType.parse(it) }
+    overrideEffectiveType?.let { BaseFieldType.parse(it) }
 
   fun typeLiteral(defaultType: LogicalFieldType) =
-    overrideTypeLiteral ?: protobufTypeLiteral(defaultType)
+    overrideEffectiveType ?: protobufTypeLiteral(defaultType)
 }

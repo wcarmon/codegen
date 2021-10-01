@@ -117,6 +117,7 @@ class ${entity.name.upperCamel}TracedDAO(
     }
   }
 
+<#if entity.hasNonIdFields>
   override fun update(context: ${request.jvmView.unqualifiedContextClass}, entity: ${entity.name.upperCamel}) {
     val span = tracer.buildSpan("jdbc::update")
         .asChildOf(context.currentSpan())
@@ -130,6 +131,7 @@ class ${entity.name.upperCamel}TracedDAO(
     }
   }
 
+</#if>
   override fun upsert(context: ${request.jvmView.unqualifiedContextClass}, entity: ${entity.name.upperCamel}) {
     val span = tracer.buildSpan("jdbc::upsert")
         .asChildOf(context.currentSpan())
@@ -144,7 +146,7 @@ class ${entity.name.upperCamel}TracedDAO(
   }
 
   // -- Patch methods
-<#list entity.nonIdFields as field>
+<#list entity.patchableFields as field>
   override fun set${field.name.upperCamel}(
     context: ${request.jvmView.unqualifiedContextClass},
     ${entity.kotlinView.methodArgsForIdFields(false)},

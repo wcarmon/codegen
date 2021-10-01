@@ -129,6 +129,7 @@ func (dao *${entity.name.upperCamel}PostgreSQLDAO) Create${entity.name.upperCame
   return nil
 }
 
+<#if entity.hasNonIdFields>
 func (dao *${entity.name.upperCamel}PostgreSQLDAO) Update${entity.name.upperCamel}(ctx context.Context, entity ${entity.name.upperCamel}) error {
   tx, err := dao.db.BeginTx(ctx, &sql.TxOptions{Isolation: dao.isolationLevel})
   if err != nil {
@@ -163,6 +164,7 @@ func (dao *${entity.name.upperCamel}PostgreSQLDAO) Update${entity.name.upperCame
   return nil
 }
 
+</#if>
 func (dao *${entity.name.upperCamel}PostgreSQLDAO) List${entity.name.upperCamel}(ctx context.Context) ([]${entity.name.upperCamel}, error) {
   stmt, err := dao.db.PrepareContext(ctx, SELECT_ALL__${entity.name.upperSnake} )
   if err != nil {
@@ -209,7 +211,7 @@ func (dao *${entity.name.upperCamel}PostgreSQLDAO) List${entity.name.upperCamel}
   return entities, nil
 }
 
-<#list entity.nonIdFields as field>
+<#list entity.patchableFields as field>
 func (dao *${entity.name.upperCamel}PostgreSQLDAO) Set${field.name.upperCamel}(ctx context.Context, ${entity.golangView.methodArgsForIdFields()}, ${field.name.lowerCamel} ${field.golangView.typeLiteral}) error {
   tx, err := dao.db.BeginTx(ctx, &sql.TxOptions{Isolation: dao.isolationLevel})
   if err != nil {

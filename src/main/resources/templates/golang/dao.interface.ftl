@@ -17,12 +17,13 @@ type ${entity.name.upperCamel}DAO interface {
   FindById${entity.name.upperCamel}(ctx context.Context, ${entity.golangView.methodArgsForIdFields()}) (*${entity.name.upperCamel}, error)
 
   Create${entity.name.upperCamel}(ctx context.Context, entity ${entity.name.upperCamel}) error
-
+<#if entity.hasNonIdFields>
   Update${entity.name.upperCamel}(ctx context.Context, entity ${entity.name.upperCamel}) error
 
+</#if>
   List${entity.name.upperCamel}(ctx context.Context) ([]${entity.name.upperCamel}, error)
 
-<#list entity.nonIdFields as field>
+<#list entity.patchableFields as field>
   Set${field.name.upperCamel}(ctx context.Context, ${entity.golangView.methodArgsForIdFields()}, ${field.name.lowerCamel} ${field.golangView.typeLiteral}) error
 
 </#list>

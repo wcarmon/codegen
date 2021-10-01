@@ -62,7 +62,7 @@ service ${entity.name.upperCamel}Service {
 <#if entity.canUpdate>
   rpc Update${entity.name.upperCamel}(Update${entity.name.upperCamel}Request) returns (Update${entity.name.upperCamel}Response) {}
 
-  <#list entity.nonIdFields as field>
+  <#list entity.patchableFields as field>
   rpc Set${field.name.upperCamel}(Set${entity.name.upperCamel}${field.name.upperCamel}Request) returns (PatchResponse) {}
   </#list>
 <#-- TODO: upsert -->

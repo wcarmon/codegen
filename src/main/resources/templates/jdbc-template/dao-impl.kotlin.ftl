@@ -89,6 +89,7 @@ class ${entity.name.upperCamel}DAOImpl(
       rowMapper
     )
 
+<#if entity.hasNonIdFields>
   override fun update(context: ${request.jvmView.unqualifiedContextClass}, entity: ${entity.name.upperCamel}) {
 
     jdbcTemplate.update(
@@ -98,12 +99,13 @@ class ${entity.name.upperCamel}DAOImpl(
     }
   }
 
+</#if>
   override fun upsert(context: ${request.jvmView.unqualifiedContextClass}, entity: ${entity.name.upperCamel}) {
     TODO("finish this method")
   }
 
   // -- Patch methods
-  <#list entity.nonIdFields as field>
+  <#list entity.patchableFields as field>
     override fun set${field.name.upperCamel}(
       context: ${request.jvmView.unqualifiedContextClass},
       ${entity.kotlinView.methodArgsForIdFields(false)},

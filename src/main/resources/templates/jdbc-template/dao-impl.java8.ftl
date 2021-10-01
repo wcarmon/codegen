@@ -133,6 +133,7 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
         rowMapper));
   }
 
+<#if entity.hasNonIdFields>
   @Override
   public void update(${request.jvmView.unqualifiedContextClass} context, ${entity.name.upperCamel} entity) {
     Objects.requireNonNull(context, "context is required and null.");
@@ -153,6 +154,7 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
     });
   }
 
+</#if>
   @Override
   public void upsert(${request.jvmView.unqualifiedContextClass} context,${entity.name.upperCamel} entity) {
     Objects.requireNonNull(context, "context is required and null.");
@@ -162,7 +164,7 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
   }
 
   // -- Patch methods
-<#list entity.nonIdFields as field>
+<#list entity.patchableFields as field>
   @Override
   public void set${field.name.upperCamel}(
     ${request.jvmView.unqualifiedContextClass} context,

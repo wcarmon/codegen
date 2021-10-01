@@ -11,7 +11,7 @@
       "$ref": "default-value.schema.json",
       "description": "literal for default value, wrap strings in single quotes"
     },
-    "overrideTypeLiteral": {
+    "overrideEffectiveType": {
       "description": "Allows custom DB type, replaces auto-derived DB type (use Postgres types)",
       "maxLength": 64,
       "minLength": 1,

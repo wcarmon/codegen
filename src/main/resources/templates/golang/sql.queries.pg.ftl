@@ -59,6 +59,7 @@ ${request.golangView.serializeImports(request.extraGolangImports)}
       FROM ${entity.rdbmsView.qualifiedTableName}
     `
 
+<#if entity.hasNonIdFields>
     // Update 1-row
     // - Entity: ${entity.name.upperCamel}
     // - PK column count: ${entity.idFields?size}
@@ -70,6 +71,7 @@ ${request.golangView.serializeImports(request.extraGolangImports)}
       WHERE ${entity.rdbmsView.primaryKeyWhereClause_numberedDollars(1 + entity.nonIdFields?size)}
     `
 
+</#if>
     <#if entity.hasIdFields>
     ${entity.golangView.patchQueries_numberdDollar()}
     </#if>

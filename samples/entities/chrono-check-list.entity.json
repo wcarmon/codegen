@@ -30,7 +30,7 @@
     },
     {
       "golang": {
-        "overrideTypeLiteral": "string"
+        "overrideEffectiveType": "string"
       },
       "jvm": {
         "overrideProtobufSerde": {
@@ -44,7 +44,7 @@
       },
       "name": "taskUuid",
       "protobuf": {
-        "overrideTypeLiteral": "string"
+        "overrideEffectiveType": "string"
       },
       "rdbms": {
         "varcharLength": 36

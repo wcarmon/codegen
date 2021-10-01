@@ -75,7 +75,7 @@ ${entity.name.upperCamel}Proto entity = 1;
 message Update${entity.name.upperCamel}Response {
 }
 
-  <#list entity.nonIdFields as field>
+  <#list entity.patchableFields as field>
 message Set${entity.name.upperCamel}${field.name.upperCamel}Request {
 ${entity.protobufView.fieldsForPatch(field, 1, "  ")}
 }

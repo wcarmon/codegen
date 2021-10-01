@@ -50,12 +50,14 @@ interface ${entity.name.upperCamel}DAO {
    */
   suspend fun list(): List<${entity.name.upperCamel}>
 
+<#if entity.hasNonIdFields>
   /**
    * Update all (non-PK) fields on one {@link ${entity.pkg.value}.${entity.name.upperCamel}} instance
    * (${entity.nonIdFields?size} non-PK fields)
    */
   suspend fun update(entity: ${entity.name.upperCamel})
 
+</#if>
   /**
    * Upsert/Put {@link ${entity.pkg.value}.${entity.name.upperCamel}}
    *
@@ -67,7 +69,7 @@ interface ${entity.name.upperCamel}DAO {
    */
   suspend fun upsert(entity: ${entity.name.upperCamel})
 
-<#list entity.nonIdFields as field>
+<#list entity.patchableFields as field>
   /**
    * Patch/Set
    *

@@ -11,7 +11,7 @@ ${request.golangView.serializeImports(request.extraGolangImports)}
 
 <#list entities as entity>
   const (
-    <#if entity.hasIdFields>
+<#if entity.hasIdFields>
       // Delete 1-row
       // - Entity: ${entity.name.upperCamel}
       // - PK column count: ${entity.idFields?size}
@@ -38,7 +38,7 @@ ${request.golangView.serializeImports(request.extraGolangImports)}
       FROM ${entity.rdbmsView.qualifiedTableName}
       WHERE ${entity.rdbmsView.getPrimaryKeyWhereClause_questionMarks()}
       `
-
+  <#if entity.hasNonIdFields>
       // Update 1-row
       // - Entity: ${entity.name.upperCamel}
       // - PK column count: ${entity.idFields?size}
@@ -49,7 +49,8 @@ ${request.golangView.serializeImports(request.extraGolangImports)}
         ${entity.rdbmsView.updateSetClause_questionMarks}
       WHERE ${entity.rdbmsView.getPrimaryKeyWhereClause_questionMarks()}
       `
-    </#if>
+  </#if>
+</#if>
 
   // Insert 1-row
   // - Entity: ${entity.name.upperCamel}

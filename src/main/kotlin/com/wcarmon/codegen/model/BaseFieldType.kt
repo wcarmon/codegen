@@ -197,10 +197,13 @@ enum class BaseFieldType {
       "email" to EMAIL,
       "file" to PATH,
       "float32" to FLOAT_32,
+      "float4" to FLOAT_32,
       "float64" to FLOAT_64,
+      "float8" to FLOAT_64,
       "instant" to UTC_INSTANT,
       "int" to INT_32,  // java, kotlin, postgresql, mysql, oracle
       "int16" to INT_16,
+      "int2" to INT_16,
       "int32" to INT_32,
       "int64" to INT_64,
       "integer" to INT_32,  // java, kotlin, postgresql, mysql, oracle
@@ -209,6 +212,7 @@ enum class BaseFieldType {
       "path" to PATH,
       "phoneNumber" to PHONE_NUMBER,
       "set" to SET,
+      "smallint" to INT_16,
       "string" to STRING,
       "tel" to PHONE_NUMBER,
       "uint16" to INT_16,
@@ -217,6 +221,7 @@ enum class BaseFieldType {
       "uri" to URI,
       "url" to URL,
       "uuid" to UUID,
+      "varchar" to STRING,
       "weekOfYear" to WEEK_OF_YEAR,
 
 

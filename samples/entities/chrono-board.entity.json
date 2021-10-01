@@ -79,7 +79,7 @@
     {
       "enumType": true,
       "golang": {
-        "overrideTypeLiteral": "ChronoHorizon"
+        "overrideEffectiveType": "ChronoHorizon"
       },
       "jvm": {
         "overrideKafkaSerde": {
@@ -97,10 +97,10 @@
       },
       "name": "horizon",
       "protobuf": {
-        "overrideTypeLiteral": "int32"
+        "overrideEffectiveType": "int32"
       },
       "rdbms": {
-        "overrideTypeLiteral": "INTEGER"
+        "overrideEffectiveType": "INTEGER"
       },
       "type": "ChronoHorizon"
     },
@@ -131,7 +131,7 @@
           "deserializeTemplate": "fix--%s",
           "serializeTemplate": "fix--%s"
         },
-        "overrideTypeLiteral": "ChronoLevel"
+        "overrideEffectiveType": "ChronoLevel"
       },
       "jvm": {
         "overrideProtobufSerde": {
@@ -146,10 +146,10 @@
       "name": "importance",
       "nullable": false,
       "protobuf": {
-        "overrideTypeLiteral": "int32"
+        "overrideEffectiveType": "int32"
       },
       "rdbms": {
-        "overrideTypeLiteral": "INTEGER"
+        "overrideEffectiveType": "INTEGER"
       },
       "type": "ChronoLevel"
     },

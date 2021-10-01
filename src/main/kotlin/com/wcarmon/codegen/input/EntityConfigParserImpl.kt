@@ -2,6 +2,7 @@ package com.wcarmon.codegen.input
 
 import com.fasterxml.jackson.databind.ObjectReader
 import com.wcarmon.codegen.log.structuredDebug
+import com.wcarmon.codegen.log.structuredError
 import com.wcarmon.codegen.model.Entity
 import org.apache.logging.log4j.LogManager
 import java.nio.file.Path
@@ -26,7 +27,14 @@ class EntityConfigParserImpl(
     return entityConfigs.map { path ->
       try {
         parse(path)
+
       } catch (ex: Exception) {
+        LOG.structuredError(
+          "Failed to parse entity",
+          "cause" to ex,
+          "path" to path,
+        )
+
         throw RuntimeException("Failed to parse entity: path=$path", ex)
       }
     }.sortedBy { it.name.upperCamel }

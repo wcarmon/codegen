@@ -10,7 +10,6 @@ ${request.jvmView.templateDebugInfo}
  */
 public final class SQLQueries {
 <#list entities as entity>
-
   <#if entity.hasIdFields>
   /**
    * Find-by-PK
@@ -33,6 +32,7 @@ public final class SQLQueries {
     + " FROM ${entity.rdbmsView.qualifiedTableName_escaped}"
     + " WHERE ${entity.rdbmsView.primaryKeyWhereClause_questionMarks}";
 
+<#if entity.hasNonIdFields>
   /**
    * Update 1-row
    * Entity: {@link ${entity.pkg.value}.${entity.name.upperCamel}}
@@ -45,6 +45,7 @@ public final class SQLQueries {
     + " ${entity.rdbmsView.updateSetClause_questionMarks}"
     + " WHERE ${entity.rdbmsView.primaryKeyWhereClause_questionMarks}";
 
+</#if>
   /**
    * Delete 1-row
    * Entity: {@link ${entity.pkg.value}.${entity.name.upperCamel}}

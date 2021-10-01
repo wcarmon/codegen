@@ -144,6 +144,7 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
         () -> realDAO.list(childContext));
   }
 
+<#if entity.hasNonIdFields>
   @Override
   public void update(${request.jvmView.unqualifiedContextClass} context, ${entity.name.upperCamel} entity) {
     Objects.requireNonNull(context, "context is required and missing.");
@@ -161,6 +162,7 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
         () -> realDAO.update(childContext, entity));
   }
 
+</#if>
   @Override
   public void upsert(${request.jvmView.unqualifiedContextClass} context, ${entity.name.upperCamel} entity) {
     Objects.requireNonNull(context, "context is required and missing.");
@@ -179,7 +181,7 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
   }
 
   // -- Patch methods
-<#list entity.nonIdFields as field>
+<#list entity.patchableFields as field>
   @Override
   public void set${field.name.upperCamel}(
       ${request.jvmView.unqualifiedContextClass} context,

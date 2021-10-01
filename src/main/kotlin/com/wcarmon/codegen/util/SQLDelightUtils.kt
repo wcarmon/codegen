@@ -13,8 +13,8 @@ import com.wcarmon.codegen.model.QuoteType.NONE
 fun effectiveSQLDelightTypeLiteral(field: Field): String {
 
   val base =
-    if (field.rdbmsConfig.overrideTypeLiteral != null) {
-      BaseFieldType.parse(field.rdbmsConfig.overrideTypeLiteral)
+    if (field.rdbmsConfig.overrideEffectiveType != null) {
+      BaseFieldType.parse(field.rdbmsConfig.overrideEffectiveType)
 
     } else {
       field.type.base

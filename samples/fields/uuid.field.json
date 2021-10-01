@@ -1,7 +1,7 @@
 {
   "$schema": "https://wcarmon.com/schemas/codegen/field.schema.json",
   "golang": {
-    "overrideTypeLiteral": "string"
+    "overrideEffectiveType": "string"
   },
   "jvm": {
     "overrideRDBMSSerde": {
@@ -16,7 +16,7 @@
   "name": "uuid",
   "positionInId": 0,
   "protobuf": {
-    "overrideTypeLiteral": "string"
+    "overrideEffectiveType": "string"
   },
   "rdbms": {
     "varcharLength": 36

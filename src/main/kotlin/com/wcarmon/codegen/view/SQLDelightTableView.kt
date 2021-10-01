@@ -60,14 +60,19 @@ class SQLDelightTableView(
 
   fun placeholderColumnSetters(
     indentation: String = "  ",
-  ): String =
-    entity.nonIdFields
+  ): String {
+    check(entity.hasNonIdFields) {
+      "Cannot do updates on entites lacking non-id fields"
+    }
+
+    return entity.nonIdFields
       .joinToString(
         prefix = indentation,
         separator = ",\n$indentation",
       ) {
         it.name.lowerSnake + "=?"
       }
+  }
 
   fun uniqueConstraints(
     indentation: String,

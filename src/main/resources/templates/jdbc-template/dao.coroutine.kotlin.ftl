@@ -90,6 +90,7 @@ private val rowMapper: RowMapper<${entity.name.upperCamel}>,
     )
   }
 
+<#if entity.hasNonIdFields>
   override suspend fun update(entity: ${entity.name.upperCamel}): Unit = withContext(Dispatchers.IO) {
 
    jdbcTemplate.update(
@@ -99,12 +100,13 @@ private val rowMapper: RowMapper<${entity.name.upperCamel}>,
     }
   }
 
+</#if>
   override suspend fun upsert(entity: ${entity.name.upperCamel}): Unit = withContext(Dispatchers.IO) {
     TODO("finish this method")
   }
 
   // -- Patch methods
-<#list entity.nonIdFields as field>
+<#list entity.patchableFields as field>
   override suspend fun set${field.name.upperCamel}(
     ${entity.kotlinView.methodArgsForIdFields(false)},
     ${field.name.lowerCamel}: ${field.kotlinView.unqualifiedType}): Unit = withContext(Dispatchers.IO) {

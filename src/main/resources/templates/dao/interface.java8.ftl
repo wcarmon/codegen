@@ -53,6 +53,7 @@ public interface ${entity.name.upperCamel}DAO {
 <#--  TODO: Add @param to javadoc for context -->
   List<${entity.name.upperCamel}> list(${request.jvmView.unqualifiedContextClass} context);
 
+<#if entity.hasNonIdFields>
   /**
    * Update all (non-PK) fields on one {@link ${entity.pkg.value}.${entity.name.upperCamel}} instance
    * (${entity.nonIdFields?size} non-PK fields)
@@ -60,6 +61,7 @@ public interface ${entity.name.upperCamel}DAO {
 <#--  TODO: Add @param to javadoc for context -->
   void update(${request.jvmView.unqualifiedContextClass} context, ${entity.name.upperCamel} entity);
 
+</#if>
   /**
    * Upsert/Put {@link ${entity.pkg.value}.${entity.name.upperCamel}}
    * <p>
@@ -72,7 +74,7 @@ public interface ${entity.name.upperCamel}DAO {
 <#--  TODO: Add @param to javadoc for context -->
   void upsert(${request.jvmView.unqualifiedContextClass} context, ${entity.name.upperCamel} entity);
 
-  <#list entity.nonIdFields as field>
+  <#list entity.patchableFields as field>
   /**
    * Patch/Set
    * <p>

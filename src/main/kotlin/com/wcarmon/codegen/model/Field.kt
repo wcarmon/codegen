@@ -341,18 +341,18 @@ data class Field(
     -> kotlinTypeLiteral(this, fullyQualified)
 
     GOLANG_1_9,
-    -> golangConfig.overrideTypeLiteral ?: golangTypeLiteral(this, fullyQualified)
+    -> golangConfig.overrideEffectiveType ?: golangTypeLiteral(this, fullyQualified)
 
     PROTO_BUF_3 -> protobufConfig.typeLiteral(type)
 
-    SQL_POSTGRESQL -> rdbmsConfig.overrideTypeLiteral ?: getPostgresTypeLiteral(
+    SQL_POSTGRESQL -> rdbmsConfig.overrideEffectiveType ?: getPostgresTypeLiteral(
       effectiveBaseType = effectiveBaseType(targetLanguage),
       errorLoggingInfo = "field=$this",
       logicalFieldType = type,
       rdbmsConfig = rdbmsConfig,
     )
 
-    SQL_SQLITE -> rdbmsConfig.overrideTypeLiteral ?: getSQLiteTypeLiteral(
+    SQL_SQLITE -> rdbmsConfig.overrideEffectiveType ?: getSQLiteTypeLiteral(
       type,
     )
 

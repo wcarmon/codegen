@@ -34,7 +34,7 @@
   },
   "name": "tags",
   "protobuf": {
-    "overrideTypeLiteral": "string",
+    "overrideEffectiveType": "string",
     "repeated": true
   },
   "rdbms": {
