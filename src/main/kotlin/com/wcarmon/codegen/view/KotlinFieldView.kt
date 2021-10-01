@@ -8,6 +8,7 @@ import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.SerdeMode.DESERIALIZE
 import com.wcarmon.codegen.model.SerdeMode.SERIALIZE
 import com.wcarmon.codegen.model.TargetLanguage
+import com.wcarmon.codegen.model.TargetLanguage.SQL_POSTGRESQL
 import com.wcarmon.codegen.util.defaultResultSetGetterMethod
 import com.wcarmon.codegen.util.kotlinTypeLiteral
 
@@ -59,7 +60,7 @@ class KotlinFieldView(
     val wrapped =
       ResultSetReadExpression(
         fieldName = field.name,
-        getterMethod = defaultResultSetGetterMethod(field.effectiveBaseType(targetLanguage)),
+        getterMethod = defaultResultSetGetterMethod(field.effectiveBaseType(SQL_POSTGRESQL)),
         resultSetIdentifierExpression = RawLiteralExpression("rs"),
       )
 

@@ -8,6 +8,10 @@
   "jvm": {
     "defaultValue": {
       "value": null
+    },
+    "overrideRDBMSSerde": {
+      "deserializeTemplate": "Instant.parse(%s)",
+      "serializeTemplate": "%s.toString()"
     }
   },
   "name": "deadline",

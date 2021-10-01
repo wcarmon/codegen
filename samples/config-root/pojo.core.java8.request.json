@@ -9,6 +9,7 @@
     "com.fasterxml.jackson.databind.annotation.JsonDeserialize",
     "com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder",
     "com.google.common.base.Preconditions",
+    "com.wcarmon.ub.model.UBUuid",
     "java.util.ArrayList",
     "java.util.Arrays",
     "java.util.Collections",

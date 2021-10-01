@@ -34,11 +34,11 @@
       },
       "jvm": {
         "overrideProtobufSerde": {
-          "deserializeTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
+          "deserializeTemplate": "UBUuid.parse(%s)",
           "serializeTemplate": "%s.toString()"
         },
         "overrideRDBMSSerde": {
-          "deserializeTemplate": "com.wcarmon.ub.model.UBUuid.fromString(%s)",
+          "deserializeTemplate": "UBUuid.parse(%s)",
           "serializeTemplate": "%s.toString()"
         }
       },
@@ -49,7 +49,7 @@
       "rdbms": {
         "varcharLength": 36
       },
-      "type": "com.wcarmon.ub.model.UBUuid"
+      "type": "UBUuid"
     },
     {
       "golang": {

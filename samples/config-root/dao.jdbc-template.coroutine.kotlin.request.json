@@ -9,6 +9,7 @@
     "com.wcarmon.chrono.dao31.*",
     "com.wcarmon.chrono.model30.*",
     "com.wcarmon.chrono.sql30.*",
+    "com.wcarmon.ub.model.UBUuid",
     "java.sql.Types",
     "java.time.Clock",
     "kotlinx.coroutines.Dispatchers",

@@ -12,6 +12,12 @@
       "rdbms": {
         "varcharLength": 255
       },
+      "jvm": {
+        "overrideRDBMSSerde": {
+          "serializeTemplate": "%s.toString()",
+          "deserializeTemplate": "URI(%s)"
+        }
+      },
       "type": "uri"
     },
     {

@@ -5,7 +5,8 @@
     "file:///home/wcarmon/git-repos/codegen/samples/entities"
   ],
   "extraJVMImports": [
-    "com.wcarmon.chrono.model30.*"
+    "com.wcarmon.chrono.model30.*",
+    "com.wcarmon.ub.model.UBUuid"
   ],
   "jvmContextClass": "com.wcarmon.chrono.context.ChronoContext",
   "outputDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/kotlin/com/wcarmon/chrono/dao30",

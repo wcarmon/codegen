@@ -1,5 +1,11 @@
 {
   "$schema": "https://wcarmon.com/schemas/codegen/field.schema.json",
+  "jvm": {
+    "overrideRDBMSSerde": {
+      "deserializeTemplate": "Instant.parse(%s)",
+      "serializeTemplate": "%s.toString()"
+    }
+  },
   "name": "updated",
   "type": "Instant"
 }

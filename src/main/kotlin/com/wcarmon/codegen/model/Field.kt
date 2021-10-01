@@ -370,15 +370,18 @@ data class Field(
         jvmConfig.overrideRDBMSSerde
 
       } else if (requiresJDBCSerde(this)) {
-        //TODO: use default serde for INSTANT
-        //TODO: use default serde for URI
         LOG.structuredWarn(
           "Recommended: override the rdbms Serde",
-          "field" to this,
+          "field.name" to name.lowerCamel,
+          "field.type" to type.base,
           "targetLanguage" to targetLanguage,
         )
 
-        Serde.INLINE
+        // Many JVM Classes conform to this reasonable default
+        Serde(
+          deserializeTemplate = StringFormatTemplate("${type.rawTypeLiteral}.parse(%s)"),
+          serializeTemplate = StringFormatTemplate("%s.toString()"),
+        )
 
       } else {
         Serde.INLINE

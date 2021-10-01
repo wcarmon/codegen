@@ -8,6 +8,7 @@
     "com.wcarmon.chrono.dao31.*",
     "com.wcarmon.chrono.model30.*",
     "com.wcarmon.tracing.SpanElement",
+    "com.wcarmon.ub.model.UBUuid",
     "io.opentracing.Span",
     "io.opentracing.Tracer",
     "java.util.function.Function",

@@ -7,6 +7,7 @@
   "extraJVMImports": [
     "com.wcarmon.chrono.grpc.*",
     "com.wcarmon.chrono.model00.*",
+    "com.wcarmon.ub.model.UBUuid",
     "java.util.Collection",
     "java.util.Collections",
     "java.util.List",

@@ -7,7 +7,8 @@
   "extraJVMImports": [
     "com.fasterxml.jackson.annotation.JsonPropertyOrder",
     "com.fasterxml.jackson.databind.annotation.JsonDeserialize",
-    "com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder"
+    "com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder",
+    "com.wcarmon.ub.model.UBUuid"
   ],
   "outputDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/kotlin/com/wcarmon/chrono/model30",
   "outputFilenameTemplate": "%s.kt",

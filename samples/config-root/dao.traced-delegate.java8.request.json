@@ -6,6 +6,7 @@
   ],
   "extraJVMImports": [
     "com.wcarmon.chrono.model00.*",
+    "com.wcarmon.ub.model.UBUuid",
     "io.opentracing.Span",
     "io.opentracing.Tracer",
     "java.util.function.Function",

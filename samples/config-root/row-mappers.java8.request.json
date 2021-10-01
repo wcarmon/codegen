@@ -8,6 +8,7 @@
     "com.fasterxml.jackson.core.type.TypeReference",
     "com.fasterxml.jackson.databind.ObjectMapper",
     "com.wcarmon.chrono.model00.*",
+    "com.wcarmon.ub.model.UBUuid",
     "java.math.BigDecimal",
     "java.math.BigInteger",
     "java.net.URI",

@@ -6,7 +6,8 @@
   ],
   "extraJVMImports": [
     "com.wcarmon.chrono.grpc.*",
-    "com.wcarmon.chrono.model30.*"
+    "com.wcarmon.chrono.model30.*",
+    "com.wcarmon.ub.model.UBUuid"
   ],
   "outputDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/kotlin/com/wcarmon/chrono/protobuf30",
   "outputFilenameTemplate": "ProtobufMappers.kt",

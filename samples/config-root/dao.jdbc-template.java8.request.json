@@ -9,6 +9,7 @@
     "com.wcarmon.chrono.dao00.*",
     "com.wcarmon.chrono.model00.*",
     "com.wcarmon.chrono.sql00.SQLQueries",
+    "com.wcarmon.ub.model.UBUuid",
     "java.sql.Types",
     "java.time.Clock",
     "java.util.Collection",

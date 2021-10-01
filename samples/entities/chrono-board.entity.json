@@ -21,6 +21,10 @@
       "jvm": {
         "defaultValue": {
           "value": null
+        },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "URI(%s)",
+          "serializeTemplate": "%s.toString()"
         }
       },
       "name": "backgroundImage",
@@ -31,7 +35,7 @@
         },
         "varcharLength": 1024
       },
-      "type": "java.net.URI"
+      "type": "URI"
     },
     {
       "golang": {
