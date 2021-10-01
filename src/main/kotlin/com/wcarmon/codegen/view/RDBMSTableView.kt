@@ -1,6 +1,7 @@
 package com.wcarmon.codegen.view
 
 import com.wcarmon.codegen.ast.FieldValidationExpressions
+import com.wcarmon.codegen.ast.InterFieldValidationExpression
 import com.wcarmon.codegen.ast.RawLiteralExpression
 import com.wcarmon.codegen.ast.RenderConfig
 import com.wcarmon.codegen.model.Entity
@@ -28,9 +29,16 @@ data class RDBMSTableView(
     if (entity.idFields.isEmpty()) ""
     else "PrimaryKey " + English.plural("field", entity.idFields.size)
 
+  /**
+   * SQLite should NOT use this (all others can)
+   */
+  val qualifiedTableName: String by lazy {
+    "$schemaPrefix\"${entity.name.lowerSnake}\""
+  }
+
   val schemaPrefix: String =
     if (entity.rdbmsConfig.schema.isBlank()) ""
-    else "${entity.rdbmsConfig.schema}."
+    else "\"${entity.rdbmsConfig.schema}\"."
 
 
   val primaryKeyWhereClause_questionMarks: String = commaSeparatedColumnAssignment(
@@ -68,6 +76,11 @@ data class RDBMSTableView(
       parts += check
     }
 
+    val interField = interFieldCheckConstraints
+    if (interField.isNotBlank()) {
+      parts += interField
+    }
+
     val output = parts.joinToString(separator = ",\n\n")
 
     if (output.isNotBlank()) {
@@ -78,7 +91,29 @@ data class RDBMSTableView(
   }
 
   val uniqueConstraints: String by lazy {
-    "-- TODO: add unique constraints here"
+    //TODO: more here
+    ""
+  }
+
+  val interFieldCheckConstraints: String by lazy {
+    val renderConfig = RenderConfig(
+      debugMode = debugMode,
+      targetLanguage = SQL_POSTGRESQL,
+      terminate = false,
+    )
+
+    entity
+      .interFieldValidations
+      .joinToString(
+        separator = ",\n"
+      ) { v ->
+        InterFieldValidationExpression(
+          entity = entity,
+          validationConfig = v,
+          validationSeparator = ",\n"
+        )
+          .render(renderConfig)
+      }
   }
 
   val checkConstraints: String by lazy {
@@ -98,7 +133,7 @@ data class RDBMSTableView(
     }
       .filter { it.isNotBlank() }
       .joinToString(
-        separator = "\n\n",
+        separator = ",\n",
       )
   }
 

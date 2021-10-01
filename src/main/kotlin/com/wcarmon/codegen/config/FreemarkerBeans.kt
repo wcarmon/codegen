@@ -40,12 +40,12 @@ class FreemarkerBeans {
 
         it.defaultEncoding = "UTF-8"
         it.fallbackOnNullLoopVariable = false
-        it.logTemplateExceptions = false
+        it.logTemplateExceptions = true // shows real exception on failures
         it.templateExceptionHandler = TemplateExceptionHandler.DEBUG_HANDLER
         it.templateLoader = templateLoader
         it.whitespaceStripping = true
-        it.wrapUncheckedExceptions = true
-//      it.templateExceptionHandler = TemplateExceptionHandler.RETHROW_HANDLER
+        it.wrapUncheckedExceptions = true // includes template line info
+//        it.templateExceptionHandler = TemplateExceptionHandler.RETHROW_HANDLER
       }
 //TODO: find equivalent for this
 //      it.addProperty("directive.foreach.max_loops", "5000")

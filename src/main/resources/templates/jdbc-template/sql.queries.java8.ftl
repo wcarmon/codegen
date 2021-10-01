@@ -20,7 +20,7 @@ public final class SQLQueries {
    */
   public static final String SELECT_BY_PK__${entity.name.upperSnake} =
     "SELECT ${entity.rdbmsView.commaSeparatedColumns}"
-    + " FROM \"${entity.name.lowerSnake}\""
+    + " FROM ${entity.rdbmsView.qualifiedTableName}"
     + " WHERE ${entity.rdbmsView.primaryKeyWhereClause_questionMarks}";
 
   /**
@@ -30,7 +30,7 @@ public final class SQLQueries {
    */
   public static final String ROW_EXISTS__${entity.name.upperSnake} =
     "SELECT COUNT(*)"
-    + " FROM \"${entity.name.lowerSnake}\""
+    + " FROM ${entity.rdbmsView.qualifiedTableName}"
     + " WHERE ${entity.rdbmsView.primaryKeyWhereClause_questionMarks}";
 
   /**
@@ -40,7 +40,7 @@ public final class SQLQueries {
    * Columns count: ${entity.fields?size}
    */
   public static final String UPDATE__${entity.name.upperSnake} =
-    "UPDATE \"${entity.name.lowerSnake}\""
+    "UPDATE ${entity.rdbmsView.qualifiedTableName}"
     + " SET"
     + " ${entity.rdbmsView.updateSetClause_questionMarks}"
     + " WHERE ${entity.rdbmsView.primaryKeyWhereClause_questionMarks}";
@@ -51,7 +51,7 @@ public final class SQLQueries {
    * PK column count: ${entity.idFields?size}
    */
   public static final String DELETE__${entity.name.upperSnake} =
-    "DELETE FROM \"${entity.name.lowerSnake}\""
+    "DELETE FROM ${entity.rdbmsView.qualifiedTableName}"
     + " WHERE ${entity.rdbmsView.primaryKeyWhereClause_questionMarks}";
   </#if>
 
@@ -62,7 +62,7 @@ public final class SQLQueries {
    */
   public static final String SELECT_ALL__${entity.name.upperSnake} =
     "SELECT ${entity.rdbmsView.commaSeparatedColumns}"
-    + " FROM \"${entity.name.lowerSnake}\"";
+    + " FROM ${entity.rdbmsView.qualifiedTableName}";
 
   /**
    * Insert 1-row
@@ -71,7 +71,7 @@ public final class SQLQueries {
    * Columns count: ${entity.fields?size}
    */
   public static final String INSERT__${entity.name.upperSnake} =
-    "INSERT INTO \"${entity.name.lowerSnake}\""
+    "INSERT INTO ${entity.rdbmsView.qualifiedTableName}"
     + " (${entity.rdbmsView.commaSeparatedColumns})"
     + " VALUES (${entity.rdbmsView.questionMarkStringForInsert})";
 

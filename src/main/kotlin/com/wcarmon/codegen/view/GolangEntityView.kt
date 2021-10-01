@@ -112,7 +112,7 @@ class GolangEntityView(
 
         lines += "// Patch ${entity.name.upperCamel}.${field.name.lowerCamel}"
         lines += "PATCH__${entity.name.upperSnake}__${field.name.upperSnake} = `"
-        lines += """${indentation}UPDATE "${entity.name.lowerSnake}" """
+        lines += """${indentation}UPDATE ${entity.rdbmsView.qualifiedTableName}"""
 
         val p = placeholderType.firstPlaceholder()
         lines += """${indentation}SET ${field.name.lowerSnake}=$p """

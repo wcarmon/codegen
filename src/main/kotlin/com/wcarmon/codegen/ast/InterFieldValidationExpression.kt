@@ -22,9 +22,6 @@ data class InterFieldValidationExpression(
   private val field1 = entity.fieldForName(validationConfig.fieldName1)
     ?: throw RuntimeException("Cannot find field: field.name=${validationConfig.fieldName1}, entity=${entity.name.upperCamel}")
 
-  private val name0 = field0.name.lowerCamel
-  private val name1 = field1.name.lowerCamel
-
 
   override fun renderWithoutDebugComments(config: RenderConfig): String =
     when (config.targetLanguage) {
@@ -35,11 +32,15 @@ data class InterFieldValidationExpression(
 
       KOTLIN_JVM_1_4 -> handleKotlin(config)
 
+      SQL_POSTGRESQL
+      -> handlePostgreSQL(config)
+
       else -> TODO("handle InterFieldValidation for ${config.targetLanguage}")
     }.trimEnd()
 
   private fun handleJava(config: RenderConfig): String {
-
+    val name0 = field0.name.lowerCamel
+    val name1 = field1.name.lowerCamel
     val output = mutableListOf<String>()
 
     when (validationConfig.type) {
@@ -94,6 +95,8 @@ data class InterFieldValidationExpression(
 
   private fun handleKotlin(config: RenderConfig): String {
 
+    val name0 = field0.name.lowerCamel
+    val name1 = field1.name.lowerCamel
     val output = mutableListOf<String>()
 
     when (validationConfig.type) {
@@ -142,6 +145,20 @@ data class InterFieldValidationExpression(
       separator = validationSeparator
     ) {
       "${config.lineIndentation}$it"
+    }
+  }
+
+  private fun handlePostgreSQL(config: RenderConfig): String {
+    val name0 = field0.name.lowerSnake
+    val name1 = field1.name.lowerSnake
+
+    //TODO: use config.lineIndentation
+    return when (validationConfig.type) {
+      BEFORE -> """CHECK("$name0" < "$name1")"""
+      NOT_BEFORE -> """CHECK("$name0" >= "$name1")"""
+      LESS_OR_EQUAL_TO -> """CHECK("$name0" <= "$name1")"""
+      LESS_THAN -> """CHECK("$name0" < "$name1")"""
+      NOT_EQUAL -> """CHECK("$name0" <> "$name1")"""
     }
   }
 }

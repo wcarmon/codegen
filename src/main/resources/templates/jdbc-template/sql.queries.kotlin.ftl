@@ -23,7 +23,7 @@ ${request.jvmView.templateDebugInfo}
   val SELECT_BY_PK__${entity.name.upperSnake} =
     """
     |SELECT ${entity.rdbmsView.commaSeparatedColumns}
-    |FROM "${entity.name.lowerSnake}"
+    |FROM ${entity.rdbmsView.qualifiedTableName}
     |WHERE ${entity.rdbmsView.primaryKeyWhereClause_questionMarks}"
     """.trimMargin()
 
@@ -35,7 +35,7 @@ ${request.jvmView.templateDebugInfo}
   val ROW_EXISTS__${entity.name.upperSnake} =
     """
     |SELECT COUNT(*)
-    |FROM "${entity.name.lowerSnake}"
+    |FROM ${entity.rdbmsView.qualifiedTableName}
     |WHERE ${entity.rdbmsView.primaryKeyWhereClause_questionMarks}
     """.trimMargin()
 
@@ -47,7 +47,7 @@ ${request.jvmView.templateDebugInfo}
    */
   val UPDATE__${entity.name.upperSnake} =
     """
-    |UPDATE "${entity.name.lowerSnake}"
+    |UPDATE ${entity.rdbmsView.qualifiedTableName}
     |SET
     |  ${entity.rdbmsView.updateSetClause_questionMarks}
     |WHERE ${entity.rdbmsView.primaryKeyWhereClause_questionMarks}
@@ -60,7 +60,7 @@ ${request.jvmView.templateDebugInfo}
    */
   val DELETE__${entity.name.upperSnake} =
     """
-    |DELETE FROM "${entity.name.lowerSnake}"
+    |DELETE FROM ${entity.rdbmsView.qualifiedTableName}
     |WHERE ${entity.rdbmsView.primaryKeyWhereClause_questionMarks}
     """.trimMargin()
   </#if>
@@ -73,7 +73,7 @@ ${request.jvmView.templateDebugInfo}
   val SELECT_ALL__${entity.name.upperSnake} =
     """
     |SELECT ${entity.rdbmsView.commaSeparatedColumns}
-    |FROM "${entity.name.lowerSnake}"
+    |FROM ${entity.rdbmsView.qualifiedTableName}
     """.trimMargin()
 
   /**
@@ -84,7 +84,7 @@ ${request.jvmView.templateDebugInfo}
    */
   val INSERT__${entity.name.upperSnake} =
     """
-    |INSERT INTO "${entity.name.lowerSnake}" (
+    |INSERT INTO ${entity.rdbmsView.qualifiedTableName} (
     |  ${entity.rdbmsView.commaSeparatedColumns}
     |)
     |VALUES (${entity.rdbmsView.questionMarkStringForInsert})

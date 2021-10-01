@@ -289,18 +289,32 @@ data class FieldValidationExpressions(
       output += """CHECK ("$fName" <= ${validationConfig.maxValue})"""
     }
 
-    //TODO: after
-    //TODO: before
-    //TODO: fileConstraint
-    //TODO: maxSize
-    //TODO: minSize
-    //TODO: requireLowerCase
-    //TODO: requireMatchesRegex
-    //TODO: requireNotBlank
-    //TODO: requireTrimmed
-    //TODO: requireUpperCase
+    if (validationConfig.requireNotBlank != null && validationConfig.requireNotBlank) {
+      output += """CHECK (LENGTH(TRIM("$fName")) > 0)"""
+    }
 
-    System.err.println("TODO: finish this")
+    if (validationConfig.requireTrimmed != null && validationConfig.requireTrimmed) {
+      output += """CHECK (TRIM("$fName") = "$fName")"""
+    }
+
+    if (validationConfig.requireLowerCase != null && validationConfig.requireLowerCase) {
+      output += """CHECK (LOWER("$fName") = "$fName")"""
+    }
+
+    if (validationConfig.requireUpperCase != null && validationConfig.requireUpperCase) {
+      output += """CHECK (UPPER("$fName") = "$fName")"""
+    }
+
+    //TODO: after <-- requires same date-time serialization mechanism
+    //TODO: before <-- requires same date-time serialization mechanism
+    //  JVM:        2021-10-01T16:50:11.628135Z
+    //  POSTGRESQL: 2021-10-01 16:50:11.628135 +00:00
+    //            TO_CHAR((NOW() AT TIME ZONE 'UTC'), 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"')
+
+    //TODO: fileConstraint <-- impossible (different file system)
+    //TODO: maxSize - https://www.postgresql.org/docs/current/arrays.html
+    //TODO: minSize - https://www.postgresql.org/docs/current/arrays.html
+    //TODO: requireMatchesRegex - https://www.postgresql.org/docs/current/functions-matching.html
 
     check(output.none { it.isBlank() })
     return output.joinToString(

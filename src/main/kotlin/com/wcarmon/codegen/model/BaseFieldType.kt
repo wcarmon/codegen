@@ -408,32 +408,32 @@ enum class BaseFieldType {
       MAP,
       SET,
       YEAR,
+      ZONE_OFFSET,
       -> false
 
       COLOR,
       EMAIL,
+      DURATION,
+      MONTH_DAY,
       PATH,
+      PERIOD,
       PHONE_NUMBER,
       STRING,
       URI,
       URL,
       USER_DEFINED,
-      UUID,
-      -> true
-
-      ARRAY,
-      DURATION,
-      MONTH_DAY,
-      PERIOD,
       UTC_INSTANT,
       UTC_TIME,
+      UUID,
       WEEK_OF_YEAR,
       YEAR_MONTH,
       ZONE_AGNOSTIC_DATE,
       ZONE_AGNOSTIC_DATE_TIME,
       ZONE_AGNOSTIC_TIME,
-      ZONE_OFFSET,
       ZONED_DATE_TIME,
+      -> true
+
+      ARRAY,
       -> TODO("Decide if base type can receive string literal: $this")
     }
   }
