@@ -8,7 +8,6 @@ request.jvmContextClass)}
 
 <#list entities as entity>
 ${entity.kotlinView.typeReferenceDeclarations}
-
 </#list>
 
 /**

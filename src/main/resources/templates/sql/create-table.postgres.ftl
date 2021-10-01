@@ -15,12 +15,6 @@ CREATE TABLE IF NOT EXISTS ${entity.rdbmsView.schemaPrefix}${entity.name.lowerSn
   <#list entity.nonIdFields as field>
     ${field.rdbmsView.postgresqlColumnDefinition}<#if field?has_next>,</#if>
   </#list>
-<#--  -->
-  <#if entity.hasIdFields>
-  ,
-    ${entity.rdbmsView.primaryKeyTableConstraint}
-  </#if>
-  <#-- TODO: unique constraints -->
-  <#-- TODO: check constraints -->
+  ${entity.rdbmsView.constraints}
 );
 </#list>

@@ -1,5 +1,6 @@
 package com.wcarmon.codegen.view
 
+import com.wcarmon.codegen.ast.FieldValidationExpressions
 import com.wcarmon.codegen.ast.RawLiteralExpression
 import com.wcarmon.codegen.ast.RenderConfig
 import com.wcarmon.codegen.model.Entity
@@ -7,6 +8,7 @@ import com.wcarmon.codegen.model.JDBCColumnIndex
 import com.wcarmon.codegen.model.PreparedStatementBuilderConfig
 import com.wcarmon.codegen.model.SQLPlaceholderType.NUMBERED_DOLLARS
 import com.wcarmon.codegen.model.SQLPlaceholderType.QUESTION_MARK
+import com.wcarmon.codegen.model.TargetLanguage.SQL_POSTGRESQL
 import com.wcarmon.codegen.util.*
 import org.atteo.evo.inflector.English
 
@@ -48,6 +50,58 @@ data class RDBMSTableView(
     )
   }
 
+  val constraints: String by lazy {
+
+    val parts = mutableListOf<String>()
+
+    if (entity.hasIdFields) {
+      parts += entity.rdbmsView.primaryKeyTableConstraint
+    }
+
+    val unique = uniqueConstraints
+    if (unique.isNotBlank()) {
+      parts += unique
+    }
+
+    val check = checkConstraints
+    if (check.isNotBlank()) {
+      parts += check
+    }
+
+    val output = parts.joinToString(separator = ",\n\n")
+
+    if (output.isNotBlank()) {
+      ",\n$output"
+    } else {
+      output
+    }
+  }
+
+  val uniqueConstraints: String by lazy {
+    "-- TODO: add unique constraints here"
+  }
+
+  val checkConstraints: String by lazy {
+    val renderConfig = RenderConfig(
+      debugMode = debugMode,
+      targetLanguage = SQL_POSTGRESQL,
+      terminate = false,
+    )
+
+    validatedFields.map { field ->
+      FieldValidationExpressions(
+        field = field,
+        validationConfig = field.validationConfig,
+        validationSeparator = ",\n"
+      )
+        .render(renderConfig)
+    }
+      .filter { it.isNotBlank() }
+      .joinToString(
+        separator = "\n\n",
+      )
+  }
+
   val primaryKeyTableConstraint: String = primaryKeyTableConstraint(entity)
 
   val questionMarkStringForInsert: String = (1..entity.fields.size).joinToString { "?" }
@@ -68,6 +122,12 @@ data class RDBMSTableView(
     fields = entity.nonIdFields,
     placeholderType = QUESTION_MARK,
   )
+
+  private val validatedFields =
+    entity.sortedFieldsWithIdsFirst
+      .filter {
+        it.validationConfig.hasValidation
+      }
 
   val updateSetClause_numeredDollars: String = commaSeparatedColumnAssignment(
     fields = entity.nonIdFields,

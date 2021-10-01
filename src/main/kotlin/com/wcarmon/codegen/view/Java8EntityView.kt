@@ -83,15 +83,20 @@ class Java8EntityView(
   val fieldDeclarations: String by lazy {
 
     entity.sortedFieldsWithIdsFirst
-      .joinToString("\n") { field ->
-        FieldDeclarationExpression(
-          //TODO: suffix "ID/Primary key" when `field.idField`
-          documentation = DocumentationExpression(field.documentation),
-          field = field,
-          finalityModifier = FinalityModifier.FINAL,
-          visibilityModifier = VisibilityModifier.PRIVATE,
-//      defaultValue = TODO()  TODO: fix this
-        ).render(renderConfig.indented)
+      .joinToString(
+        separator = "\n"
+      ) { field ->
+        field.java8View.fieldDeclaration
+      }
+  }
+
+  val fieldDeclarationsForBuilder: String by lazy {
+
+    entity.sortedFieldsWithIdsFirst
+      .joinToString(
+        separator = "\n"
+      ) { field ->
+        field.java8View.fieldDeclarationForBuilder
       }
   }
 

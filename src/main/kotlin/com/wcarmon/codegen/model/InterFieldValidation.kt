@@ -7,6 +7,7 @@ data class InterFieldValidation(
   val fieldName0: Name,
   val fieldName1: Name,
   val type: InterFieldValidationType
+  //TODO: allow custom message here
 ) {
 
   init {

@@ -2,6 +2,8 @@ package com.wcarmon.codegen
 
 
 import com.wcarmon.codegen.input.OutputFileNameBuilder
+import com.wcarmon.codegen.log.structuredInfo
+import com.wcarmon.codegen.log.structuredWarn
 import com.wcarmon.codegen.model.CodeGenRequest
 import com.wcarmon.codegen.model.Entity
 import org.apache.logging.log4j.LogManager
@@ -17,7 +19,12 @@ class CodeGenerator(
 
   /** Executed after each file generated */
   private val onAfterGenerateFile: Consumer<Path> =
-    Consumer { LOG.info("Generated: $it") },
+    Consumer {
+      LOG.structuredInfo(
+        "Generated file",
+        "path" to it
+      )
+    },
 ) {
 
   companion object {
@@ -56,7 +63,15 @@ class CodeGenerator(
       )
 
       if (Files.exists(dest) && !allowOverwrite) {
-        LOG.warn("Refusing to overwrite $dest")
+        LOG.structuredWarn(
+          "Refusing to overwrite",
+          "allowOverwrite" to allowOverwrite,
+          "dest" to dest,
+          "entity" to entity,
+          "outputDir" to outputDir,
+          "request" to request,
+        )
+
         return@forEach
       }
 
@@ -100,7 +115,12 @@ class CodeGenerator(
 
     if (Files.exists(outputFile)) {
       if (!allowOverwrite) {
-        LOG.warn("Refusing to overwrite $outputFile")
+        LOG.structuredWarn(
+          "Refusing to overwrite",
+          "allowOverwrite" to allowOverwrite,
+          "outputFile" to outputFile,
+          "request" to request,
+        )
         return
       }
 

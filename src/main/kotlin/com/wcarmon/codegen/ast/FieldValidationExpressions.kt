@@ -18,8 +18,6 @@ data class FieldValidationExpressions(
 
   override val expressionName: String = FieldValidationExpressions::class.java.simpleName
 
-  private val fName = field.name.lowerCamel
-
   override fun renderWithoutDebugComments(config: RenderConfig): String =
     when (config.targetLanguage) {
       JAVA_08,
@@ -29,12 +27,20 @@ data class FieldValidationExpressions(
 
       KOTLIN_JVM_1_4 -> handleKotlin(config)
 
+      //TODO: add other databases which are compatible with postgresql
+      SQL_POSTGRESQL,
+      -> handlePostgreSQL(config)
+
       else -> TODO("handle Field validation for $config")
     }.trimEnd()
 
   //TODO: fix indentation on multi-line validations
   private fun handleJava(config: RenderConfig): String {
+    if (!validationConfig.hasValidation) {
+      return ""
+    }
 
+    val fName = field.name.lowerCamel
     val baseType = field.effectiveBaseType(JAVA_08)
     val output = mutableListOf<String>()
 
@@ -161,6 +167,7 @@ data class FieldValidationExpressions(
       return ""
     }
 
+    val fName = field.name.lowerCamel
     val baseType = field.effectiveBaseType(KOTLIN_JVM_1_4)
     val output = mutableListOf<String>()
 
@@ -256,6 +263,44 @@ data class FieldValidationExpressions(
         |}
         """.trimMargin()
     }
+
+    check(output.none { it.isBlank() })
+    return output.joinToString(
+      separator = validationSeparator
+    ) {
+      "${config.lineIndentation}$it"
+    }
+  }
+
+  private fun handlePostgreSQL(config: RenderConfig): String {
+    if (!validationConfig.hasValidation) {
+      return ""
+    }
+
+    val fName = field.name.lowerSnake
+    val baseType = field.effectiveBaseType(SQL_POSTGRESQL)
+    val output = mutableListOf<String>()
+
+    if (validationConfig.minValue != null) {
+      output += """CHECK ("$fName" >= ${validationConfig.minValue})"""
+    }
+
+    if (validationConfig.maxValue != null) {
+      output += """CHECK ("$fName" <= ${validationConfig.maxValue})"""
+    }
+
+    //TODO: after
+    //TODO: before
+    //TODO: fileConstraint
+    //TODO: maxSize
+    //TODO: minSize
+    //TODO: requireLowerCase
+    //TODO: requireMatchesRegex
+    //TODO: requireNotBlank
+    //TODO: requireTrimmed
+    //TODO: requireUpperCase
+
+    System.err.println("TODO: finish this")
 
     check(output.none { it.isBlank() })
     return output.joinToString(

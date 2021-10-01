@@ -104,6 +104,30 @@ class Java8FieldView(
   )
     .render(renderConfig.unterminated)
 
+  val fieldDeclarationForBuilder: String by lazy {
+    FieldDeclarationExpression(
+      //TODO: suffix "ID/Primary key" when `field.idField`
+      defaultValue = DefaultValueExpression(field),
+      documentation = DocumentationExpression.EMPTY,
+      field = field,
+      finalityModifier = FinalityModifier.NON_FINAL,
+      visibilityModifier = VisibilityModifier.PRIVATE,
+      //TODO: annotations
+    ).render(renderConfig.indented.terminated)
+
+  }
+
+  val fieldDeclaration: String by lazy {
+    FieldDeclarationExpression(
+      //TODO: suffix "ID/Primary key" when `field.idField`
+      defaultValue = EmptyExpression,
+      documentation = DocumentationExpression(field.documentation),
+      field = field,
+      finalityModifier = FinalityModifier.FINAL,
+      visibilityModifier = VisibilityModifier.PRIVATE,
+      //TODO: annotations
+    ).render(renderConfig.indented.terminated)
+  }
 
   val typeParameters: List<String> =
     field.typeParameters(targetLanguage)

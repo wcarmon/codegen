@@ -142,7 +142,20 @@ data class DefaultValueExpression(
       }
     }
 
-    return "TODO-fix-java-default"
+    val v = effectiveDefaultValue.uninterpreted
+    checkNotNull(v) { "effectiveDefaultValue.uninterpreted is unexpectedly null" }
+
+    if (!effectiveBaseType.canAssignStringLiteral) {
+      return v.toString()
+    }
+
+    // Invariant: Stringlike base type
+    return if (effectiveDefaultValue.shouldQuote) {
+      QuoteType.DOUBLE.wrap(v.toString())
+
+    } else {
+      v.toString()
+    }
   }
 
   private fun handleKotlin(

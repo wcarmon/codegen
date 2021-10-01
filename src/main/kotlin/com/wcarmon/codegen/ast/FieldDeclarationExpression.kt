@@ -65,9 +65,9 @@ data class FieldDeclarationExpression(
     output.append(" ")
     output.append(field.name.lowerCamel)
 
-    val dflt = defaultValue.render(config)
+    val dflt = defaultValue.render(config.unterminated)
     if (dflt.isNotBlank()) {
-      TODO("handle default value: $dflt")
+      output.append(" = $dflt")
     }
 
     if (config.terminate) {
@@ -80,11 +80,11 @@ data class FieldDeclarationExpression(
   private fun handleKotlin(config: RenderConfig): String {
 
     val doc = documentation.render(config.unterminated)
-    val dValue = defaultValue.render(config.unterminated)
+    val dflt = defaultValue.render(config.unterminated)
     val typeLiteral = kotlinTypeLiteral(field, false)
     val variableKeyword = if (finalityModifier == FINAL) "val " else "var "
 
-    val defaultValueFragment = if (dValue.isNotBlank()) " = $dValue" else ""
+    val defaultValueFragment = if (dflt.isNotBlank()) " = $dflt" else ""
     val docFragment = if (doc.isNotBlank()) "\n$doc\n" else ""
     val visibilityFragment = visibilityModifier.render(config.targetLanguage)
 

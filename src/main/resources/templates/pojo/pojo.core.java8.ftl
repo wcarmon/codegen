@@ -81,10 +81,7 @@ ${entity.java8View.fieldDeclarations}
 
   @JsonPOJOBuilder(withPrefix = "", buildMethodName = "build")
   public static class ${entity.name.upperCamel}Builder {
-<#-- TODO: set default values on fields here-->
-    <#list entity.sortedFields as field>
-    private ${field.java8View.typeLiteral} ${field.name.lowerCamel};
-    </#list>
+    ${entity.java8View.fieldDeclarationsForBuilder}
 
     ${entity.name.upperCamel}Builder() {
     }

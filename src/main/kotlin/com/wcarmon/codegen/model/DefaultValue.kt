@@ -1,6 +1,7 @@
 package com.wcarmon.codegen.model
 
 import com.fasterxml.jackson.annotation.JsonCreator
+import com.wcarmon.codegen.log.structuredWarn
 import com.wcarmon.codegen.model.DefaultValue.Mode.*
 import org.apache.logging.log4j.LogManager
 
@@ -113,15 +114,15 @@ data class DefaultValue(
 
           } else {
             if (theDefault == "true" || theDefault == "false") {
-              val debugContext = mapOf<String, Any?>(
+
+              LOG.structuredWarn(
+                "JSON config error: unnecessary quotes on boolean",
                 "mode" to mode,
                 "quoteValue" to quoteValue,
                 "raw" to raw,
                 "theDefault" to theDefault,
                 "theDefault::class" to (theDefault.javaClass.name ?: "<null>"),
               )
-
-              LOG.warn("JSON config error: unnecessary quotes on boolean: context=$debugContext")
             }
 
             //TODO: warn about unnecessary quotes on numbers
@@ -138,15 +139,16 @@ data class DefaultValue(
         && mode == PRESENT__OTHER
         && isBlankCharSequence(theDefault)
       ) {
-        val debugContext = mapOf<String, Any?>(
+        LOG.structuredWarn(
+          "JSON config error: blank strings must be quoted",
+          "allowQuoting" to allowQuoting,
+          "emptyCollection" to emptyCollection,
           "mode" to mode,
           "quoteValue" to quoteValue,
           "raw" to raw,
           "theDefault" to theDefault,
           "theDefault::class" to (theDefault?.javaClass?.name ?: "<null>"),
         )
-
-        LOG.warn("JSON config error: blank strings must be quoted: context=$debugContext")
       }
 
       return DefaultValue(

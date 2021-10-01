@@ -5,6 +5,8 @@ package com.wcarmon.codegen
 import com.wcarmon.codegen.config.CodegenBeans
 import com.wcarmon.codegen.config.FreemarkerBeans
 import com.wcarmon.codegen.config.JSONBeans
+import com.wcarmon.codegen.log.structuredError
+import com.wcarmon.codegen.log.structuredInfo
 import org.apache.logging.log4j.LogManager
 import org.springframework.boot.Banner
 import org.springframework.boot.SpringApplication
@@ -30,12 +32,23 @@ private val LOG = LogManager.getLogger("com.wcarmon.codegen.CodegenMain")
 fun main(args: Array<String>) {
 
   if (args.size != 1) {
-    LOG.error("Pass exactly 1 argument (directory containing request json files)")
-    exitProcess(1)
+    val exitCode = 1
+    LOG.structuredError(
+      "Pass exactly 1 argument",
+      "args" to args,
+      "details" to "Pass directory containing request json files",
+      "exitCode" to exitCode,
+      "nextStep" to "terminating",
+    )
+
+    exitProcess(exitCode)
   }
 
   val configRoot = Paths.get(args[0]).normalize().toAbsolutePath()
-  LOG.info("Starting codegen:  configRoot={}", configRoot)
+  LOG.structuredInfo(
+    "Starting codegen",
+    "configRoot" to configRoot,
+  )
 
   val ctx = SpringApplicationBuilder(CodeGeneratorApp::class.java)
     .bannerMode(Banner.Mode.OFF)
@@ -59,8 +72,15 @@ fun main(args: Array<String>) {
     exitProcess(0)
 
   } catch (ex: Exception) {
-    LOG.error("Failed to run generator:", ex)
+    val exitCode = 2
+    LOG.structuredError(
+      "Failed to run generator",
+      "args" to args,
+      "configRoot" to configRoot,
+      "exception" to ex,
+    )
+
     SpringApplication.exit(ctx, { 0 })
-    exitProcess(2)
+    exitProcess(exitCode)
   }
 }

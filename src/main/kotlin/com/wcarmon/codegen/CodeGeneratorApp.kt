@@ -3,6 +3,7 @@ package com.wcarmon.codegen
 import com.fasterxml.jackson.databind.ObjectReader
 import com.wcarmon.codegen.input.EntityConfigParser
 import com.wcarmon.codegen.input.getPathsMatchingNamePattern
+import com.wcarmon.codegen.log.structuredInfo
 import com.wcarmon.codegen.model.CodeGenRequest
 import com.wcarmon.codegen.model.Entity
 import com.wcarmon.codegen.model.OutputMode.SINGLE_FILE
@@ -48,15 +49,19 @@ class CodeGeneratorApp(
 
         val entities = findEntityConfigs(codeGenRequest.entityConfigDirs)
 
-        LOG.info("Found entity configs for request: count={}, names=[{}], template={}",
-          entities.size,
-          StringUtils.truncate(
-            entities
-              .map { it.name.upperCamel }
-              .sortedBy { it }
-              .joinToString(),
-            256),
-          codeGenRequest.template.toString())
+        val names = StringUtils.truncate(
+          entities
+            .map { it.name.upperCamel }
+            .sortedBy { it }
+            .joinToString(),
+          256)
+
+        LOG.structuredInfo(
+          "Found entity configs for request",
+          "entityCount" to entities.size,
+          "names" to names,
+          "template" to codeGenRequest.template,
+        )
 
         // -- Enforce unique entity names
         val entityNames = entities.map { it.name.lowerCamel }
@@ -137,10 +142,10 @@ class CodeGeneratorApp(
       "At least one Code Generate request file is required under $configRoot"
     }
 
-    LOG.info(
-      "Found Code Generate requests: count={}, files={}",
-      generatorRequestPaths.size,
-      StringUtils.truncate(generatorRequestPaths.toString(), 256)
+    LOG.structuredInfo(
+      "Found Code Generate requests",
+      "count" to generatorRequestPaths.size,
+      "files" to StringUtils.truncate(generatorRequestPaths.toString(), 256),
     )
 
     return generatorRequestPaths.map {

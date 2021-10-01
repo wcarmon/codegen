@@ -4,7 +4,6 @@
   "fieldUris": [
     "file:/home/wcarmon/git-repos/codegen/samples/fields/uuid.field.json",
     "file:/home/wcarmon/git-repos/codegen/samples/fields/created.field.json",
-    "file:/home/wcarmon/git-repos/codegen/samples/fields/name.field.json",
     "file:/home/wcarmon/git-repos/codegen/samples/fields/updated.field.json"
   ],
   "fields": [
@@ -14,6 +13,30 @@
         "varcharLength": 255
       },
       "type": "uri"
+    },
+    {
+      "golang": {
+        "defaultValue": {
+          "value": ""
+        }
+      },
+      "jvm": {
+        "defaultValue": {
+          "value": ""
+        }
+      },
+      "name": "name",
+      "rdbms": {
+        "defaultValue": {
+          "value": ""
+        },
+        "varcharLength": 48
+      },
+      "type": "String",
+      "validation": {
+        "maxSize": 48,
+        "requireNotBlank": true
+      }
     }
   ],
   "interFieldValidations": [

@@ -1,5 +1,6 @@
 package com.wcarmon.codegen.ast
 
+import com.wcarmon.codegen.log.structuredWarn
 import com.wcarmon.codegen.model.BaseFieldType.BOOLEAN
 import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.TargetLanguage.SQL_DELIGHT
@@ -70,7 +71,12 @@ class SQLDelightColumnDeclarationExpression(
 
       /* See [Field.defaultValueExpression] */
       //TODO: fix
-      LOG.warn("improve default value on sqlDelight column declaration: field=$field")
+      LOG.structuredWarn(
+        "improve default value on sqlDelight column declaration",
+        "effectiveDefaultValue" to effectiveDefaultValue,
+        "field" to field,
+        "targetLanguage" to targetLanguage,
+      )
 
 //      if (field.defaultValue.lowercase() != "null") {
 //        //TODO: use field.defaultValue here
@@ -79,7 +85,7 @@ class SQLDelightColumnDeclarationExpression(
     }
 
 //    if (field.overrideDefaultValue(targetLanguage).isPresent) {
-//      LOG.warn("Handle the rdbms override default here")
+//      LOG.structuredWarn("Handle the rdbms override default here")
 //    }
 
     if (defaultValueLiteral == null) {

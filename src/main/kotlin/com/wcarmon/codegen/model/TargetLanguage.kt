@@ -115,7 +115,7 @@ enum class TargetLanguage {
       PYTHON_3,
       -> false
 
-      RUST_1_54 -> TODO()
+      RUST_1_54 -> TODO("decide if targetLanguage=$this requires statement terminator")
 
       SQL_DB2,
       SQL_H2,
@@ -124,9 +124,9 @@ enum class TargetLanguage {
       SQL_ORACLE,
       SQL_POSTGRESQL,
       SQL_SQLITE,
-      -> TODO()
+      -> TODO("decide if targetLanguage=$this requires statement terminator")
 
-      SWIFT_5 -> TODO()
+      SWIFT_5 -> TODO("decide if targetLanguage=$this requires statement terminator")
     }
   }
 

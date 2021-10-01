@@ -16,12 +16,6 @@ ${request.jvmView.templateDebugInfo}
     <#list entity.nonIdFields as field>
         ${field.rdbmsView.postgresqlColumnDefinition}<#if field?has_next>,</#if>
     </#list>
-<#--  -->
-    <#if entity.hasIdFields>
-      ,
-        ${entity.rdbmsView.primaryKeyTableConstraint}
-    </#if>
-<#-- TODO: unique constraints -->
-<#-- TODO: check constraints -->
+    ${entity.rdbmsView.constraints}
   );
 </#list>

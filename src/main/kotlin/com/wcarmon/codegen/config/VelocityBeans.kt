@@ -1,6 +1,7 @@
 package com.wcarmon.codegen.config
 
 import com.wcarmon.codegen.TEMPLATE_SUFFIX
+import com.wcarmon.codegen.log.structuredInfo
 import org.apache.logging.log4j.LogManager
 import org.apache.velocity.app.VelocityEngine
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
@@ -46,7 +47,7 @@ class VelocityBeans {
 
       it.init()
 
-      LOG.info("Extra templates can go at $extraTemplatesPath/*$TEMPLATE_SUFFIX")
+      LOG.structuredInfo("Extra templates can go at $extraTemplatesPath/*$TEMPLATE_SUFFIX")
     }
 
   @Bean

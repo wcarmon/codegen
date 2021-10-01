@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.wcarmon.codegen.DEBUG_MODE
+import com.wcarmon.codegen.log.structuredWarn
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.TargetLanguage.*
 import com.wcarmon.codegen.util.*
@@ -371,7 +372,12 @@ data class Field(
       } else if (requiresJDBCSerde(this)) {
         //TODO: use default serde for INSTANT
         //TODO: use default serde for URI
-        LOG.warn("We recommend you override the rdbms Serde on $this")
+        LOG.structuredWarn(
+          "Recommended: override the rdbms Serde",
+          "field" to this,
+          "targetLanguage" to targetLanguage,
+        )
+
         Serde.INLINE
 
       } else {
@@ -384,7 +390,7 @@ data class Field(
         golangConfig.overrideRDBMSSerde
 
 //      } else if (requiresGolangSQLSerde(this)) {
-//        LOG.warn("We recommend you override the rdbms Serde on $this")
+//        LOG.structuredWarn("We recommend you override the rdbms Serde on $this")
 //        Serde.INLINE
 
       } else {
@@ -419,7 +425,12 @@ data class Field(
           defaultSerdeForCollection(this, targetLanguage)
 
         } else if (requiresProtobufSerde(this)) {
-          LOG.warn("We recommend you override the protobuf Serde on $this")
+          LOG.structuredWarn(
+            "Recommended: override the protobuf Serde",
+            "field" to this,
+            "targetLanguage" to targetLanguage,
+          )
+
           Serde.INLINE
 
         } else {
@@ -435,7 +446,12 @@ data class Field(
           defaultSerdeForCollection(this, targetLanguage)
 
         } else if (requiresProtobufSerde(this)) {
-          LOG.warn("We recommend you override the protobuf Serde on $this")
+          LOG.structuredWarn(
+            "Recommend: override the protobuf Serde",
+            "field" to this,
+            "targetLanguage" to targetLanguage,
+          )
+
           Serde.INLINE
 
         } else {

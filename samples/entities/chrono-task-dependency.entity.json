@@ -75,6 +75,13 @@
     }
   ],
   "indexes": [],
+  "interFieldValidations": [
+    {
+      "fieldName0": "fromTask",
+      "fieldName1": "toTask",
+      "type": "notEqual"
+    }
+  ],
   "name": "ChronoTaskDependency",
   "pkg": "com.wcarmon.chrono.model",
   "rdbms": {
