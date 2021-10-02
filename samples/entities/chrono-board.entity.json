@@ -18,9 +18,26 @@
           "value": null
         }
       },
-      "jvm": {
+      "java": {
         "defaultValue": {
           "value": null
+        },
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "URI(%s)",
+          "serializeTemplate": "%s.toString()"
+        },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "URI(%s)",
+          "serializeTemplate": "%s.toString()"
+        }
+      },
+      "kotlin": {
+        "defaultValue": {
+          "value": null
+        },
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "URI(%s)",
+          "serializeTemplate": "%s.toString()"
         },
         "overrideRDBMSSerde": {
           "deserializeTemplate": "URI(%s)",
@@ -43,7 +60,12 @@
           "value": ""
         }
       },
-      "jvm": {
+      "java": {
+        "defaultValue": {
+          "value": ""
+        }
+      },
+      "kotlin": {
         "defaultValue": {
           "value": ""
         }
@@ -63,7 +85,7 @@
           "value": true
         }
       },
-      "jvm": {
+      "java": {
         "defaultValue": {
           "value": true
         }
@@ -81,7 +103,7 @@
       "golang": {
         "overrideEffectiveType": "ChronoHorizon"
       },
-      "jvm": {
+      "java": {
         "overrideKafkaSerde": {
           "deserializeTemplate": "ChronoHorizon.parse(%s)",
           "serializeTemplate": "%s.valueAsString()"
@@ -110,7 +132,7 @@
           "value": ""
         }
       },
-      "jvm": {
+      "java": {
         "defaultValue": {
           "value": ""
         }
@@ -127,13 +149,13 @@
     {
       "enumType": true,
       "golang": {
+        "overrideEffectiveType": "ChronoLevel",
         "overrideProtobufSerde": {
           "deserializeTemplate": "fix--%s",
           "serializeTemplate": "fix--%s"
-        },
-        "overrideEffectiveType": "ChronoLevel"
+        }
       },
-      "jvm": {
+      "java": {
         "overrideProtobufSerde": {
           "deserializeTemplate": "ChronoLevel.fromValue(%s)",
           "serializeTemplate": "%s.toProtoValue()"
@@ -159,7 +181,7 @@
           "value": ""
         }
       },
-      "jvm": {
+      "java": {
         "defaultValue": {
           "value": ""
         }
@@ -187,7 +209,7 @@
           "value": -1
         }
       },
-      "jvm": {
+      "java": {
         "defaultValue": {
           "value": -1
         }

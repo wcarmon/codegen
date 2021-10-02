@@ -5,9 +5,26 @@
       "value": null
     }
   },
-  "jvm": {
+  "java": {
     "defaultValue": {
       "value": null
+    },
+    "overrideProtobufSerde": {
+      "deserializeTemplate": "Instant.parse(%s)",
+      "serializeTemplate": "%s.toString()"
+    },
+    "overrideRDBMSSerde": {
+      "deserializeTemplate": "Instant.parse(%s)",
+      "serializeTemplate": "%s.toString()"
+    }
+  },
+  "kotlin": {
+    "defaultValue": {
+      "value": null
+    },
+    "overrideProtobufSerde": {
+      "deserializeTemplate": "Instant.parse(%s)",
+      "serializeTemplate": "%s.toString()"
     },
     "overrideRDBMSSerde": {
       "deserializeTemplate": "Instant.parse(%s)",

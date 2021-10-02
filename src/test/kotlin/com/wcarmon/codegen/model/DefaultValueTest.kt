@@ -24,48 +24,49 @@ internal class DefaultValueTest {
       // -- Act
       val parsed = parseField(testCase)
 
+      val d = parsed.javaConfig.defaultValue
       check(
         testCase.expectedUninterpetedValue is String ==
-            parsed.jvmConfig.defaultValue.uninterpreted is String,
+            d.uninterpreted is String,
       ) {
         "Failed: wrong type on uninterpreted: $testCase" +
             "\ntestCase.expectedUninterpetedValue: " +
             (testCase.expectedUninterpetedValue?.javaClass?.name ?: "<null>") +
             "\nparsed.jvmConfig.defaultValue.uninterpreted: " +
-            (parsed.jvmConfig.defaultValue.uninterpreted?.javaClass?.name ?: "<null>")
+            (d.uninterpreted?.javaClass?.name ?: "<null>")
       }
 
       // -- Assert
       assertEquals(
         testCase.expectedUninterpetedValue,
-        parsed.jvmConfig.defaultValue.uninterpreted
+        d.uninterpreted
       ) {
         "Failed DefaultValue::uninterpreted: $testCase"
       }
 
       assertEquals(
         testCase.expectEmptyCollection,
-        parsed.jvmConfig.defaultValue.isEmptyCollection()
+        d.isEmptyCollection()
       ) {
         "Failed DefaultValue::isEmptyCollection: $testCase"
       }
 
-      assertEquals(!testCase.expectPresent, parsed.jvmConfig.defaultValue.isAbsent) {
+      assertEquals(!testCase.expectPresent, d.isAbsent) {
         "Failed DefaultValue::isAbsent: $testCase"
       }
 
-      assertEquals(testCase.expectPresent, parsed.jvmConfig.defaultValue.isPresent) {
+      assertEquals(testCase.expectPresent, d.isPresent) {
         "Failed DefaultValue::isPresent: $testCase"
       }
 
-      assertEquals(testCase.expectShouldQuote, parsed.jvmConfig.defaultValue.shouldQuote) {
+      assertEquals(testCase.expectShouldQuote, d.shouldQuote) {
         "Failed DefaultValue::shouldQuote: $testCase"
       }
 
-      if (parsed.jvmConfig.defaultValue.isPresent) {
+      if (d.isPresent) {
         assertEquals(
           testCase.expectIsNullLiteral,
-          parsed.jvmConfig.defaultValue.isNullLiteral()
+          d.isNullLiteral()
         ) {
           "Failed DefaultValue::isNullLiteral: $testCase"
         }
@@ -79,7 +80,7 @@ internal class DefaultValueTest {
         |{
         | "name": "bar",
         | "type": "Foo",
-        | "jvm": ${testCase.jvmConfigJSON}
+        | "java": ${testCase.jvmConfigJSON}
         |}
        """.trimMargin()
       .replace("\n", "")

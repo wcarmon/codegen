@@ -17,13 +17,17 @@ public class DAOImplBeans {
   ${entity.name.upperCamel}DAOImpl ${entity.name.lowerCamel}DAOImpl(
       Clock clock,
       JdbcTemplate jdbcTemplate,
-      RowMapper<${entity.name.upperCamel}> rowMapper,
-      ObjectWriter objectWriter) {
+      <#if entity.jvmView.requiresObjectWriter>
+      ObjectWriter objectWriter,
+      </#if>
+      RowMapper<${entity.name.upperCamel}> rowMapper) {
 
     return new ${entity.name.upperCamel}DAOImpl(
       clock,
       jdbcTemplate,
+      <#if entity.jvmView.requiresObjectWriter>
       objectWriter,
+      </#if>
       rowMapper);
   }
 

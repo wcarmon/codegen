@@ -15,7 +15,7 @@
           "value": true
         }
       },
-      "jvm": {
+      "java": {
         "defaultValue": {
           "value": true
         }
@@ -32,7 +32,7 @@
       "golang": {
         "overrideEffectiveType": "string"
       },
-      "jvm": {
+      "java": {
         "overrideProtobufSerde": {
           "deserializeTemplate": "UBUuid.parse(%s)",
           "serializeTemplate": "%s.toString()"
@@ -57,7 +57,7 @@
           "value": 0
         }
       },
-      "jvm": {
+      "java": {
         "defaultValue": {
           "value": 0
         }

@@ -62,9 +62,11 @@ data class Field(
 
   // -- Technology specific config
   private val golangConfig: GolangFieldConfig = GolangFieldConfig(),
+  private val kotlinConfig: KotlinFieldConfig = KotlinFieldConfig(),
   private val protobufConfig: ProtobufFieldConfig = ProtobufFieldConfig(),
+
   //used by tests
-  internal val jvmConfig: JVMFieldConfig = JVMFieldConfig(),
+  internal val javaConfig: JavaFieldConfig = JavaFieldConfig(),
 
   //TODO: mark private
   val rdbmsConfig: RDBMSColumnConfig = RDBMSColumnConfig(),
@@ -89,7 +91,8 @@ data class Field(
       @JsonProperty("documentation") documentation: Iterable<String> = listOf(),
       @JsonProperty("enumType") enumType: Boolean = false,
       @JsonProperty("golang") golangConfig: GolangFieldConfig = GolangFieldConfig(),
-      @JsonProperty("jvm") jvmFieldConfig: JVMFieldConfig = JVMFieldConfig(),
+      @JsonProperty("java") javaFieldConfig: JavaFieldConfig = JavaFieldConfig(),
+      @JsonProperty("kotlin") kotlinFieldConfig: KotlinFieldConfig = KotlinFieldConfig(),
       @JsonProperty("name") name: Name,
       @JsonProperty("nullable") nullable: Boolean = false,
       @JsonProperty("positionInId") positionInId: Int? = null,
@@ -140,7 +143,8 @@ data class Field(
         canUpdate = canUpdate,
         documentation = documentation.toList(),
         golangConfig = golangConfig,
-        jvmConfig = jvmFieldConfig,
+        javaConfig = javaFieldConfig,
+        kotlinConfig = kotlinFieldConfig,
         name = name,
         positionInId = positionInId,
         protobufConfig = protobufConfig,
@@ -167,6 +171,21 @@ data class Field(
         "positionInId must be non-negative: $positionInId, this=$this"
       }
     }
+
+    // ---------------------------
+    // -- DELETE this block
+    if (javaConfig.overrideRDBMSSerde != null) {
+      checkNotNull(kotlinConfig.overrideRDBMSSerde) {
+        "TODO: override rdbms serde for kotlin: field=${this.name.lowerCamel}"
+      }
+    }
+
+    if (javaConfig.defaultValue.isPresent) {
+      check(kotlinConfig.defaultValue.isPresent) {
+        "TODO: override default value for kotlin: field=${this.name.lowerCamel}"
+      }
+    }
+    // ---------------------------
 
     assertTypeParametersValid(GOLANG_1_9)
     assertTypeParametersValid(JAVA_08)
@@ -277,8 +296,10 @@ data class Field(
       JAVA_08,
       JAVA_11,
       JAVA_17,
+      -> javaConfig.typeParameters
+
       KOTLIN_JVM_1_4,
-      -> jvmConfig.typeParameters
+      -> kotlinConfig.typeParameters
 
       PROTO_BUF_3,
       -> listOf() //TODO: fix this when you support proto collections
@@ -308,8 +329,10 @@ data class Field(
       JAVA_08,
       JAVA_11,
       JAVA_17,
+      -> javaConfig.defaultValue
+
       KOTLIN_JVM_1_4,
-      -> jvmConfig.defaultValue
+      -> kotlinConfig.defaultValue
 
       GOLANG_1_9,
       -> golangConfig.defaultValue
@@ -364,27 +387,15 @@ data class Field(
       JAVA_08,
       JAVA_11,
       JAVA_17,
+      -> effectiveJavaRDBMSSerde(targetLanguage)
+
       KOTLIN_JVM_1_4,
-      -> if (jvmConfig.overrideRDBMSSerde != null) {
+      -> if (kotlinConfig.overrideRDBMSSerde != null) {
         // -- User override is highest priority
-        jvmConfig.overrideRDBMSSerde
-
-      } else if (requiresJDBCSerde(this)) {
-        LOG.structuredWarn(
-          "Recommended: override the rdbms Serde",
-          "field.name" to name.lowerCamel,
-          "field.type" to type.base,
-          "targetLanguage" to targetLanguage,
-        )
-
-        // Many JVM Classes conform to this reasonable default
-        Serde(
-          deserializeTemplate = StringFormatTemplate("${type.rawTypeLiteral}.parse(%s)"),
-          serializeTemplate = StringFormatTemplate("%s.toString()"),
-        )
+        kotlinConfig.overrideRDBMSSerde
 
       } else {
-        Serde.INLINE
+        effectiveJavaRDBMSSerde(targetLanguage)
       }
 
       GOLANG_1_9,
@@ -413,32 +424,43 @@ data class Field(
       else -> TODO("get effectiveSerde: targetLanguage=$targetLanguage, field=$this")
     }
 
+  private fun effectiveJavaRDBMSSerde(targetLanguage: TargetLanguage) =
+    if (javaConfig.overrideRDBMSSerde != null) {
+      javaConfig.overrideRDBMSSerde
+
+    } else if (requiresJDBCSerde(this)) {
+      LOG.structuredWarn(
+        "Recommended: override the rdbms Serde",
+        "field.name" to name.lowerCamel,
+        "field.type" to type.base,
+        "targetLanguage" to targetLanguage,
+      )
+
+      // Many JVM Classes conform to this reasonable default
+      Serde(
+        deserializeTemplate = StringFormatTemplate("${type.rawTypeLiteral}.parse(%s)"),
+        serializeTemplate = StringFormatTemplate("%s.toString()"),
+      )
+
+    } else {
+      Serde.INLINE
+    }
+
   fun effectiveProtobufSerde(targetLanguage: TargetLanguage): Serde =
     when (targetLanguage) {
       JAVA_08,
       JAVA_11,
       JAVA_17,
+      -> effectiveJavaProtobufSerde(targetLanguage)
+
       KOTLIN_JVM_1_4,
-      ->
-        if (jvmConfig.overrideProtobufSerde != null) {
-          // -- User override is highest priority
-          jvmConfig.overrideProtobufSerde
+      -> if (kotlinConfig.overrideProtobufSerde != null) {
+        // -- User override is highest priority
+        kotlinConfig.overrideProtobufSerde
 
-        } else if (effectiveBaseType(targetLanguage).isCollection) {
-          defaultSerdeForCollection(this, targetLanguage)
-
-        } else if (requiresProtobufSerde(this)) {
-          LOG.structuredWarn(
-            "Recommended: override the protobuf Serde",
-            "field" to this,
-            "targetLanguage" to targetLanguage,
-          )
-
-          Serde.INLINE
-
-        } else {
-          Serde.INLINE
-        }
+      } else {
+        effectiveJavaProtobufSerde(targetLanguage)
+      }
 
       GOLANG_1_9 ->
         if (golangConfig.overrideProtobufSerde != null) {
@@ -466,7 +488,8 @@ data class Field(
       else -> TODO("get effectiveSerde: targetLanguage=$targetLanguage, field=$this")
     }
 
-  fun effectiveProtobufSerdesForTypeParameters(targetLanguage: TargetLanguage): List<Serde> {
+  fun effectiveProtobufSerdesForTypeParameters(targetLanguage: TargetLanguage)
+      : List<Serde> {
     return typeParameters(targetLanguage)
       .map {
         //TODO: improve this
@@ -499,4 +522,24 @@ data class Field(
     }
   }
 
+  private fun effectiveJavaProtobufSerde(targetLanguage: TargetLanguage) =
+    if (javaConfig.overrideProtobufSerde != null) {
+      // -- User override is highest priority
+      javaConfig.overrideProtobufSerde
+
+    } else if (effectiveBaseType(targetLanguage).isCollection) {
+      defaultSerdeForCollection(this, targetLanguage)
+
+    } else if (requiresProtobufSerde(this)) {
+      LOG.structuredWarn(
+        "Recommended: override the protobuf Serde",
+        "field" to this,
+        "targetLanguage" to targetLanguage,
+      )
+
+      Serde.INLINE
+
+    } else {
+      Serde.INLINE
+    }
 }

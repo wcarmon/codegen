@@ -15,7 +15,7 @@
       "golang": {
         "overrideEffectiveType": "string"
       },
-      "jvm": {
+      "java": {
         "overrideProtobufSerde": {
           "deserializeTemplate": "UBUuid.parse(%s)",
           "serializeTemplate": "%s.toString()"

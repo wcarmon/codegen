@@ -1,6 +1,20 @@
 {
   "$schema": "https://wcarmon.com/schemas/codegen/field.schema.json",
-  "jvm": {
+  "java": {
+    "overrideProtobufSerde": {
+      "deserializeTemplate": "Instant.parse(%s)",
+      "serializeTemplate": "%s.toString()"
+    },
+    "overrideRDBMSSerde": {
+      "deserializeTemplate": "Instant.parse(%s)",
+      "serializeTemplate": "%s.toString()"
+    }
+  },
+  "kotlin": {
+    "overrideProtobufSerde": {
+      "deserializeTemplate": "Instant.parse(%s)",
+      "serializeTemplate": "%s.toString()"
+    },
     "overrideRDBMSSerde": {
       "deserializeTemplate": "Instant.parse(%s)",
       "serializeTemplate": "%s.toString()"

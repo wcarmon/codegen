@@ -16,7 +16,7 @@
       "ChronoTag"
     ]
   },
-  "jvm": {
+  "java": {
     "defaultValue": {
       "value": []
     },
@@ -27,6 +27,14 @@
     "overrideRDBMSSerde": {
       "deserializeTemplate": "toSet(%s, objectMapper, CHRONO_BOARD__TAGS_TYPE_REF)",
       "serializeTemplate": "objectWriter.writeValueAsString(%s)"
+    },
+    "typeParameters": [
+      "ChronoTag"
+    ]
+  },
+  "kotlin": {
+    "defaultValue": {
+      "value": []
     },
     "typeParameters": [
       "ChronoTag"

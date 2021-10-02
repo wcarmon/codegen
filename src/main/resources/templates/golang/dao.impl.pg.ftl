@@ -216,7 +216,6 @@ func (dao *${entity.name.upperCamel}PostgreSQLDAO) Set${field.name.upperCamel}(c
   tx, err := dao.db.BeginTx(ctx, &sql.TxOptions{Isolation: dao.isolationLevel})
   if err != nil {
     return err
-  }
   defer tx.Rollback()
 
   stmt, err := tx.PrepareContext(ctx, PATCH__${entity.name.upperSnake}__${field.name.upperSnake})

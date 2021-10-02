@@ -5,7 +5,12 @@
       "value": 0
     }
   },
-  "jvm": {
+  "java": {
+    "defaultValue": {
+      "value": 0
+    }
+  },
+  "kotlin": {
     "defaultValue": {
       "value": 0
     }

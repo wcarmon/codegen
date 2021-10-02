@@ -22,7 +22,7 @@
           "value": ""
         }
       },
-      "jvm": {
+      "java": {
         "defaultValue": {
           "value": ""
         }
@@ -43,7 +43,7 @@
           "value": true
         }
       },
-      "jvm": {
+      "java": {
         "defaultValue": {
           "value": true
         }
@@ -62,9 +62,13 @@
           "value": null
         }
       },
-      "jvm": {
+      "java": {
         "defaultValue": {
           "value": null
+        },
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "Duration.parse(%s)",
+          "serializeTemplate": "%s.toString()"
         },
         "overrideRDBMSSerde": {
           "deserializeTemplate": "Duration.parse(%s)",
@@ -86,9 +90,13 @@
           "value": null
         }
       },
-      "jvm": {
+      "java": {
         "defaultValue": {
           "value": null
+        },
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "Instant.parse(%s)",
+          "serializeTemplate": "%s.toString()"
         },
         "overrideRDBMSSerde": {
           "deserializeTemplate": "Instant.parse(%s)",
@@ -108,7 +116,7 @@
       "golang": {
         "overrideEffectiveType": "string"
       },
-      "jvm": {
+      "java": {
         "overrideProtobufSerde": {
           "deserializeTemplate": "UBUuid.parse(%s)",
           "serializeTemplate": "%s.toString()"
@@ -133,7 +141,7 @@
           "value": ""
         }
       },
-      "jvm": {
+      "java": {
         "defaultValue": {
           "value": ""
         }
@@ -157,11 +165,11 @@
         },
         "overrideEffectiveType": "ChronoLevel",
         "overrideProtobufSerde": {
-          "deserializeTemplate": "fix--%s",
-          "serializeTemplate": "fix--%s"
+          "deserializeTemplate": "TODO--fix--%s",
+          "serializeTemplate": "TODO--fix--%s"
         }
       },
-      "jvm": {
+      "java": {
         "defaultValue": {
           "quoteValue": false,
           "value": "ChronoLevel.NONE"
@@ -194,7 +202,7 @@
           "String"
         ]
       },
-      "jvm": {
+      "java": {
         "defaultValue": {
           "value": []
         },
@@ -218,7 +226,11 @@
     },
     {
       "golang": {},
-      "jvm": {
+      "java": {
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "ChronoTaskType.fromDBValue(%s)",
+          "serializeTemplate": "%s.toDBValue()"
+        },
         "overrideRDBMSSerde": {
           "deserializeTemplate": "ChronoTaskType.fromDBValue(%s)",
           "serializeTemplate": "%s.toDBValue()"
@@ -247,7 +259,7 @@
           "serializeTemplate": "fix--%s"
         }
       },
-      "jvm": {
+      "java": {
         "defaultValue": {
           "quoteValue": false,
           "value": "ChronoLevel.NONE"

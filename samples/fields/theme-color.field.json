@@ -9,7 +9,12 @@
       "value": ""
     }
   },
-  "jvm": {
+  "java": {
+    "defaultValue": {
+      "value": ""
+    }
+  },
+  "kotlin": {
     "defaultValue": {
       "value": ""
     }

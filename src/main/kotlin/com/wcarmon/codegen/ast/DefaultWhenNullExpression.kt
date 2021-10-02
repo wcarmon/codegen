@@ -66,9 +66,11 @@ data class DefaultWhenNullExpression(
     val renderedPrimary = primaryExpression.render(config)
     val renderedDefault = defaultValueExpression.render(config)
 
-    return config.lineIndentation +
-        renderedPrimary +
-        " ?: " +
-        renderedDefault
+    return renderedPrimary +
+        if (renderedDefault == "null") {
+          "?"
+        } else {
+          " ?: $renderedDefault"
+        }
   }
 }

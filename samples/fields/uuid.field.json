@@ -3,12 +3,22 @@
   "golang": {
     "overrideEffectiveType": "string"
   },
-  "jvm": {
-    "overrideRDBMSSerde": {
+  "java": {
+    "overrideProtobufSerde": {
       "deserializeTemplate": "UBUuid.parse(%s)",
       "serializeTemplate": "%s.toString()"
     },
+    "overrideRDBMSSerde": {
+      "deserializeTemplate": "UBUuid.parse(%s)",
+      "serializeTemplate": "%s.toString()"
+    }
+  },
+  "kotlin": {
     "overrideProtobufSerde": {
+      "deserializeTemplate": "UBUuid.parse(%s)",
+      "serializeTemplate": "%s.toString()"
+    },
+    "overrideRDBMSSerde": {
       "deserializeTemplate": "UBUuid.parse(%s)",
       "serializeTemplate": "%s.toString()"
     }

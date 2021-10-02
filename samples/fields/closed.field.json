@@ -5,7 +5,7 @@
       "value": false
     }
   },
-  "jvm": {
+  "java": {
     "defaultValue": {
       "value": false
     }

@@ -18,7 +18,7 @@
     "org.springframework.jdbc.core.PreparedStatementSetter",
     "org.springframework.jdbc.core.RowMapper"
   ],
-  "outputDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/java/com/wcarmon/chrono/dao31",
+  "outputDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/kotlin/com/wcarmon/chrono/dao31",
   "outputFilenameTemplate": "%sDAOImpl.kt",
   "outputMode": "multiple",
   "package": "com.wcarmon.chrono.dao31",

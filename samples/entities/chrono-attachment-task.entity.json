@@ -1,12 +1,25 @@
 {
   "$schema": "https://wcarmon.com/schemas/codegen/entity.schema.json",
+  "documentation": [
+    "Join ChronoAttachment and ChronoTask"
+  ],
   "fieldUris": [],
   "fields": [
     {
       "golang": {
         "overrideEffectiveType": "string"
       },
-      "jvm": {
+      "java": {
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "UBUuid.parse(%s)",
+          "serializeTemplate": "%s.toString()"
+        },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "UBUuid.parse(%s)",
+          "serializeTemplate": "%s.toString()"
+        }
+      },
+      "kotlin": {
         "overrideProtobufSerde": {
           "deserializeTemplate": "UBUuid.parse(%s)",
           "serializeTemplate": "%s.toString()"
@@ -30,7 +43,7 @@
       "golang": {
         "overrideEffectiveType": "string"
       },
-      "jvm": {
+      "java": {
         "overrideProtobufSerde": {
           "deserializeTemplate": "UBUuid.parse(%s)",
           "serializeTemplate": "%s.toString()"
@@ -50,9 +63,6 @@
       },
       "type": "UBUuid"
     }
-  ],
-  "documentation": [
-    "Join ChronoAttachment and ChronoTask"
   ],
   "indexes": [],
   "name": "ChronoAttachmentTask",

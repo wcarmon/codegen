@@ -32,7 +32,10 @@
     "golang": {
       "$ref": "golang-field.schema.json"
     },
-    "jvm": {
+    "java": {
+      "$ref": "jvm-field.schema.json"
+    },
+    "kotlin": {
       "$ref": "jvm-field.schema.json"
     },
     "name": {

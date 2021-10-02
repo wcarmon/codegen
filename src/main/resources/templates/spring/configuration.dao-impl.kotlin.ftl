@@ -16,12 +16,16 @@ open class DAOImplBeans {
     clock: Clock,
     jdbcTemplate: JdbcTemplate,
     rowMapper: RowMapper<${entity.name.upperCamel}>,
+    <#if entity.jvmView.requiresObjectWriter>
     objectWriter: ObjectWriter,
+    </#if>
   ) =
     ${entity.name.upperCamel}DAOImpl(
       clock = clock,
       jdbcTemplate = jdbcTemplate,
+      <#if entity.jvmView.requiresObjectWriter>
       objectWriter = objectWriter,
+      </#if>
       rowMapper = rowMapper,
     )
 
