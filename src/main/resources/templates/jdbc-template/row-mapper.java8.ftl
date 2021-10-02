@@ -34,10 +34,15 @@ public final class ${entity.name.upperCamel}RowMapper implements RowMapper<${ent
   public ${entity.name.upperCamel} mapRow(ResultSet rs, int rowNum) throws SQLException {
     Objects.requireNonNull(rs, "null ResultSet passed to ${entity.name.upperCamel}RowMapper");
 
-    return ${entity.name.upperCamel}.builder()
-        <#list entity.sortedFieldsWithIdsFirst as field>
-        .${field.name.lowerCamel}(${field.java8View.resultSetGetterExpression})
-        </#list>
-    .build();
+    try {
+      return ${entity.name.upperCamel}.builder()
+          <#list entity.sortedFieldsWithIdsFirst as field>
+          .${field.name.lowerCamel}(${field.java8View.resultSetGetterExpression})
+          </#list>
+      .build();
+
+    } catch (Exception ex) {
+      throw new RuntimeException("Failed to build ${entity.name.upperCamel} from resultSet", ex);
+    }
   }
 }
