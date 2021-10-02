@@ -3,7 +3,6 @@ package com.wcarmon.codegen.ast
 import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.Serde
 import com.wcarmon.codegen.model.SerdeMode.DESERIALIZE
-import com.wcarmon.codegen.util.protobufGetterMethodName
 
 /**
  * Useful when converting from Proto generated class to POJO
@@ -24,7 +23,7 @@ class ProtobufFieldReadExpression(
     assertNonNull = assertNonNull,
     fieldOwner = fieldOwner,
     methodName = MethodNameExpression(
-      name = protobufGetterMethodName(field)
+      name = field.protobufView.protobufGetterMethodName,
     )
   ),
 ) : Expression {

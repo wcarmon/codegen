@@ -1,7 +1,6 @@
 package com.wcarmon.codegen.ast
 
 import com.wcarmon.codegen.model.Field
-import com.wcarmon.codegen.util.protobufSetterMethodName
 
 /**
  * Useful when converting from POJO to generated proto class (via builder)
@@ -32,7 +31,7 @@ data class ProtobufFieldWriteExpression(
   override fun renderWithoutDebugComments(config: RenderConfig) =
     config.lineIndentation +
         "." +
-        protobufSetterMethodName(field).lowerCamel +
+        field.protobufView.protobufSetterMethodName.lowerCamel +
         "(" +
         sourceReadExpression.render(config.unindented.unterminated) +
         ")" +

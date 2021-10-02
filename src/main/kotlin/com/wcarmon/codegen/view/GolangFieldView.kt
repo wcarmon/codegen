@@ -4,7 +4,7 @@ import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.TargetLanguage
 
 class GolangFieldView(
-  private val debugMode: Boolean,
+  debugMode: Boolean,
   private val field: Field,
   private val rdbmsView: RDBMSColumnView,
   private val targetLanguage: TargetLanguage,

@@ -64,8 +64,8 @@ class ProtobufEntityView(
           deprecated = false,
           field = field,
           number = ProtobufFieldNumber(index + firstIndex),
-          //TODO: confirm this works on all the languages
-          repeated = field.effectiveBaseType(TargetLanguage.JAVA_08).isCollection,
+          repeated = field.effectiveBaseType(TargetLanguage.PROTO_BUF_3).isCollection
+              || field.protobufConfig.repeated,
         ).render(renderConfig.indented)
       }
       .joinToString(

@@ -16,7 +16,7 @@ import com.wcarmon.codegen.util.kotlinTypeLiteral
  * Kotlin related convenience methods for a [Field]
  */
 class KotlinFieldView(
-  private val debugMode: Boolean,
+  debugMode: Boolean,
   private val field: Field,
   private val jvmView: JVMFieldView,
   private val rdbmsView: RDBMSColumnView,

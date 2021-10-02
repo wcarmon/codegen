@@ -9,6 +9,7 @@ request.jvmContextClass)}
 <#list entities as entity>
 ${entity.sqlDelightView.modelToRecord}
 
+@Suppress("UNCHECKED_CAST")
 ${entity.sqlDelightView.recordToModel}
 
 </#list>

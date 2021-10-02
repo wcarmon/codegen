@@ -15,7 +15,6 @@ public final class TypeReferences {
 
 <#list entities as entity>
   ${entity.java8View.typeReferenceDeclarations}
-
 </#list>
 
   /**

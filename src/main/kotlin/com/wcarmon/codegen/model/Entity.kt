@@ -158,7 +158,7 @@ data class Entity(
           field.name == createdTimestampFieldName
         }
 
-      require(!matches.isEmpty()) {
+      require(matches.isNotEmpty()) {
         "Cannot find field matching createdTimestampFieldName=$createdTimestampFieldName"
       }
 
@@ -171,7 +171,7 @@ data class Entity(
           field.name == updatedTimestampFieldName
         }
 
-      require(!matches.isEmpty()) {
+      require(matches.isNotEmpty()) {
         "Cannot find field matching updateTimestampFieldName=$updatedTimestampFieldName"
       }
 

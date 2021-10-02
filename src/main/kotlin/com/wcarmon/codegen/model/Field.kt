@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.wcarmon.codegen.DEBUG_MODE
+import com.wcarmon.codegen.extensions.whenBlank
 import com.wcarmon.codegen.log.structuredWarn
 import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.TargetLanguage.*
@@ -63,7 +64,7 @@ data class Field(
   // -- Technology specific config
   private val golangConfig: GolangFieldConfig = GolangFieldConfig(),
   private val kotlinConfig: KotlinFieldConfig = KotlinFieldConfig(),
-  private val protobufConfig: ProtobufFieldConfig = ProtobufFieldConfig(),
+  val protobufConfig: ProtobufFieldConfig = ProtobufFieldConfig(),
 
   //used by tests
   internal val javaConfig: JavaFieldConfig = JavaFieldConfig(),
@@ -349,20 +350,25 @@ data class Field(
     -> kotlinTypeLiteral(this, fullyQualified)
 
     GOLANG_1_9,
-    -> golangConfig.overrideEffectiveType ?: golangTypeLiteral(this, fullyQualified)
+    -> golangConfig.overrideEffectiveType.whenBlank {
+      golangTypeLiteral(this, fullyQualified)
+    }
 
     PROTO_BUF_3 -> protobufConfig.typeLiteral(type)
 
-    SQL_POSTGRESQL -> rdbmsConfig.overrideEffectiveType ?: getPostgresTypeLiteral(
-      effectiveBaseType = effectiveBaseType(targetLanguage),
-      errorLoggingInfo = "field=$this",
-      logicalFieldType = type,
-      rdbmsConfig = rdbmsConfig,
-    )
+    SQL_POSTGRESQL,
+    -> rdbmsConfig.overrideEffectiveType.whenBlank {
+      getPostgresTypeLiteral(
+        effectiveBaseType = effectiveBaseType(targetLanguage),
+        errorLoggingInfo = "field=$this",
+        logicalFieldType = type,
+        rdbmsConfig = rdbmsConfig,
+      )
+    }
 
-    SQL_SQLITE -> rdbmsConfig.overrideEffectiveType ?: getSQLiteTypeLiteral(
-      type,
-    )
+    SQL_SQLITE -> rdbmsConfig.overrideEffectiveType.whenBlank {
+      getSQLiteTypeLiteral(type)
+    }
 
     else -> TODO("get typeLiteral: targetLanguage=$targetLanguage, field=$this")
   }
@@ -452,8 +458,8 @@ data class Field(
           // -- User override is highest priority
           golangConfig.overrideProtobufSerde
 
-        } else if (effectiveBaseType(targetLanguage).isCollection) {
-          defaultSerdeForCollection(this, targetLanguage)
+//        } else if (effectiveBaseType(targetLanguage).isCollection) {
+//          defaultSerdeForCollection(this, targetLanguage)
 
         } else if (requiresProtobufSerde(this)) {
           LOG.structuredWarn(
@@ -512,8 +518,8 @@ data class Field(
       // -- User override is highest priority
       javaConfig.overrideProtobufSerde
 
-    } else if (effectiveBaseType(targetLanguage).isCollection) {
-      defaultSerdeForCollection(this, targetLanguage)
+//    } else if (effectiveBaseType(targetLanguage).isCollection) {
+//      defaultSerdeForCollection(this, targetLanguage)
 
     } else if (requiresProtobufSerde(this)) {
       LOG.structuredWarn(

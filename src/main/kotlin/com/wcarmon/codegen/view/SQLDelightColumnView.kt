@@ -6,7 +6,7 @@ import com.wcarmon.codegen.model.Field
 import com.wcarmon.codegen.model.TargetLanguage.SQL_DELIGHT
 
 class SQLDelightColumnView(
-  private val debugMode: Boolean,
+  debugMode: Boolean,
   private val field: Field,
 ) {
 

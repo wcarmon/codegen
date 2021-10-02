@@ -271,6 +271,10 @@
         "defaultValue": {
           "value": []
         },
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "new HashSet<>(%s)",
+          "serializeTemplate": "%s"
+        },
         "overrideRDBMSSerde": {
           "deserializeTemplate": "toSet(%s, objectMapper, CHRONO_TASK__CONTEXTS_TYPE_REF)",
           "serializeTemplate": "objectWriter.writeValueAsString(%s)"
@@ -282,6 +286,10 @@
       "kotlin": {
         "defaultValue": {
           "value": []
+        },
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "%s.toSet()",
+          "serializeTemplate": "%s"
         },
         "overrideRDBMSSerde": {
           "deserializeTemplate": "toSet(%s, objectMapper, CHRONO_TASK__CONTEXTS_TYPE_REF)",

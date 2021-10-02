@@ -15,7 +15,7 @@ data class GolangFieldConfig(
   /**
    * Replace the auto-derived type with this literal
    */
-  val overrideEffectiveType: String? = null,
+  val overrideEffectiveType: String = "",
 
   val overrideElasticSearchSerde: Serde? = null,
   val overrideKafkaSerde: Serde? = null,
@@ -28,11 +28,9 @@ data class GolangFieldConfig(
 ) {
 
   val overrideBaseType: BaseFieldType? =
-    overrideEffectiveType?.let { BaseFieldType.parse(it) }
-
-  init {
-    require(overrideEffectiveType == null || overrideEffectiveType.isNotBlank()) {
-      "overrideEffectiveType must be null or non-blank"
+    if (overrideEffectiveType.isNotBlank()) {
+      BaseFieldType.parse(overrideEffectiveType)
+    } else {
+      null
     }
-  }
 }

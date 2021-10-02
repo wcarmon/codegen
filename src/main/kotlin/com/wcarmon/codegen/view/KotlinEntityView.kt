@@ -18,7 +18,7 @@ import com.wcarmon.codegen.util.kotlinMethodArgsForFields
  * Kotlin related convenience methods for a [Entity]
  */
 class KotlinEntityView(
-  private val debugMode: Boolean,
+  debugMode: Boolean,
   private val entity: Entity,
   private val jvmView: JVMEntityView,
   private val rdbmsView: RDBMSTableView,

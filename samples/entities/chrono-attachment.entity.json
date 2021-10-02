@@ -10,11 +10,11 @@
     {
       "java": {
         "overrideProtobufSerde": {
-          "deserializeTemplate": "URI(%s)",
+          "deserializeTemplate": "new URI(%s)",
           "serializeTemplate": "%s.toString()"
         },
         "overrideRDBMSSerde": {
-          "deserializeTemplate": "URI(%s)",
+          "deserializeTemplate": "new URI(%s)",
           "serializeTemplate": "%s.toString()"
         }
       },

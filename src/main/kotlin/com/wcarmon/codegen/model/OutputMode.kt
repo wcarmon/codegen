@@ -23,7 +23,7 @@ enum class OutputMode(
   companion object {
 
     @JvmStatic
-    fun fromString(input: String): OutputMode {
+    fun parse(input: String): OutputMode {
       val normalized = input.trim()
 
       return values().firstOrNull {

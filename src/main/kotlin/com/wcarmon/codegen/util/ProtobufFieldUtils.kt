@@ -8,34 +8,6 @@ import com.wcarmon.codegen.model.TargetLanguage.*
 
 
 /**
- * @return Name of setter method on builder
- */
-fun protobufSetterMethodName(field: Field): Name =
-  if (field.effectiveBaseType(PROTO_BUF_3).isCollection) {
-    "addAll"
-  } else {
-    "set"
-  }
-    .let { prefix ->
-      Name("$prefix${field.name.upperCamel}")
-    }
-
-
-/**
- * Method name on a proto to retrieve a field
- */
-fun protobufGetterMethodName(field: Field): Name =
-  if (field.effectiveBaseType(PROTO_BUF_3).isCollection) {
-    "List"
-  } else {
-    ""
-  }
-    .let { suffix ->
-      Name("get${field.name.upperCamel}$suffix")
-    }
-
-
-/**
  * Assumes we generate serde methods in the template
  */
 fun defaultSerdeForCollection(field: Field, targetLanguage: TargetLanguage): Serde =
@@ -119,24 +91,24 @@ fun protobufTypeLiteral(
   else -> "//TODO: fix TYPE=${type.base}"
 }
 
-private fun defaultKotlinSerdeForCollection(field: Field, targetLanguage: TargetLanguage) =
+private fun defaultKotlinSerdeForCollection(field: Field, targetLanguage: TargetLanguage): Serde =
 //TODO: for kotlin, use fluent collection API
   when (field.effectiveBaseType(targetLanguage)) {
-    LIST -> Serde(
-      // List<String> -> List<Entity>
-      deserializeTemplate = StringFormatTemplate("stringsTo${field.name.upperCamel}List(%s)"),
-
-      // Collection<Entity> -> Collection<String>
-      serializeTemplate = StringFormatTemplate("toStrings(%s)"),
-    )
-
-    SET -> Serde(
-      // List<String> -> Set<Entity>
-      deserializeTemplate = StringFormatTemplate("stringsTo${field.name.upperCamel}Set(%s)"),
-
-      // Collection<Entity> -> Collection<String>
-      serializeTemplate = StringFormatTemplate("toStrings(%s)"),
-    )
+//    LIST -> Serde(
+//      // List<String> -> List<Entity>
+//      deserializeTemplate = StringFormatTemplate("stringsTo${field.name.upperCamel}List(%s)"),
+//
+//      // Collection<Entity> -> Collection<String>
+//      serializeTemplate = StringFormatTemplate("toStrings(%s)"),
+//    )
+//
+//    SET -> Serde(
+//      // List<String> -> Set<Entity>
+//      deserializeTemplate = StringFormatTemplate("stringsTo${field.name.upperCamel}Set(%s)"),
+//
+//      // Collection<Entity> -> Collection<String>
+//      serializeTemplate = StringFormatTemplate("toStrings(%s)"),
+//    )
 
     ARRAY -> TODO("handle default serde for Array")
     MAP -> TODO("handle default serde for Map")
@@ -144,7 +116,7 @@ private fun defaultKotlinSerdeForCollection(field: Field, targetLanguage: Target
     else -> TODO("defaultSerdeForCollection method is only for collections: field=$field")
   }
 
-private fun defaultJavaSerdeForCollection(field: Field, targetLanguage: TargetLanguage) =
+private fun defaultJavaSerdeForCollection(field: Field, targetLanguage: TargetLanguage): Serde =
   when (field.effectiveBaseType(targetLanguage)) {
     LIST -> Serde(
       // List<String> -> List<Entity>

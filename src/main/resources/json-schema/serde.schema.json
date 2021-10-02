@@ -12,7 +12,7 @@
     },
     "serializeTemplate": {
       "description": "Expression, theType -> String, qualified by the package & possibly the type, use %s for placeholder",
-      "maxLength": 64,
+      "maxLength": 80,
       "minLength": 1,
       "type": "string"
     }

@@ -24,7 +24,7 @@ class AnnotationExpression(
     //TODO: regex: [a-zA-z]([a-zA-z0-9:]*[a-zA-Z0-9])?
   }
 
-  override val expressionName = AnnotationExpression::class.java.name
+  override val expressionName: String = AnnotationExpression::class.java.name
 
   override fun renderWithoutDebugComments(config: RenderConfig): String {
     TODO("Not yet implemented")

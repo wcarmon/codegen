@@ -39,6 +39,11 @@ data class ProtobufFieldDeclarationExpression(
       if (deprecated) " [deprecated = true]"
       else ""
 
+    val typeLiteral = field.effectiveTypeLiteral(PROTO_BUF_3)
+    check(typeLiteral.isNotBlank()) {
+      "proto field declaration: type cannot be blank"
+    }
+
     return config.lineIndentation +
         repeatedPrefix +
         field.effectiveTypeLiteral(PROTO_BUF_3) +

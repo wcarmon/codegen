@@ -20,9 +20,9 @@
     "defaultValue": {
       "value": []
     },
-    "overrideProtobufRepeatedItemSerde": {
-      "deserializeTemplate": "ChronoTag.fromString(%s)",
-      "serializeTemplate": "%s.toString()"
+    "overrideProtobufSerde": {
+      "deserializeTemplate": "%s.stream().map(ChronoTag::new).collect(Collectors.toSet())",
+      "serializeTemplate": "%s.stream().map(ChronoTag::toString).collect(Collectors.toList())"
     },
     "overrideRDBMSSerde": {
       "deserializeTemplate": "toSet(%s, objectMapper, CHRONO_BOARD__TAGS_TYPE_REF)",
@@ -36,9 +36,13 @@
     "defaultValue": {
       "value": []
     },
+    "overrideProtobufSerde": {
+      "deserializeTemplate": "%s.map { ChronoTag(it) }.toSet()",
+      "serializeTemplate": "%s.map { it.toString() }"
+    },
     "overrideRDBMSSerde": {
-      "deserializeTemplate": "TODO--fix--%s",
-      "serializeTemplate": "TODO--fix--%s"
+      "deserializeTemplate": "objectMapper.readValue(%s, Set::class.java) as Set<ChronoTag>",
+      "serializeTemplate": "objectWriter.writeValueAsString(%s)"
     },
     "typeParameters": [
       "ChronoTag"

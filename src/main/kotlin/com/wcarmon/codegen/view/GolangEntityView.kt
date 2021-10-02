@@ -10,7 +10,7 @@ import com.wcarmon.codegen.model.SQLPlaceholderType.*
 import com.wcarmon.codegen.model.TargetLanguage
 
 class GolangEntityView(
-  private val debugMode: Boolean,
+  debugMode: Boolean,
   private val entity: Entity,
   private val rdbmsView: RDBMSTableView,
   private val targetLanguage: TargetLanguage,
@@ -123,7 +123,7 @@ class GolangEntityView(
           && entity.updatedTimestampFieldName != null
         ) {
           val placeholder = placeholderType.forIndex(2)
-          lines += """${indentation}  AND ${entity.updatedTimestampFieldName.lowerSnake}=$placeholder"""
+          lines += """$indentation  AND ${entity.updatedTimestampFieldName.lowerSnake}=$placeholder"""
 
           pkIndexOffset++
         }

@@ -22,6 +22,7 @@ class ${entity.name.upperCamel}RowMapper(
    *
    * @return equivalent [${entity.name.upperCamel}] instance
    */
+  @Suppress("UNCHECKED_CAST")
   override fun mapRow(rs: ResultSet, rowNum: Int): ${entity.name.upperCamel} =
     ${entity.name.upperCamel}(
       <#list entity.sortedFieldsWithIdsFirst as field>
