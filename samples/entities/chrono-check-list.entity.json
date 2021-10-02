@@ -20,6 +20,11 @@
           "value": true
         }
       },
+      "kotlin": {
+        "defaultValue": {
+          "value": true
+        }
+      },
       "name": "displayCollapsed",
       "rdbms": {
         "defaultValue": {
@@ -33,6 +38,16 @@
         "overrideEffectiveType": "string"
       },
       "java": {
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "UBUuid.parse(%s)",
+          "serializeTemplate": "%s.toString()"
+        },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "UBUuid.parse(%s)",
+          "serializeTemplate": "%s.toString()"
+        }
+      },
+      "kotlin": {
         "overrideProtobufSerde": {
           "deserializeTemplate": "UBUuid.parse(%s)",
           "serializeTemplate": "%s.toString()"
@@ -58,6 +73,11 @@
         }
       },
       "java": {
+        "defaultValue": {
+          "value": 0
+        }
+      },
+      "kotlin": {
         "defaultValue": {
           "value": 0
         }

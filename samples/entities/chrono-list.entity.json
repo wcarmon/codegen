@@ -30,6 +30,16 @@
           "serializeTemplate": "%s.toString()"
         }
       },
+      "kotlin": {
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "UBUuid.parse(%s)",
+          "serializeTemplate": "%s.toString()"
+        },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "UBUuid.parse(%s)",
+          "serializeTemplate": "%s.toString()"
+        }
+      },
       "name": "boardUuid",
       "protobuf": {
         "overrideEffectiveType": "string"
@@ -46,6 +56,11 @@
         }
       },
       "java": {
+        "defaultValue": {
+          "value": 0
+        }
+      },
+      "kotlin": {
         "defaultValue": {
           "value": 0
         }
@@ -73,6 +88,11 @@
           "value": 100
         }
       },
+      "kotlin": {
+        "defaultValue": {
+          "value": 100
+        }
+      },
       "name": "hardLimit",
       "precision": 5,
       "rdbms": {
@@ -96,6 +116,11 @@
           "value": ""
         }
       },
+      "kotlin": {
+        "defaultValue": {
+          "value": ""
+        }
+      },
       "name": "iconCode",
       "rdbms": {
         "defaultValue": {
@@ -112,6 +137,11 @@
         }
       },
       "java": {
+        "defaultValue": {
+          "value": 0
+        }
+      },
+      "kotlin": {
         "defaultValue": {
           "value": 0
         }

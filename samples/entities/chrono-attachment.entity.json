@@ -18,6 +18,16 @@
           "serializeTemplate": "%s.toString()"
         }
       },
+      "kotlin": {
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "URI(%s)",
+          "serializeTemplate": "%s.toString()"
+        },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "URI(%s)",
+          "serializeTemplate": "%s.toString()"
+        }
+      },
       "name": "uri",
       "rdbms": {
         "varcharLength": 255
@@ -31,6 +41,11 @@
         }
       },
       "java": {
+        "defaultValue": {
+          "value": ""
+        }
+      },
+      "kotlin": {
         "defaultValue": {
           "value": ""
         }

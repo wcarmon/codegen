@@ -172,21 +172,6 @@ data class Field(
       }
     }
 
-    // ---------------------------
-    // -- DELETE this block
-    if (javaConfig.overrideRDBMSSerde != null) {
-      checkNotNull(kotlinConfig.overrideRDBMSSerde) {
-        "TODO: override rdbms serde for kotlin: field=${this.name.lowerCamel}"
-      }
-    }
-
-    if (javaConfig.defaultValue.isPresent) {
-      check(kotlinConfig.defaultValue.isPresent) {
-        "TODO: override default value for kotlin: field=${this.name.lowerCamel}"
-      }
-    }
-    // ---------------------------
-
     assertTypeParametersValid(GOLANG_1_9)
     assertTypeParametersValid(JAVA_08)
     assertTypeParametersValid(KOTLIN_JVM_1_4)

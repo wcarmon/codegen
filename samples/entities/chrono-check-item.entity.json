@@ -25,6 +25,16 @@
           "serializeTemplate": "%s.toString()"
         }
       },
+      "kotlin": {
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "UBUuid.parse(%s)",
+          "serializeTemplate": "%s.toString()"
+        },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "UBUuid.parse(%s)",
+          "serializeTemplate": "%s.toString()"
+        }
+      },
       "name": "checklistUuid",
       "protobuf": {
         "overrideEffectiveType": "string"

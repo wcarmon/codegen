@@ -36,6 +36,10 @@
     "defaultValue": {
       "value": []
     },
+    "overrideRDBMSSerde": {
+      "deserializeTemplate": "TODO--fix--%s",
+      "serializeTemplate": "TODO--fix--%s"
+    },
     "typeParameters": [
       "ChronoTag"
     ]

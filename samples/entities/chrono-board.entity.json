@@ -90,6 +90,11 @@
           "value": true
         }
       },
+      "kotlin": {
+        "defaultValue": {
+          "value": true
+        }
+      },
       "name": "enableSearch",
       "rdbms": {
         "defaultValue": {
@@ -104,6 +109,20 @@
         "overrideEffectiveType": "ChronoHorizon"
       },
       "java": {
+        "overrideKafkaSerde": {
+          "deserializeTemplate": "ChronoHorizon.parse(%s)",
+          "serializeTemplate": "%s.valueAsString()"
+        },
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "ChronoHorizon.fromValue(%s)",
+          "serializeTemplate": "%s.toProtoValue()"
+        },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "ChronoHorizon.fromDBValue(%s)",
+          "serializeTemplate": "%s.toDBValue()"
+        }
+      },
+      "kotlin": {
         "overrideKafkaSerde": {
           "deserializeTemplate": "ChronoHorizon.parse(%s)",
           "serializeTemplate": "%s.valueAsString()"
@@ -137,6 +156,11 @@
           "value": ""
         }
       },
+      "kotlin": {
+        "defaultValue": {
+          "value": ""
+        }
+      },
       "name": "iconCode",
       "rdbms": {
         "defaultValue": {
@@ -156,6 +180,16 @@
         }
       },
       "java": {
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "ChronoLevel.fromValue(%s)",
+          "serializeTemplate": "%s.toProtoValue()"
+        },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "ChronoLevel.fromDBValue(%s)",
+          "serializeTemplate": "%s.toDBValue()"
+        }
+      },
+      "kotlin": {
         "overrideProtobufSerde": {
           "deserializeTemplate": "ChronoLevel.fromValue(%s)",
           "serializeTemplate": "%s.toProtoValue()"
@@ -186,6 +220,11 @@
           "value": ""
         }
       },
+      "kotlin": {
+        "defaultValue": {
+          "value": ""
+        }
+      },
       "name": "keywords",
       "rdbms": {
         "defaultValue": {
@@ -210,6 +249,11 @@
         }
       },
       "java": {
+        "defaultValue": {
+          "value": -1
+        }
+      },
+      "kotlin": {
         "defaultValue": {
           "value": -1
         }

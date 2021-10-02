@@ -16,6 +16,16 @@
           "serializeTemplate": "%s.toString()"
         }
       },
+      "kotlin": {
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "UBUuid.parse(%s)",
+          "serializeTemplate": "%s.toString()"
+        },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "UBUuid.parse(%s)",
+          "serializeTemplate": "%s.toString()"
+        }
+      },
       "name": "fromTask",
       "positionInId": 0,
       "protobuf": {
@@ -31,6 +41,16 @@
         "overrideEffectiveType": "string"
       },
       "java": {
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "UBUuid.parse(%s)",
+          "serializeTemplate": "%s.toString()"
+        },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "UBUuid.parse(%s)",
+          "serializeTemplate": "%s.toString()"
+        }
+      },
+      "kotlin": {
         "overrideProtobufSerde": {
           "deserializeTemplate": "UBUuid.parse(%s)",
           "serializeTemplate": "%s.toString()"
@@ -59,13 +79,27 @@
           "quoteValue": false,
           "value": "ChronoTaskDependencyType.FinishStart"
         },
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "ChronoTaskDependencyType.fromProtoValue(%s)",
+          "serializeTemplate": "%s.toProtoValue()"
+        },
         "overrideRDBMSSerde": {
           "deserializeTemplate": "ChronoTaskDependencyType.fromDBValue(%s)",
           "serializeTemplate": "%s.toDBValue()"
+        }
+      },
+      "kotlin": {
+        "defaultValue": {
+          "quoteValue": false,
+          "value": "ChronoTaskDependencyType.FinishStart"
         },
         "overrideProtobufSerde": {
           "deserializeTemplate": "ChronoTaskDependencyType.fromProtoValue(%s)",
           "serializeTemplate": "%s.toProtoValue()"
+        },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "ChronoTaskDependencyType.fromDBValue(%s)",
+          "serializeTemplate": "%s.toDBValue()"
         }
       },
       "name": "type",

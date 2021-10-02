@@ -27,6 +27,11 @@
           "value": ""
         }
       },
+      "kotlin": {
+        "defaultValue": {
+          "value": ""
+        }
+      },
       "name": "details",
       "nullable": false,
       "rdbms": {
@@ -48,6 +53,11 @@
           "value": true
         }
       },
+      "kotlin": {
+        "defaultValue": {
+          "value": true
+        }
+      },
       "name": "enableSearch",
       "rdbms": {
         "defaultValue": {
@@ -63,6 +73,19 @@
         }
       },
       "java": {
+        "defaultValue": {
+          "value": null
+        },
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "Duration.parse(%s)",
+          "serializeTemplate": "%s.toString()"
+        },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "Duration.parse(%s)",
+          "serializeTemplate": "%s.toString()"
+        }
+      },
+      "kotlin": {
         "defaultValue": {
           "value": null
         },
@@ -103,6 +126,19 @@
           "serializeTemplate": "%s.toString()"
         }
       },
+      "kotlin": {
+        "defaultValue": {
+          "value": null
+        },
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "Instant.parse(%s)",
+          "serializeTemplate": "%s.toString()"
+        },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "Instant.parse(%s)",
+          "serializeTemplate": "%s.toString()"
+        }
+      },
       "name": "expiration",
       "nullable": true,
       "rdbms": {
@@ -117,6 +153,16 @@
         "overrideEffectiveType": "string"
       },
       "java": {
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "UBUuid.parse(%s)",
+          "serializeTemplate": "%s.toString()"
+        },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "UBUuid.parse(%s)",
+          "serializeTemplate": "%s.toString()"
+        }
+      },
+      "kotlin": {
         "overrideProtobufSerde": {
           "deserializeTemplate": "UBUuid.parse(%s)",
           "serializeTemplate": "%s.toString()"
@@ -146,6 +192,11 @@
           "value": ""
         }
       },
+      "kotlin": {
+        "defaultValue": {
+          "value": ""
+        }
+      },
       "name": "keywords",
       "nullable": false,
       "rdbms": {
@@ -170,6 +221,20 @@
         }
       },
       "java": {
+        "defaultValue": {
+          "quoteValue": false,
+          "value": "ChronoLevel.NONE"
+        },
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "ChronoLevel.fromValue(%s)",
+          "serializeTemplate": "%s.toProtoValue()"
+        },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "ChronoLevel.fromDBValue(%s)",
+          "serializeTemplate": "%s.toDBValue()"
+        }
+      },
+      "kotlin": {
         "defaultValue": {
           "quoteValue": false,
           "value": "ChronoLevel.NONE"
@@ -214,6 +279,18 @@
           "String"
         ]
       },
+      "kotlin": {
+        "defaultValue": {
+          "value": []
+        },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "toSet(%s, objectMapper, CHRONO_TASK__CONTEXTS_TYPE_REF)",
+          "serializeTemplate": "objectWriter.writeValueAsString(%s)"
+        },
+        "typeParameters": [
+          "String"
+        ]
+      },
       "name": "contexts",
       "protobuf": {
         "overrideEffectiveType": "string",
@@ -227,6 +304,16 @@
     {
       "golang": {},
       "java": {
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "ChronoTaskType.fromDBValue(%s)",
+          "serializeTemplate": "%s.toDBValue()"
+        },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "ChronoTaskType.fromDBValue(%s)",
+          "serializeTemplate": "%s.toDBValue()"
+        }
+      },
+      "kotlin": {
         "overrideProtobufSerde": {
           "deserializeTemplate": "ChronoTaskType.fromDBValue(%s)",
           "serializeTemplate": "%s.toDBValue()"
@@ -260,6 +347,20 @@
         }
       },
       "java": {
+        "defaultValue": {
+          "quoteValue": false,
+          "value": "ChronoLevel.NONE"
+        },
+        "overrideProtobufSerde": {
+          "deserializeTemplate": "ChronoLevel.fromValue(%s)",
+          "serializeTemplate": "%s.toProtoValue()"
+        },
+        "overrideRDBMSSerde": {
+          "deserializeTemplate": "ChronoLevel.fromDBValue(%s)",
+          "serializeTemplate": "%s.toDBValue()"
+        }
+      },
+      "kotlin": {
         "defaultValue": {
           "quoteValue": false,
           "value": "ChronoLevel.NONE"

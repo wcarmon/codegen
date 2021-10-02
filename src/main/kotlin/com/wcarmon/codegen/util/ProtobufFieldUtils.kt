@@ -51,55 +51,6 @@ fun defaultSerdeForCollection(field: Field, targetLanguage: TargetLanguage): Ser
     else -> TODO("handle protobuf serde for targetLanguage=$targetLanguage")
   }
 
-private fun defaultKotlinSerdeForCollection(field: Field, targetLanguage: TargetLanguage) =
-//TODO: for kotlin, use fluent collection API
-  when (field.effectiveBaseType(targetLanguage)) {
-    LIST -> Serde(
-      // List<String> -> List<Entity>
-      deserializeTemplate = StringFormatTemplate("stringsTo${field.name.upperCamel}List(%s)"),
-
-      // Collection<Entity> -> Collection<String>
-      serializeTemplate = StringFormatTemplate("toStrings(%s)"),
-    )
-
-    SET -> Serde(
-      // List<String> -> Set<Entity>
-      deserializeTemplate = StringFormatTemplate("stringsTo${field.name.upperCamel}Set(%s)"),
-
-      // Collection<Entity> -> Collection<String>
-      serializeTemplate = StringFormatTemplate("toStrings(%s)"),
-    )
-
-    ARRAY -> TODO("handle default serde for Array")
-    MAP -> TODO("handle default serde for Map")
-
-    else -> TODO("defaultSerdeForCollection method is only for collections: field=$field")
-  }
-
-private fun defaultJavaSerdeForCollection(field: Field, targetLanguage: TargetLanguage) =
-  when (field.effectiveBaseType(targetLanguage)) {
-    LIST -> Serde(
-      // List<String> -> List<Entity>
-      deserializeTemplate = StringFormatTemplate("stringsTo${field.name.upperCamel}List(%s)"),
-
-      // Collection<Entity> -> Collection<String>
-      serializeTemplate = StringFormatTemplate("toStrings(%s)"),
-    )
-
-    SET -> Serde(
-      // List<String> -> Set<Entity>
-      deserializeTemplate = StringFormatTemplate("stringsTo${field.name.upperCamel}Set(%s)"),
-
-      // Collection<Entity> -> Collection<String>
-      serializeTemplate = StringFormatTemplate("toStrings(%s)"),
-    )
-
-    ARRAY -> TODO("handle default serde for Array")
-    MAP -> TODO("handle default serde for Map")
-
-    else -> TODO("defaultSerdeForCollection method is only for collections: field=$field")
-  }
-
 
 /**
  * @return true when Type is not trivially mapped to Proto field type
@@ -167,3 +118,52 @@ fun protobufTypeLiteral(
 
   else -> "//TODO: fix TYPE=${type.base}"
 }
+
+private fun defaultKotlinSerdeForCollection(field: Field, targetLanguage: TargetLanguage) =
+//TODO: for kotlin, use fluent collection API
+  when (field.effectiveBaseType(targetLanguage)) {
+    LIST -> Serde(
+      // List<String> -> List<Entity>
+      deserializeTemplate = StringFormatTemplate("stringsTo${field.name.upperCamel}List(%s)"),
+
+      // Collection<Entity> -> Collection<String>
+      serializeTemplate = StringFormatTemplate("toStrings(%s)"),
+    )
+
+    SET -> Serde(
+      // List<String> -> Set<Entity>
+      deserializeTemplate = StringFormatTemplate("stringsTo${field.name.upperCamel}Set(%s)"),
+
+      // Collection<Entity> -> Collection<String>
+      serializeTemplate = StringFormatTemplate("toStrings(%s)"),
+    )
+
+    ARRAY -> TODO("handle default serde for Array")
+    MAP -> TODO("handle default serde for Map")
+
+    else -> TODO("defaultSerdeForCollection method is only for collections: field=$field")
+  }
+
+private fun defaultJavaSerdeForCollection(field: Field, targetLanguage: TargetLanguage) =
+  when (field.effectiveBaseType(targetLanguage)) {
+    LIST -> Serde(
+      // List<String> -> List<Entity>
+      deserializeTemplate = StringFormatTemplate("stringsTo${field.name.upperCamel}List(%s)"),
+
+      // Collection<Entity> -> Collection<String>
+      serializeTemplate = StringFormatTemplate("toStrings(%s)"),
+    )
+
+    SET -> Serde(
+      // List<String> -> Set<Entity>
+      deserializeTemplate = StringFormatTemplate("stringsTo${field.name.upperCamel}Set(%s)"),
+
+      // Collection<Entity> -> Collection<String>
+      serializeTemplate = StringFormatTemplate("toStrings(%s)"),
+    )
+
+    ARRAY -> TODO("handle default serde for Array")
+    MAP -> TODO("handle default serde for Map")
+
+    else -> TODO("defaultSerdeForCollection method is only for collections: field=$field")
+  }
