@@ -2,8 +2,8 @@ package ${request.packageName.value}
 ${request.jvmView.templateDebugInfo}
 
 ${request.kotlinView.serializeImports(
-  request.extraJVMImports,
-  entity.kotlinView.importsForFields)}
+  entity.kotlinView.importsForFields,
+  request.extraJVMImports)}
 
 
 /**
@@ -19,7 +19,7 @@ interface ${entity.name.upperCamel}DAO {
 
 <#if entity.hasIdFields>
  /**
-  * Delete at-most-one existing {@link ${entity.pkg.value}.${entity.name.upperCamel}} instance
+  * Delete at-most-one existing [${entity.pkg.value}.${entity.name.upperCamel}] instance
   *
   * NOOP if no matching entity exists
   *
@@ -29,19 +29,19 @@ interface ${entity.name.upperCamel}DAO {
 
   /**
    * @param TODO
-   * @return true when {@link ${entity.pkg.value}.${entity.name.upperCamel}} exists with matching PK
+   * @return true when [${entity.pkg.value}.${entity.name.upperCamel}] exists with matching PK
    */
   suspend fun exists(${entity.kotlinView.methodArgsForIdFields(false)}): Boolean
 
   /**
    * @param TODO
-   * @return one {@link ${entity.pkg.value}.${entity.name.upperCamel}} instance (matching PKs) or null
+   * @return one [${entity.pkg.value}.${entity.name.upperCamel} instance (matching PKs) or null
    */
   suspend fun findById( ${entity.kotlinView.methodArgsForIdFields(false)}): ${entity.name.upperCamel}?
 </#if>
 
   /**
-   * Create at-most-one {@link ${entity.pkg.value}.${entity.name.upperCamel}} instance
+   * Create at-most-one [${entity.pkg.value}.${entity.name.upperCamel}] instance
    */
   suspend fun create(entity: ${entity.name.upperCamel})
 
@@ -52,18 +52,18 @@ interface ${entity.name.upperCamel}DAO {
 
 <#if entity.hasNonIdFields>
   /**
-   * Update all (non-PK) fields on one {@link ${entity.pkg.value}.${entity.name.upperCamel}} instance
+   * Update all (non-PK) fields on one [${entity.pkg.value}.${entity.name.upperCamel}] instance
    * (${entity.nonIdFields?size} non-PK fields)
    */
   suspend fun update(entity: ${entity.name.upperCamel})
 
 </#if>
   /**
-   * Upsert/Put {@link ${entity.pkg.value}.${entity.name.upperCamel}}
+   * Upsert/Put [${entity.pkg.value}.${entity.name.upperCamel}]
    *
    * Update if entity exists, Create if entity does not exist
    *
-   * Same concept as {@link java.util.Map#put}
+   * Same concept as [java.util.Map#put}
    *
    * @param entity to update or create
    */
@@ -73,7 +73,7 @@ interface ${entity.name.upperCamel}DAO {
   /**
    * Patch/Set
    *
-   * Set one field: {@link ${entity.pkg.value}.${entity.name.upperCamel}#${field.name.lowerCamel}}
+   * Set one field: [${entity.pkg.value}.${entity.name.upperCamel}#${field.name.lowerCamel}]
    *
    * @param ${field.name.lowerCamel} - replacement for existing value
    */

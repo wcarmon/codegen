@@ -23,54 +23,6 @@ fun effectiveSQLDelightTypeLiteral(field: Field): String {
   return sqlDelightTypeLiteral(base)
 }
 
-/**
- * See https://cashapp.github.io/sqldelight/jvm_sqlite/types/
- */
-private fun sqlDelightTypeLiteral(baseType: BaseFieldType): String = when (baseType) {
-
-  BOOLEAN -> "INTEGER AS Boolean"
-  CHAR -> TODO()
-  FLOAT_32 -> "REAL AS Float"
-  FLOAT_64 -> "REAL"
-  FLOAT_BIG -> TODO()
-  INT_128 -> TODO()
-  INT_16 -> "INTEGER AS Short"
-  INT_32 -> "INTEGER AS Int"
-  INT_64 -> "INTEGER"
-  INT_8 -> TODO()
-  INT_BIG -> TODO()
-  YEAR -> "INTEGER"
-  ZONE_OFFSET -> "INTEGER"
-
-  ARRAY,
-  COLOR,
-  DURATION,
-  EMAIL,
-  LIST,
-  MAP,
-  MONTH_DAY,
-  PATH,
-  PERIOD,
-  PHONE_NUMBER,
-  SET,
-  STRING,
-  URI,
-  URL,
-  UTC_INSTANT,
-  UTC_TIME,
-  UUID,
-  YEAR_MONTH,
-  ZONE_AGNOSTIC_DATE,
-  ZONE_AGNOSTIC_TIME,
-  ZONED_DATE_TIME,
-  -> "TEXT"
-
-  //TODO: allow override in json config
-  USER_DEFINED -> "TEXT"
-
-  else -> TODO("get sqldelight type for: $baseType")
-}
-
 
 fun quoteTypeForSQLDelightLiteral(base: BaseFieldType): QuoteType = when (base) {
 

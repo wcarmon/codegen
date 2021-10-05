@@ -16,18 +16,18 @@ ${request.kotlinView.serializeImports(
  */
 @Suppress("MagicNumber", "TooManyFunctions") // column & placeholder numbers
 class ${entity.name.upperCamel}DAOImpl(
+
   /** To set timestamp on patch methods */
   private val clock: Clock,
-
+<#-- -->
   private val jdbcTemplate: JdbcTemplate,
-
+<#-- -->
   <#if entity.jvmView.requiresObjectWriter>
   /** To serialize collection fields */
   private val objectWriter: ObjectWriter,
   </#if>
-
+<#-- -->
   private val rowMapper: RowMapper<${entity.name.upperCamel}>,
-
 ): ${entity.name.upperCamel}DAO {
 
 <#if entity.hasIdFields>
@@ -104,8 +104,8 @@ class ${entity.name.upperCamel}DAOImpl(
     TODO("finish this method")
   }
 
-  // -- Patch methods
   <#list entity.patchableFields as field>
+    // -- Patch methods
     override fun set${field.name.upperCamel}(
       context: ${request.jvmView.unqualifiedContextClass},
       ${entity.kotlinView.methodArgsForIdFields(false)},

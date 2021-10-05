@@ -358,7 +358,7 @@ data class Field(
 
     SQL_POSTGRESQL,
     -> rdbmsConfig.overrideEffectiveType.whenBlank {
-      getPostgresTypeLiteral(
+      postgresTypeLiteral(
         effectiveBaseType = effectiveBaseType(targetLanguage),
         errorLoggingInfo = "field=$this",
         logicalFieldType = type,

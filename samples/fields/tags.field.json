@@ -41,7 +41,7 @@
       "serializeTemplate": "%s.map { it.toString() }"
     },
     "overrideRDBMSSerde": {
-      "deserializeTemplate": "objectMapper.readValue(%s, Set::class.java) as Set<ChronoTag>",
+      "deserializeTemplate": "parseSet(%s, objectMapper)",
       "serializeTemplate": "objectWriter.writeValueAsString(%s)"
     },
     "typeParameters": [

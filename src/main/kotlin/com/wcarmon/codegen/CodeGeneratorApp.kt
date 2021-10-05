@@ -39,7 +39,14 @@ class CodeGeneratorApp(
     require(Files.exists(cleanRoot)) { "configRoot must exist at $cleanRoot" }
     require(Files.isDirectory(cleanRoot)) { "expected directory at $cleanRoot" }
 
-    val requests = findCodeGenRequests(cleanRoot)
+    val paths = findCodeGenRequestFiles(cleanRoot)
+    LOG.structuredInfo(
+      "Found Code Generate requests",
+      "count" to paths.size,
+      "files" to StringUtils.truncate(paths.toString(), 256),
+    )
+
+    val requests = parseCodeGenRequests(paths)
     check(requests.isNotEmpty()) {
       "Cannot find any codegen requests under $cleanRoot"
     }
@@ -123,15 +130,33 @@ class CodeGeneratorApp(
   }
 
   /**
+   * @return parsed [CodeGenRequest] instances
+   */
+  private fun parseCodeGenRequests(files: Collection<Path>): Collection<CodeGenRequest> =
+    files.map { path ->
+      try {
+        //TODO: validate via json-schema here
+
+        objectReader.readValue(
+          path.toFile(),
+          CodeGenRequest::class.java
+        )
+
+      } catch (ex: Exception) {
+        throw RuntimeException("Failed to parse codegen request json file: path=$path", ex)
+      }
+    }
+
+  /**
    * Traverse `configRoot`,
    * parse found json files to [CodeGenRequest] instances
    *
    * @param configRoot file system root for searching
-   * @return parsed [CodeGenRequest] instances
+   * @return paths matching the pattern
    *
    * See [PATTERN_FOR_GEN_REQ_FILE]
    */
-  private fun findCodeGenRequests(configRoot: Path): Collection<CodeGenRequest> {
+  private fun findCodeGenRequestFiles(configRoot: Path): Collection<Path> {
 
     val generatorRequestPaths = getPathsMatchingNamePattern(
       pathPattern = PATTERN_FOR_GEN_REQ_FILE,
@@ -142,19 +167,7 @@ class CodeGeneratorApp(
       "At least one Code Generate request file is required under $configRoot"
     }
 
-    LOG.structuredInfo(
-      "Found Code Generate requests",
-      "count" to generatorRequestPaths.size,
-      "files" to StringUtils.truncate(generatorRequestPaths.toString(), 256),
-    )
-
-    return generatorRequestPaths.map {
-      //TODO: validate via json-schema here
-      objectReader.readValue(
-        it.toFile(),
-        CodeGenRequest::class.java
-      )
-    }
+    return generatorRequestPaths
   }
 
   /**
@@ -180,7 +193,8 @@ class CodeGeneratorApp(
       "At least one entity config file is required under configRoots=$configRoots"
     }
 
-    return entityConfigParser.parse(entityConfigPaths)
+    return entityConfigParser
+      .parse(entityConfigPaths)
       .sortedBy { it.name.upperCamel }
   }
 }

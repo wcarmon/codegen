@@ -1,6 +1,7 @@
 package com.wcarmon.codegen.log
 
 import org.apache.logging.log4j.message.MapMessage
+import java.util.*
 
 private const val SERIALIZED_NULL = "null"
 private const val KEY_FOR_MESSAGE = "message"
@@ -77,7 +78,11 @@ private fun toLogFriendlyMap(
   pairs
     //TODO: sort message first
     .map {
-      it.first to (it.second?.toString() ?: SERIALIZED_NULL)
+      it.first to if (it.second is Array<*>) {
+        Arrays.toString(it.second as Array<*>)
+      } else {
+        (it.second?.toString() ?: SERIALIZED_NULL)
+      }
     }
     .sortedBy { it.first }
     .toMap()

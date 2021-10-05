@@ -6,7 +6,8 @@
   ],
   "extraJVMImports": [
     "com.fasterxml.jackson.core.type.TypeReference",
-    "com.fasterxml.jackson.databind.ObjectMapper"
+    "com.fasterxml.jackson.databind.ObjectMapper",
+    "com.fasterxml.jackson.module.kotlin.readValue"
   ],
   "outputDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/kotlin/com/wcarmon/chrono/model30",
   "outputFilenameTemplate": "TypeReferences.kt",

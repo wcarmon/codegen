@@ -16,6 +16,7 @@ ${request.kotlinView.serializeImports(
  */
 @Suppress("MagicNumber", "TooManyFunctions") // column & placeholder numbers
 class ${entity.name.upperCamel}DAOImpl(
+
   /** To set timestamp on patch methods */
   private val clock: Clock,
 
@@ -27,7 +28,6 @@ private val objectWriter: ObjectWriter,
 </#if>
 
 private val rowMapper: RowMapper<${entity.name.upperCamel}>,
-
 ) : ${entity.name.upperCamel}DAO {
 
 <#if entity.hasIdFields>
@@ -105,8 +105,8 @@ private val rowMapper: RowMapper<${entity.name.upperCamel}>,
     TODO("finish this method")
   }
 
-  // -- Patch methods
 <#list entity.patchableFields as field>
+  // -- Patch methods
   override suspend fun set${field.name.upperCamel}(
     ${entity.kotlinView.methodArgsForIdFields(false)},
     ${field.name.lowerCamel}: ${field.kotlinView.unqualifiedType}): Unit = withContext(Dispatchers.IO) {

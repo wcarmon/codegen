@@ -6,7 +6,6 @@ package com.wcarmon.codegen.util
 import com.wcarmon.codegen.ast.MethodParameterExpression
 import com.wcarmon.codegen.model.*
 import com.wcarmon.codegen.model.BaseFieldType.*
-import com.wcarmon.codegen.model.BaseFieldType.UUID
 import com.wcarmon.codegen.model.TargetLanguage.JAVA_08
 import java.util.*
 
@@ -160,58 +159,6 @@ fun unmodifiableJavaCollectionMethod(base: BaseFieldType): String {
   }
 }
 
-@Suppress("ComplexMethod")
-private fun fullyQualifiedJavaTypeLiteral(
-  field: Field,
-): String {
-
-  val baseType = field.effectiveBaseType(JAVA_08)
-  val typeParameters = field.typeParameters(JAVA_08)
-
-  return when (baseType) {
-
-    ARRAY -> typeParameters.first() + "[]"
-    BOOLEAN -> if (field.type.nullable) "Boolean" else "boolean"
-    CHAR -> if (field.type.nullable) "Character" else "char"
-    COLOR -> "String"
-    DURATION -> "java.time.Duration"
-    EMAIL -> "String"
-    FLOAT_32 -> if (field.type.nullable) "Float" else "float"
-    FLOAT_64 -> if (field.type.nullable) "Double" else "double"
-    FLOAT_BIG -> "java.math.BigDecimal"
-    INT_128 -> "java.math.BigInteger"
-    INT_16 -> if (field.type.nullable) "Short" else "short"
-    INT_32 -> if (field.type.nullable) "Integer" else "int"
-    INT_64 -> if (field.type.nullable) "Long" else "long"
-    INT_8 -> if (field.type.nullable) "Byte" else "byte"
-    INT_BIG -> "java.math.BigInteger"
-    LIST -> "java.util.List<${typeParameters[0]}>"
-    MAP -> "java.util.Map<${typeParameters[0]}, ${typeParameters[1]}>"
-    MONTH_DAY -> "java.time.MonthDay"
-    PATH -> "java.nio.file.Path"
-    PERIOD -> "java.time.Period"
-    PHONE_NUMBER -> "String"
-    SET -> "java.util.Set<${typeParameters[0]}>"
-    STRING -> "String"
-    URI -> "java.net.URI"
-    URL -> "java.net.URL"
-    UTC_INSTANT -> "java.time.Instant"
-    UTC_TIME -> "java.time.OffsetTime"
-    UUID -> "java.util.UUID"
-    YEAR -> "java.time.Year"
-    YEAR_MONTH -> "java.time.YearMonth"
-    ZONE_AGNOSTIC_DATE -> "java.time.LocalDate"
-    ZONE_AGNOSTIC_DATE_TIME -> "java.time.LocalDateTime"
-    ZONE_AGNOSTIC_TIME -> "java.time.LocalTime"
-    ZONE_OFFSET -> "java.time.ZoneOffset"
-    ZONED_DATE_TIME -> "java.time.ZonedDateTime"
-
-    WEEK_OF_YEAR -> TODO()
-
-    //TODO: need to convert when raw is specified in json as non-jvm
-    USER_DEFINED -> field.type.rawTypeLiteral
-  }
-}
 
 /**
  * @return true when JVM compiler cannot automatically resolve the type

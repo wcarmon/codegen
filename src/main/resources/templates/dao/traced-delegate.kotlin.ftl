@@ -145,8 +145,8 @@ class ${entity.name.upperCamel}TracedDAO(
     }
   }
 
-  // -- Patch methods
 <#list entity.patchableFields as field>
+  // -- Patch methods
   override fun set${field.name.upperCamel}(
     context: ${request.jvmView.unqualifiedContextClass},
     ${entity.kotlinView.methodArgsForIdFields(false)},

@@ -10,6 +10,21 @@ enum class BaseFieldType {
 
   BOOLEAN,
 
+  /**
+   * Small enough to fit in memory
+   *
+   * PostgreSQL:
+   * - bytea fits in memory
+   * - ByteArray uses [java.sql.ResultSet.getBytes]
+   *
+   * - BLOBs are too big to fit in memory
+   * - BLOBs are non-standard and more annoying to manage than file references
+   * - BLOBs must be accessed in a transaction (autoCommit = false)
+   * - BLOB uses [java.sql.ResultSet.getBlob] and [java.sql.Blob.getBinaryStream]
+   * - BLOB uses [java.sql.PreparedStatement.setBinaryStream]
+   */
+  BYTE_ARRAY,
+
   // -- Characters
   CHAR, // 16-bit Unicode character
   COLOR,
@@ -25,11 +40,72 @@ enum class BaseFieldType {
   FLOAT_32,
   FLOAT_64,
   FLOAT_BIG,
+
+  /**
+   * DB2:
+   * Golang:
+   * Java:
+   * Kotlin:
+   * Mysql/Maria:
+   * Oracle:
+   * SQLite:
+   * Rust:        i128
+   * PostgreSQL:  NUMERIC(20,0)
+   */
   INT_128,
+
+  /**
+   * DB2:         SMALLINT
+   * Golang:      int16
+   * Java:        Short, short
+   * Kotlin:      Short
+   * Mysql/Maria: SMALLINT
+   * Oracle:      SHORTINTEGER
+   * PostgreSQL:  INT2, SMALLINT, NUMERIC(3,0)
+   * Rust:        i16
+   * SQLite:      INTEGER
+   */
   INT_16,
+
+  /**
+   * DB2:           INTEGER, INT
+   * Golang:        int32
+   * Java:          Integer, int
+   * Kotlin:        Int
+   * Maria/Mysql:   INT
+   * Oracle:        INTEGER
+   * PostgreSQL:    INT4, INTEGER, NUMERIC(5,0)
+   * Rust:          i32
+   * SQLite:        INTEGER
+   */
   INT_32,
+
+  /**
+   * DB2:         BIGINT
+   * Golang:      int64
+   * Java:        Long, long
+   * Kotlin:      Long
+   * Maria/Mysql: BIGINT
+   * Oracle:      LONGINTEGER
+   * PostgreSQL:  INT8, BIGINT, NUMERIC(10,0)
+   * Rust:        i64
+   * SQLite:      INTEGER
+   */
   INT_64,
+
+  /**
+   * DB2:         --
+   * Golang:      byte
+   * Java:        Byte, byte
+   * Kotlin:      Byte
+   * Mysql/Maria: TINYINT
+   * Oracle:      --
+   * SQLite:      INTEGER
+   * Rust:        i8
+   * PostgreSQL:  NUMERIC(2,0)
+   */
   INT_8,
+
   INT_BIG,
 
   // -- Temporal
@@ -63,12 +139,18 @@ enum class BaseFieldType {
      */
     @JvmStatic
     fun parse(value: String): BaseFieldType =
-      MAPPINGS.getOrDefault(value, null)
+      MAPPINGS
+        .entries
+        .firstOrNull { entry ->
+          entry.key.equals(value, true)
+        }?.value
         ?: USER_DEFINED
 //        ?: throw IllegalArgumentException("Failed to parse baseType for value='$value'")
 
     private val MAPPINGS = mapOf(
+      "[]byte" to BYTE_ARRAY,
       "android.graphics.Color" to COLOR,
+      "byte[]" to BYTE_ARRAY,
       "golang.bool" to BOOLEAN,
       "golang.byte" to INT_8,
       "golang.float32" to FLOAT_32,
@@ -127,6 +209,7 @@ enum class BaseFieldType {
       "java.util.UUID" to UUID,
       "javafx.scene.paint.Color" to COLOR,
       "kotlin.Byte" to INT_8,
+      "kotlin.ByteArray" to BYTE_ARRAY,
       "kotlin.collections.List" to LIST,
       "kotlin.collections.Map" to MAP,
       "kotlin.collections.Set" to SET,
@@ -140,6 +223,7 @@ enum class BaseFieldType {
       "postgres.bool" to BOOLEAN,
       "postgres.boolean" to BOOLEAN,
       "postgres.bytea" to ARRAY,
+      "postgres.bytea" to BYTE_ARRAY,
       "postgres.character" to STRING,
       "postgres.date" to ZONE_AGNOSTIC_DATE,
       "postgres.double precision" to FLOAT_64,
@@ -168,6 +252,7 @@ enum class BaseFieldType {
       "postgres.varchar" to STRING,
       "postgres.xml" to STRING,
       "rust.bool" to BOOLEAN,
+      "rust.ByteArray" to BYTE_ARRAY,
       "rust.f32" to FLOAT_32,
       "rust.f64" to FLOAT_64,
       "rust.i128" to INT_128,
@@ -189,6 +274,7 @@ enum class BaseFieldType {
       "bigint" to INT_BIG,
       "bool" to BOOLEAN,
       "boolean" to BOOLEAN,
+      "bytearray" to BYTE_ARRAY,
       "character" to CHAR,
       "color" to COLOR,
       "datetime-local" to ZONE_AGNOSTIC_DATE_TIME,
@@ -399,6 +485,7 @@ enum class BaseFieldType {
   val canAssignStringLiteral by lazy {
     when (this) {
       BOOLEAN,
+      BYTE_ARRAY,
       CHAR,
       FLOAT_32,
       FLOAT_64,

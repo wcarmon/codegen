@@ -13,37 +13,30 @@ ${entity.kotlinView.typeReferenceDeclarations}
 /**
  * Deserialize to a [Set]
  *
- * @param serialized json version of set data
- * @param <T> complete type, (including the [Set<E>])
+ * @param serialized - json version of set data
+ * @param objectMapper
+ * @param <E> element type
  * @return a new [Set], possibly empty, never null
  */
-fun <T> toSet(
-      serialized: String?,
-      objectMapper: ObjectMapper,
-      typeRef: TypeReference<T>): T {
-  if( serialized == null || serialized.trim().isEmpty() ) {
-    @Suppress("UNCHECKED_CAST")
-    return setOf<Any>() as T
-  }
-
-  return objectMapper.readValue(serialized, typeRef)
-}
+inline fun <reified E> parseSet(
+  serialized: String?,
+  objectMapper: ObjectMapper,
+): Set<E> =
+  if (serialized.isNullOrBlank()) setOf()
+  else objectMapper.readValue(serialized)
 
 /**
  * Deserialize to a [List]
  *
- * @param serialized json version of list data
- * @param <T> complete type, (including the [List<E>])
+ * @param serialized - json version of list data
+ * @param objectMapper
+ * @param <E> element type
  * @return a new [List], possibly empty, never null
  */
-fun <T> toList(
-      serialized: String?,
-      objectMapper: ObjectMapper,
-      typeRef: TypeReference<T>): T {
-  if( serialized == null || serialized.trim().isEmpty() ) {
-    @Suppress("UNCHECKED_CAST")
-    return listOf<Any>() as T
-  }
+inline fun <reified E> parseList(
+  serialized: String?,
+  objectMapper: ObjectMapper,
+): List<E> =
+  if (serialized.isNullOrBlank()) listOf()
+  else objectMapper.readValue(serialized)
 
-  return objectMapper.readValue(serialized, typeRef)
-}

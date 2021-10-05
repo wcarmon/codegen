@@ -111,7 +111,9 @@ fun defaultPreparedStatementSetterMethod(base: BaseFieldType): Name =
  * Essential for [java.sql.PreparedStatement.setNull]
  */
 fun jdbcType(base: BaseFieldType): JDBCType = when (base) {
+
   BOOLEAN -> JDBCType.BOOLEAN
+  BYTE_ARRAY -> JDBCType.LONGVARBINARY
   FLOAT_32 -> JDBCType.FLOAT
   FLOAT_64 -> JDBCType.DOUBLE
   FLOAT_BIG -> JDBCType.DECIMAL

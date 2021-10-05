@@ -292,7 +292,7 @@
           "serializeTemplate": "%s"
         },
         "overrideRDBMSSerde": {
-          "deserializeTemplate": "toSet(%s, objectMapper, CHRONO_TASK__CONTEXTS_TYPE_REF)",
+          "deserializeTemplate": "parseSet(%s, objectMapper)",
           "serializeTemplate": "objectWriter.writeValueAsString(%s)"
         },
         "typeParameters": [
@@ -337,7 +337,7 @@
         "overrideEffectiveType": "int32"
       },
       "rdbms": {
-        "overrideEffectiveType": "int32"
+        "overrideEffectiveType": "INTEGER"
       },
       "type": "ChronoTaskType"
     },

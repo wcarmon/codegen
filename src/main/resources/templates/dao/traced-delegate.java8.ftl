@@ -180,8 +180,8 @@ public final class ${entity.name.upperCamel}TracedDAO implements ${entity.name.u
         () -> realDAO.upsert(childContext, entity));
   }
 
-  // -- Patch methods
 <#list entity.patchableFields as field>
+  // -- Patch methods
   @Override
   public void set${field.name.upperCamel}(
       ${request.jvmView.unqualifiedContextClass} context,

@@ -137,8 +137,8 @@ class ${entity.name.upperCamel}TracedDAO(
     }
   }
 
-  // -- Patch methods
 <#list entity.patchableFields as field>
+  // -- Patch methods
   override suspend fun set${field.name.upperCamel}(
     ${entity.kotlinView.methodArgsForIdFields(false)},
     ${field.name.lowerCamel}: ${field.kotlinView.unqualifiedType}) {

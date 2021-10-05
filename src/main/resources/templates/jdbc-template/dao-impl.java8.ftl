@@ -23,6 +23,7 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
   private final Clock clock;
   private final JdbcTemplate jdbcTemplate;
   <#if entity.jvmView.requiresObjectWriter>
+
   /** To serialize collection fields */
   private final ObjectWriter objectWriter;
   </#if>
@@ -163,8 +164,8 @@ public final class ${entity.name.upperCamel}DAOImpl implements ${entity.name.upp
     //TODO: more here
   }
 
-  // -- Patch methods
 <#list entity.patchableFields as field>
+  // -- Patch methods
   @Override
   public void set${field.name.upperCamel}(
     ${request.jvmView.unqualifiedContextClass} context,

@@ -1,6 +1,7 @@
 package com.wcarmon.codegen.model
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import org.apache.logging.log4j.LogManager
 
 private const val MAX_TYPE_LITERAL_LENGTH = 64
 
@@ -30,11 +31,15 @@ data class RDBMSColumnConfig(
   //TODO: represent foreign Keys
 ) {
 
+  companion object {
+    @JvmStatic
+    private val LOG = LogManager.getLogger(RDBMSColumnConfig::class.java)
+  }
+
   init {
     if (varcharLength != null) {
       require(varcharLength > 0) { "varcharLength must be positive: this=$this" }
     }
-
 
     if (overrideEffectiveType.isNotBlank()) {
       require(overrideEffectiveType.length < MAX_TYPE_LITERAL_LENGTH) {

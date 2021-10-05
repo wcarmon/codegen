@@ -31,7 +31,7 @@ public final class ${entity.name.upperCamel}RowMapper implements RowMapper<${ent
    * @return equivalent {@link ${entity.name.upperCamel}} instance
    */
   @Override
-  public ${entity.name.upperCamel} mapRow(ResultSet rs, int rowNum) throws SQLException {
+  public ${entity.name.upperCamel} mapRow(ResultSet rs, int rowNum) {
     Objects.requireNonNull(rs, "null ResultSet passed to ${entity.name.upperCamel}RowMapper");
 
     try {

@@ -19,7 +19,7 @@ interface ${entity.name.upperCamel}DAO {
 
 <#if entity.hasIdFields>
  /**
-  * Delete at-most-one existing {@link ${entity.pkg.value}.${entity.name.upperCamel}} instance
+  * Delete at-most-one existing [${entity.pkg.value}.${entity.name.upperCamel}] instance
   *
   * NOOP if no matching entity exists
   *
@@ -30,33 +30,33 @@ interface ${entity.name.upperCamel}DAO {
 
   /**
   * @param TODO
-  * @return true when {@link ${entity.pkg.value}.${entity.name.upperCamel}} exists with matching PK
+  * @return true when [${entity.pkg.value}.${entity.name.upperCamel}] exists with matching PK
   */
 <#-- TODO: Add @param to kotlindoc for context  -->
   fun exists(context: ${request.jvmView.unqualifiedContextClass}, ${entity.kotlinView.methodArgsForIdFields(false)}): Boolean
 
   /**
   * @param TODO
-  * @return one {@link ${entity.pkg.value}.${entity.name.upperCamel}} instance (matching PKs) or null
+  * @return one [${entity.pkg.value}.${entity.name.upperCamel} instance (matching PKs) or null
   */
   <#-- TODO: Add @param to kotlindoc for context  -->
   fun findById( context: ${request.jvmView.unqualifiedContextClass}, ${entity.kotlinView.methodArgsForIdFields(false)}): ${entity.name.upperCamel}?
 </#if>
 
   /**
-  * Create at-most-one {@link ${entity.pkg.value}.${entity.name.upperCamel}} instance
+  * Create at-most-one [${entity.pkg.value}.${entity.name.upperCamel}] instance
   */
   fun create(context: ${request.jvmView.unqualifiedContextClass}, entity: ${entity.name.upperCamel})
 
   /**
-  * @return all {@link ${entity.pkg.value}.${entity.name.upperCamel}} entities or empty List (never null)
+  * @return all [${entity.pkg.value}.${entity.name.upperCamel}] entities or empty List (never null)
   */
 <#-- TODO: Add @param to kotlindoc for context  -->
   fun list(context: ${request.jvmView.unqualifiedContextClass}): List<${entity.name.upperCamel}>
 
 <#if entity.hasNonIdFields>
   /**
-  * Update all (non-PK) fields on one {@link ${entity.pkg.value}.${entity.name.upperCamel}} instance
+  * Update all (non-PK) fields on one [${entity.pkg.value}.${entity.name.upperCamel}] instance
   * (${entity.nonIdFields?size} non-PK fields)
   */
 <#-- TODO: Add @param to kotlindoc for context  -->
@@ -64,11 +64,11 @@ interface ${entity.name.upperCamel}DAO {
 
 </#if>
   /**
-  * Upsert/Put {@link ${entity.pkg.value}.${entity.name.upperCamel}}
+  * Upsert/Put [${entity.pkg.value}.${entity.name.upperCamel}]
   *
   * Update if entity exists, Create if entity does not exist
   *
-  * Same concept as {@link java.util.Map#put}
+  * Same concept as [java.util.Map#put}
   *
   * @param entity to update or create
   */
@@ -79,7 +79,7 @@ interface ${entity.name.upperCamel}DAO {
  /**
   * Patch/Set
   *
-  * Set one field: {@link ${entity.pkg.value}.${entity.name.upperCamel}#${field.name.lowerCamel}}
+  * Set one field: [${entity.pkg.value}.${entity.name.upperCamel}#${field.name.lowerCamel}]
   *
   * @param ${field.name.lowerCamel} - replacement for existing value
   */

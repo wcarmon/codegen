@@ -18,6 +18,7 @@ class ProtobufFieldReadExpression(
 
   private val serde: Serde,
 
+  /** Using [MethodInvokeExpression] over [FieldReadExpression] since proto has atypical accessors for collections */
   private val protobufReadExpression: Expression = MethodInvokeExpression(
     arguments = listOf(),
     assertNonNull = assertNonNull,
