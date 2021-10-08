@@ -57,10 +57,10 @@
     "defaultValue": {
       "value": ""
     },
+    "validation": {
+      "requireTrimmed": true
+    },
     "varcharLength": 512
   },
-  "type": "Set",
-  "validation": {
-    "requireTrimmed": true
-  }
+  "type": "Set"
 }

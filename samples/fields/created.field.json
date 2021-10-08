@@ -1,5 +1,12 @@
 {
   "$schema": "https://wcarmon.com/schemas/codegen/field.schema.json",
+  "golang": {
+  },
+  "rdbms": {
+    "validation": {
+      "requireTrimmed": true
+    }
+  },
   "java": {
     "overrideProtobufSerde": {
       "deserializeTemplate": "Instant.parse(%s)",
@@ -21,8 +28,5 @@
     }
   },
   "name": "created",
-  "type": "Instant",
-  "validation": {
-    "requireTrimmed": true
-  }
+  "type": "Instant"
 }

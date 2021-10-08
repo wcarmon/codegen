@@ -62,12 +62,12 @@
         "overrideEffectiveType": "string"
       },
       "rdbms": {
+        "validation": {
+          "requireTrimmed": true
+        },
         "varcharLength": 36
       },
-      "type": "UBUuid",
-      "validation": {
-        "requireTrimmed": true
-      }
+      "type": "UBUuid"
     },
     {
       "golang": {

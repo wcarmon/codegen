@@ -32,12 +32,12 @@
         "overrideEffectiveType": "string"
       },
       "rdbms": {
-        "varcharLength": 36
+        "varcharLength": 36,
+        "validation": {
+          "requireTrimmed": true
+        }
       },
-      "type": "UBUuid",
-      "validation": {
-        "requireTrimmed": true
-      }
+      "type": "UBUuid"
     },
     {
       "golang": {
@@ -69,12 +69,12 @@
         "overrideEffectiveType": "string"
       },
       "rdbms": {
-        "varcharLength": 36
+        "varcharLength": 36,
+        "validation": {
+          "requireTrimmed": true
+        }
       },
-      "type": "UBUuid",
-      "validation": {
-        "requireTrimmed": true
-      }
+      "type": "UBUuid"
     },
     {
       "golang": {
@@ -114,12 +114,13 @@
       },
       "rdbms": {
         "overrideEffectiveType": "VARCHAR",
-        "varcharLength": 2
+        "varcharLength": 2,
+        "validation": {
+          "requireTrimmed": true,
+          "requireMatchesRegex": "^[FS]{2}$"
+        }
       },
-      "type": "ChronoTaskDependencyType",
-      "validation": {
-        "requireTrimmed": true
-      }
+      "type": "ChronoTaskDependencyType"
     }
   ],
   "indexes": [],

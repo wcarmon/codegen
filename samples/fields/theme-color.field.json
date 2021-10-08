@@ -7,16 +7,28 @@
   "golang": {
     "defaultValue": {
       "value": ""
+    },
+    "validation": {
+      "requireMatchesRegex": "^#([0-9a-fA-F]{6})?$",
+      "requireTrimmed": true
     }
   },
   "java": {
     "defaultValue": {
       "value": ""
+    },
+    "validation": {
+      "requireMatchesRegex": "^#([0-9a-fA-F]{6})?$",
+      "requireTrimmed": true
     }
   },
   "kotlin": {
     "defaultValue": {
       "value": ""
+    },
+    "validation": {
+      "requireMatchesRegex": "^#([0-9a-fA-F]{6})?$",
+      "requireTrimmed": true
     }
   },
   "name": "themeColor",
@@ -25,12 +37,11 @@
     "defaultValue": {
       "value": ""
     },
+    "validation": {
+      "requireMatchesRegex": "^#([0-9a-fA-F]{6})?$",
+      "requireTrimmed": true
+    },
     "varcharLength": 7
   },
-  "type": "color",
-  "validation": {
-    "maxSize": 7,
-    "requireMatchesRegex": "^#[0-9a-fA-F]{6}$",
-    "requireTrimmed": true
-  }
+  "type": "color"
 }

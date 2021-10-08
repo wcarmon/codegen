@@ -198,8 +198,9 @@ class KotlinEntityView(
     validatedFields.map { field ->
       FieldValidationExpressions(
         field = field,
+        tableConstraintPrefix = "",
         validationConfig = field.effectiveFieldValidation(targetLanguage),
-        validationSeparator = "\n"
+        validationSeparator = "\n",
       )
         .render(renderConfig.doubleIndented)
     }

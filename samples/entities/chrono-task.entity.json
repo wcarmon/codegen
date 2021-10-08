@@ -20,16 +20,25 @@
       "golang": {
         "defaultValue": {
           "value": ""
+        },
+        "validation": {
+          "requireTrimmed": true
         }
       },
       "java": {
         "defaultValue": {
           "value": ""
+        },
+        "validation": {
+          "requireTrimmed": true
         }
       },
       "kotlin": {
         "defaultValue": {
           "value": ""
+        },
+        "validation": {
+          "requireTrimmed": true
         }
       },
       "name": "details",
@@ -38,12 +47,12 @@
         "defaultValue": {
           "value": ""
         },
+        "validation": {
+          "requireTrimmed": true
+        },
         "varcharLength": 8000
       },
-      "type": "String",
-      "validation": {
-        "requireTrimmed": true
-      }
+      "type": "String"
     },
     {
       "golang": {
@@ -180,12 +189,12 @@
         "overrideEffectiveType": "string"
       },
       "rdbms": {
+        "validation": {
+          "requireTrimmed": true
+        },
         "varcharLength": 36
       },
-      "type": "UBUuid",
-      "validation": {
-        "requireTrimmed": true
-      }
+      "type": "UBUuid"
     },
     {
       "golang": {
@@ -209,12 +218,12 @@
         "defaultValue": {
           "value": ""
         },
+        "validation": {
+          "requireTrimmed": true
+        },
         "varcharLength": 256
       },
-      "type": "String",
-      "validation": {
-        "requireTrimmed": true
-      }
+      "type": "String"
     },
     {
       "enumType": true,
@@ -314,12 +323,12 @@
         "repeated": true
       },
       "rdbms": {
+        "validation": {
+          "requireTrimmed": true
+        },
         "varcharLength": 256
       },
-      "type": "Set",
-      "validation": {
-        "requireTrimmed": true
-      }
+      "type": "Set"
     },
     {
       "golang": {},

@@ -1,30 +1,39 @@
 {
   "$schema": "https://wcarmon.com/schemas/codegen/field.schema.json",
+  "golang": {
+    "overrideEffectiveType": "string"
+  },
   "java": {
     "overrideProtobufSerde": {
-      "deserializeTemplate": "Instant.parse(%s)",
+      "deserializeTemplate": "UBUuid.parse(%s)",
       "serializeTemplate": "%s.toString()"
     },
     "overrideRDBMSSerde": {
-      "deserializeTemplate": "Instant.parse(%s)",
+      "deserializeTemplate": "UBUuid.parse(%s)",
       "serializeTemplate": "%s.toString()"
     }
   },
   "kotlin": {
     "overrideProtobufSerde": {
-      "deserializeTemplate": "Instant.parse(%s)",
+      "deserializeTemplate": "UBUuid.parse(%s)",
       "serializeTemplate": "%s.toString()"
     },
     "overrideRDBMSSerde": {
-      "deserializeTemplate": "Instant.parse(%s)",
+      "deserializeTemplate": "UBUuid.parse(%s)",
       "serializeTemplate": "%s.toString()"
     }
   },
-  "name": "updated",
+  "name": "owner",
+  "protobuf": {
+    "overrideEffectiveType": "string"
+  },
   "rdbms": {
     "validation": {
+      "minSize": 16,
+      "requireNotBlank": true,
       "requireTrimmed": true
-    }
+    },
+    "varcharLength": 36
   },
-  "type": "Instant"
+  "type": "UBUuid"
 }

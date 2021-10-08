@@ -425,6 +425,9 @@ data class Field(
       GOLANG_1_9,
       -> golangConfig.validationConfig
 
+      SQL_POSTGRESQL,
+      -> rdbmsConfig.validationConfig
+
       else -> TODO("get field validaiton for targetLanguage=$targetLanguage, field=$this")
     }
 

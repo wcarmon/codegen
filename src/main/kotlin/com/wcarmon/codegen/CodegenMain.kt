@@ -68,8 +68,7 @@ fun main(args: Array<String>) {
     ctx.getBean(CodeGeneratorApp::class.java)
       .run(configRoot)
 
-    ctx.close()
-    exitProcess(0)
+    LOG.info("Success")
 
   } catch (ex: Exception) {
     val exitCode = 2
@@ -82,5 +81,10 @@ fun main(args: Array<String>) {
 
     SpringApplication.exit(ctx, { 0 })
     exitProcess(exitCode)
+
+  }finally {
+    ctx.close()
   }
+
+  exitProcess(0)
 }

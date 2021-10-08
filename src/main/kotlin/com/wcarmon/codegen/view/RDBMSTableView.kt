@@ -134,8 +134,9 @@ data class RDBMSTableView(
     validatedFields.map { field ->
       FieldValidationExpressions(
         field = field,
+        tableConstraintPrefix = "${entity.name.lowerSnake}_",
         validationConfig = field.effectiveFieldValidation(targetLanguage),
-        validationSeparator = ",\n"
+        validationSeparator = ",\n",
       )
         .render(renderConfig)
     }

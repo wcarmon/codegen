@@ -81,16 +81,25 @@
       "golang": {
         "defaultValue": {
           "value": 100
+        },
+        "validation": {
+          "minValue": 0
         }
       },
       "java": {
         "defaultValue": {
           "value": 100
+        },
+        "validation": {
+          "minValue": 0
         }
       },
       "kotlin": {
         "defaultValue": {
           "value": 100
+        },
+        "validation": {
+          "minValue": 0
         }
       },
       "name": "hardLimit",
@@ -98,12 +107,12 @@
       "rdbms": {
         "defaultValue": {
           "value": 100
+        },
+        "validation": {
+          "minValue": 0
         }
       },
-      "type": "Int",
-      "validation": {
-        "minValue": 0
-      }
+      "type": "Int"
     },
     {
       "golang": {
@@ -139,11 +148,17 @@
       "java": {
         "defaultValue": {
           "value": 0
+        },
+        "validation": {
+          "minValue": 0
         }
       },
       "kotlin": {
         "defaultValue": {
           "value": 0
+        },
+        "validation": {
+          "minValue": 0
         }
       },
       "name": "softLimit",
@@ -151,12 +166,12 @@
       "rdbms": {
         "defaultValue": {
           "value": 0
+        },
+        "validation": {
+          "minValue": 0
         }
       },
-      "type": "Int",
-      "validation": {
-        "minValue": 0
-      }
+      "type": "Int"
     }
   ],
   "indexes": [],

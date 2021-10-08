@@ -13,6 +13,8 @@ import com.wcarmon.codegen.util.isPrimitive
 data class FieldValidationExpressions(
   val field: Field,
   val validationConfig: FieldValidation,
+
+  val tableConstraintPrefix: String = "",
   val validationSeparator: String = "\n",
 ) : Expression {
 
@@ -278,34 +280,37 @@ data class FieldValidationExpressions(
     }
 
     val fName = field.name.lowerSnake
-    val baseType = field.effectiveBaseType(SQL_POSTGRESQL)
+
+    val nullSafeSnippet = if (field.type.nullable) {
+      "\"$fName\" IS NULL OR "
+    } else {
+      ""
+    }
+
     val output = mutableListOf<String>()
 
     if (validationConfig.minValue != null) {
-      output += """CHECK ("$fName" >= ${validationConfig.minValue})"""
+      output += """CONSTRAINT ${tableConstraintPrefix}${fName}_min_value CHECK (${nullSafeSnippet}"$fName" >= ${validationConfig.minValue})"""
     }
 
     if (validationConfig.maxValue != null) {
-      output += """CHECK ("$fName" <= ${validationConfig.maxValue})"""
+      output += """CONSTRAINT ${tableConstraintPrefix}${fName}_max_value CHECK (${nullSafeSnippet}"$fName" <= ${validationConfig.maxValue})"""
     }
 
     if (validationConfig.requireNotBlank != null && validationConfig.requireNotBlank) {
-      output += """CHECK (LENGTH(TRIM("$fName")) > 0)"""
+      output += """CONSTRAINT ${tableConstraintPrefix}${fName}_not_blank CHECK (${nullSafeSnippet}LENGTH(TRIM("$fName")) > 0)"""
     }
 
     if (validationConfig.requireTrimmed != null && validationConfig.requireTrimmed) {
-      if (field.type.nullable) {
-        TODO("allow null or ...")
-      }
-      output += """CHECK (TRIM("$fName") = "$fName")"""
+      output += """CONSTRAINT ${tableConstraintPrefix}${fName}_trimmed CHECK (${nullSafeSnippet}TRIM("$fName") = "$fName")"""
     }
 
     if (validationConfig.requireLowerCase != null && validationConfig.requireLowerCase) {
-      output += """CHECK (LOWER("$fName") = "$fName")"""
+      output += """CONSTRAINT ${tableConstraintPrefix}${fName}_lower_case CHECK (${nullSafeSnippet}LOWER("$fName") = "$fName")"""
     }
 
     if (validationConfig.requireUpperCase != null && validationConfig.requireUpperCase) {
-      output += """CHECK (UPPER("$fName") = "$fName")"""
+      output += """CONSTRAINT ${tableConstraintPrefix}${fName}_upper_case CHECK (${nullSafeSnippet}UPPER("$fName") = "$fName")"""
     }
 
     //TODO: after <-- requires same date-time serialization mechanism

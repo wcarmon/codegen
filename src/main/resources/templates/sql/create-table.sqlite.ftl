@@ -2,6 +2,13 @@ ${request.jvmView.templateDebugInfo}
 -- See https://www.sqlite.org/lang_createtable.html
 -- See https://www.sqlite.org/datatype3.html
 <#-- -->
+
+-- ** Drop
+<#list entities as entity>
+--  DROP TABLE IF EXISTS ${entity.rdbmsView.schemaPrefix}${entity.name.lowerSnake};
+</#list>
+
+-- ** Create
 <#list entities as entity>
 
 -- Entity: ${entity.pkg.value}.${entity.name.upperCamel}

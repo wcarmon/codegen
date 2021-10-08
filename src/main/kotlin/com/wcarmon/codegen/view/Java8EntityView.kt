@@ -183,6 +183,7 @@ class Java8EntityView(
     validatedFields.map { field ->
       FieldValidationExpressions(
         field = field,
+        tableConstraintPrefix = "",
         validationConfig = field.effectiveFieldValidation(targetLanguage),
         validationSeparator = "\n"
       )

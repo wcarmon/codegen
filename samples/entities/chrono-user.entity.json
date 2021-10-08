@@ -1,50 +1,48 @@
 {
   "$schema": "https://wcarmon.com/schemas/codegen/entity.schema.json",
-  "createdTimestampFieldName": "created",
   "fieldUris": [
     "file:/home/wcarmon/git-repos/codegen/samples/fields/created.field.json",
-    "file:/home/wcarmon/git-repos/codegen/samples/fields/name.field.json",
     "file:/home/wcarmon/git-repos/codegen/samples/fields/updated.field.json",
     "file:/home/wcarmon/git-repos/codegen/samples/fields/uuid.field.json"
   ],
   "fields": [
     {
-      "documentation": [
-        "SQL: query",
-        "Browser: ?TODO?"
-      ],
-      "name": "query",
-      "rdbms": {
+      "golang": {
         "validation": {
+          "maxSize": 96,
+          "requireNotBlank": true,
           "requireTrimmed": true
-        },
-        "varcharLength": 1024
+        }
       },
-      "type": "String"
-    },
-    {
-      "name": "platform",
+      "java": {
+        "validation": {
+          "maxSize": 96,
+          "requireNotBlank": true,
+          "requireTrimmed": true
+        }
+      },
+      "kotlin": {
+        "validation": {
+          "maxSize": 96,
+          "requireNotBlank": true,
+          "requireTrimmed": true
+        }
+      },
+      "name": "email",
       "rdbms": {
         "validation": {
+          "requireNotBlank": true,
           "requireTrimmed": true
         },
-        "varcharLength": 16
+        "varcharLength": 96
       },
       "type": "String"
     }
   ],
-  "indexes": [],
-  "interFieldValidations": [
-    {
-      "fieldName0": "updated",
-      "fieldName1": "created",
-      "type": "notBefore"
-    }
-  ],
-  "name": "ChronoSavedSearch",
+  "interFieldValidations": [],
+  "name": "ChronoUser",
   "pkg": "com.wcarmon.chrono.model",
   "rdbms": {
     "schema": "test"
-  },
-  "updatedTimestampFieldName": "updated"
+  }
 }
