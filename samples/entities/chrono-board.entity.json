@@ -50,6 +50,9 @@
         "defaultValue": {
           "value": null
         },
+        "validation": {
+          "requireTrimmed": true
+        },
         "varcharLength": 1024
       },
       "type": "URI"
@@ -58,22 +61,34 @@
       "golang": {
         "defaultValue": {
           "value": ""
+        },
+        "validation": {
+          "maxSize": 512
         }
       },
       "java": {
         "defaultValue": {
           "value": ""
+        },
+        "validation": {
+          "maxSize": 512
         }
       },
       "kotlin": {
         "defaultValue": {
           "value": ""
+        },
+        "validation": {
+          "maxSize": 512
         }
       },
       "name": "details",
       "rdbms": {
         "defaultValue": {
           "value": ""
+        },
+        "validation": {
+          "requireTrimmed": true
         },
         "varcharLength": 512
       },
@@ -213,16 +228,28 @@
       "golang": {
         "defaultValue": {
           "value": ""
+        },
+        "validation": {
+          "maxSize": 128,
+          "requireTrimmed": true
         }
       },
       "java": {
         "defaultValue": {
           "value": ""
+        },
+        "validation": {
+          "maxSize": 128,
+          "requireTrimmed": true
         }
       },
       "kotlin": {
         "defaultValue": {
           "value": ""
+        },
+        "validation": {
+          "maxSize": 128,
+          "requireTrimmed": true
         }
       },
       "name": "keywords",
@@ -230,12 +257,13 @@
         "defaultValue": {
           "value": ""
         },
+        "validation": {
+          "maxSize": 128,
+          "requireTrimmed": true
+        },
         "varcharLength": 192
       },
-      "type": "String",
-      "validation": {
-        "maxSize": 128
-      }
+      "type": "String"
     },
     {
       "documentation": [
@@ -246,16 +274,25 @@
       "golang": {
         "defaultValue": {
           "value": -1
+        },
+        "validation": {
+          "minValue": -1
         }
       },
       "java": {
         "defaultValue": {
           "value": -1
+        },
+        "validation": {
+          "minValue": -1
         }
       },
       "kotlin": {
         "defaultValue": {
           "value": -1
+        },
+        "validation": {
+          "minValue": -1
         }
       },
       "name": "pinnedPosition",
@@ -264,13 +301,13 @@
       "rdbms": {
         "defaultValue": {
           "value": -1
+        },
+        "validation": {
+          "minValue": -1
         }
       },
       "scale": 0,
-      "type": "java.lang.Integer",
-      "validation": {
-        "minValue": -1
-      }
+      "type": "java.lang.Integer"
     }
   ],
   "indexes": [

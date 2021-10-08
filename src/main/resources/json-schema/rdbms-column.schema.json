@@ -17,6 +17,9 @@
       "minLength": 1,
       "type": "string"
     },
+    "validation": {
+      "$ref": "field-validation.schema.json"
+    },
     "varcharLength": {
       "exclusiveMinimum": 0,
       "maximum": 10000,

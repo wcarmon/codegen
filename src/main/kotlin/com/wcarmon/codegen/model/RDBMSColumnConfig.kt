@@ -1,5 +1,6 @@
 package com.wcarmon.codegen.model
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import org.apache.logging.log4j.LogManager
 
@@ -27,6 +28,9 @@ data class RDBMSColumnConfig(
    * For VARCHAR columns, wrap in single quotes
    */
   val defaultValue: DefaultValue = DefaultValue(),
+
+  @JsonProperty("validation")
+  val validationConfig: FieldValidation = FieldValidation(),
 
   //TODO: represent foreign Keys
 ) {

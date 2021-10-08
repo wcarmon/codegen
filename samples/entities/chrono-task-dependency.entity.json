@@ -34,7 +34,10 @@
       "rdbms": {
         "varcharLength": 36
       },
-      "type": "UBUuid"
+      "type": "UBUuid",
+      "validation": {
+        "requireTrimmed": true
+      }
     },
     {
       "golang": {
@@ -68,7 +71,10 @@
       "rdbms": {
         "varcharLength": 36
       },
-      "type": "UBUuid"
+      "type": "UBUuid",
+      "validation": {
+        "requireTrimmed": true
+      }
     },
     {
       "golang": {
@@ -110,7 +116,10 @@
         "overrideEffectiveType": "VARCHAR",
         "varcharLength": 2
       },
-      "type": "ChronoTaskDependencyType"
+      "type": "ChronoTaskDependencyType",
+      "validation": {
+        "requireTrimmed": true
+      }
     }
   ],
   "indexes": [],

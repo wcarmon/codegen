@@ -30,6 +30,7 @@
   "type": "color",
   "validation": {
     "maxSize": 7,
-    "requireMatchesRegex": "^#[0-9a-fA-F]{6}$"
+    "requireMatchesRegex": "^#[0-9a-fA-F]{6}$",
+    "requireTrimmed": true
   }
 }

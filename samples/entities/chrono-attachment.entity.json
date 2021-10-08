@@ -38,16 +38,28 @@
       "golang": {
         "defaultValue": {
           "value": ""
+        },
+        "validation": {
+          "maxSize": 48,
+          "requireNotBlank": true
         }
       },
       "java": {
         "defaultValue": {
           "value": ""
+        },
+        "validation": {
+          "maxSize": 48,
+          "requireNotBlank": true
         }
       },
       "kotlin": {
         "defaultValue": {
           "value": ""
+        },
+        "validation": {
+          "maxSize": 48,
+          "requireNotBlank": true
         }
       },
       "name": "name",
@@ -55,13 +67,12 @@
         "defaultValue": {
           "value": ""
         },
+        "validation": {
+          "requireNotBlank": true
+        },
         "varcharLength": 48
       },
-      "type": "String",
-      "validation": {
-        "maxSize": 48,
-        "requireNotBlank": true
-      }
+      "type": "String"
     }
   ],
   "interFieldValidations": [

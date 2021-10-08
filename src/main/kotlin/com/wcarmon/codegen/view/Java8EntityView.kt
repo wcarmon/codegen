@@ -178,12 +178,12 @@ class Java8EntityView(
       }
   }
 
-  val validationExpressions: String by lazy {
+  val fieldValidationExpressions: String by lazy {
 
     validatedFields.map { field ->
       FieldValidationExpressions(
         field = field,
-        validationConfig = field.validationConfig,
+        validationConfig = field.effectiveFieldValidation(targetLanguage),
         validationSeparator = "\n"
       )
         .render(renderConfig.doubleIndented)
@@ -252,7 +252,7 @@ class Java8EntityView(
   private val validatedFields =
     entity.sortedFieldsWithIdsFirst
       .filter {
-        it.validationConfig.hasValidation
+        it.effectiveFieldValidation(targetLanguage).hasValidation
             // For Java we need validation to enforce null safety
             || !it.type.nullable
       }

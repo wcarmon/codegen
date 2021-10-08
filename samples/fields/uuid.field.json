@@ -29,6 +29,11 @@
     "overrideEffectiveType": "string"
   },
   "rdbms": {
+    "validation": {
+      "minSize": 16,
+      "requireNotBlank": true,
+      "requireTrimmed": true
+    },
     "varcharLength": 36
   },
   "type": "UBUuid"

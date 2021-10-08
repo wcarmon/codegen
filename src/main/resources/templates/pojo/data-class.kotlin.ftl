@@ -14,7 +14,7 @@ data class ${entity.name.upperCamel}(
 ) {
 
   init {
-${entity.kotlinView.validationExpressions}
+${entity.kotlinView.fieldValidationExpressions}
 ${entity.kotlinView.interFieldValidationExpressions}
   }
 }

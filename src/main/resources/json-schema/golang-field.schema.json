@@ -7,6 +7,12 @@
     "defaultValue": {
       "$ref": "default-value.schema.json"
     },
+    "overrideEffectiveType": {
+      "description": "Allows custom golang type, replaces auto-derived type",
+      "maxLength": 64,
+      "minLength": 1,
+      "type": "string"
+    },
     "overrideElasticSearchSerde": {
       "$ref": "serde.schema.json"
     },
@@ -23,12 +29,6 @@
     "overrideRDBMSSerde": {
       "$ref": "serde.schema.json"
     },
-    "overrideEffectiveType": {
-      "description": "Allows custom golang type, replaces auto-derived type",
-      "maxLength": 64,
-      "minLength": 1,
-      "type": "string"
-    },
     "typeParameters": {
       "items": {
         "type": "string"
@@ -37,6 +37,9 @@
       "minItems": 0,
       "type": "array",
       "uniqueItems": false
+    },
+    "validation": {
+      "$ref": "field-validation.schema.json"
     }
   },
   "propertyNames": {

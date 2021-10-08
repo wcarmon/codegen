@@ -1,0 +1,12 @@
+{
+  "$schema": "https://wcarmon.com/schemas/codegen/request.schema.json",
+  "allowOverride": true,
+  "entityConfigDirs": [
+    "file:///home/wcarmon/git-repos/codegen/samples/entities"
+  ],
+  "outputDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/gen/sql/drop-tables",
+  "outputFilenameTemplate": "sqlite.sql",
+  "outputMode": "single",
+  "package": "",
+  "templateURI": "classpath:/templates/sql/drop-table.sqlite.ftl"
+}

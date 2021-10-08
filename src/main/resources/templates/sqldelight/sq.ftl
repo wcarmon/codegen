@@ -1,13 +1,5 @@
 <#--
-NOTE:
-SQLDelight writes to build/generated/sqldelight/code/<DatabaseNameInBuildDotGradle>/com/foo/FooRecord.kt
-
-Generate:
-./gradlew :sandbox:generateMain<DatabaseName>Interface
-./gradlew :sandbox:generateMainSandboxDatabaseInterface
-./gradlew :sandbox build -x test
-
-(TODO: intellij build doesn't generate *.sq -> kotlin)
+See /docs/sqldelight.md
 -->
 -- See https://cashapp.github.io/sqldelight/jvm_sqlite/types/
 ${entity.sqlDelightView.createTableStatement}

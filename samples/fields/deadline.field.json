@@ -36,6 +36,9 @@
   "rdbms": {
     "defaultValue": {
       "value": null
+    },
+    "validation": {
+      "requireTrimmed": true
     }
   },
   "type": "Instant"

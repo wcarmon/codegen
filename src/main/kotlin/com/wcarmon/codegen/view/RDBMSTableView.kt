@@ -123,16 +123,18 @@ data class RDBMSTableView(
   }
 
   val checkConstraints: String by lazy {
+    val targetLanguage = SQL_POSTGRESQL
+
     val renderConfig = RenderConfig(
       debugMode = debugMode,
-      targetLanguage = SQL_POSTGRESQL,
+      targetLanguage = targetLanguage,
       terminate = false,
     )
 
     validatedFields.map { field ->
       FieldValidationExpressions(
         field = field,
-        validationConfig = field.validationConfig,
+        validationConfig = field.effectiveFieldValidation(targetLanguage),
         validationSeparator = ",\n"
       )
         .render(renderConfig)
@@ -167,7 +169,7 @@ data class RDBMSTableView(
   private val validatedFields =
     entity.sortedFieldsWithIdsFirst
       .filter {
-        it.validationConfig.hasValidation
+        it.effectiveFieldValidation(SQL_POSTGRESQL).hasValidation
       }
 
   val updateSetClause_numeredDollars: String = commaSeparatedColumnAssignment(

@@ -59,5 +59,8 @@
     },
     "varcharLength": 512
   },
-  "type": "Set"
+  "type": "Set",
+  "validation": {
+    "requireTrimmed": true
+  }
 }

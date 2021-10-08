@@ -7,7 +7,7 @@ ${request.jvmView.templateDebugInfo}
 -- Entity: ${entity.pkg.value}.${entity.name.upperCamel}
 -- PK column count: ${entity.idFields?size}
 -- Columns count: ${entity.fields?size}
-CREATE TABLE IF NOT EXISTS ${entity.rdbmsView.schemaPrefix}${entity.name.lowerSnake}
+CREATE TABLE IF NOT EXISTS ${entity.name.lowerSnake}
 (
   <#list entity.idFields as field>
     ${field.rdbmsView.sqliteColumnDefinition}<#if field?has_next || entity.hasNonIdFields>,</#if>

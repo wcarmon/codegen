@@ -190,15 +190,15 @@ class KotlinEntityView(
   private val validatedFields =
     entity.sortedFieldsWithIdsFirst
       .filter {
-        it.validationConfig.hasValidation
+        it.effectiveFieldValidation(targetLanguage).hasValidation
       }
 
-  val validationExpressions: String by lazy {
+  val fieldValidationExpressions: String by lazy {
 
     validatedFields.map { field ->
       FieldValidationExpressions(
         field = field,
-        validationConfig = field.validationConfig,
+        validationConfig = field.effectiveFieldValidation(targetLanguage),
         validationSeparator = "\n"
       )
         .render(renderConfig.doubleIndented)

@@ -35,13 +35,19 @@
         "overrideEffectiveType": "string"
       },
       "rdbms": {
+        "validation": {
+          "requireTrimmed": true
+        },
         "varcharLength": 36
       },
       "type": "UBUuid"
     },
     {
       "golang": {
-        "overrideEffectiveType": "string"
+        "overrideEffectiveType": "string",
+        "validation": {
+          "requireTrimmed": true
+        }
       },
       "java": {
         "overrideProtobufSerde": {
@@ -69,6 +75,9 @@
         "overrideEffectiveType": "string"
       },
       "rdbms": {
+        "validation": {
+          "requireTrimmed": true
+        },
         "varcharLength": 36
       },
       "type": "UBUuid"

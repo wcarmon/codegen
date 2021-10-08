@@ -24,7 +24,7 @@ ${entity.java8View.fieldDeclarations}
     </#list>
 
     // -- Validation
-    ${entity.java8View.validationExpressions}
+    ${entity.java8View.fieldValidationExpressions}
     ${entity.java8View.interFieldValidationExpressions}
   }
 

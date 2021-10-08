@@ -40,7 +40,10 @@
         },
         "varcharLength": 8000
       },
-      "type": "String"
+      "type": "String",
+      "validation": {
+        "requireTrimmed": true
+      }
     },
     {
       "golang": {
@@ -179,7 +182,10 @@
       "rdbms": {
         "varcharLength": 36
       },
-      "type": "UBUuid"
+      "type": "UBUuid",
+      "validation": {
+        "requireTrimmed": true
+      }
     },
     {
       "golang": {
@@ -205,7 +211,10 @@
         },
         "varcharLength": 256
       },
-      "type": "String"
+      "type": "String",
+      "validation": {
+        "requireTrimmed": true
+      }
     },
     {
       "enumType": true,
@@ -307,7 +316,10 @@
       "rdbms": {
         "varcharLength": 256
       },
-      "type": "Set"
+      "type": "Set",
+      "validation": {
+        "requireTrimmed": true
+      }
     },
     {
       "golang": {},

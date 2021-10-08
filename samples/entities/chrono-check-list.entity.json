@@ -64,7 +64,10 @@
       "rdbms": {
         "varcharLength": 36
       },
-      "type": "UBUuid"
+      "type": "UBUuid",
+      "validation": {
+        "requireTrimmed": true
+      }
     },
     {
       "golang": {

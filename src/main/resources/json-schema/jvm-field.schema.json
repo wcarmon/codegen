@@ -31,6 +31,9 @@
       "minItems": 0,
       "type": "array",
       "uniqueItems": false
+    },
+    "validation": {
+      "$ref": "field-validation.schema.json"
     }
   },
   "propertyNames": {

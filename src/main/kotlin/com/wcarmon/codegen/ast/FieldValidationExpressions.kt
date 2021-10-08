@@ -294,6 +294,9 @@ data class FieldValidationExpressions(
     }
 
     if (validationConfig.requireTrimmed != null && validationConfig.requireTrimmed) {
+      if (field.type.nullable) {
+        TODO("allow null or ...")
+      }
       output += """CHECK (TRIM("$fName") = "$fName")"""
     }
 

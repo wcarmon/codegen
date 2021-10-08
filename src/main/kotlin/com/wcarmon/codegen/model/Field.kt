@@ -59,7 +59,6 @@ data class Field(
    * ...
    */
   val positionInId: Int? = null,
-  val validationConfig: FieldValidation = FieldValidation(),
 
   // -- Technology specific config
   private val golangConfig: GolangFieldConfig = GolangFieldConfig(),
@@ -103,7 +102,6 @@ data class Field(
       @JsonProperty("scale") scale: Int = 0,
       @JsonProperty("signed") signed: Boolean = true,
       @JsonProperty("type") typeLiteral: String = "",
-      @JsonProperty("validation") validationConfig: FieldValidation = FieldValidation(),
     ): Field {
 
       // -- validate typeLiteral
@@ -151,7 +149,6 @@ data class Field(
         protobufConfig = protobufConfig,
         rdbmsConfig = rdbmsConfig,
         type = logicalType,
-        validationConfig = validationConfig,
       )
     }
   }
@@ -413,6 +410,22 @@ data class Field(
       -> throw UnsupportedOperationException()
 
       else -> TODO("get effectiveSerde: targetLanguage=$targetLanguage, field=$this")
+    }
+
+  fun effectiveFieldValidation(targetLanguage: TargetLanguage): FieldValidation =
+    when (targetLanguage) {
+      JAVA_08,
+      JAVA_11,
+      JAVA_17,
+      -> javaConfig.validationConfig
+
+      KOTLIN_JVM_1_4,
+      -> kotlinConfig.validationConfig
+
+      GOLANG_1_9,
+      -> golangConfig.validationConfig
+
+      else -> TODO("get field validaiton for targetLanguage=$targetLanguage, field=$this")
     }
 
   private fun effectiveJavaRDBMSSerde(targetLanguage: TargetLanguage) =
