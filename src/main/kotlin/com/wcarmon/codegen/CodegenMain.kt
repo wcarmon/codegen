@@ -82,7 +82,7 @@ fun main(args: Array<String>) {
     SpringApplication.exit(ctx, { 0 })
     exitProcess(exitCode)
 
-  }finally {
+  } finally {
     ctx.close()
   }
 

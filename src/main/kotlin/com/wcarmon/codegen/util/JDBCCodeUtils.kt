@@ -174,8 +174,9 @@ fun defaultResultSetGetterMethod(base: BaseFieldType): Name = when (base) {
   ZONE_OFFSET -> "getInt"
 
   ARRAY,
-  DURATION,
   COLOR,
+  DURATION,
+  EMAIL,
   LIST,
   MAP,
   MONTH_DAY,

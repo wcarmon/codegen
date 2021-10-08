@@ -4,7 +4,10 @@ import com.wcarmon.codegen.ast.*
 import com.wcarmon.codegen.ast.FieldReadMode.DIRECT
 import com.wcarmon.codegen.ast.FinalityModifier.FINAL
 import com.wcarmon.codegen.ast.VisibilityModifier.PUBLIC
+import com.wcarmon.codegen.model.BaseFieldType
+import com.wcarmon.codegen.model.BaseFieldType.*
 import com.wcarmon.codegen.model.Field
+import com.wcarmon.codegen.model.FieldValidation
 import com.wcarmon.codegen.model.SerdeMode.DESERIALIZE
 import com.wcarmon.codegen.model.SerdeMode.SERIALIZE
 import com.wcarmon.codegen.model.TargetLanguage
@@ -154,4 +157,96 @@ class KotlinFieldView(
       .expand(thingToSerialize)
   }
 
+  fun fakeFieldAssignment(): String {
+    //TODO: use constraints (for strings & numbers)
+    //TODO: handle user defined types (json config)
+
+    val testConfig = field.effectiveTestConfig(targetLanguage)
+    val validation = field.effectiveFieldValidation(targetLanguage)
+
+    val nonNullRightSide =
+      if (testConfig.randomValueBuilder.isNotBlank()) {
+        testConfig.randomValueBuilder
+
+      } else if (field.type.enumType) {
+        //TODO: for java, use .length (instead of .size)
+        "${field.type.rawTypeLiteral}.values()[" +
+            "ThreadLocalRandom.current().nextInt(${field.type.rawTypeLiteral}.values().size)" +
+            "]"
+
+      } else {
+        fakerExpression(validation, field.type.base)
+      }
+
+    //TODO: randomly null for nullable  <- if (ThreadLocalRandom.current().nextBoolean()) null else TODO()
+
+    return "${field.name.lowerCamel} = $nonNullRightSide"
+  }
+
+
+  //TODO: extract so other JVM languages can use
+  //TODO: handle when there's a regex, see faker.regexify()
+  private fun fakerExpression(
+    validation: FieldValidation,
+    baseType: BaseFieldType
+  ) = when (baseType) {
+//    BOOLEAN -> "faker.bool().bool()"
+    BOOLEAN -> "ThreadLocalRandom.current().nextBoolean()"
+    COLOR -> "faker.color().hex(true)"
+    DURATION -> "Duration.ofSeconds(faker.number().numberBetween(10, 86_400).toLong())"
+    INT_16 -> {
+      val low = validation.minValue?.toString() ?: "Short.MIN_VALUE"
+      val high = validation.maxValue?.toString() ?: "Short.MAX_VALUE"
+      "faker.number().numberBetween($low, $high)"
+    }
+    INT_32 -> {
+      val low = validation.minValue?.toString() ?: "Int.MIN_VALUE"
+      val high = validation.maxValue?.toString() ?: "Int.MAX_VALUE"
+//      "faker.number().numberBetween($low, $high)"
+      "ThreadLocalRandom.current().nextInt($low, $high)"
+    }
+    INT_64 -> {
+      val low = validation.minValue?.toString() ?: "Long.MIN_VALUE"
+      val high = validation.maxValue?.toString() ?: "Long.MAX_VALUE"
+      "ThreadLocalRandom.current().nextLong($low, $high)"
+    }
+//    EMAIL -> "faker.bothify(\"???##@gmail.com\")"
+    EMAIL -> "faker.internet().safeEmailAddress()"
+
+    //TODO: Set
+    //TODO: bigInt
+    //TODO: bigDecimal
+
+    UTC_INSTANT -> "faker.date().past(365, TimeUnit.DAYS).toInstant()"
+
+    FLOAT_32 -> {
+      val low = validation.minValue?.toString() ?: "Float.MIN_VALUE"
+      val high = validation.maxValue?.toString() ?: "Float.MAX_VALUE"
+      "faker.number().randomDouble(1, $low, $high) as Float"
+    }
+    FLOAT_64 -> {
+      val low = validation.minValue?.toString() ?: "Double.MIN_VALUE"
+      val high = validation.maxValue?.toString() ?: "Double.MAX_VALUE"
+      "faker.number().randomDouble(2, $low, $high)"
+    }
+    PERIOD -> "Period.ofDays(ThreadLocalRandom.current().nextInt(60))"
+    STRING -> {
+      val maxLength = validation.maxSize ?: 32
+      //GOTCHA: substring fails if upper limit is beyond string length
+      "faker.lorem().sentence(20).substring(0, $maxLength).trim()"
+    }
+    URI -> {
+      //TODO: allow file:// uris  <-- faker.file().fileName()
+      "URI(faker.internet().url())"
+    }
+    URL -> "faker.internet().url()"
+    UUID -> "UUID.fromString(faker.internet().uuid())"
+
+    // faker.address().cityName().replace(' ', '_').lowercase()
+
+    else -> {
+      System.err.println("TODO: handle: ${field.type.base} (${field.name.lowerCamel})")
+      "\"fix-$baseType\""
+    }
+  }
 }

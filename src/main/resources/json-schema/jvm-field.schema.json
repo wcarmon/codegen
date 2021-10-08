@@ -23,6 +23,9 @@
     "overrideRDBMSSerde": {
       "$ref": "serde.schema.json"
     },
+    "test": {
+      "$ref": "test-field.schema.json"
+    },
     "typeParameters": {
       "items": {
         "type": "string"

@@ -172,6 +172,9 @@
         "overrideRDBMSSerde": {
           "deserializeTemplate": "UBUuid.parse(%s)",
           "serializeTemplate": "%s.toString()"
+        },
+        "test": {
+          "randomValueBuilder": "UBUuid.random()"
         }
       },
       "kotlin": {
@@ -182,6 +185,9 @@
         "overrideRDBMSSerde": {
           "deserializeTemplate": "UBUuid.parse(%s)",
           "serializeTemplate": "%s.toString()"
+        },
+        "test": {
+          "randomValueBuilder": "UBUuid.random()"
         }
       },
       "name": "listUuid",
@@ -250,7 +256,8 @@
         "overrideRDBMSSerde": {
           "deserializeTemplate": "ChronoLevel.fromDBValue(%s)",
           "serializeTemplate": "%s.toDBValue()"
-        }
+        },
+        "test": {}
       },
       "kotlin": {
         "defaultValue": {
@@ -264,7 +271,8 @@
         "overrideRDBMSSerde": {
           "deserializeTemplate": "ChronoLevel.fromDBValue(%s)",
           "serializeTemplate": "%s.toDBValue()"
-        }
+        },
+        "test": {}
       },
       "name": "importance",
       "nullable": false,
@@ -331,6 +339,7 @@
       "type": "Set"
     },
     {
+      "enumType": true,
       "golang": {},
       "java": {
         "overrideProtobufSerde": {
@@ -387,7 +396,8 @@
         "overrideRDBMSSerde": {
           "deserializeTemplate": "ChronoLevel.fromDBValue(%s)",
           "serializeTemplate": "%s.toDBValue()"
-        }
+        },
+        "test": {}
       },
       "kotlin": {
         "defaultValue": {
@@ -401,7 +411,8 @@
         "overrideRDBMSSerde": {
           "deserializeTemplate": "ChronoLevel.fromDBValue(%s)",
           "serializeTemplate": "%s.toDBValue()"
-        }
+        },
+        "test": {}
       },
       "name": "urgency",
       "nullable": false,

@@ -115,6 +115,9 @@
     "rdbms": {
       "$ref": "rdbms-table.schema.json"
     },
+    "test": {
+      "$ref": "test-entity.schema.json"
+    },
     "updatedTimestampFieldName": {
       "maxLength": 48,
       "minLength": 1,

@@ -70,9 +70,12 @@ data class Entity(
    */
   val updatedTimestampFieldName: Name? = null,
 
-  val interFieldValidations: Set<InterFieldValidation> = setOf()
+  val interFieldValidations: Set<InterFieldValidation> = setOf(),
 
-  // TODO: list: pagination
+  @JsonProperty("test")
+  val testConfig: TestEntityConfig = TestEntityConfig(),
+
+// TODO: list: pagination
 ) {
 
   /* All fields, in idiomatic order */

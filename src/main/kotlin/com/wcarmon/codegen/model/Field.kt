@@ -205,7 +205,6 @@ data class Field(
     )
   }
 
-
   val rdbmsView by lazy {
     RDBMSColumnView(
       debugMode = DEBUG_MODE,
@@ -244,6 +243,21 @@ data class Field(
     )
   }
 
+  fun effectiveTestConfig(targetLanguage: TargetLanguage): TestFieldConfig =
+    when (targetLanguage) {
+      GOLANG_1_9 -> golangConfig.testConfig
+
+      JAVA_08,
+      JAVA_11,
+      JAVA_17,
+      -> javaConfig.testConfig
+
+      KOTLIN_JVM_1_4,
+      -> kotlinConfig.testConfig
+
+      else -> TODO("Get effective effectiveTestConfig for field=$this, targetLanguage=$targetLanguage")
+    }
+
   fun effectiveBaseType(targetLanguage: TargetLanguage): BaseFieldType =
     when (targetLanguage) {
       GOLANG_1_9 -> golangConfig.overrideBaseType ?: type.base
@@ -253,7 +267,8 @@ data class Field(
       JAVA_17,
       -> type.base
 
-      KOTLIN_JVM_1_4 -> type.base
+      KOTLIN_JVM_1_4,
+      -> type.base
 
       PROTO_BUF_3 -> protobufConfig.overrideBaseType ?: type.base
 

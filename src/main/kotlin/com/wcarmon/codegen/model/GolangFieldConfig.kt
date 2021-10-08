@@ -29,6 +29,9 @@ data class GolangFieldConfig(
 
   // -- Only for Collections & Generic types (Parametric polymorphism)
   val typeParameters: List<String> = listOf(),
+
+  @JsonProperty("test")
+  val testConfig: TestFieldConfig = TestFieldConfig(),
 ) {
 
   val overrideBaseType: BaseFieldType? =

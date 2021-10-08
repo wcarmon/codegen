@@ -1,0 +1,27 @@
+{
+  "$schema": "https://wcarmon.com/schemas/codegen/request.schema.json",
+  "allowOverride": true,
+  "entityConfigDirs": [
+    "file:///home/wcarmon/git-repos/codegen/samples/entities"
+  ],
+  "extraJVMImports": [
+    "com.fasterxml.jackson.databind.ObjectWriter",
+    "com.github.javafaker.Faker",
+    "com.wcarmon.chrono.model30.*",
+    "com.wcarmon.ub.model.UBUuid",
+    "java.net.URI",
+    "java.net.URL",
+    "java.time.Clock",
+    "java.time.Duration",
+    "java.time.Period",
+    "java.util.concurrent.ThreadLocalRandom",
+    "java.util.concurrent.TimeUnit",
+    "java.util.UUID"
+  ],
+  "jvmContextClass": "com.wcarmon.chrono.context.ChronoContext",
+  "outputDirectory": "file:///home/wcarmon/git-repos/modern-jvm/sandbox/src/genTest/kotlin/com/wcarmon/chrono/fake30",
+  "outputFilenameTemplate": "FakeEntityBuilders.kt",
+  "outputMode": "single",
+  "package": "com.wcarmon.chrono.fake30",
+  "templateURI": "classpath:/templates/test/fake-entity.kotlin.ftl"
+}

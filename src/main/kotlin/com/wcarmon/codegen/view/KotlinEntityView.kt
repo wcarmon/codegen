@@ -210,6 +210,14 @@ class KotlinEntityView(
       )
   }
 
+  fun fakeFieldAssignments(): String =
+    entity.fields
+      .joinToString(
+        separator = ",\n"
+      ) { field ->
+        field.kotlinView.fakeFieldAssignment()
+      }
+
   fun patchQueries(): String {
     val indentation = "  "
 

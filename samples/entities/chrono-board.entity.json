@@ -136,7 +136,8 @@
         "overrideRDBMSSerde": {
           "deserializeTemplate": "ChronoHorizon.fromDBValue(%s)",
           "serializeTemplate": "%s.toDBValue()"
-        }
+        },
+        "test": {}
       },
       "kotlin": {
         "overrideKafkaSerde": {
@@ -150,7 +151,8 @@
         "overrideRDBMSSerde": {
           "deserializeTemplate": "ChronoHorizon.fromDBValue(%s)",
           "serializeTemplate": "%s.toDBValue()"
-        }
+        },
+        "test": {}
       },
       "name": "horizon",
       "protobuf": {
@@ -203,7 +205,8 @@
         "overrideRDBMSSerde": {
           "deserializeTemplate": "ChronoLevel.fromDBValue(%s)",
           "serializeTemplate": "%s.toDBValue()"
-        }
+        },
+        "test": {}
       },
       "kotlin": {
         "overrideProtobufSerde": {
@@ -213,7 +216,8 @@
         "overrideRDBMSSerde": {
           "deserializeTemplate": "ChronoLevel.fromDBValue(%s)",
           "serializeTemplate": "%s.toDBValue()"
-        }
+        },
+        "test": {}
       },
       "name": "importance",
       "nullable": false,
@@ -328,5 +332,6 @@
   "rdbms": {
     "schema": "test"
   },
+  "test": {},
   "updatedTimestampFieldName": "updated"
 }

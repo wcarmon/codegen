@@ -36,6 +36,36 @@
         },
         "varcharLength": 96
       },
+      "type": "email"
+    },
+    {
+      "golang": {
+        "defaultValue": {
+          "quoteValue": true,
+          "value": ""
+        }
+      },
+      "java": {
+        "defaultValue": {
+          "quoteValue": true,
+          "value": ""
+        }
+      },
+      "kotlin": {
+        "defaultValue": {
+          "quoteValue": true,
+          "value": ""
+        }
+      },
+      "name": "bcryptHash",
+      "nullable": false,
+      "rdbms": {
+        "validation": {
+          "requireNotBlank": true,
+          "requireTrimmed": true
+        },
+        "varcharLength": 64
+      },
       "type": "String"
     }
   ],

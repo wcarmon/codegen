@@ -23,4 +23,7 @@ data class JavaFieldConfig(
 
   // -- Only for Collections & Generic types (Parametric polymorphism)
   val typeParameters: List<String> = listOf(),
+
+  @JsonProperty("test")
+  val testConfig: TestFieldConfig = TestFieldConfig(),
 )

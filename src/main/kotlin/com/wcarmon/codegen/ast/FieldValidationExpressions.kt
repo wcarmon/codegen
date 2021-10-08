@@ -112,6 +112,7 @@ data class FieldValidationExpressions(
     }
 
     if (validationConfig.maxValue != null) {
+      //TODO: fix for durations
       output += """
         |Preconditions.checkArgument(
         |  $fName <= ${validationConfig.maxValue},
@@ -120,6 +121,7 @@ data class FieldValidationExpressions(
     }
 
     if (validationConfig.minValue != null) {
+      //TODO: fix for durations
       output += """
         |Preconditions.checkArgument(
         |  $fName >= ${validationConfig.minValue},
@@ -223,6 +225,7 @@ data class FieldValidationExpressions(
     }
 
     if (validationConfig.maxValue != null) {
+      //TODO: fix for durations
       output += """
         |require($fName <= ${validationConfig.maxValue}) {
         |  "'$fName' is too large: maxValue=${validationConfig.maxValue}, value=$$fName"
@@ -231,6 +234,7 @@ data class FieldValidationExpressions(
     }
 
     if (validationConfig.minValue != null) {
+      //TODO: fix for durations
       output += """
         |require($fName >= ${validationConfig.minValue}) {
         |  "'$fName' is too small: minValue=${validationConfig.minValue}, value=$$fName"
@@ -290,10 +294,12 @@ data class FieldValidationExpressions(
     val output = mutableListOf<String>()
 
     if (validationConfig.minValue != null) {
+      //TODO: fix for durations
       output += """CONSTRAINT ${tableConstraintPrefix}${fName}_min_value CHECK (${nullSafeSnippet}"$fName" >= ${validationConfig.minValue})"""
     }
 
     if (validationConfig.maxValue != null) {
+      //TODO: fix for durations
       output += """CONSTRAINT ${tableConstraintPrefix}${fName}_max_value CHECK (${nullSafeSnippet}"$fName" <= ${validationConfig.maxValue})"""
     }
 

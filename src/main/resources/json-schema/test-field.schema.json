@@ -1,0 +1,19 @@
+{
+  "$id": "https://wcarmon.com/schemas/codegen/test-field.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "extra config for Automated testing",
+  "properties": {
+    "randomValueBuilder": {
+      "maxLength": 96,
+      "minLength": 0,
+      "type": "string"
+    }
+  },
+  "propertyNames": {
+    "pattern": "^[$]?[A-Za-z_][A-Za-z0-9]*$"
+  },
+  "required": [],
+  "title": "Automated Testing config",
+  "type": "object"
+}

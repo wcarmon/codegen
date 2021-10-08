@@ -45,6 +45,9 @@
         "overrideRDBMSSerde": {
           "deserializeTemplate": "UBUuid.parse(%s)",
           "serializeTemplate": "%s.toString()"
+        },
+        "test": {
+          "randomValueBuilder": "UBUuid.random()"
         }
       },
       "kotlin": {
@@ -55,6 +58,9 @@
         "overrideRDBMSSerde": {
           "deserializeTemplate": "UBUuid.parse(%s)",
           "serializeTemplate": "%s.toString()"
+        },
+        "test": {
+          "randomValueBuilder": "UBUuid.random()"
         }
       },
       "name": "taskUuid",
