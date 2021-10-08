@@ -11,6 +11,8 @@ $RECYCLE.BIN/
 *.a
 *.ap_
 *.apk
+*.app
+*.avi
 *.bak
 *.bundle
 *.cab
@@ -26,6 +28,7 @@ $RECYCLE.BIN/
 *.egg
 *.egg-info
 *.exe
+*.flv
 *.gem
 *.gz
 *.hprof
@@ -42,6 +45,8 @@ $RECYCLE.BIN/
 *.lo
 *.lock
 *.log
+*.mov
+*.mp4
 *.msi
 *.msm
 *.msp
@@ -66,12 +71,14 @@ $RECYCLE.BIN/
 *.tar
 *.tar.gz
 *.tgz
+*.tiff
 *.tlh
 *.tli
 *.tmp
 *.Trashes
 *.user
 *.war
+*.wmv
 *.zip
 */WEB-INF/lib/
 *erase*
@@ -199,6 +206,7 @@ src/gen/kotlin/
 tags
 target/
 Temporary Items
+TEST*.xml
 test-output/
 testem.log
 Thumbs.db
