@@ -173,14 +173,20 @@ class KotlinFieldView(
         "${field.type.rawTypeLiteral}.values()[" +
             "ThreadLocalRandom.current().nextInt(${field.type.rawTypeLiteral}.values().size)" +
             "]"
+        // Alternative: faker.options().option(${field.type.rawTypeLiteral}::class.java)
 
       } else {
         fakerExpression(validation, field.type.base)
       }
 
-    //TODO: randomly null for nullable  <- if (ThreadLocalRandom.current().nextBoolean()) null else TODO()
+    return if (field.type.nullable) {
+      "${field.name.lowerCamel} = faker.options().option(null, $nonNullRightSide)"
+      // Alternative: if (ThreadLocalRandom.current().nextBoolean()) null else $nonNullRightSide
+      // Alternative: if (faker.bool().bool()) null else $nonNullRightSide
 
-    return "${field.name.lowerCamel} = $nonNullRightSide"
+    } else {
+      "${field.name.lowerCamel} = $nonNullRightSide"
+    }
   }
 
 

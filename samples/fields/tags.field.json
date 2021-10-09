@@ -28,6 +28,9 @@
       "deserializeTemplate": "toSet(%s, objectMapper, CHRONO_BOARD__TAGS_TYPE_REF)",
       "serializeTemplate": "objectWriter.writeValueAsString(%s)"
     },
+    "test": {
+      "randomValueBuilder": "fix-me"
+    },
     "typeParameters": [
       "ChronoTag"
     ]
@@ -43,6 +46,9 @@
     "overrideRDBMSSerde": {
       "deserializeTemplate": "parseSet(%s, objectMapper)",
       "serializeTemplate": "objectWriter.writeValueAsString(%s)"
+    },
+    "test": {
+      "randomValueBuilder": "(1..4).map { ChronoTag(faker.address().cityName()) }.take(ThreadLocalRandom.current().nextInt(4)).toSet()"
     },
     "typeParameters": [
       "ChronoTag"

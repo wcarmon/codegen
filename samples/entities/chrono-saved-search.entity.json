@@ -13,6 +13,16 @@
         "SQL: query",
         "Browser: ?TODO?"
       ],
+      "java": {
+        "test": {
+          "randomValueBuilder": "faker.options().option(\"browser\", \"elasticsearch\", \"rdbms\")"
+        }
+      },
+      "kotlin": {
+        "test": {
+          "randomValueBuilder": "faker.options().option(\"browser\", \"elasticsearch\", \"rdbms\")"
+        }
+      },
       "name": "query",
       "rdbms": {
         "validation": {

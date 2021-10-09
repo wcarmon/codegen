@@ -49,6 +49,7 @@ fun protobufTypeLiteral(
 
   COLOR,
   DURATION,
+  EMAIL,
   MONTH_DAY,
   PATH,
   PERIOD,
@@ -69,6 +70,7 @@ fun protobufTypeLiteral(
 
   INT_16,
   INT_32,
+  ZONE_OFFSET,
   -> "int32"
 
   INT_64,
@@ -85,10 +87,10 @@ fun protobufTypeLiteral(
 //  LIST -> TODO()    //TODO: repeated
 //  MAP -> TODO()
 //  SET -> TODO()     //TODO: repeated
-//  ZONE_OFFSET -> TODO()
 
 
-  else -> "//TODO: fix TYPE=${type.base}"
+//  else -> "//TODO: fix TYPE=${type.base}"
+  else -> TODO("fix TYPE=${type.base}")
 }
 
 private fun defaultKotlinSerdeForCollection(field: Field, targetLanguage: TargetLanguage): Serde =

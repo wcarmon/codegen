@@ -305,6 +305,8 @@
           "deserializeTemplate": "toSet(%s, objectMapper, CHRONO_TASK__CONTEXTS_TYPE_REF)",
           "serializeTemplate": "objectWriter.writeValueAsString(%s)"
         },
+        "test": {
+        },
         "typeParameters": [
           "String"
         ]
@@ -312,6 +314,9 @@
       "kotlin": {
         "defaultValue": {
           "value": []
+        },
+        "test": {
+          "randomValueBuilder": "listOf(\"@home\", \"@work\", \"@school\", \"@errands\", \"@phone\").shuffled().take(ThreadLocalRandom.current().nextInt(5)).toSet()"
         },
         "overrideProtobufSerde": {
           "deserializeTemplate": "%s.toSet()",
